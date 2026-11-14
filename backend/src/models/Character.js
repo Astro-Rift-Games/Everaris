@@ -35,6 +35,7 @@ const preparedAbilitiesSchema = new mongoose.Schema({
 // admitted reservations remain until extraction or a loss consumes them.
 const pendingReservationSchema = new mongoose.Schema({
   reservationId:     { type: String, required: true },
+  raidId:            { type: String, default: null },
   admittedAt:        { type: Date, default: null },
   items:             { type: [itemSchema], default: [] },
   preparedEquipment: { type: preparedEquipmentSchema, default: () => ({}) },

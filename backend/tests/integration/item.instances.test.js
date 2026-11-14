@@ -93,6 +93,7 @@ test('v3 HTTP durable instance ownership and extraction', async t => {
   await t.test('host publishes ID-free variants and equipment; commit reissues IDs and rejects invalid modifiers before consuming result', async () => {
     await Inventory.updatePreparedEquipment(accountId, { weaponSlot1: { lootId: 'arming_sword', instanceId: instance.instanceId } }, 0);
     await Inventory.savePendingReservation(accountId, 'reserve');
+    await Character.updateOne({ accountId }, { $set: { 'inventory.pendingReservation.raidId': 'raid' } });
     const published = await send('post', '/raid/extraction-result', { raidId: 'raid', resultSequence: 1, experienceGranted: 0,
       items: [{ lootId: 'arming_sword', amount: 1, modifiers: modifiers() }, { lootId: 'arming_sword', amount: 1 }],
       preparedEquipment: { weaponSlot1: { lootId: 'arming_sword', modifiers: modifiers() } } });

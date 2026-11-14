@@ -231,6 +231,26 @@ class SessionTicketService {
       expiresAt
     };
 
+    const raidId = `raid-${raidCode.trim()}`;
+    if (reservation.raidId !== raidId) {
+      if (reservation.raidId && reservation.admittedAt) {
+        throw { statusCode: 409, errorCode: 'RESERVATION_RAID_MISMATCH',
+          message: 'The admitted reservation is bound to another raid.' };
+      }
+
+      const binding = await Character.updateOne({
+        accountId,
+        'inventory.pendingReservation.reservationId': reservationId,
+        'inventory.pendingReservation.raidId': reservation.raidId ?? null,
+        // A re-binding must not race the admission that freezes the raid binding.
+        ...(reservation.raidId ? { 'inventory.pendingReservation.admittedAt': null } : {})
+      }, { $set: { 'inventory.pendingReservation.raidId': raidId } });
+      if (!binding.matchedCount) {
+        throw { statusCode: 409, errorCode: 'REVISION_CONFLICT',
+          message: 'Reservation changed during raid admission ticket issuance.' };
+      }
+    }
+
     const ticket = this.signPayload(payload);
 
     return {

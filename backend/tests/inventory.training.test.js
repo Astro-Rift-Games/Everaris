@@ -157,6 +157,7 @@ test('InventoryService.requestTrainingWeapon - validations and limits', async (t
     const trainingWeapon = { lootId: 'training_wand', instance: makeInstance('training_wand') };
     mockChar.inventory.pendingReservation = {
       reservationId: 'res-training-2',
+      raidId: 'raid-RAID01',
       admittedAt: null,
       items: [],
       preparedEquipment: {
@@ -344,6 +345,7 @@ test('requested training weapon reaches the raid admission ticket through the re
         [['arming_sword', '111111111111111111111111']],
         'the displaced arming_sword travels as a carried item, not as the equipped weapon');
 
+      stored.inventory.pendingReservation.raidId = 'raid-RAID01';
       const ticket = await SessionTicketService.issueRaidAdmissionTicket('acc123', 'RAID01', `res-${weaponId}`);
       const verified = SessionTicketService.verifyRaidAdmissionTicket(ticket.ticket, 'RAID01');
       assert.equal(verified.valid, true);

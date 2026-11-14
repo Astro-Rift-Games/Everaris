@@ -182,6 +182,7 @@ test('physical inventory public service contract', async t => {
     const reserved = await Inventory.savePendingReservation('account', 'res');
     assert.deepEqual(reserved.pendingReservation.items, [entry(3, 'bone', 4), entry(8, 'bone', 2)]);
     assert.deepEqual((await snapshot()).loadout, []);
+    character.inventory.pendingReservation.raidId = 'raid-ABC123';
     assert.deepEqual((await Session.issueRaidAdmissionTicket('account', 'ABC123', 'res')).snapshot.items, [{ lootId: 'bone', amount: 6 }]);
     character.inventory.loadout = [entry(3, 'bone', 10)];
     await Inventory.clearPendingReservation('account', { rollback: true });

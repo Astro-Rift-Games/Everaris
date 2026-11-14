@@ -182,7 +182,11 @@ test('E2E Town Identity and Raid Admission Integration (US-59 / SEC-59.1)', asyn
     assert.strictEqual(retry.status, 200);
     assert.deepStrictEqual(retry.body, admit.body);
 
-    const raidId = 'admitted-extraction-raid';
+    const raidCode = '482913';
+    const ticket = await request(app).post('/character/me/raid/admission-ticket')
+      .set('Authorization', `Bearer ${token}`).send({ raidCode, reservationId });
+    assert.strictEqual(ticket.status, 200);
+    const raidId = `raid-${raidCode}`;
     const publish = await request(app).post('/character/raid/extraction-result')
       .set('Authorization', `Bearer ${token}`)
       .send({ raidId, resultSequence: 1, targetCharacterId: characterId,

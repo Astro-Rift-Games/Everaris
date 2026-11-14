@@ -251,9 +251,17 @@ class RaidResultService {
         };
       }
 
+      if (recipientChar.inventory.pendingReservation.raidId !== raidId) {
+        throw {
+          statusCode: 422,
+          errorCode: 'RESERVATION_RAID_MISMATCH',
+          message: 'Target reservation is not bound to this raid.',
+        };
+      }
+
       // 3. Host raid membership validation
       if (callerAccountId !== recipientAccountId) {
-        const callerInRaid = (callerChar.inventory && callerChar.inventory.pendingReservation) ||
+        const callerInRaid = callerChar.inventory?.pendingReservation?.raidId === raidId ||
           (callerChar.inventory && callerChar.inventory.appliedExtractionReceipts &&
             callerChar.inventory.appliedExtractionReceipts.some(r => r.raidId === raidId));
         if (!callerInRaid) {
@@ -400,6 +408,7 @@ class RaidResultService {
       resultId: effectiveResultId,
       raidId,
       accountId: recipientAccountId,
+      reservationId: isDedicatedServerVerified ? null : recipientChar.inventory.pendingReservation.reservationId,
       ...(characterId ? { characterId } : {}),
       items: resultItems,
       preparedEquipment: resultEquipment,

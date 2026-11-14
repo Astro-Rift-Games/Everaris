@@ -12,8 +12,8 @@ Execution tracker only: scope and acceptance come from the HacknPlan item; nothi
 
 ## Tasks
 
-- T1 — S1: known-item registry, publish catalog check (422, no document), Unity parity test, fix fixtures with non-catalog ids. Route: inline. Commit: pending.
-- T2 — S2, S3: reservation `raidId` binding at ticket issuance, publish binding/participation checks, result↔reservation binding enforced at commit. Route: inline. Commit: pending.
+- T1 — S1: known-item registry, publish catalog check (422, no document), Unity parity test, fix fixtures with non-catalog ids. Route: inline. Commit: 37c1ca78 (done).
+- T2 — S2, S3: reservation `raidId` binding at ticket issuance, publish binding/participation checks, result↔reservation binding enforced at commit. Route: gentle-ai-worker (context backstop). RED tests already in `backend/tests/raid.result.authority.test.js` (S2–S4: 12 failing). Commit: pending.
 - T3 — S4: update ExtractionArchitecture.md (Bounded Player-Host Authority) and run npm test, test:concurrency and test:integration. Route: inline + independent verify (Risk item 2/3). Commit: pending.
 
 ## Log
@@ -24,4 +24,5 @@ Execution tracker only: scope and acceptance come from the HacknPlan item; nothi
 - L4 (decision): budget = 5000 XP + 30 slots per (raid, character), at most one creditable result per reservation, enforced at commit.
 - L5 (evidence): all 86 Unity LootDefinition ids already exist in the union of EQUIPMENT_TEMPLATES, GEM_CATALOG, BUY_CATALOG and SELL_CATALOG, so no extra zero-value list is needed. Backend-only GD-14 ids (slime_gel, ...) remain valid.
 - L7 (T1 evidence): RED: 3/4 S1 tests failed before the change (unknown loot accepted; unknown v3 equipment returned 400). GREEN after `src/config/itemCatalog.js` + `requireCatalogLoot` in RaidResultService. Fixtures that published non-existent ids (gold, iron_ore, sword, loot_item_N, health_potion, helm_iron, armor_leather, sword_basic, potion_heal, gold_bar) were replaced with real catalog ids; integration 220/220.
+- L8 (T2): the worker stopped correctly. Two S4 assertions expected raw XP, but progression is level-relative, and the successful S1 fixture had an unbound reservation. The parent fixed the tests (they now compare against `computeLevelAndExperience` and use `ticketedRaider`); the RED count is 10 (S2/S3). Worker resumed (task mwgy5snn-3-ugjy).
 - L6 (scope notes): atomic uniqueness of concurrent publications belongs to FIX-22; unconsumed result retention (TTL) belongs to FIX-21. Unsigned results stored before this change carry no reservation binding and skip the commit gate; reservations ticketed before deploy without `raidId` fail closed on unsigned publish.

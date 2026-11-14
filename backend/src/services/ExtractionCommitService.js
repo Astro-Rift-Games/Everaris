@@ -104,6 +104,17 @@ class ExtractionCommitService {
       };
     }
 
+    if (authResult.reservationId && (
+      character.inventory.pendingReservation?.reservationId !== authResult.reservationId ||
+      character.inventory.pendingReservation?.raidId !== authResult.raidId
+    )) {
+      throw {
+        statusCode: 409,
+        errorCode: 'RESULT_RESERVATION_MISMATCH',
+        message: 'The authoritative result does not match the active raid reservation.',
+      };
+    }
+
     if (character.inventory.loadout && character.inventory.loadout.length > 0) {
       throw {
         statusCode: 409,
@@ -235,6 +246,9 @@ class ExtractionCommitService {
         {
           accountId: accountId,
           revision: character.revision,
+          ...(authResult.reservationId ? {
+            'inventory.pendingReservation.reservationId': authResult.reservationId
+          } : {}),
           'inventory.appliedExtractionReceipts': {
             $not: { $elemMatch: { raidId: raidId } }
           }

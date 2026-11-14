@@ -329,7 +329,7 @@ test('RaidResultService Bounded Player-Host Authority (TASK-223 / SEC-223)', asy
       accountId: 'host_acc_123',
       name: 'HostCharacter',
       inventory: {
-        pendingReservation: { reservationId: 'res_host' },
+        pendingReservation: { reservationId: 'res_host', raidId: 'raid_bounded_1' },
         appliedExtractionReceipts: []
       }
     });
@@ -339,7 +339,7 @@ test('RaidResultService Bounded Player-Host Authority (TASK-223 / SEC-223)', asy
       accountId: 'player_acc_456',
       name: 'PlayerCharacter',
       inventory: {
-        pendingReservation: { reservationId: 'res_player' },
+        pendingReservation: { reservationId: 'res_player', raidId: 'raid_bounded_1' },
         appliedExtractionReceipts: []
       }
     });

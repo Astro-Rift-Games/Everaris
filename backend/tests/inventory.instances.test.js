@@ -183,6 +183,7 @@ test('v3 instance public HTTP/service contract', async t => {
     const reserved = await Inventory.savePendingReservation(accountId, 'reserve');
     assert.deepEqual(reserved.pendingReservation.items, [unit(3, 'shield', 2)]);
     assert.deepEqual(reserved.pendingReservation.preparedEquipment.weaponSlot1, equipment('arming_sword', 1, mods()));
+    stored.inventory.pendingReservation.raidId = 'raid-ABC123';
     const beforeTicket = structuredClone(stored);
     const counters = [writes, claims, publications];
     const ticket = await Session.issueRaidAdmissionTicket(accountId, 'ABC123', 'reserve');
@@ -210,7 +211,7 @@ test('v3 instance public HTTP/service contract', async t => {
   await t.test('admission signs ID-free individual weapons in slot order without changing the reservation', async () => {
     const first = mods(['RES_RUBY_GEM', null]);
     const second = mods([null, 'RES_SAPPHIRE_GEM']);
-    stored.inventory.pendingReservation = { reservationId: 'reserve', admittedAt: null,
+    stored.inventory.pendingReservation = { reservationId: 'reserve', raidId: 'raid-ABC123', admittedAt: null,
       items: [unit(9, 'arming_sword', 1, first), { slot: 5, lootId: 'bone', amount: 7 },
         unit(2, 'arming_sword', 2, second), unit(7, 'arming_sword', 3)],
       preparedEquipment: { ...emptyEquipment(), weaponSlot1: equipment('arming_sword', 4, first),
@@ -241,7 +242,7 @@ test('v3 instance public HTTP/service contract', async t => {
   await t.test('full carried weapon admission preserves all 34 ID-free units and reports signed transport size', async t => {
     const modifiers = { ...mods(['RES_RUBY_GEM', 'RES_SAPPHIRE_GEM']),
       secondary: { attribute: 'intelligence', grade: 'S' } };
-    stored.inventory.pendingReservation = { reservationId: '0123456789abcdef0123456789abcdef', admittedAt: null,
+    stored.inventory.pendingReservation = { reservationId: '0123456789abcdef0123456789abcdef', raidId: 'raid-123456', admittedAt: null,
       items: Array.from({ length: 30 }, (_, slot) => unit(slot, 'arming_sword', slot + 1, modifiers)),
       preparedEquipment: { ...emptyEquipment(), weaponSlot1: equipment('arming_sword', 31, modifiers),
         weaponSlot2: equipment('arming_sword', 32, modifiers), offHand1: equipment('arming_sword', 33, modifiers),
@@ -356,7 +357,7 @@ test('v3 instance public HTTP/service contract', async t => {
   });
 
   await t.test('host result immutability binds modifiers, not just template and quantity', async () => {
-    stored.inventory.pendingReservation = { reservationId: 'reserve', items: [], preparedEquipment: emptyEquipment() };
+    stored.inventory.pendingReservation = { reservationId: 'reserve', raidId: 'raid', items: [], preparedEquipment: emptyEquipment() };
     Result.findOne = async () => null;
     const payload = { raidId: 'raid', resultSequence: 1, items: [{ lootId: 'arming_sword', amount: 1, modifiers: mods() }], preparedEquipment: {}, experienceGranted: 0 };
     const published = await Raid.publishHostResult(accountId, payload);
@@ -387,6 +388,7 @@ test('v3 instance public HTTP/service contract', async t => {
     const reserved = await Inventory.savePendingReservation(accountId, 'reserve');
     assert.equal(reserved.pendingReservation.preparedEquipment.weaponSlot1, 'training_dagger');
     const admitted = await Inventory.admitPendingReservation(accountId, 'reserve'); assert.ok(admitted.pendingReservation.admittedAt);
+    stored.inventory.pendingReservation.raidId = 'raid-ABC123';
     assert.deepEqual((await Session.issueRaidAdmissionTicket(accountId, 'ABC123', 'reserve')).snapshot.items,
       [{ lootId: 'bone', amount: 4 }, { lootId: 'placeholder_helmet', amount: 1 }]);
     await Inventory.clearPendingReservation(accountId);
