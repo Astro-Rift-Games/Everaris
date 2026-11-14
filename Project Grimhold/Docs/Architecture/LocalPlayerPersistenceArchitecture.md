@@ -517,6 +517,19 @@ a pending extraction commit keeps its retry path. Previously admission deleted t
 reservation, which made every player-hosted extraction publish fail with `NO_ACTIVE_RESERVATION`
 and left the backend Loadout empty for the next Raid.
 
+**Backend reservation ownership (FIX-19).** The backend enforces the same ownership as
+`LocalProfileStore`: while any reservation is pending, `POST .../stash/move-to-loadout`,
+`POST .../loadout/move-to-stash` and `PUT .../prepared-equipment` return `409 RESERVATION_PENDING`
+in every inventory schema version and leave the document, revision included, unchanged; the write
+filter also requires no pending reservation. Unlike Unity, the backend still accepts a launch with a
+different reservation id while an unadmitted one is pending, because orphan recovery relies on it: it
+first restores the old reservation exactly as a rollback does, then derives the new one. Replacement
+and rollback always restore, whatever the active Loadout and Equipment hold, so the total per
+`lootId` is unchanged; legacy (v1) lists merge restored units into their single entry per `lootId`.
+A defeat commit clears the pending reservation only when it is admitted and is the one the result is
+bound to (same `reservationId`, or the same raid for results without one); an unadmitted or later
+reservation keeps its items.
+
 **Loss notice (FIX-53).** Technical Raid failures still consume the reservation as a loss, but no
 longer silently: before `ClearLostParticipationReservation`, `SessionConnectionCoordinator` captures
 the lost set (reserved items plus prepared Equipment of its own reservation) as a `RaidLossNotice`
