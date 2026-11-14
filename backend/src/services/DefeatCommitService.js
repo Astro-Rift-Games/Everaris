@@ -190,8 +190,15 @@ class DefeatCommitService {
     // ------------------------------------------------------------------
     // 5. Atomic Database Update on Character
     // ------------------------------------------------------------------
+    // A defeat consumes only the reservation its raid admitted. An unadmitted reservation, or one
+    // bound to another reservation id or raid, belongs to a later launch and keeps its items.
+    // Unbound (signed/legacy) results fall back to the reservation's raid binding when it has one.
+    const pendingReservation = character.inventory?.pendingReservation;
+    const clearsReservation = Boolean(pendingReservation?.admittedAt) && (authResult.reservationId
+      ? pendingReservation.reservationId === authResult.reservationId
+      : !pendingReservation.raidId || pendingReservation.raidId === raidId);
     const updateDoc = {
-      $unset: { 'inventory.pendingReservation': 1 },
+      ...(clearsReservation ? { $unset: { 'inventory.pendingReservation': 1 } } : {}),
       $set: {
         level: computed.resultingLevel,
         experience: computed.resultingExperience,
@@ -210,6 +217,7 @@ class DefeatCommitService {
 
     const characterFilter = {
       accountId,
+      ...(clearsReservation ? { 'inventory.pendingReservation.reservationId': pendingReservation.reservationId } : {}),
       ...uncreditedResultReservationFilter(authResult),
       appliedProgressionReceipts: {
         $not: {

@@ -146,6 +146,7 @@ test('DefeatCommitService.commit', async (t) => {
       experience: 0,
       characterAttributes: { vitality: 5, resistance: 5, strength: 5, dexterity: 5, intelligence: 5, luck: 5, availablePoints: 10 }
     });
+    char.inventory.pendingReservation.admittedAt = new Date();
     Character.findOne = async () => char;
 
     const result = await DefeatCommitService.commit('acc123', { raidId: 'raid-1', resultSequence: 1 });
@@ -159,6 +160,57 @@ test('DefeatCommitService.commit', async (t) => {
     assert.equal(char.lastProgressionReceipt.resultSequence, 1);
     assert.equal(char.lastProgressionReceipt.consolidatedExperience, 500);
     assert.equal(char.inventory.pendingReservation, undefined);
+  });
+
+  // FIX-19: a defeat consumes only the reservation its raid admitted, never a newer one.
+  const boundDefeat = (reservationId) => {
+    const result = { _id: 'auth123', raidId: 'raid-1', accountId: 'acc123', items: [], experienceGranted: 500, reservationId };
+    AuthoritativeExtractionResult.findOne = async () => ({ ...result, consumed: false });
+    AuthoritativeExtractionResult.findOneAndUpdate = async () => ({ ...result, consumed: true });
+  };
+  const reservation = (reservationId, admittedAt) => ({ reservationId, admittedAt, raidId: 'raid-2',
+    items: [{ lootId: 'arming_sword', amount: 1 }], preparedEquipment: { weaponSlot1: 'arming_sword' } });
+
+  await t.test('bound defeat clears the admitted reservation it belongs to', async () => {
+    boundDefeat('res-1');
+    const char = makeCharacter();
+    char.inventory.pendingReservation = reservation('res-1', new Date());
+    Character.findOne = async () => char;
+    await DefeatCommitService.commit('acc123', { raidId: 'raid-1', resultSequence: 1 });
+    assert.equal(char.inventory.pendingReservation, undefined);
+  });
+
+  for (const admittedAt of [null, new Date()]) {
+    await t.test(`bound defeat keeps a newer ${admittedAt ? 'admitted' : 'unadmitted'} reservation and its items`, async () => {
+      boundDefeat('res-old');
+      const char = makeCharacter();
+      char.inventory.pendingReservation = reservation('res-new', admittedAt);
+      const kept = structuredClone(char.inventory.pendingReservation);
+      Character.findOne = async () => char;
+      const result = await DefeatCommitService.commit('acc123', { raidId: 'raid-1', resultSequence: 1 });
+      assert.equal(result.alreadySecured, false);
+      assert.equal(char.lastProgressionReceipt.reservationId, 'res-old');
+      assert.deepEqual(char.inventory.pendingReservation, kept);
+    });
+  }
+
+  await t.test('unbound defeat keeps an unadmitted reservation, which no raid can have produced', async () => {
+    const char = makeCharacter();
+    char.inventory.pendingReservation = reservation('res-new', null);
+    const kept = structuredClone(char.inventory.pendingReservation);
+    Character.findOne = async () => char;
+    await DefeatCommitService.commit('acc123', { raidId: 'raid-1', resultSequence: 1 });
+    assert.equal(char.lastProgressionReceipt.consolidatedExperience, 500);
+    assert.deepEqual(char.inventory.pendingReservation, kept);
+  });
+
+  await t.test('unbound defeat keeps an admitted reservation bound to another raid', async () => {
+    const char = makeCharacter();
+    char.inventory.pendingReservation = reservation('res-new', new Date());
+    const kept = structuredClone(char.inventory.pendingReservation);
+    Character.findOne = async () => char;
+    await DefeatCommitService.commit('acc123', { raidId: 'raid-1', resultSequence: 1 });
+    assert.deepEqual(char.inventory.pendingReservation, kept);
   });
 
   await t.test('idempotent replay of same (raidId, resultSequence) returns alreadySecured: true without mutating', async () => {
