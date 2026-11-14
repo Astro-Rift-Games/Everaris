@@ -535,9 +535,16 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
                 };
 
                 var (success, result, error) = await InventoryClient.CommitDefeatUnifiedAsync(_backendConfig, AuthToken, request);
-                if (!success && error.error == BackendErrorUtility.Unauthorized)
+                if (!success)
                 {
-                    ApplicationAuthContext.Instance?.HandleUnauthorizedSession();
+                    if (error.error == BackendErrorUtility.Unauthorized)
+                    {
+                        ApplicationAuthContext.Instance?.HandleUnauthorizedSession();
+                    }
+                    else
+                    {
+                        Debug.LogError($"[{nameof(RemoteInventoryService)}] CommitDefeatUnifiedAsync failed (raidId={receipt.RaidId}, seq={receipt.ResultSequence}): Error={error.error}: {error.message}");
+                    }
                 }
 
                 if (success && _store != null)

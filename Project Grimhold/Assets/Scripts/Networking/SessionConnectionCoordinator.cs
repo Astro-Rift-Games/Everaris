@@ -2167,7 +2167,16 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             Debug.LogWarning($"[{nameof(SessionConnectionCoordinator)}] Loss cleanup unavailable; login will recover the orphan reservation.");
             return;
         }
-        _participationOutcomeTask = ClearLostParticipationReservationAsync(service);
+        RegisterParticipationOutcomeTask(ClearLostParticipationReservationAsync(service));
+    }
+
+    /// <summary>Registers an asynchronous participation outcome (defeat commit, loss clear) to be awaited before runners are destroyed.</summary>
+    public void RegisterParticipationOutcomeTask(Task task)
+    {
+        if (task == null) return;
+        _participationOutcomeTask = _participationOutcomeTask == null || _participationOutcomeTask.IsCompleted
+            ? task
+            : Task.WhenAll(_participationOutcomeTask, task);
     }
 
     private bool HasCommittedLocalExtraction(string raidId)
