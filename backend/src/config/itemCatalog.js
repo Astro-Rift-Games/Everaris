@@ -16,9 +16,12 @@ const KNOWN_LOOT_IDS = Object.freeze(new Set([
   ...Object.keys(SELL_CATALOG)
 ]));
 
-/** True when the identifier, after legacy alias normalization, names a game item. */
+/**
+ * True when the identifier, after legacy alias normalization, names a game item.
+ * Matching is exact: a padded identifier would be stored and credited padded.
+ */
 function isKnownLootId(lootId) {
-  return typeof lootId === 'string' && KNOWN_LOOT_IDS.has(normalizeLootId(lootId.trim()));
+  return typeof lootId === 'string' && KNOWN_LOOT_IDS.has(normalizeLootId(lootId));
 }
 
 module.exports = { KNOWN_LOOT_IDS, isKnownLootId };

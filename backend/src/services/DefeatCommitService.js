@@ -12,6 +12,7 @@
 const Character = require('../models/Character');
 const AuthoritativeExtractionResult = require('../models/AuthoritativeExtractionResult');
 const { requireMigratedInventory } = require('./InventoryEntries');
+const { requireResultReservation, resultReservationFilter } = require('./ResultReservationBinding');
 const {
   computeLevelAndExperience,
   computeAttributePointsGranted,
@@ -121,6 +122,8 @@ class DefeatCommitService {
       };
     }
 
+    requireResultReservation(character, authResult);
+
     // ------------------------------------------------------------------
     // 3. Atomically claim authoritative result (distributed lock)
     // ------------------------------------------------------------------
@@ -204,6 +207,7 @@ class DefeatCommitService {
 
     const characterFilter = {
       accountId,
+      ...resultReservationFilter(authResult),
       appliedProgressionReceipts: {
         $not: {
           $elemMatch: { raidId, resultSequence }

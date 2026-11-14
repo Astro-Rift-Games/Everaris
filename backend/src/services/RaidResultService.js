@@ -165,6 +165,14 @@ class RaidResultService {
       isDedicatedServerVerified = true;
     }
 
+    // Signed producers skip the bounded checks below, so the list shape is enforced here.
+    if (items !== undefined && items !== null && !Array.isArray(items)) {
+      throw {
+        statusCode: 400,
+        errorCode: 'INVALID_RESULT_PAYLOAD',
+        message: 'items must be an array.',
+      };
+    }
     requireCatalogLoot(items, preparedEquipment);
 
     // Resolve recipient Character and recipientAccountId

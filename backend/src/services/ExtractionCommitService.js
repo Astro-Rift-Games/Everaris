@@ -19,6 +19,7 @@ const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
 const { serializeItems, requireMigratedInventory, inventoryVersion, receiveItem } = require('./InventoryEntries');
 const { validateResultItems, resultEquipmentToInstances, equipmentToResult } = require('./ItemInstances');
 const { returnTrainingWeapons } = require('./TrainingWeapons');
+const { requireResultReservation, resultReservationFilter } = require('./ResultReservationBinding');
 const {
   computeLevelAndExperience,
   computeAttributePointsGranted,
@@ -104,16 +105,7 @@ class ExtractionCommitService {
       };
     }
 
-    if (authResult.reservationId && (
-      character.inventory.pendingReservation?.reservationId !== authResult.reservationId ||
-      character.inventory.pendingReservation?.raidId !== authResult.raidId
-    )) {
-      throw {
-        statusCode: 409,
-        errorCode: 'RESULT_RESERVATION_MISMATCH',
-        message: 'The authoritative result does not match the active raid reservation.',
-      };
-    }
+    requireResultReservation(character, authResult);
 
     if (character.inventory.loadout && character.inventory.loadout.length > 0) {
       throw {
@@ -246,9 +238,7 @@ class ExtractionCommitService {
         {
           accountId: accountId,
           revision: character.revision,
-          ...(authResult.reservationId ? {
-            'inventory.pendingReservation.reservationId': authResult.reservationId
-          } : {}),
+          ...resultReservationFilter(authResult),
           'inventory.appliedExtractionReceipts': {
             $not: { $elemMatch: { raidId: raidId } }
           }
