@@ -180,6 +180,15 @@ test('DefeatCommitService.commit', async (t) => {
     assert.equal(char.inventory.pendingReservation, undefined);
   });
 
+  await t.test('bound defeat clears its own reservation even when admission was never recorded', async () => {
+    boundDefeat('res-1');
+    const char = makeCharacter();
+    char.inventory.pendingReservation = reservation('res-1', null);
+    Character.findOne = async () => char;
+    await DefeatCommitService.commit('acc123', { raidId: 'raid-1', resultSequence: 1 });
+    assert.equal(char.inventory.pendingReservation, undefined);
+  });
+
   for (const admittedAt of [null, new Date()]) {
     await t.test(`bound defeat keeps a newer ${admittedAt ? 'admitted' : 'unadmitted'} reservation and its items`, async () => {
       boundDefeat('res-old');

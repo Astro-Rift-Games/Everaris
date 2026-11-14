@@ -526,9 +526,9 @@ different reservation id while an unadmitted one is pending, because orphan reco
 first restores the old reservation exactly as a rollback does, then derives the new one. Replacement
 and rollback always restore, whatever the active Loadout and Equipment hold, so the total per
 `lootId` is unchanged; legacy (v1) lists merge restored units into their single entry per `lootId`.
-A defeat commit clears the pending reservation only when it is admitted and is the one the result is
-bound to (same `reservationId`, or the same raid for results without one); an unadmitted or later
-reservation keeps its items.
+A defeat commit clears the pending reservation only when it is the one the result was played with:
+the same `reservationId` (whether or not admission was recorded) or, for results without one, an
+admitted reservation of the same raid. A later reservation keeps its items.
 
 **Loss notice (FIX-53).** Technical Raid failures still consume the reservation as a loss, but no
 longer silently: before `ClearLostParticipationReservation`, `SessionConnectionCoordinator` captures
