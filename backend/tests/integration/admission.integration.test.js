@@ -186,7 +186,7 @@ test('E2E Town Identity and Raid Admission Integration (US-59 / SEC-59.1)', asyn
     const publish = await request(app).post('/character/raid/extraction-result')
       .set('Authorization', `Bearer ${token}`)
       .send({ raidId, resultSequence: 1, targetCharacterId: characterId,
-        items: [{ lootId: 'health_potion', amount: 1 }],
+        items: [{ lootId: 'CON_HEALTH_POTION', amount: 1 }],
         preparedEquipment: { weaponSlot1: 'arming_sword' }, experienceGranted: 50 });
     assert.strictEqual(publish.status, 200);
 
@@ -198,7 +198,7 @@ test('E2E Town Identity and Raid Admission Integration (US-59 / SEC-59.1)', asyn
     const commit = await request(app).post('/character/me/extraction/commit')
       .set('Authorization', `Bearer ${token}`).send({ raidId, resultSequence: 1 });
     assert.strictEqual(commit.status, 201);
-    assert.deepStrictEqual(commit.body.loadout, [{ lootId: 'health_potion', amount: 1 }]);
+    assert.deepStrictEqual(commit.body.loadout, [{ lootId: 'CON_HEALTH_POTION', amount: 1 }]);
     const inventory = await request(app).get('/character/me/inventory')
       .set('Authorization', `Bearer ${token}`);
     assert.strictEqual(inventory.status, 200);

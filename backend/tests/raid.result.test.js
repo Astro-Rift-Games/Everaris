@@ -53,9 +53,9 @@ test('RaidResultService.publishHostResult (US-58 / SEC-58.2)', async (t) => {
       raidId,
       resultId,
       targetAccountId,
-      items: [{ lootId: 'gold', amount: 100 }],
+      items: [{ lootId: 'gold_coin', amount: 100 }],
       experienceGranted: 50,
-      preparedEquipment: { weaponSlot1: 'sword' },
+      preparedEquipment: { weaponSlot1: 'arming_sword' },
       issuedAt
     };
     payload.hostSignature = signPayload(payload);
@@ -157,7 +157,7 @@ test('RaidResultService.publishHostResult (US-58 / SEC-58.2)', async (t) => {
       raidId,
       resultId,
       targetAccountId: 'victim_account',
-      items: [{ lootId: 'gold', amount: 500 }],
+      items: [{ lootId: 'gold_coin', amount: 500 }],
       experienceGranted: 100,
       issuedAt
     };
@@ -185,7 +185,7 @@ test('RaidResultService.publishHostResult (US-58 / SEC-58.2)', async (t) => {
       resultId,
       raidId,
       accountId: targetAccountId,
-      items: [{ lootId: 'gold', amount: 100 }],
+      items: [{ lootId: 'gold_coin', amount: 100 }],
       preparedEquipment: {},
       experienceGranted: 50,
       consumed: false
@@ -195,7 +195,7 @@ test('RaidResultService.publishHostResult (US-58 / SEC-58.2)', async (t) => {
       raidId,
       resultId,
       targetAccountId,
-      items: [{ lootId: 'gold', amount: 200 }], // conflicting amount!
+      items: [{ lootId: 'gold_coin', amount: 200 }], // conflicting amount!
       experienceGranted: 50,
       issuedAt
     };
@@ -216,7 +216,7 @@ test('RaidResultService.publishHostResult (US-58 / SEC-58.2)', async (t) => {
       resultId,
       raidId,
       accountId: targetAccountId,
-      items: [{ lootId: 'gold', amount: 100 }],
+      items: [{ lootId: 'gold_coin', amount: 100 }],
       preparedEquipment: {},
       experienceGranted: 50,
       consumed: true, // already consumed!
@@ -227,7 +227,7 @@ test('RaidResultService.publishHostResult (US-58 / SEC-58.2)', async (t) => {
       raidId,
       resultId,
       targetAccountId,
-      items: [{ lootId: 'gold', amount: 100 }],
+      items: [{ lootId: 'gold_coin', amount: 100 }],
       experienceGranted: 50,
       issuedAt
     };
@@ -248,7 +248,7 @@ test('RaidResultService.publishHostResult (US-58 / SEC-58.2)', async (t) => {
       resultId,
       raidId,
       accountId: targetAccountId,
-      items: [{ lootId: 'gold', amount: 100 }],
+      items: [{ lootId: 'gold_coin', amount: 100 }],
       preparedEquipment: {
         armor: '', boots: '', gloves: '', helmet: '', offHand1: '', offHand2: '', weaponSlot1: '', weaponSlot2: ''
       },
@@ -260,7 +260,7 @@ test('RaidResultService.publishHostResult (US-58 / SEC-58.2)', async (t) => {
       raidId,
       resultId,
       targetAccountId,
-      items: [{ lootId: 'gold', amount: 100 }],
+      items: [{ lootId: 'gold_coin', amount: 100 }],
       experienceGranted: 50,
       preparedEquipment: {},
       issuedAt
@@ -283,7 +283,7 @@ test('RaidResultService.publishHostResult (US-58 / SEC-58.2)', async (t) => {
         resultId: `${raidId}:${missingCharId}:1`,
         resultSequence: 1,
         targetCharacterId: missingCharId,
-        items: [{ lootId: 'gold', amount: 10 }],
+        items: [{ lootId: 'gold_coin', amount: 10 }],
         experienceGranted: 10,
         issuedAt
       };
@@ -381,7 +381,7 @@ test('RaidResultService Bounded Player-Host Authority (TASK-223 / SEC-223)', asy
       raidId,
       resultId,
       targetAccountId: playerAccountId,
-      items: [{ lootId: 'iron_ore', amount: 5 }],
+      items: [{ lootId: 'slime_gel', amount: 5 }],
       preparedEquipment: { weaponSlot1: 'arming_sword' },
       experienceGranted: 250,
       hostSignature: '',
@@ -405,7 +405,7 @@ test('RaidResultService Bounded Player-Host Authority (TASK-223 / SEC-223)', asy
 
     const result = await RaidResultService.publishHostResult(hostAccountId, {
       raidId, resultId, targetCharacterId: 'char_player_id',
-      items: [{ lootId: 'iron_ore', amount: 5 }],
+      items: [{ lootId: 'slime_gel', amount: 5 }],
       preparedEquipment: { weaponSlot1: 'arming_sword' },
       experienceGranted: 250, issuedAt
     });
@@ -424,7 +424,7 @@ test('RaidResultService Bounded Player-Host Authority (TASK-223 / SEC-223)', asy
       raidId,
       resultId,
       targetAccountId: playerAccountId,
-      items: [{ lootId: 'iron_ore', amount: 1 }],
+      items: [{ lootId: 'slime_gel', amount: 1 }],
       experienceGranted: 50,
       hostSignature: '',
       issuedAt
@@ -456,7 +456,7 @@ test('RaidResultService Bounded Player-Host Authority (TASK-223 / SEC-223)', asy
       raidId,
       resultId,
       targetAccountId: playerAccountId,
-      items: [{ lootId: 'iron_ore', amount: 1 }],
+      items: [{ lootId: 'slime_gel', amount: 1 }],
       experienceGranted: 50,
       hostSignature: '',
       issuedAt
@@ -475,7 +475,7 @@ test('RaidResultService Bounded Player-Host Authority (TASK-223 / SEC-223)', asy
   await t.test('rejects with 422 EXCEEDS_INVENTORY_CAPACITY when items array exceeds 30 slots', async () => {
     const items = [];
     for (let i = 0; i < 31; i++) {
-      items.push({ lootId: `loot_item_${i}`, amount: 1 });
+      items.push({ lootId: 'bone', amount: 1 });
     }
 
     const payload = {
@@ -503,7 +503,7 @@ test('RaidResultService Bounded Player-Host Authority (TASK-223 / SEC-223)', asy
       raidId,
       resultId,
       targetAccountId: playerAccountId,
-      items: [{ lootId: 'gold', amount: -5 }],
+      items: [{ lootId: 'gold_coin', amount: -5 }],
       experienceGranted: 100,
       hostSignature: '',
       issuedAt
@@ -524,7 +524,7 @@ test('RaidResultService Bounded Player-Host Authority (TASK-223 / SEC-223)', asy
       raidId,
       resultId,
       targetAccountId: playerAccountId,
-      items: [{ lootId: 'gold', amount: 10 }],
+      items: [{ lootId: 'gold_coin', amount: 10 }],
       experienceGranted: 999999, // Exploit attempt
       hostSignature: '',
       issuedAt
@@ -566,7 +566,7 @@ test('RaidResultService Bounded Player-Host Authority (TASK-223 / SEC-223)', asy
       raidId,
       resultId,
       targetAccountId: playerAccountId,
-      items: [{ lootId: 'gold', amount: 1000 }],
+      items: [{ lootId: 'gold_coin', amount: 1000 }],
       preparedEquipment: {},
       experienceGranted: 1000,
       issuedAt
@@ -582,7 +582,7 @@ test('RaidResultService Bounded Player-Host Authority (TASK-223 / SEC-223)', asy
       raidId,
       resultId,
       targetAccountId: playerAccountId,
-      items: [{ lootId: 'gold', amount: 1000 }],
+      items: [{ lootId: 'gold_coin', amount: 1000 }],
       experienceGranted: 1000,
       hostSignature: forgedSignature,
       issuedAt

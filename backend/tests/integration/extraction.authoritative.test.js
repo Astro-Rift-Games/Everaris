@@ -75,8 +75,8 @@ test('E2E Authoritative Extraction Result & Anti-Replay Validation (US-58 / SEC-
       raidId,
       resultSequence,
       targetAccountId: playerAccountId,
-      items: [{ lootId: 'iron_ore', amount: 5 }],
-      preparedEquipment: { helmet: 'helm_iron' },
+      items: [{ lootId: 'slime_gel', amount: 5 }],
+      preparedEquipment: { helmet: 'heavy_armor_helmet' },
       experienceGranted: 100,
       issuedAt: new Date().toISOString()
     };
@@ -94,7 +94,7 @@ test('E2E Authoritative Extraction Result & Anti-Replay Validation (US-58 / SEC-
     const tamperedLootRes = await request(app)
       .post('/character/raid/extraction-result')
       .set('Authorization', `Bearer ${hostToken}`)
-      .send({ ...validPayload, items: [{ lootId: 'iron_ore', amount: 999 }], hostSignature: validSig });
+      .send({ ...validPayload, items: [{ lootId: 'slime_gel', amount: 999 }], hostSignature: validSig });
     assert.strictEqual(tamperedLootRes.status, 401);
     assert.strictEqual(tamperedLootRes.body.error, 'INVALID_HOST_SIGNATURE');
 
@@ -125,13 +125,13 @@ test('E2E Authoritative Extraction Result & Anti-Replay Validation (US-58 / SEC-
       resultSequence,
       targetAccountId: playerAccountId,
       items: [
-        { lootId: 'iron_ore', amount: 5 },
-        { lootId: 'potion_heal', amount: 2 }
+        { lootId: 'slime_gel', amount: 5 },
+        { lootId: 'CON_HEALTH_POTION', amount: 2 }
       ],
       preparedEquipment: {
-        helmet: 'helm_iron',
-        armor: 'armor_leather',
-        weaponSlot1: 'sword_basic'
+        helmet: 'heavy_armor_helmet',
+        armor: 'forest_ranger_leather_armor',
+        weaponSlot1: 'arming_sword'
       },
       experienceGranted: 50,
       issuedAt: new Date().toISOString()
@@ -162,7 +162,7 @@ test('E2E Authoritative Extraction Result & Anti-Replay Validation (US-58 / SEC-
       raidId,
       resultSequence,
       targetAccountId: playerAccountId,
-      items: [{ lootId: 'gold_bar', amount: 100 }],
+      items: [{ lootId: 'gold_coin', amount: 100 }],
       experienceGranted: 9999,
       issuedAt: new Date().toISOString()
     };
@@ -185,9 +185,9 @@ test('E2E Authoritative Extraction Result & Anti-Replay Validation (US-58 / SEC-
       targetAccountId: playerAccountId,
       items: existing.items.map(i => ({ lootId: i.lootId, amount: i.amount })),
       preparedEquipment: {
-        helmet: 'helm_iron',
-        armor: 'armor_leather',
-        weaponSlot1: 'sword_basic'
+        helmet: 'heavy_armor_helmet',
+        armor: 'forest_ranger_leather_armor',
+        weaponSlot1: 'arming_sword'
       },
       experienceGranted: existing.experienceGranted,
       issuedAt: existing.issuedAt.toISOString()
@@ -228,15 +228,15 @@ test('E2E Authoritative Extraction Result & Anti-Replay Validation (US-58 / SEC-
     assert.strictEqual(char.experience, 50);
 
     // 6c. Character loadout has the 2 authoritative items
-    const iron = char.inventory.loadout.find(i => i.lootId === 'iron_ore');
-    const pot = char.inventory.loadout.find(i => i.lootId === 'potion_heal');
+    const iron = char.inventory.loadout.find(i => i.lootId === 'slime_gel');
+    const pot = char.inventory.loadout.find(i => i.lootId === 'CON_HEALTH_POTION');
     assert.ok(iron && iron.amount === 5);
     assert.ok(pot && pot.amount === 2);
 
     // 6d. Equipment is restored
-    assert.strictEqual(char.inventory.preparedEquipment.helmet, 'helm_iron');
-    assert.strictEqual(char.inventory.preparedEquipment.armor, 'armor_leather');
-    assert.strictEqual(char.inventory.preparedEquipment.weaponSlot1, 'sword_basic');
+    assert.strictEqual(char.inventory.preparedEquipment.helmet, 'heavy_armor_helmet');
+    assert.strictEqual(char.inventory.preparedEquipment.armor, 'forest_ranger_leather_armor');
+    assert.strictEqual(char.inventory.preparedEquipment.weaponSlot1, 'arming_sword');
 
     // 6e. Extraction receipt is recorded
     assert.strictEqual(char.inventory.appliedExtractionReceipts.length, 1);
@@ -258,7 +258,7 @@ test('E2E Authoritative Extraction Result & Anti-Replay Validation (US-58 / SEC-
     const afterPressure = await Character.findOne({ accountId: playerAccountId }).lean();
     assert.ok(afterPressure.inventory.appliedExtractionReceipts.some(r => r.raidId === raidId), 'Consumed raid receipt must survive cap pressure');
     const payload = { raidId, resultSequence: 999, targetAccountId: playerAccountId,
-      items: [{ lootId: 'iron_ore', amount: 5 }], experienceGranted: 50 };
+      items: [{ lootId: 'slime_gel', amount: 5 }], experienceGranted: 50 };
     payload.hostSignature = signPayload(payload);
     const republish = await request(app).post('/character/raid/extraction-result')
       .set('Authorization', `Bearer ${hostToken}`).send(payload);
@@ -275,7 +275,7 @@ test('E2E Authoritative Extraction Result & Anti-Replay Validation (US-58 / SEC-
       raidId,
       resultSequence,
       targetAccountId: playerAccountId,
-      items: [{ lootId: 'iron_ore', amount: 5 }],
+      items: [{ lootId: 'slime_gel', amount: 5 }],
       experienceGranted: 50,
       issuedAt: new Date().toISOString()
     };

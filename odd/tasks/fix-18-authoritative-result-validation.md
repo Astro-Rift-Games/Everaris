@@ -1,0 +1,27 @@
+# FIX-18 — Authoritative validation of published raid results
+
+HacknPlan FIX-18 (ID 688), parent FIX-US-04 (ID 685). Branch `fix/fix-18-authoritative-result-validation`.
+Execution tracker only: scope and acceptance come from the HacknPlan item; nothing here re-scopes it.
+
+## Specs
+
+- **S1 — Catalog.** HacknPlan scope 1: "Validación autoritativa en el backend de cada identificador de botín y pieza de equipamiento declarada contra el catálogo oficial del juego, rechazando entradas no reconocidas." AC: "Un resultado con lootId fuera de catálogo se rechaza con 422 y no crea documento." Decision (L2): a single backend known-item registry, the union of the existing backend catalogs after alias normalization, plus a parity test against the Unity LootDefinitions. It also applies to signed results.
+- **S2 — Raid-reservation binding.** HacknPlan scope 2: "Vinculación estricta entre la expedición en curso y la reserva de equipamiento admitida, exigiendo coincidencia de identificadores al publicar resultados". AC: "Un resultado para un raidId distinto al de la reserva admitida se rechaza." Decision (L2): when the admission ticket is issued (`raidCode`), the backend persists `raidId = 'raid-' + raidCode` in `pendingReservation`. Re-binding is allowed before admit; after admit a different raid is rejected. An unsigned publication requires the recipient's reservation `raidId` to match. When caller ≠ recipient, the host must also be bound to that raid or hold a receipt for it.
+- **S3 — Per-raid budget.** HacknPlan scope 2: "aplicando un límite de experiencia y botín acumulado por expedición". AC: "Publicaciones repetidas no superan el presupuesto por raid." The scope includes self-publication. Decision (L3/L4): 5000 XP and 30 slots per raid and character. At most one creditable result per reservation: the result stores the `reservationId` and `raidId` it was bound to, and the commit requires them to match the current reservation.
+- **S4 — Regression.** AC: "Las extracciones legítimas (solo y party) siguen persistiendo."
+
+## Tasks
+
+- T1 — S1: known-item registry, publish catalog check (422, no document), Unity parity test, fix fixtures with non-catalog ids. Route: inline. Commit: pending.
+- T2 — S2, S3: reservation `raidId` binding at ticket issuance, publish binding/participation checks, result↔reservation binding enforced at commit. Route: inline. Commit: pending.
+- T3 — S4: update ExtractionArchitecture.md (Bounded Player-Host Authority) and run npm test, test:concurrency and test:integration. Route: inline + independent verify (Risk item 2/3). Commit: pending.
+
+## Log
+
+- L1 (user, 2026-11-14): "revisa FIX-18 — Validación autoritativa de resultados publicados: catálogo, participación y vínculo raid-reserva y empieza la implementacion siguiendo ODD"
+- L2 (user decisions): bind the raid "Persistir raidCode al emitir el ticket (Recomendado)"; catalog "Registro de items conocidos + test de paridad (Recomendado)".
+- L3 (user, budget): "hay un error en la tarea, ExtractionArchitecture es documentacion de programacion, no es de diseño. Creo que desde diseño no pasaron un presupuesto asi que es decision nuestra elegir lo mejor para el proyecto"
+- L4 (decision): budget = 5000 XP + 30 slots per (raid, character), at most one creditable result per reservation, enforced at commit.
+- L5 (evidence): all 86 Unity LootDefinition ids already exist in the union of EQUIPMENT_TEMPLATES, GEM_CATALOG, BUY_CATALOG and SELL_CATALOG, so no extra zero-value list is needed. Backend-only GD-14 ids (slime_gel, ...) remain valid.
+- L7 (T1 evidence): RED: 3/4 S1 tests failed before the change (unknown loot accepted; unknown v3 equipment returned 400). GREEN after `src/config/itemCatalog.js` + `requireCatalogLoot` in RaidResultService. Fixtures that published non-existent ids (gold, iron_ore, sword, loot_item_N, health_potion, helm_iron, armor_leather, sword_basic, potion_heal, gold_bar) were replaced with real catalog ids; integration 220/220.
+- L6 (scope notes): atomic uniqueness of concurrent publications belongs to FIX-22; unconsumed result retention (TTL) belongs to FIX-21. Unsigned results stored before this change carry no reservation binding and skip the commit gate; reservations ticketed before deploy without `raidId` fail closed on unsigned publish.

@@ -10,6 +10,7 @@ const { normalizeItems, normalizePreparedEquipment } = require('./InventoryLootI
 const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
 const { requireMigratedInventory, inventoryVersion } = require('./InventoryEntries');
 const { validateResultItems, validateResultEquipment } = require('./ItemInstances');
+const { isKnownLootId } = require('../config/itemCatalog');
 // Payload equality includes instance modifiers; the legacy HMAC wire contract is unchanged.
 function stableStringify(value) {
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(',')}]`;
@@ -40,6 +41,31 @@ function areEquipmentEquivalent(existingEq, incomingEq) {
     if ((normA[slot] || '') !== (normB[slot] || '')) return false;
   }
   return true;
+}
+
+function unknownLootId(lootId) {
+  return {
+    statusCode: 422,
+    errorCode: 'UNKNOWN_LOOT_ID',
+    message: `Unknown lootId: ${lootId}`,
+  };
+}
+
+// Every published item and equipment identifier must name a game item (FIX-18).
+// Shape errors are left to the format-specific validation that follows.
+function requireCatalogLoot(items, preparedEquipment) {
+  if (Array.isArray(items)) {
+    for (const item of items) {
+      if (item && typeof item.lootId === 'string' && !isKnownLootId(item.lootId)) throw unknownLootId(item.lootId);
+    }
+  }
+  if (preparedEquipment && typeof preparedEquipment === 'object') {
+    for (const slot of EQUIPMENT_SLOTS) {
+      const value = preparedEquipment[slot];
+      const lootId = value && typeof value === 'object' ? value.lootId : value;
+      if (typeof lootId === 'string' && lootId !== '' && !isKnownLootId(lootId)) throw unknownLootId(lootId);
+    }
+  }
 }
 
 class RaidResultService {
@@ -138,6 +164,8 @@ class RaidResultService {
 
       isDedicatedServerVerified = true;
     }
+
+    requireCatalogLoot(items, preparedEquipment);
 
     // Resolve recipient Character and recipientAccountId
     let recipientChar = null;
