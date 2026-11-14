@@ -62,14 +62,19 @@ function moveStack(from, to, fromList, toList, version, lootId, amount, sourceSl
   else from[index].amount -= amount;
 }
 
+// While a reservation is pending it owns Inventory and Equipment; callers also filter the write on it.
+function rejectPendingReservation(character, message) {
+  if (character.inventory.pendingReservation) throw { statusCode: 409, errorCode: 'RESERVATION_PENDING', message };
+}
+
 async function transferSlotItems(character, fromList, toList, lootId, amount, expectedRevision, sourceSlot) {
   if (character.revision !== expectedRevision) throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict.' };
+  rejectPendingReservation(character, 'Cannot transfer items while a reservation is pending.');
   if (!Number.isSafeInteger(amount) || amount < 1) throw { statusCode: 400, errorCode: 'VALIDATION_FAILED', message: 'Amount must be a positive integer.' };
   const from = inventoryItems(character, fromList);
   const to = inventoryItems(character, toList);
   moveStack(from, to, fromList, toList, inventoryVersion(character), lootId, amount, sourceSlot);
-  // Legacy transfers remain usable during reservations; rollback restores collisions.
-  return writeSlotLists(character, expectedRevision, { [fromList]: from, [toList]: to });
+  return writeSlotLists(character, expectedRevision, { [fromList]: from, [toList]: to }, true);
 }
 
 const TRANSFER_DIRECTIONS = { toLoadout: ['stash', 'loadout'], toStash: ['loadout', 'stash'] };
@@ -213,7 +218,7 @@ async function updateInstanceEquipment(character, requested, expectedRevision) {
       receiveItem(loadout, 'loadout', { ...copyEntry(item), amount: 1 }, 3);
     }
   }
-  const snapshot = await writeSlotLists(character, expectedRevision, { stash, loadout, preparedEquipment: equipment });
+  const snapshot = await writeSlotLists(character, expectedRevision, { stash, loadout, preparedEquipment: equipment }, true);
   return { preparedEquipment: equipment, ...snapshot };
 }
 
@@ -487,6 +492,7 @@ class InventoryService {
     if (character.revision !== expectedRevision) {
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict.' };
     }
+    rejectPendingReservation(character, 'Cannot transfer items while a reservation is pending.');
     lootId = normalizeLootId(lootId);
 
     const stash   = character.inventory.stash;
@@ -518,7 +524,7 @@ class InventoryService {
     }
 
     const updated = await Character.findOneAndUpdate(
-      { accountId, revision: expectedRevision },
+      { accountId, revision: expectedRevision, 'inventory.pendingReservation': null },
       {
         $set: { 'inventory.stash': stash, 'inventory.loadout': loadout },
         $inc: { revision: 1 }
@@ -557,6 +563,7 @@ class InventoryService {
     if (character.revision !== expectedRevision) {
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict.' };
     }
+    rejectPendingReservation(character, 'Cannot transfer items while a reservation is pending.');
     lootId = normalizeLootId(lootId);
 
     const stash   = character.inventory.stash;
@@ -588,7 +595,7 @@ class InventoryService {
     }
 
     const updated = await Character.findOneAndUpdate(
-      { accountId, revision: expectedRevision },
+      { accountId, revision: expectedRevision, 'inventory.pendingReservation': null },
       {
         $set: { 'inventory.stash': stash, 'inventory.loadout': loadout },
         $inc: { revision: 1 }
@@ -702,6 +709,7 @@ class InventoryService {
     if (character.revision !== expectedRevision) {
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict.' };
     }
+    rejectPendingReservation(character, 'Cannot change equipment while a reservation is pending.');
     if (version === 3) return updateInstanceEquipment(character, slots, expectedRevision);
     normalizePreparedEquipment(slots);
 
@@ -778,7 +786,7 @@ class InventoryService {
     }
 
     const updated = await Character.findOneAndUpdate(
-      { accountId, revision: expectedRevision },
+      { accountId, revision: expectedRevision, 'inventory.pendingReservation': null },
       {
         $set: {
           'inventory.stash': character.inventory.stash,

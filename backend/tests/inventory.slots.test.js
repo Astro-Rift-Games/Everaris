@@ -164,17 +164,32 @@ test('physical inventory public service contract', async t => {
     await rejectsUnchanged(() => Inventory.shopSell('account', 'bone', 1, 0, 5, 'legacy', 3), 'INVENTORY_MIGRATION_REQUIRED');
   });
 
-  for (const version of [1, 2]) await t.test(`v${version} reservation restrictions and legacy move compatibility`, async () => {
+  for (const version of [1, 2]) await t.test(`v${version} reservation restrictions block every inventory mutation`, async () => {
     character.inventory.inventorySchemaVersion = version;
     character.inventory.stash = [entry(9, 'bone', 2)];
+    character.inventory.loadout = [entry(2, 'stick', 1)];
     character.inventory.pendingReservation = { reservationId: 'pending', items: [] };
     await rejectsUnchanged(() => Inventory.updateOrder('account', 'stash', ['bone'], 4, version === 2 ? [9] : undefined), 'RESERVATION_PENDING');
     await rejectsUnchanged(() => Inventory.shopBuy('account', 'healthpotion', 1, 0, 4, 'buy'), 'RESERVATION_PENDING');
     await rejectsUnchanged(() => Inventory.shopSell('account', 'bone', 1, 0, 4, 'sell', version === 2 ? 0 : undefined), 'RESERVATION_PENDING');
     await rejectsUnchanged(() => Inventory.shopBuyback('account', 'line', 1, 4, 'rebuy'), 'RESERVATION_PENDING');
     if (version === 2) await rejectsUnchanged(() => Inventory.moveSlot('account', 'stash', 9, 'loadout', 0, 'bone', 4), 'RESERVATION_PENDING');
-    const moved = await Inventory.moveToLoadout('account', 'bone', 1, 4, version === 2 ? 9 : undefined);
-    assert.equal(moved.revision, 5);
+    await rejectsUnchanged(() => Inventory.moveToLoadout('account', 'bone', 1, 4, version === 2 ? 9 : undefined), 'RESERVATION_PENDING');
+    await rejectsUnchanged(() => Inventory.moveToStash('account', 'stick', 1, 4, version === 2 ? 2 : undefined), 'RESERVATION_PENDING');
+    await rejectsUnchanged(() => Inventory.updatePreparedEquipment('account', { weaponSlot1: '' }, 4), 'RESERVATION_PENDING');
+  });
+
+  await t.test('v3 reservation restrictions block every inventory mutation', async () => {
+    const instance = (n) => ({ instanceId: n.toString(16).padStart(24, '0'), modifiers: { gemSocketCount: 0, gems: [] } });
+    character.inventory.inventorySchemaVersion = 3;
+    character.inventory.stash = [{ ...entry(9, 'arming_sword', 1), instance: instance(1) }];
+    character.inventory.loadout = [entry(2, 'bone', 3)];
+    character.inventory.preparedEquipment = { weaponSlot1: { lootId: 'arming_sword', instance: instance(2) } };
+    character.inventory.pendingReservation = { reservationId: 'pending', items: [] };
+    await rejectsUnchanged(() => Inventory.moveToLoadout('account', 'arming_sword', 1, 4, 9), 'RESERVATION_PENDING');
+    await rejectsUnchanged(() => Inventory.moveToStash('account', 'bone', 1, 4, 2), 'RESERVATION_PENDING');
+    await rejectsUnchanged(() => Inventory.updatePreparedEquipment('account',
+      { weaponSlot1: { lootId: 'arming_sword', instanceId: instance(1).instanceId } }, 4), 'RESERVATION_PENDING');
   });
 
   await t.test('reservation stores exact slots; ticket aggregates; rollback never merges occupied collisions', async () => {
