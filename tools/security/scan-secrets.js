@@ -208,7 +208,7 @@ function scanHistoryOutput(diffOutput) {
     } else if (line.startsWith('+++ b/')) {
       currentFile = line.slice(6).trim();
     } else if (line.startsWith('+') && !line.startsWith('+++')) {
-      if (IGNORED_LOCAL_FILES.has(path.basename(currentFile))) continue;
+      if (IGNORED_LOCAL_FILES.has(path.basename(currentFile)) || currentFile.split(/[/\\]/).some(p => IGNORED_DIRS.has(p))) continue;
       findings.push(...scanContent(line.slice(1), `git:${currentCommit}:${currentFile}`));
     }
   }
@@ -239,7 +239,7 @@ function scanGitHistory(rootDir) {
       } else if (line.startsWith('+++ b/')) {
         currentFile = line.slice(6).trim();
       } else if (line.startsWith('+') && !line.startsWith('+++')) {
-        if (IGNORED_LOCAL_FILES.has(path.basename(currentFile))) return;
+        if (IGNORED_LOCAL_FILES.has(path.basename(currentFile)) || currentFile.split(/[/\\]/).some(p => IGNORED_DIRS.has(p))) return;
         const lineFindings = scanContent(line.slice(1), `git:${currentCommit}:${currentFile}`);
         for (const f of lineFindings) {
           findings.push(f);
