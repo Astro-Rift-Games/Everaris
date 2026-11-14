@@ -19,7 +19,10 @@ const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
 const { serializeItems, requireMigratedInventory, inventoryVersion, receiveItem } = require('./InventoryEntries');
 const { validateResultItems, resultEquipmentToInstances, equipmentToResult } = require('./ItemInstances');
 const { returnTrainingWeapons } = require('./TrainingWeapons');
-const { requireResultReservation, resultReservationFilter } = require('./ResultReservationBinding');
+const {
+  requireUncreditedResultReservation, requireResultReservation,
+  uncreditedResultReservationFilter, resultReservationFilter,
+} = require('./ResultReservationBinding');
 const {
   computeLevelAndExperience,
   computeAttributePointsGranted,
@@ -105,6 +108,7 @@ class ExtractionCommitService {
       };
     }
 
+    requireUncreditedResultReservation(character, authResult);
     requireResultReservation(character, authResult);
 
     if (character.inventory.loadout && character.inventory.loadout.length > 0) {
@@ -194,6 +198,7 @@ class ExtractionCommitService {
       const newAvailablePoints = (character.characterAttributes?.availablePoints || 0) + pointsGranted;
 
       const progressionReceipt = {
+        ...(authResult.reservationId ? { reservationId: authResult.reservationId } : {}),
         raidId,
         resultSequence,
         consolidatedExperience: authResult.experienceGranted,
@@ -224,6 +229,7 @@ class ExtractionCommitService {
               raidId,
               resultSequence,
               resultId: authResult.resultId || `${raidId}:${resultSequence}`,
+              ...(authResult.reservationId ? { reservationId: authResult.reservationId } : {}),
               timestamp: new Date()
             }]
           },
@@ -239,6 +245,7 @@ class ExtractionCommitService {
           accountId: accountId,
           revision: character.revision,
           ...resultReservationFilter(authResult),
+          ...uncreditedResultReservationFilter(authResult),
           'inventory.appliedExtractionReceipts': {
             $not: { $elemMatch: { raidId: raidId } }
           }

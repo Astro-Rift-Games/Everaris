@@ -12,7 +12,9 @@
 const Character = require('../models/Character');
 const AuthoritativeExtractionResult = require('../models/AuthoritativeExtractionResult');
 const { requireMigratedInventory } = require('./InventoryEntries');
-const { requireResultReservation, resultReservationFilter } = require('./ResultReservationBinding');
+const {
+  requireUncreditedResultReservation, uncreditedResultReservationFilter,
+} = require('./ResultReservationBinding');
 const {
   computeLevelAndExperience,
   computeAttributePointsGranted,
@@ -122,7 +124,7 @@ class DefeatCommitService {
       };
     }
 
-    requireResultReservation(character, authResult);
+    requireUncreditedResultReservation(character, authResult);
 
     // ------------------------------------------------------------------
     // 3. Atomically claim authoritative result (distributed lock)
@@ -178,6 +180,7 @@ class DefeatCommitService {
     const newAvailablePoints = (character.characterAttributes?.availablePoints || 0) + pointsGranted;
 
     const progressionReceipt = {
+      ...(authResult.reservationId ? { reservationId: authResult.reservationId } : {}),
       raidId,
       resultSequence,
       consolidatedExperience: experienceToGrant,
@@ -207,7 +210,7 @@ class DefeatCommitService {
 
     const characterFilter = {
       accountId,
-      ...resultReservationFilter(authResult),
+      ...uncreditedResultReservationFilter(authResult),
       appliedProgressionReceipts: {
         $not: {
           $elemMatch: { raidId, resultSequence }

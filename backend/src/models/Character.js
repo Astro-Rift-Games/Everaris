@@ -49,10 +49,12 @@ const extractionReceiptSchema = new mongoose.Schema({
   raidId:         { type: String, required: true },
   resultSequence: { type: Number, required: true },
   resultId:       { type: String },
+  reservationId:  { type: String },
   timestamp:      { type: Date, default: Date.now }
 }, { _id: false });
 
 const progressionReceiptSchema = new mongoose.Schema({
+  reservationId:          { type: String },
   raidId:                 { type: String, required: true },
   resultSequence:         { type: Number, required: true },
   consolidatedExperience: { type: Number, required: true },

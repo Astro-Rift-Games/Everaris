@@ -15,6 +15,7 @@ const RaidResultService = require('../src/services/RaidResultService');
 const SessionTicketService = require('../src/services/SessionTicketService');
 const ExtractionCommitService = require('../src/services/ExtractionCommitService');
 const DefeatCommitService = require('../src/services/DefeatCommitService');
+const InventoryService = require('../src/services/InventoryService');
 const { buildCanonicalResultString } = require('../src/utils/raidResultCanonicalizer');
 const { createEquipment } = require('../src/services/ItemInstances');
 const { computeLevelAndExperience } = require('../src/config/progressionBalance');
@@ -333,16 +334,112 @@ describe('FIX-18 authoritative result validation', () => {
       assert.equal((await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID }).lean()).consumed, false);
     });
 
-    test('a defeat commit cannot credit a result once its reservation was replaced', async () => {
+    test('a late defeat commit credits XP after its reservation was replaced', async () => {
       const raider = await ticketedRaider('replaced');
-      await publish(raider.accountId, raider, RAID_ID);
+      await publish(raider.accountId, raider, RAID_ID, { items: [] });
       await Character.updateOne({ accountId: raider.accountId }, { $set: { 'inventory.pendingReservation.reservationId': 'res_newer' } });
+
+      const committed = await DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 });
+
+      assert.equal(committed.alreadySecured, false);
+      const after = await stored(raider.accountId);
+      assert.deepEqual(progressionOf(after), progressed(raider.character, 5000));
+      assert.equal(after.appliedProgressionReceipts[0].reservationId, raider.reservationId);
+    });
+
+    test('a defeat commit retains XP after the real inventory loss clear', async () => {
+      const raider = await ticketedRaider('loss');
+      await publish(raider.accountId, raider, RAID_ID, { items: [], experienceGranted: 80 });
+      await InventoryService.clearPendingReservation(raider.accountId, { expectedReservationId: raider.reservationId });
+      assert.equal((await stored(raider.accountId)).inventory.pendingReservation, null);
+
+      const committed = await DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 });
+
+      assert.equal(committed.alreadySecured, false);
+      assert.deepEqual(progressionOf(await stored(raider.accountId)), progressed(raider.character, 80));
+      assert.equal((await stored(raider.accountId)).appliedProgressionReceipts[0].reservationId, raider.reservationId);
+    });
+
+    for (const secondCommit of ['extraction', 'defeat']) {
+      test(`after re-binding, defeat A prevents a second ${secondCommit} credit for B`, async () => {
+        const raider = await ticketedRaider('rebind', RAID_CODE, { admittedAt: null });
+        await publish(raider.accountId, raider, RAID_ID, { items: [], experienceGranted: 80 });
+        await SessionTicketService.issueRaidAdmissionTicket(raider.accountId, OTHER_RAID_CODE, raider.reservationId);
+        await publish(raider.accountId, raider, OTHER_RAID_ID, { items: [], experienceGranted: 120 });
+
+        await DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 });
+        const before = await stored(raider.accountId);
+        assert.deepEqual(progressionOf(before), progressed(raider.character, 80));
+        assert.equal(before.appliedProgressionReceipts[0].reservationId, raider.reservationId);
+        const service = secondCommit === 'extraction' ? ExtractionCommitService : DefeatCommitService;
+        const error = await rejection(service.commit(raider.accountId, { raidId: OTHER_RAID_ID, resultSequence: 1 }));
+
+        assert.equal(error.statusCode, 409);
+        assert.equal(error.errorCode, 'RESULT_RESERVATION_MISMATCH');
+        assert.deepEqual(await stored(raider.accountId), before);
+        assert.equal(before.appliedProgressionReceipts.length, 1);
+        assert.equal((await AuthoritativeExtractionResult.findOne({ raidId: OTHER_RAID_ID }).lean()).consumed, false);
+      });
+    }
+
+    test('after extraction B, defeat A cannot credit the same reservation', async () => {
+      const raider = await ticketedRaider('reverse', RAID_CODE, { admittedAt: null });
+      await publish(raider.accountId, raider, RAID_ID, { items: [], experienceGranted: 80 });
+      await SessionTicketService.issueRaidAdmissionTicket(raider.accountId, OTHER_RAID_CODE, raider.reservationId);
+      await publish(raider.accountId, raider, OTHER_RAID_ID, { experienceGranted: 120 });
+      await ExtractionCommitService.commit(raider.accountId, { raidId: OTHER_RAID_ID, resultSequence: 1 });
+      const before = await stored(raider.accountId);
+      assert.deepEqual(progressionOf(before), progressed(raider.character, 120));
+      assert.equal(before.inventory.appliedExtractionReceipts[0].reservationId, raider.reservationId);
+      assert.equal(before.appliedProgressionReceipts[0].reservationId, raider.reservationId);
 
       const error = await rejection(DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 }));
 
+      assert.equal(error.statusCode, 409);
       assert.equal(error.errorCode, 'RESULT_RESERVATION_MISMATCH');
-      assert.deepEqual(progressionOf(await stored(raider.accountId)), progressionOf(raider.character));
+      assert.deepEqual(await stored(raider.accountId), before);
+      assert.equal(before.appliedProgressionReceipts.length, 1);
+      assert.equal((await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID }).lean()).consumed, false);
     });
+
+    test('signed object equipment on a non-weapon slot rejects a padded catalog id', async () => {
+      const raider = await ticketedRaider('signedHelmet');
+      const payload = {
+        raidId: RAID_ID,
+        resultId: `${RAID_ID}:${raider.accountId}:1`,
+        targetAccountId: raider.accountId,
+        items: [],
+        preparedEquipment: { helmet: { lootId: '\nheavy_armor_helmet' } },
+        experienceGranted: 0
+      };
+      payload.hostSignature = sign(payload, raider.accountId);
+      const before = await stored(raider.accountId);
+
+      const error = await rejection(RaidResultService.publishHostResult(raider.accountId, payload));
+
+      assert.equal(error.statusCode, 422);
+      assert.equal(error.errorCode, 'UNKNOWN_LOOT_ID');
+      assert.deepEqual(await stored(raider.accountId), before);
+      assert.equal(await AuthoritativeExtractionResult.countDocuments(), 0);
+    });
+
+    for (const hasCharacter of [true, false]) {
+      test(`unsigned non-list items reject before recipient lookup (character exists: ${hasCharacter})`, async () => {
+        const raider = hasCharacter ? await ticketedRaider('nonlist') : { accountId: new mongoose.Types.ObjectId().toString() };
+        const before = await stored(raider.accountId);
+
+        const error = await rejection(RaidResultService.publishHostResult(raider.accountId, {
+          raidId: RAID_ID,
+          targetAccountId: raider.accountId,
+          items: { lootId: 'slime_gel', amount: 1 }
+        }));
+
+        assert.equal(error.statusCode, 400);
+        assert.equal(error.errorCode, 'INVALID_RESULT_PAYLOAD');
+        assert.deepEqual(await stored(raider.accountId), before);
+        assert.equal(await AuthoritativeExtractionResult.countDocuments(), 0);
+      });
+    }
 
     test('a padded lootId is not a catalog id and creates no document', async () => {
       const raider = await ticketedRaider('padder');
