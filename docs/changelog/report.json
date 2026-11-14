@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1071,
-  "canonicalEntries": 1068,
+  "rawCommits": 1073,
+  "canonicalEntries": 1070,
   "before": {
+    "Bug Fixes": 139,
     "Documentation": 101,
-    "Bug Fixes": 137,
     "Other Changes": 360,
     "Architecture & Infrastructure": 23,
     "Tests": 41,
@@ -12,8 +12,8 @@
     "Refactoring": 14
   },
   "after": {
+    "Bug Fixes": 155,
     "Documentation": 117,
-    "Bug Fixes": 153,
     "Other Changes": 168,
     "Maintenance": 21,
     "Tests": 46,
@@ -23,18 +23,18 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Persistence & Backend": 250,
+    "Combat": 373,
+    "Inventory & Loot": 432,
+    "Networking & Sessions": 323,
+    "Persistence & Backend": 251,
+    "Build & Tooling": 560,
+    "Tests": 679,
     "Abilities": 132,
-    "Inventory & Loot": 431,
-    "Build & Tooling": 558,
     "Documentation": 401,
-    "Tests": 677,
-    "Networking & Sessions": 322,
     "Extraction": 154,
     "UI": 324,
     "World & Visibility": 141,
     "Unassigned": 31,
-    "Combat": 372,
     "Audio": 36,
     "Art & Animation": 237,
     "Input": 30,
@@ -42,8 +42,8 @@
   },
   "canonical": {
     "sections": {
+      "Bug Fixes": 154,
       "Documentation": 117,
-      "Bug Fixes": 152,
       "Other Changes": 167,
       "Maintenance": 21,
       "Tests": 46,
@@ -52,18 +52,18 @@
       "Refactoring": 27
     },
     "systems": {
-      "Persistence & Backend": 250,
+      "Combat": 371,
+      "Inventory & Loot": 432,
+      "Networking & Sessions": 323,
+      "Persistence & Backend": 251,
+      "Build & Tooling": 558,
+      "Tests": 677,
       "Abilities": 130,
-      "Inventory & Loot": 431,
-      "Build & Tooling": 556,
       "Documentation": 399,
-      "Tests": 675,
-      "Networking & Sessions": 322,
       "Extraction": 154,
       "UI": 323,
       "World & Visibility": 139,
       "Unassigned": 31,
-      "Combat": 370,
       "Audio": 36,
       "Art & Animation": 234,
       "Input": 30,
@@ -34547,8 +34547,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 194,
-      "canonicalEntries": 194
+      "originalCommits": 196,
+      "canonicalEntries": 196
     },
     {
       "key": "v0.5.0",
@@ -34592,6 +34592,219 @@
     }
   ],
   "commits": [
+    {
+      "sha": "50bdc895e7ef755fe7b9d04151058f4fa0bca5db",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/50bdc895e7ef755fe7b9d04151058f4fa0bca5db",
+      "subject": "fix(inventory): clear reservations on defeat and fallback to valid weapon set",
+      "body": "Clear pending loadout reservations in backend and client upon character defeat\nso returning players are not locked out of mutating equipment in Town.\nSelect initial active weapon set prioritizing main-hand attack weapons over\noff-hand shields, and defensively fall back to the alternate weapon set during\nplayer spawn if the selected set lacks an attack strategy.\n\nPlayer-Fixed: Fixed an issue where dying in raid prevented changing equipment in Town due to a stuck pending reservation.\nPlayer-Fixed: Fixed an issue where entering a raid with a shield in the first weapon set bounced the player back to Town.\nRefs: #711, #717\n",
+      "date": "2026-11-14T17:34:44-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Networking/AuthoritativeRaidAdmissionTicket.cs",
+        "Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs",
+        "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionData.cs",
+        "Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs",
+        "Project Grimhold/Assets/Scripts/Player/Combat/PlayerWeaponEquipmentNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownEquipmentMutationEndpoint.cs",
+        "Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs",
+        "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionRulesTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs",
+        "backend/src/services/InventoryService.js",
+        "backend/tests/inventory.lifecycle.test.js",
+        "backend/tests/reservation.loss-clear.test.js"
+      ],
+      "originalType": "fix",
+      "originalScope": "inventory",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Combat/PlayerWeaponEquipmentNetworkController.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Combat/PlayerWeaponEquipmentNetworkController.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownEquipmentMutationEndpoint.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.lifecycle.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "scope",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/AuthoritativeRaidAdmissionTicket.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionData.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionRulesTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.lifecycle.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/reservation.loss-clear.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionRulesTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionRulesTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.lifecycle.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/reservation.loss-clear.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "2877fbfbe2b803a8b759f195846677df5d85c2d3",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2877fbfbe2b803a8b759f195846677df5d85c2d3",
+      "subject": "fix(security): ignore dependency directories during history secret scan",
+      "body": "Ensure git history scanning respects ignored dependency directories such\nas node_modules to avoid false positive alarms on third-party test fixtures.\n",
+      "date": "2026-11-14T17:34:18-03:00",
+      "files": [
+        "tools/security/scan-secrets.js"
+      ],
+      "originalType": "fix",
+      "originalScope": "security",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "tools/security/scan-secrets.js",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "e47705b906cc10e4202d2b1428d700bae8c227d5",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e47705b906cc10e4202d2b1428d700bae8c227d5",

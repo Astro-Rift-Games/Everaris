@@ -4,32 +4,148 @@
 
 Release: Unreleased
 
-194 original commits; 194 canonical entries.
+196 original commits; 196 canonical entries.
 
 ## Canonical classification
 
-73 features; 59 bug fixes; 1 refactoring; 1 architecture & infrastructure; 27 documentation; 17 tests; 10 maintenance; 6 other changes
+73 features; 61 bug fixes; 1 refactoring; 1 architecture & infrastructure; 27 documentation; 17 tests; 10 maintenance; 6 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 8 | 9 | 1 | 0 | 9 | 1 |
 | Art & Animation | 10 | 9 | 1 | 0 | 7 | 0 |
 | Audio | 4 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 47 | 42 | 1 | 1 | 20 | 6 |
-| Combat | 34 | 10 | 0 | 0 | 12 | 0 |
+| Build & Tooling | 47 | 44 | 1 | 1 | 20 | 6 |
+| Combat | 34 | 11 | 0 | 0 | 12 | 0 |
 | Documentation | 26 | 21 | 0 | 0 | 11 | 0 |
 | Extraction | 13 | 10 | 0 | 0 | 9 | 3 |
 | Input | 0 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 55 | 36 | 1 | 1 | 19 | 3 |
+| Inventory & Loot | 55 | 37 | 1 | 1 | 19 | 3 |
 | Movement | 3 | 2 | 0 | 0 | 0 | 0 |
-| Networking & Sessions | 23 | 24 | 0 | 0 | 17 | 2 |
-| Persistence & Backend | 27 | 23 | 0 | 1 | 11 | 3 |
-| Tests | 70 | 53 | 1 | 1 | 27 | 4 |
+| Networking & Sessions | 23 | 25 | 0 | 0 | 17 | 2 |
+| Persistence & Backend | 27 | 24 | 0 | 1 | 11 | 3 |
+| Tests | 70 | 55 | 1 | 1 | 27 | 4 |
 | UI | 28 | 13 | 1 | 0 | 12 | 1 |
 | Unassigned | 0 | 1 | 0 | 0 | 12 | 0 |
 | World & Visibility | 19 | 8 | 0 | 0 | 3 | 1 |
 
 ## Original commit records
+
+### 50bdc895e7ef755fe7b9d04151058f4fa0bca5db
+
+[50bdc895e7ef755fe7b9d04151058f4fa0bca5db](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/50bdc895e7ef755fe7b9d04151058f4fa0bca5db)
+
+Date: 2026-11-14T17:34:44-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Inventory & Loot, Networking & Sessions, Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(inventory): clear reservations on defeat and fallback to valid weapon set
+```
+
+#### Original body
+
+```text
+Clear pending loadout reservations in backend and client upon character defeat
+so returning players are not locked out of mutating equipment in Town.
+Select initial active weapon set prioritizing main-hand attack weapons over
+off-hand shields, and defensively fall back to the alternate weapon set during
+player spawn if the selected set lacks an attack strategy.
+
+Player-Fixed: Fixed an issue where dying in raid prevented changing equipment in Town due to a stuck pending reservation.
+Player-Fixed: Fixed an issue where entering a raid with a shield in the first weapon set bounced the player back to Town.
+Refs: #711, #717
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/AuthoritativeRaidAdmissionTicket.cs
+Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs
+Project Grimhold/Assets/Scripts/Networking/RaidAdmissionData.cs
+Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+Project Grimhold/Assets/Scripts/Player/Combat/PlayerWeaponEquipmentNetworkController.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownEquipmentMutationEndpoint.cs
+Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionRulesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs
+backend/src/services/InventoryService.js
+backend/tests/inventory.lifecycle.test.js
+backend/tests/reservation.loss-clear.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Combat/PlayerWeaponEquipmentNetworkController.cs
+- message-term → Combat: weapon
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Combat/PlayerWeaponEquipmentNetworkController.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/TownEquipmentMutationEndpoint.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- path → Inventory &amp; Loot: backend/tests/inventory.lifecycle.test.js
+- scope → Inventory &amp; Loot: inventory
+- message-term → Inventory &amp; Loot: inventory
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/AuthoritativeRaidAdmissionTicket.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidAdmissionData.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionRulesTests.cs
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/tests/inventory.lifecycle.test.js
+- path → Persistence &amp; Backend: backend/tests/reservation.loss-clear.test.js
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionRulesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionRulesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs
+- path → Tests: backend/tests/inventory.lifecycle.test.js
+- path → Tests: backend/tests/reservation.loss-clear.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 2877fbfbe2b803a8b759f195846677df5d85c2d3
+
+[2877fbfbe2b803a8b759f195846677df5d85c2d3](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2877fbfbe2b803a8b759f195846677df5d85c2d3)
+
+Date: 2026-11-14T17:34:18-03:00 · Classification: Bug Fixes (explicit) · Systems: Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(security): ignore dependency directories during history secret scan
+```
+
+#### Original body
+
+```text
+Ensure git history scanning respects ignored dependency directories such
+as node_modules to avoid false positive alarms on third-party test fixtures.
+```
+
+#### Changed paths
+
+```text
+tools/security/scan-secrets.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Build &amp; Tooling: tools/security/scan-secrets.js
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### e47705b906cc10e4202d2b1428d700bae8c227d5
 

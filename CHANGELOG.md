@@ -84,6 +84,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Picking a name someone else registers at the same moment now says the name is taken instead of showing a server error.
 - If the town session cannot be loaded, login now shows an error and lets you try again instead of entering in a broken state.
 - Retrying an old purchase or sale can no longer charge you or pay you twice.
+- Fixed an issue where dying in raid prevented changing equipment in Town due to a stuck pending reservation.
+- Fixed an issue where entering a raid with a shield in the first weapon set bounced the player back to Town.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08
