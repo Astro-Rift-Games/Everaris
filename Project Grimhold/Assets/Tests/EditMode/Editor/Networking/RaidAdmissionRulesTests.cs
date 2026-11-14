@@ -93,4 +93,51 @@ public sealed class RaidAdmissionRulesTests
             Object.DestroyImmediate(trap);
         }
     }
+
+    [Test]
+    public void ActiveWeaponSet_SelectsSetB_WhenSetAHasNoMainWeaponAndSetBHasMainWeapon()
+    {
+        var prepared = new PreparedEquipmentLoadout(
+            weaponSetAMainHand: default,
+            weaponSetBMainHand: new LootId("rapier"),
+            weaponSetAOffHand: new LootId("shield"));
+
+        var reservation = new PendingLoadoutReservation("res-1", new List<StashItem>(), prepared);
+        RaidCode.TryParse("123456", out RaidCode code);
+        var profileId = new ProfileId("profile-1");
+        var attributes = ProgressionBalanceDefaults.InitialCharacterAttributeState;
+
+        Assert.That(
+            RaidAdmissionData.TryCreate(
+                code,
+                profileId,
+                reservation,
+                attributes,
+                default(PreparedAbilityLoadout),
+                1,
+                0,
+                0,
+                out RaidAdmissionData admission),
+            Is.True);
+
+        Assert.That(admission.ActiveWeaponSet, Is.EqualTo(WeaponSetSlot.SetB));
+
+        var ticket = new AuthoritativeRaidAdmissionTicket(
+            "raw-ticket",
+            profileId,
+            code,
+            "res-1",
+            1,
+            0,
+            attributes,
+            default(PreparedAbilityLoadout),
+            new LootEntry[0],
+            prepared,
+            0,
+            0,
+            "Tester");
+
+        Assert.That(ticket.TryToRaidAdmissionData(out RaidAdmissionData ticketAdmission), Is.True);
+        Assert.That(ticketAdmission.ActiveWeaponSet, Is.EqualTo(WeaponSetSlot.SetB));
+    }
 }

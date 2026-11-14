@@ -506,7 +506,8 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
             var remoteService = context.GetComponent<RemoteInventoryService>();
             if (remoteService != null)
             {
-                _ = remoteService.CommitDefeatUnifiedAsync(receipt);
+                Task defeatTask = remoteService.CommitDefeatUnifiedAsync(receipt);
+                SessionConnectionCoordinator.Instance?.RegisterParticipationOutcomeTask(defeatTask);
             }
         }
     }

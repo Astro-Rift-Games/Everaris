@@ -487,9 +487,26 @@ public sealed class PlayerWeaponEquipmentNetworkController : NetworkBehaviour, I
             return false;
         }
 
+        bool setAHasEligibleWeapon =
+            TryResolveEligibleWeapon(slot1Catalog - 1, attributes, out _, out _) == WeaponEligibilityFailure.None ||
+            TryResolveEligibleWeapon(catalogIndices[6] - 1, attributes, out _, out _) == WeaponEligibilityFailure.None;
+
+        bool setBHasEligibleWeapon =
+            TryResolveEligibleWeapon(slot2Catalog - 1, attributes, out _, out _) == WeaponEligibilityFailure.None ||
+            TryResolveEligibleWeapon(catalogIndices[7] - 1, attributes, out _, out _) == WeaponEligibilityFailure.None;
+
+        if (activeWeaponSet == WeaponSetSlot.SetA && !setAHasEligibleWeapon && setBHasEligibleWeapon)
+        {
+            activeWeaponSet = WeaponSetSlot.SetB;
+        }
+        else if (activeWeaponSet == WeaponSetSlot.SetB && !setBHasEligibleWeapon && setAHasEligibleWeapon)
+        {
+            activeWeaponSet = WeaponSetSlot.SetA;
+        }
+
         if (activeWeaponSet != WeaponSetSlot.SetA && activeWeaponSet != WeaponSetSlot.SetB ||
-            activeWeaponSet == WeaponSetSlot.SetA && slot1Catalog == 0 && catalogIndices[6] == 0 ||
-            activeWeaponSet == WeaponSetSlot.SetB && slot2Catalog == 0 && catalogIndices[7] == 0)
+            activeWeaponSet == WeaponSetSlot.SetA && !setAHasEligibleWeapon ||
+            activeWeaponSet == WeaponSetSlot.SetB && !setBHasEligibleWeapon)
         {
             error = "The active Weapon Set must reference a valid weapon.";
             return false;

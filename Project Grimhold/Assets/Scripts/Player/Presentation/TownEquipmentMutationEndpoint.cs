@@ -125,7 +125,8 @@ public sealed class TownEquipmentMutationEndpoint : ITownEquipmentMutationEndpoi
                 // A stale revision or unknown outcome needs authoritative reconciliation, not a POST replay.
                 // Keep the busy gate held until the refresh finishes.
                 if (response.error.error == "REVISION_CONFLICT" || BackendErrorUtility.IsTransportFailure(response.error.error) ||
-                    string.IsNullOrEmpty(response.error.error) || response.error.error == "INVALID_INVENTORY")
+                    string.IsNullOrEmpty(response.error.error) || response.error.error == "INVALID_INVENTORY" ||
+                    (response.error.error == "RESERVATION_PENDING" && _trainingStore.PendingReservation == null))
                     await ReconcileSafelyAsync();
                 if (response.error.error == BackendErrorUtility.Unauthorized)
                     ApplicationAuthContext.Instance?.HandleUnauthorizedSession();

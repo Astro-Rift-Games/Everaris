@@ -102,8 +102,8 @@ test('reservation admission and loss lifecycle', async t => {
     };
     AuthoritativeExtractionResult.exists = async query => {
       // Results bind to the character's accountId, not its character _id or reservationId.
-      assert.deepEqual(query, { accountId: 'account', consumed: { $ne: true } });
-      return results.find(result => result.accountId === query.accountId && result.consumed !== true) || null;
+      assert.deepEqual(query, { accountId: 'account', consumed: { $ne: true }, 'items.0': { $exists: true } });
+      return results.find(result => result.accountId === query.accountId && result.consumed !== true && result.items?.length > 0) || null;
     };
   });
 
@@ -203,7 +203,7 @@ test('reservation admission and loss lifecycle', async t => {
     for (const operation of ['clear', 'replace empty', 'replace populated']) {
       await t.test(`${operation} blocks any unconsumed result targeting admitted character (${consumed})`, async () => {
         stored.inventory.pendingReservation.admittedAt = admittedAt;
-        results.push({ accountId: 'account', raidId: 'unrelated-raid-name', consumed });
+        results.push({ accountId: 'account', raidId: 'unrelated-raid-name', consumed, items: [{ lootId: 'iron_ore', amount: 1 }] });
         if (operation === 'replace populated') {
           stored.inventory.loadout = [{ lootId: 'iron_ore', amount: 2 }];
           stored.inventory.preparedEquipment = equipment({ weaponSlot1: 'arming_sword' });
@@ -216,7 +216,10 @@ test('reservation admission and loss lifecycle', async t => {
 
   await t.test('loss clear discards admitted items and all Equipment without changing active ownership', async () => {
     stored.inventory.pendingReservation.admittedAt = admittedAt;
-    results.push({ accountId: 'other-account', consumed: false }, { accountId: 'account', consumed: true });
+    results.push(
+      { accountId: 'other-account', consumed: false, items: [{ lootId: 'iron_ore', amount: 1 }] },
+      { accountId: 'account', consumed: true, items: [{ lootId: 'iron_ore', amount: 1 }] }
+    );
     const before = await snapshot();
     const response = await call('delete', `${base}/reservation`);
     assert.equal(response.status, 200);
@@ -227,7 +230,10 @@ test('reservation admission and loss lifecycle', async t => {
 
   await t.test('replacement of admitted reservation never recovers its items or Equipment', async () => {
     stored.inventory.pendingReservation.admittedAt = admittedAt;
-    results.push({ accountId: 'other-account', consumed: false }, { accountId: 'account', consumed: true });
+    results.push(
+      { accountId: 'other-account', consumed: false, items: [{ lootId: 'iron_ore', amount: 1 }] },
+      { accountId: 'account', consumed: true, items: [{ lootId: 'iron_ore', amount: 1 }] }
+    );
     const before = await snapshot();
     const response = await call('post', `${base}/reservation`, { reservationId: 'new-reservation' });
     assert.equal(response.status, 409);
@@ -238,7 +244,7 @@ test('reservation admission and loss lifecycle', async t => {
 
   await t.test('same-id save of admitted reservation remains idempotent with a pending extraction', async () => {
     stored.inventory.pendingReservation.admittedAt = admittedAt;
-    results.push({ accountId: 'account', consumed: false });
+    results.push({ accountId: 'account', consumed: false, items: [{ lootId: 'iron_ore', amount: 1 }] });
     const before = await snapshot();
     const response = await call('post', `${base}/reservation`, { reservationId: 'reservation' });
     assert.equal(response.status, 201);

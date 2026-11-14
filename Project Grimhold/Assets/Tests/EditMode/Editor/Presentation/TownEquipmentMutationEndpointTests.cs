@@ -166,6 +166,38 @@ namespace Tests.EditMode.Presentation
             Assert.That(store.PendingReservation?.ReservationId, Is.EqualTo(localReservation ? "reserved" : null));
         }
 
+        [Test]
+        public async System.Threading.Tasks.Task ReservationPending_WhenLocalReservationIsNull_AttemptsAuthoritativeReconciliation()
+        {
+            var repository = new InMemoryLocalProfileRepository();
+            Assert.That(repository.Initialize(Profile, _catalog), Is.True);
+            var snapshot = repository.Snapshot.Clone();
+            snapshot.InventorySchemaVersion = 3;
+            snapshot.RemoteRevision = 5;
+            snapshot.PendingReservation = null;
+            Assert.That(repository.TrySave(snapshot, out _), Is.True);
+            var store = new LocalProfileStore(repository, Profile, _catalog);
+
+            int reconcileCalls = 0;
+            var endpoint = new TownEquipmentMutationEndpoint(_service, Profile, _catalog, () => true);
+            endpoint.BindTrainingBackend(
+                store,
+                _ => System.Threading.Tasks.Task.FromResult((
+                    false,
+                    default(Grimhold.Backend.TrainingWeaponResult),
+                    new Grimhold.Backend.BackendError { error = "RESERVATION_PENDING", message = "Reservation pending." })),
+                () =>
+                {
+                    reconcileCalls++;
+                    return System.Threading.Tasks.Task.FromResult(true);
+                });
+
+            var result = await endpoint.RequestTrainingWeaponAsync(new LootId("training_dagger"), EquipmentSlot.WeaponSetAMainHand);
+
+            Assert.That(result, Is.EqualTo(StashOperationResult.ReservationPending));
+            Assert.That(reconcileCalls, Is.EqualTo(1));
+        }
+
         [TestCase(false, EquipmentSlot.Helmet)]
         [TestCase(true, EquipmentSlot.WeaponSetAMainHand)]
         public async System.Threading.Tasks.Task TrainingRequest_RejectsHydrationAndIncompatibleSlotWithoutCallingBackend(bool requiresHydration, EquipmentSlot slot)

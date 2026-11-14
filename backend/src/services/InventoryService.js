@@ -151,8 +151,14 @@ function serializePendingReservation(res, sorted = false, version = 2) {
 }
 
 // Authoritative results target the owning account, not a reservation/raid identifier.
+// Only unconsumed results with non-empty extracted items represent loot that must be protected.
+// Defeat results (or empty-bag runs) contain no loot and must not deadlock reservation loss clears.
 async function assertNoPendingExtractionResult(accountId) {
-  if (await AuthoritativeExtractionResult.exists({ accountId, consumed: { $ne: true } })) {
+  if (await AuthoritativeExtractionResult.exists({
+    accountId,
+    consumed: { $ne: true },
+    'items.0': { $exists: true }
+  })) {
     throw { statusCode: 409, errorCode: 'EXTRACTION_RESULT_PENDING', message: 'An authoritative extraction result is pending for this character.' };
   }
 }
