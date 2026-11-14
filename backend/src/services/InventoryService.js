@@ -123,8 +123,15 @@ function restoreReservation(character) {
     if (!equipment[slot]) equipment[slot] = item;
     else displaced.push(version === 3 ? { ...copyEntry(item), amount: 1 } : { lootId: item, amount: 1 });
   }
-  const loadout = restoreEntries(character.inventory.loadout, reservation.items, 'loadout');
-  character.inventory.loadout = restoreEntries(loadout, displaced, 'loadout');
+  if (version >= 2) {
+    const loadout = restoreEntries(character.inventory.loadout, reservation.items, 'loadout');
+    character.inventory.loadout = restoreEntries(loadout, displaced, 'loadout');
+  } else {
+    // Legacy lists hold one aggregated entry per lootId and no capacity, so restoration merges.
+    const loadout = serializeItems(character.inventory.loadout);
+    for (const item of [...serializeItems(reservation.items), ...displaced]) receiveItem(loadout, 'loadout', item, version);
+    character.inventory.loadout = loadout;
+  }
   character.inventory.preparedEquipment = equipment;
 }
 
@@ -926,20 +933,10 @@ class InventoryService {
       character.unlockedAbilities
     );
 
-    // If an unconsumed reservation from an aborted/cancelled launch is still pending while active loadout/equipment are empty,
-    // recover its items and equipment before creating the new reservation so items are not lost.
-    const currentEq = character.inventory.preparedEquipment || {};
-    const hasActiveEquipment = EQUIPMENT_SLOTS.some(slot => Boolean(currentEq[slot]));
-    if (
-      character.inventory.pendingReservation &&
-      !character.inventory.pendingReservation.admittedAt &&
-      (version >= 2 || ((!character.inventory.loadout || character.inventory.loadout.length === 0) && !hasActiveEquipment))
-    ) {
-      if (version >= 2) restoreReservation(character);
-      else {
-        character.inventory.loadout = serializeItems(character.inventory.pendingReservation.items);
-        character.inventory.preparedEquipment = serializePreparedEquipment(character.inventory.pendingReservation.preparedEquipment);
-      }
+    // An unadmitted reservation from an aborted launch is restored before the new one is derived,
+    // whatever the active loadout and equipment hold, so none of its items are lost.
+    if (character.inventory.pendingReservation && !character.inventory.pendingReservation.admittedAt) {
+      restoreReservation(character);
     }
     if (version >= 2 && character.inventory.loadout.length > CAPACITIES.loadout) inventoryFull();
 
@@ -1030,7 +1027,6 @@ class InventoryService {
     }
 
     requireMigratedInventory(character);
-    const version = inventoryVersion(character);
     if (character.inventory.pendingReservation?.admittedAt) {
       if (rollback) {
         throw { statusCode: 409, errorCode: 'RESERVATION_ADMITTED', message: 'An admitted reservation cannot be rolled back.' };
@@ -1046,16 +1042,9 @@ class InventoryService {
     }
     const setFields = { 'inventory.pendingReservation': null };
     if (rollback && character.inventory.pendingReservation) {
-      const currentEq = character.inventory.preparedEquipment || {};
-      const hasActiveEquipment = EQUIPMENT_SLOTS.some(slot => Boolean(currentEq[slot]));
-      if (version >= 2) {
-        restoreReservation(character);
-        setFields['inventory.loadout'] = character.inventory.loadout;
-        setFields['inventory.preparedEquipment'] = character.inventory.preparedEquipment;
-      } else if ((!character.inventory.loadout || character.inventory.loadout.length === 0) && !hasActiveEquipment) {
-        setFields['inventory.loadout'] = serializeItems(character.inventory.pendingReservation.items);
-        setFields['inventory.preparedEquipment'] = serializePreparedEquipment(character.inventory.pendingReservation.preparedEquipment);
-      }
+      restoreReservation(character);
+      setFields['inventory.loadout'] = character.inventory.loadout;
+      setFields['inventory.preparedEquipment'] = character.inventory.preparedEquipment;
     }
 
     const updated = await Character.findOneAndUpdate(

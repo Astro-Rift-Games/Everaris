@@ -192,6 +192,46 @@ test('physical inventory public service contract', async t => {
       { weaponSlot1: { lootId: 'arming_sword', instanceId: instance(1).instanceId } }, 4), 'RESERVATION_PENDING');
   });
 
+  // Every unit the character owns, wherever it sits, read through the public inventory snapshot.
+  function totalsByLootId(view) {
+    const totals = {};
+    const add = (lootId, amount) => { totals[lootId] = (totals[lootId] || 0) + amount; };
+    const addEquipment = equipment => Object.values(equipment || {}).filter(Boolean)
+      .forEach(item => add(typeof item === 'object' ? item.lootId : item, 1));
+    [...view.stash, ...view.loadout, ...(view.pendingReservation?.items || [])].forEach(item => add(item.lootId, item.amount));
+    addEquipment(view.preparedEquipment); addEquipment(view.pendingReservation?.preparedEquipment);
+    return totals;
+  }
+
+  function seedUnadmittedReservationOverActiveItems(version) {
+    const unit = (n) => ({ lootId: 'arming_sword', instance: { instanceId: n.toString(16).padStart(24, '0'), modifiers: { gemSocketCount: 0, gems: [] } } });
+    const weapon = n => (version === 3 ? unit(n) : 'arming_sword');
+    const at = (slot, lootId, amount) => (version === 1 ? { lootId, amount } : entry(slot, lootId, amount));
+    character.inventory.inventorySchemaVersion = version;
+    character.inventory.stash = [at(0, 'bone', 2)];
+    character.inventory.loadout = [at(2, 'stick', 1), at(5, 'bone', 1)];
+    character.inventory.preparedEquipment = { weaponSlot1: weapon(1) };
+    character.inventory.pendingReservation = { reservationId: 'old', admittedAt: null,
+      items: [at(2, 'bone', 3), at(4, 'stick', 2)], preparedEquipment: { weaponSlot1: weapon(2), weaponSlot2: weapon(3) } };
+  }
+
+  for (const version of [1, 2, 3]) await t.test(`v${version} replacing an unadmitted reservation over active items keeps every unit`, async () => {
+    seedUnadmittedReservationOverActiveItems(version);
+    const before = totalsByLootId(await snapshot());
+    const replaced = await Inventory.savePendingReservation('account', 'new');
+    assert.equal(replaced.pendingReservation.reservationId, 'new');
+    assert.deepEqual(totalsByLootId(await snapshot()), before);
+  });
+
+  for (const version of [1, 2, 3]) await t.test(`v${version} rolling back an unadmitted reservation over active items keeps every unit`, async () => {
+    seedUnadmittedReservationOverActiveItems(version);
+    const before = totalsByLootId(await snapshot());
+    await Inventory.clearPendingReservation('account', { rollback: true, expectedReservationId: 'old' });
+    const after = await snapshot();
+    assert.equal(after.pendingReservation, null);
+    assert.deepEqual(totalsByLootId(after), before);
+  });
+
   await t.test('reservation stores exact slots; ticket aggregates; rollback never merges occupied collisions', async () => {
     character.inventory.loadout = [entry(8, 'bone', 2), entry(3, 'bone', 4)];
     const reserved = await Inventory.savePendingReservation('account', 'res');
