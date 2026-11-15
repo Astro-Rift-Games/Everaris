@@ -25,7 +25,9 @@ public sealed class ScreenDamageFeedbackState
         }
         float dt = Finite(deltaTime) ? Mathf.Max(0, deltaTime) : 0;
         // A maximum-health change is not an impact. Late join/rebind starts a silent baseline.
-        if (_baseline && health < _health && Mathf.Approximately(maximum, _maximum)) _flashAge = 0;
+        // A hit flash triggers only on sudden loss meeting or exceeding the configured threshold.
+        float lossFraction = (_health - health) / maximum;
+        if (_baseline && lossFraction >= _config.SuddenLossThreshold && Mathf.Approximately(maximum, _maximum)) _flashAge = 0;
         else _flashAge += dt;
         _health = health;
         _maximum = maximum;
