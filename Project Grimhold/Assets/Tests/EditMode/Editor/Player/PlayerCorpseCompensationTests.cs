@@ -4,6 +4,23 @@ namespace Tests.EditMode.Player
 {
     public sealed class PlayerCorpseCompensationTests
     {
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public void Liquidation_OnlyPublishesAfterSuccessfulCaptureAndClear(bool captureSucceeds, bool clearSucceeds)
+        {
+            var calls = new System.Collections.Generic.List<string>();
+            bool owned = true;
+            bool result = PlayerCorpseGenerationController.TryLiquidateOwnership(
+                () => { calls.Add("capture"); return captureSucceeds; },
+                () => { calls.Add("clear"); if (clearSucceeds) owned = false; return clearSucceeds; },
+                () => { calls.Add("publish"); Assert.That(owned, Is.False, "Never publish success before ownership was removed."); });
+            Assert.That(result, Is.EqualTo(captureSucceeds && clearSucceeds));
+            Assert.That(owned, Is.EqualTo(!(captureSucceeds && clearSucceeds)));
+            Assert.That(calls, Is.EqualTo(!captureSucceeds ? new[] { "capture" }
+                : !clearSucceeds ? new[] { "capture", "clear" } : new[] { "capture", "clear", "publish" }));
+        }
+
         [Test]
         public void PostClearFailure_PreservesAndEnablesCorpseContainer_NeverLeavesBothEmpty()
         {

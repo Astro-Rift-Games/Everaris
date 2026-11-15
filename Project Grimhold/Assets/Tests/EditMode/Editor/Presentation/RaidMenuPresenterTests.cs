@@ -117,6 +117,57 @@ namespace Tests.EditMode.Presentation
             Object.DestroyImmediate(_holder);
         }
 
+        [TestCase("NO_AUTHORITATIVE_RESULT", false, false, "No se pudo guardar; se reintentará al iniciar sesión.")]
+        [TestCase("NO_AUTHORITATIVE_RESULT", false, true, "No se pudo guardar la experiencia de la derrota; el servidor ya no puede acreditar este resultado.")]
+        [TestCase("TIMEOUT", false, true, "No se pudo guardar; se reintentará al iniciar sesión.")]
+        [TestCase("RESULT_CONFLICT", false, false, "No se pudo guardar; se reintentará al iniciar sesión.")]
+        [TestCase("TOO_MANY_REQUESTS", true, true, "Guardado pendiente; reintentando… Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.")]
+        public void BackendCommitStatus_AppearsInResultsWithoutReplacingSummary(string code, bool retrying, bool defeat, string expected)
+        {
+            var participantObject = new GameObject("DefeatFeedbackSource");
+            participantObject.SetActive(false);
+            participantObject.transform.SetParent(_holder.transform);
+            var feedback = defeat
+                ? participantObject.AddComponent<NetworkRaidParticipant>().BackendDefeatFeedback
+                : new Grimhold.Backend.BackendCommitFeedback();
+            var error = new Grimhold.Backend.BackendError { error = code, message = "raw diagnostics" };
+            feedback.Begin();
+            if (retrying) feedback.Retrying(error);
+            else feedback.Complete(false, error);
+            string text = RaidMenuPresenter.ResolveBackendFeedback(feedback);
+            var result = CreateResult(defeat ? ExpeditionExperienceResolutionOutcome.Defeated
+                : ExpeditionExperienceResolutionOutcome.Extracted, 5000, 25, 100, false);
+            PresentResult(result, text, canReturn: true);
+            Assert.That(_view.StatusText.text, Is.EqualTo(expected));
+            Assert.That(_progressionResultsRoot.activeSelf, Is.True);
+            Assert.That(_progressionExperienceText.text, Does.Contain("Conservación: 50%"));
+            Assert.That(_view.AbandonButton.interactable, Is.True);
+        }
+
+        [Test]
+        public void ExtractedCommittedWithCorrection_KeepsLocalAndBackendConfirmation()
+        {
+            // Exercise the extracted-branch projection without fabricating Fusion's spawned state.
+            var feedback = new Grimhold.Backend.BackendCommitFeedback();
+            feedback.Complete(true, default);
+            string text = RaidMenuPresenter.ResolveExtractionPersistenceFeedback(
+                ExtractionLootSaveStatus.Committed, true, RaidMenuPresenter.ResolveBackendFeedback(feedback), out bool canRetry);
+            PresentResult(CreateResult(ExpeditionExperienceResolutionOutcome.Extracted, 10000, 25, 100, false), text, true);
+            Assert.That(_view.StatusText.text, Is.EqualTo("Botín asegurado.\n(Progresión ajustada por el servidor).\nResultado guardado."));
+            Assert.That(canRetry, Is.False);
+            Assert.That(_view.AbandonButton.interactable, Is.True);
+        }
+
+        [TestCase(ExtractionLootSaveStatus.Committed, "Botín asegurado.", false)]
+        [TestCase(ExtractionLootSaveStatus.PersistenceFailed, "No se pudo guardar el botín. Pulsa Reintentar.", true)]
+        public void ExtractionLocalStatus_WithoutBackendFeedback_PreservesPreviousTextAndRetry(
+            ExtractionLootSaveStatus status, string expected, bool expectedRetry)
+        {
+            string text = RaidMenuPresenter.ResolveExtractionPersistenceFeedback(status, false, string.Empty, out bool canRetry);
+            Assert.That(text, Is.EqualTo(expected));
+            Assert.That(canRetry, Is.EqualTo(expectedRetry));
+        }
+
         [Test]
         public void View_PresentAliveState_SetsAliveTitleAndEnablesResumeButton()
         {

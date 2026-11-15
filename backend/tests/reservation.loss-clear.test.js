@@ -114,8 +114,9 @@ test('admitted reservation loss clear with defeat / empty extraction result', as
     AuthoritativeExtractionResult.exists = async query => {
       assert.equal(query.accountId, 'account');
       assert.deepEqual(query.consumed, { $ne: true });
-      if (query['items.0']?.$exists) {
-        return results.find(r => r.accountId === query.accountId && r.consumed !== true && r.items && r.items.length > 0) || null;
+      if (query.$or || query['items.0']?.$exists) {
+        return results.find(r => r.accountId === query.accountId && r.consumed !== true &&
+          (r.items?.length > 0 || (query.$or && EQUIPMENT_SLOTS.some(slot => r.preparedEquipment?.[slot])))) || null;
       }
       return results.find(r => r.accountId === query.accountId && r.consumed !== true) || null;
     };
@@ -163,6 +164,20 @@ test('admitted reservation loss clear with defeat / empty extraction result', as
     assert.equal(weaponRes.status, 200);
     assert.equal(weaponRes.body.loadout[0].lootId, 'training_short_sword');
   });
+
+  for (const weaponSlot1 of ['arming_sword', { lootId: 'arming_sword' }]) {
+    await t.test(`equipment-only extraction blocks loss clear: ${JSON.stringify(weaponSlot1)}`, async () => {
+      results.push({ accountId: 'account', raidId: 'raid-1', reservationId: 'raid-res-1', consumed: false,
+        items: [], preparedEquipment: { weaponSlot1 }, experienceGranted: 100 });
+      const before = structuredClone(stored);
+      const res = await call('delete', `${base}/reservation`);
+      assert.equal(res.status, 409);
+      assert.equal(res.body.error, 'EXTRACTION_RESULT_PENDING');
+      assert.deepEqual(stored, before);
+      assert.equal(writes, 0);
+      assert.equal(results[0].consumed, false);
+    });
+  }
 
   await t.test('loss clear is rejected with 409 EXTRACTION_RESULT_PENDING when unconsumed result has items', async () => {
     // Extraction result has items that must be protected

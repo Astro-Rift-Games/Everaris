@@ -1,27 +1,8 @@
 #if UNITY_EDITOR && UNITY_INCLUDE_TESTS
-using System;
-using System.IO;
-using System.Reflection;
 using NUnit.Framework;
 
 public sealed class ResultsProgressionCoherenceTests
 {
-    private const string SaverPath =
-        "Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs";
-    private const string PresenterPath =
-        "Assets/Scripts/Player/Presentation/RaidMenuPresenter.cs";
-
-    [Test]
-    public void ExpeditionProgressionResult_DeclaresWithPersistedProgression()
-    {
-        MethodInfo method = typeof(ExpeditionProgressionResult).GetMethod(
-            "WithPersistedProgression",
-            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-        Assert.That(method, Is.Not.Null,
-            "ExpeditionProgressionResult must provide WithPersistedProgression() to update presentation when backend or store persists a corrected level/experience.");
-    }
-
     [Test]
     public void ExpeditionProgressionResult_WithPersistedProgression_CalculatesLevelsGainedAndUpdatesProjection()
     {
@@ -72,23 +53,28 @@ public sealed class ResultsProgressionCoherenceTests
     [Test]
     public void ExtractionLootSaver_CalculatesConsolidatedExperienceWithFullExpeditionLedger()
     {
-        string source = File.ReadAllText(SaverPath);
-
-        Assert.That(source, Does.Contain("ExpeditionExperienceRules"),
-            "PlayerExtractionLootSaver must use ExpeditionExperienceRules to combine ledger experience with extracted loot.");
-        Assert.That(source, Does.Not.Contain("new ExpeditionExperienceResolution(\n                ExpeditionExperienceResolutionOutcome.Extracted,\n                default,\n                10000,"),
-            "PlayerExtractionLootSaver must not hardcode 10000 basis points or ignore the expedition ledger.");
+        Assert.That(PlayerExpeditionProgressionResolver.TryCalculateProgression(
+            new ExpeditionExperienceSnapshot(100, 50, 20, 30),
+            ExpeditionExperienceResolutionOutcome.Extracted,
+            new ExpeditionProgressionBaseline(1, 0), out var resolution, out var application), Is.True);
+        Assert.That(resolution.ConsolidatedExperience, Is.EqualTo(200));
+        Assert.That(application.Result.ResultingLevel, Is.EqualTo(2));
+        Assert.That(application.Result.ResultingExperience, Is.EqualTo(100));
     }
 
-    [Test]
-    public void RaidMenuPresenter_DetectsProgressionCorrectionAndDisplaysNotice()
+    [TestCase(Grimhold.Backend.BackendCommitStatus.None, 10, false)]
+    [TestCase(Grimhold.Backend.BackendCommitStatus.Saving, 10, false)]
+    [TestCase(Grimhold.Backend.BackendCommitStatus.Saved, 10, true)]
+    [TestCase(Grimhold.Backend.BackendCommitStatus.Saved, 0, false)]
+    public void RaidMenuPresenter_OnlyConfirmedBackendDifferenceIsServerCorrection(
+        Grimhold.Backend.BackendCommitStatus status, long experience, bool expected)
     {
-        string source = File.ReadAllText(PresenterPath);
-
-        Assert.That(source, Does.Contain("WithPersistedProgression"),
-            "RaidMenuPresenter must update the displayed snapshot with persisted progression when it differs.");
-        Assert.That(source, Does.Contain("Progresión ajustada") | Does.Contain("ajustada por el servidor"),
-            "RaidMenuPresenter must display a correction notice when the persisted values diverge from the simulation.");
+        bool correction = RaidMenuPresenter.IsServerProgressionCorrection(status, 1, 0, 1, experience);
+        Assert.That(correction, Is.EqualTo(expected));
+        string feedback = RaidMenuPresenter.ResolveExtractionPersistenceFeedback(
+            ExtractionLootSaveStatus.Committed, correction, null, out bool retry);
+        Assert.That(feedback, Is.EqualTo(expected ? "Botín asegurado.\n(Progresión ajustada por el servidor)." : "Botín asegurado."));
+        Assert.That(retry, Is.False);
     }
 }
 #endif

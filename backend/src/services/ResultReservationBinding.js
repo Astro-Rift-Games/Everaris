@@ -7,6 +7,45 @@
 
 'use strict';
 
+const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
+
+const EMPTY_EQUIPMENT_ENCODINGS = [null, '', 'null', {}];
+
+function ownsEquipment(value) {
+  return value !== undefined && value !== null && value !== '' && value !== 'null' &&
+    !(typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0);
+}
+
+// The publish contract has no outcome discriminator. Empty ownership is defeat-compatible.
+function isDefeatResult(result) {
+  return !(result.items?.length) && !EQUIPMENT_SLOTS.some(slot => {
+    const value = result.preparedEquipment?.[slot];
+    return Array.isArray(value) ? value.some(ownsEquipment) : ownsEquipment(value);
+  });
+}
+
+function publishedResultSequence(result) {
+  if (Number.isSafeInteger(result.resultSequence) && result.resultSequence > 0) return result.resultSequence;
+  // Pre-existing results encode the published sequence in the generated result ID.
+  const prefix = `${result.raidId}:`;
+  const remainder = result.resultId?.startsWith(prefix) ? result.resultId.slice(prefix.length) : '';
+  const match = /^[^:]+:([1-9]\d*)$/.exec(remainder);
+  const sequence = match ? Number(match[1]) : NaN;
+  return Number.isSafeInteger(sequence) ? sequence : null;
+}
+
+function pendingLootResultFilter() {
+  return { $or: [
+    { 'items.0': { $exists: true } },
+    // $nin alone excludes a mixed array if even one element is empty. Check
+    // array elements separately so any owned element protects the result.
+    ...EQUIPMENT_SLOTS.flatMap(slot => [
+      { [`preparedEquipment.${slot}`]: { $exists: true, $not: { $type: 'array' }, $nin: EMPTY_EQUIPMENT_ENCODINGS } },
+      { [`preparedEquipment.${slot}`]: { $elemMatch: { $nin: EMPTY_EQUIPMENT_ENCODINGS } } },
+    ]),
+  ] };
+}
+
 function requireUncreditedResultReservation(character, authResult) {
   if (!authResult.reservationId) return;
   const receipts = [
@@ -55,6 +94,9 @@ function resultReservationFilter(authResult) {
 }
 
 module.exports = {
+  isDefeatResult,
+  publishedResultSequence,
+  pendingLootResultFilter,
   requireUncreditedResultReservation,
   requireResultReservation,
   uncreditedResultReservationFilter,

@@ -165,7 +165,7 @@ public sealed class LocalProfileRepository : ILocalProfileRepository
             return false;
         }
 
-        if (!LocalProfileSaveCodec.TryDecode(LocalProfileSaveCodec.Encode(snapshot), snapshot.ProfileId, _catalog, _abilityCatalog, out _, out _, out error))
+        if (!LocalProfileSaveCodec.TryDecode(LocalProfileSaveCodec.Encode(snapshot), snapshot.ProfileId, _catalog, _abilityCatalog, out _, out _, out error, strictShopReceipts: true))
         {
             LastError = error;
             return false;

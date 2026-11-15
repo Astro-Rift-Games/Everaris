@@ -123,6 +123,34 @@ namespace Tests.EditMode.Stash
                 "When main file is genuinely corrupted, restoring backup is expected.");
         }
 
+        [TestCase(true)]
+        [TestCase(false)]
+        public void UnknownEquipment_RoundTripsModifiersAndIdentity(bool withIdentity)
+        {
+            var snapshot = new LocalProfileSnapshot { ProfileId = _profile, InventorySchemaVersion = 3 };
+            var document = Newtonsoft.Json.Linq.JObject.Parse(LocalProfileSaveCodec.Encode(snapshot));
+            var item = Newtonsoft.Json.Linq.JObject.Parse("{\"slot\":4,\"lootId\":\"unknown_equipment\",\"amount\":1,\"instance\":{\"instanceId\":null,\"modifiers\":{\"primary\":{\"attribute\":\"dexterity\",\"grade\":\"B\"},\"secondary\":{\"attribute\":\"strength\",\"grade\":\"E\"},\"gemSocketCount\":2,\"gems\":[\"unknown_gem\",null]}}}");
+            if (withIdentity) item["instance"]["instanceId"] = "0123456789abcdef01234567";
+            ((Newtonsoft.Json.Linq.JArray)document["stash"]).Add(item);
+            Assert.That(LocalProfileSaveCodec.TryDecode(document.ToString(), _profile, _catalog,
+                out var decoded, out _, out var error), Is.True, error);
+            var encoded = Newtonsoft.Json.Linq.JObject.Parse(LocalProfileSaveCodec.Encode(decoded));
+            Assert.That(Newtonsoft.Json.Linq.JToken.DeepEquals(encoded["stash"][0]["instance"], item["instance"]), Is.True);
+            Assert.That(decoded.Stash[0].Slot, Is.EqualTo(4));
+            Assert.That(decoded.Stash[0].Amount, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void UnknownEquipment_RejectsStackedInstance()
+        {
+            var document = Newtonsoft.Json.Linq.JObject.Parse(LocalProfileSaveCodec.Encode(new LocalProfileSnapshot { ProfileId = _profile }));
+            ((Newtonsoft.Json.Linq.JArray)document["stash"]).Add(Newtonsoft.Json.Linq.JObject.Parse(
+                "{\"slot\":0,\"lootId\":\"unknown_equipment\",\"amount\":2,\"instance\":{\"instanceId\":\"0123456789abcdef01234567\"}}"));
+            Assert.That(LocalProfileSaveCodec.TryDecode(document.ToString(), _profile, _catalog,
+                out var decoded, out _, out _), Is.False);
+            Assert.That(decoded, Is.Null);
+        }
+
         private bool InvokePrepareRepositoryForLogin(bool permission, InventoryData? inventory, ProgressionData? progression)
         {
             MethodInfo method = typeof(ApplicationStashServiceBootstrapper).GetMethod(

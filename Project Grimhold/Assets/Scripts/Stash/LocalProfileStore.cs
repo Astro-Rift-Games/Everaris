@@ -59,6 +59,7 @@ public sealed class LocalProfileStore : IMissionClaimService
         _repository.Snapshot?.PendingReservation;
     public PendingExtractionCommit PendingExtractionCommit => 
         _repository.Snapshot?.PendingExtractionCommit;
+    public PendingDefeatCommit PendingDefeatCommit => _repository.Snapshot?.PendingDefeatCommit;
     /// <summary>
     /// Remains true after the pending backend commit is acknowledged and cleared.
     /// Departure cleanup must match this participation, not a previous Raid's receipt.
@@ -2244,7 +2245,8 @@ public sealed class LocalProfileStore : IMissionClaimService
     public StashOperationResult TryCommitDefeatProgression(
         ProgressionReceipt receipt,
         int resultingLevel,
-        long resultingExperience)
+        long resultingExperience,
+        string reservationId = null)
     {
         if (!receipt.IsValid || receipt.ProfileId != _profileId)
             return StashOperationResult.InvalidInventory;
@@ -2273,6 +2275,9 @@ public sealed class LocalProfileStore : IMissionClaimService
                 return StashOperationResult.InvalidInventory;
         }
 
+        // Never overwrite a durable, unacknowledged participation with another one.
+        if (current.PendingDefeatCommit != null) return StashOperationResult.ReservationPending;
+
         LocalProfileSnapshot next = current.Clone();
 
         int effectiveProgressionSequence = receipt.ResultSequence > current.LastAppliedProgressionResultSequence
@@ -2297,7 +2302,9 @@ public sealed class LocalProfileStore : IMissionClaimService
             next.AppliedProgressionReceipts.RemoveAt(0);
         }
 
-        // Defeat consumes the raid reservation as a loss.
+        // Progression, loss and the retry receipt are accepted in one local write.
+        next.PendingDefeatCommit = new PendingDefeatCommit(receipt,
+            string.IsNullOrEmpty(reservationId) ? current.PendingReservation?.ReservationId : reservationId);
         next.PendingReservation = null;
 
         var progression = new ExperienceApplicationResult(
@@ -2309,6 +2316,64 @@ public sealed class LocalProfileStore : IMissionClaimService
 
         return Commit(next, progression);
     }
+    /// <summary>Retires an exact uncreditable defeat receipt; ordinary hydration owns backend progression.</summary>
+    public StashOperationResult TryRetireDefeatCommit(ProgressionReceipt receipt)
+    {
+        lock (_sync)
+        {
+            LocalProfileSnapshot current = _repository.Snapshot;
+            if (!IsAvailable || current == null) return StashOperationResult.PersistenceFailed;
+            if (current.PendingDefeatCommit == null || !current.PendingDefeatCommit.Receipt.Equals(receipt))
+                return StashOperationResult.InvalidInventory;
+            return Commit(CreateRetiredDefeatSnapshot(current));
+        }
+    }
+
+    private static LocalProfileSnapshot CreateRetiredDefeatSnapshot(LocalProfileSnapshot current)
+    {
+        LocalProfileSnapshot next = current.Clone();
+        next.PendingDefeatCommit = null;
+        if (!string.IsNullOrEmpty(current.PendingDefeatCommit.ReservationId) &&
+            next.PendingReservation?.ReservationId == current.PendingDefeatCommit.ReservationId)
+            next.PendingReservation = null;
+        return next;
+    }
+
+    /// <summary>Completes an exact successful defeat response with authoritative progression.</summary>
+    public StashOperationResult TryCompleteDefeatCommit(
+        ProgressionReceipt receipt, Grimhold.Backend.CommitDefeatUnifiedResult result)
+    {
+        lock (_sync)
+        {
+            LocalProfileSnapshot current = _repository.Snapshot;
+            if (!IsAvailable || current == null) return StashOperationResult.PersistenceFailed;
+            if (current.PendingDefeatCommit == null ||
+                !current.PendingDefeatCommit.Receipt.Equals(receipt) ||
+                result.revision < current.RemoteRevision ||
+                !CharacterProgressionRules.IsValidState(ProgressionBalanceDefaults.InitialExperienceCurve,
+                    result.level, result.experience))
+                return StashOperationResult.HydrationFailed;
+
+            LocalProfileSnapshot next = CreateRetiredDefeatSnapshot(current);
+            var progression = new Grimhold.Backend.ProgressionData
+            {
+                level = result.level, experience = result.experience,
+                characterAttributes = result.characterAttributes,
+                lastAppliedProgressionResultSequence = receipt.ResultSequence,
+                revision = result.revision
+            };
+            if (!ApplicationStashServiceBootstrapper.HydrateSnapshot(
+                    _profileId, next, null, progression, _lootCatalog, _abilityCatalog))
+                return StashOperationResult.HydrationFailed;
+            // Unlike ordinary metadata hydration, this endpoint confirms the exact raid receipt.
+            // Retain that identity so a late live callback remains an idempotent local no-op.
+            next.LastProgressionReceipt = receipt;
+            next.AppliedProgressionReceipts.Clear();
+            next.AppliedProgressionReceipts.Add(receipt);
+            return Commit(next);
+        }
+    }
+
     /// <summary>Accepts backend-issued extraction instances and retires the retry payload in one write.</summary>
     public StashOperationResult TryCompleteExtractionCommit(
         ExtractionReceipt receipt,

@@ -44,6 +44,18 @@ namespace Grimhold.Tests.Backend
             if (_authObject != null) Object.DestroyImmediate(_authObject);
         }
 
+        [Test]
+        public async Task LoginRateLimited_ShowsSpanishWaitHintWithoutPartialIdentity()
+        {
+            _backend.LoginError = new BackendError { error = "TOO_MANY_REQUESTS", message = "raw English message", retryAfter = 12 };
+            var result = await _controller.ExecuteLoginAsync(Username, "pw");
+            Assert.That(result.Status, Is.EqualTo(LoginFlowStatus.AuthFailed));
+            Assert.That(result.ErrorMessage, Is.EqualTo("Demasiadas solicitudes. Espera 12 segundos antes de volver a intentarlo."));
+            Assert.That(_controller.HasHydrationFailed, Is.False);
+            Assert.That(_controller.PendingUsername, Is.Null);
+            AssertNoPartialIdentity();
+        }
+
         [TestCase(BackendErrorUtility.NetworkError, LoginFlowStatus.NetworkError)]
         [TestCase(BackendErrorUtility.Timeout, LoginFlowStatus.NetworkError)]
         [TestCase("INTERNAL_SERVER_ERROR", LoginFlowStatus.HydrationFailed)]
@@ -142,10 +154,11 @@ namespace Grimhold.Tests.Backend
         {
             public (bool success, TownSessionTicketResponse data, BackendError error) TicketResult;
             public int StashInitializations { get; private set; }
+            public BackendError LoginError;
 
             public Task<(bool success, LoginResult result, BackendError error)> PostLoginAsync(
                 BackendConfiguration config, string username, string password)
-                => Task.FromResult<(bool, LoginResult, BackendError)>((true, new LoginResult { token = Token }, default));
+                => Task.FromResult<(bool, LoginResult, BackendError)>((string.IsNullOrEmpty(LoginError.error), new LoginResult { token = Token }, LoginError));
 
             public Task<(bool success, CharacterData data, BackendError error)> GetCharacterAsync(
                 BackendConfiguration config, string token)

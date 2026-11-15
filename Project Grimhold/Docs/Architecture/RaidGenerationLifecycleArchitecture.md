@@ -71,6 +71,10 @@ runner-scoped cleanup. Fusion Host Migration remains valid only while the phase 
 Cleanup attempts every object and records failures. A partial cleanup publishes a
 diagnostic failure and keeps the session closed. Persistence failures remain in the
 pending barrier until `PlayerExtractionLootSaver` retries or confirms the transaction.
+The persistence timer is diagnostic only: expiration never releases this barrier, and a missing
+timer is armed while waiting. Only pending extracted participants with Input Authority can still
+ACK and hold the barrier. Retained disconnected participants without Input Authority do not
+hold closure; their retained participant/avatar objects remain protected from world cleanup.
 
 Validation must distinguish compilation, EditMode, PlayMode and manual Host/Client
 evidence. Two consecutive raids must not retain objects, seeds, registry entries or

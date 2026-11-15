@@ -107,6 +107,20 @@ public sealed class RemoteShopTransactionServiceTests
     }
 
     [Test]
+    public async Task V2_AlreadySecuredWithMissingLocalReceipt_ReconcilesWithoutReapplyingTrade()
+    {
+        Seed(95, 1); // Cache already hydrated the durable trade, but its receipt was damaged.
+        string before = LocalProfileSaveCodec.Encode(_repository.Snapshot);
+        _tradeResponse = new ShopTransactionResult { alreadySecured = true, revision = 8 };
+        Assert.That(await _service.ExecuteTradeAsync(Profile, Ticket()), Is.EqualTo(StashOperationResult.Success));
+        Assert.That(LocalProfileSaveCodec.Encode(_repository.Snapshot), Is.EqualTo(before));
+        Assert.That(_calls, Is.EqualTo(1));
+        Assert.That(_commits, Is.Zero);
+        Assert.That(_reconciliations, Is.EqualTo(1));
+        LogAssert.NoUnexpectedReceived();
+    }
+
+    [Test]
     public async Task BackendAcknowledgedButLocalDiskFails_StillReportsDurableSuccessAndReconciles()
     {
         _failLocalWrites = true;

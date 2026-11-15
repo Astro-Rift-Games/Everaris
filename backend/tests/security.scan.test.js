@@ -3,7 +3,19 @@ const assert = require('node:assert/strict');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { scanContent, scanDirectory, scanHistoryOutput, redact } = require('../../tools/security/scan-secrets');
+const { EventEmitter } = require('node:events');
+const { PassThrough } = require('node:stream');
+const { scanContent, scanDirectory, scanGitHistory, scanHistoryOutput, runCli, redact } = require('../../tools/security/scan-secrets');
+
+function fakeGit(action) {
+  return () => {
+    const git = new EventEmitter();
+    git.stdout = new PassThrough();
+    git.stderr = new PassThrough();
+    process.nextTick(() => action(git));
+    return git;
+  };
+}
 
 describe('Secret Scanner Unit Tests (US-61 / SEC-61.2)', () => {
   test('history output reports commit and path without exposing the raw key', () => {
@@ -26,6 +38,144 @@ describe('Secret Scanner Unit Tests (US-61 / SEC-61.2)', () => {
     assert.equal(JSON.stringify(findings).includes(fakeKey), false);
     assert.match(findings[0].redactedValue, /\*/);
     assert.deepEqual(scanHistoryOutput(''), []);
+  });
+
+  test('history parsing uses new-file hunk line numbers and skips ignored extensions', async () => {
+    const key = 'ghp_' + 'S'.repeat(36);
+    const history = [
+      'commit abcdef0123456789', '+++ b/backend/config.js',
+      '@@ -8,2 +40,3 @@', '-removed', ' context', '+harmless', '+' + key,
+      '@@ -80 +95 @@', '+' + key,
+      '+++ b/image.PNG', '@@ -0,0 +1 @@', '+' + key,
+      '+++ b/backend/security.scan.test.js', '+' + key,
+      '+++ b/node_modules/example.js', '+' + key
+    ].join('\n');
+    const expected = [42, 95].map(line => ({
+      file: 'git:abcdef01:backend/config.js', line, type: 'GITHUB_TOKEN',
+      redactedValue: redact(key), category: 'CRITICAL'
+    }));
+    assert.deepEqual(scanHistoryOutput(history), expected);
+    const findings = await scanGitHistory('.', fakeGit(git => {
+      git.stdout.end(history);
+      git.stdout.on('end', () => git.emit('close', 0));
+      git.stderr.end();
+    }));
+    assert.deepEqual(findings, expected);
+  });
+
+  for (const [label, action, message] of [
+    ['spawn event', git => git.emit('error', new Error('synthetic failure')), 'could not start git log'],
+    ['nonzero exit', git => {
+      git.stderr.end('fatal: synthetic diagnostic');
+      git.stdout.end();
+      git.stdout.on('end', () => git.emit('close', 128));
+    }, 'git log exited with code 128 (stderr received; contents withheld)'],
+    ['signal termination', git => {
+      git.stdout.end();
+      git.stdout.on('end', () => git.emit('close', null, 'SIGTERM'));
+    }, 'git log terminated by signal SIGTERM'],
+    ['stdout error', git => git.stdout.emit('error', new Error('synthetic failure')), 'could not read git log stdout'],
+    ['stderr error', git => git.stderr.emit('error', new Error('synthetic failure')), 'could not read git log stderr']
+  ]) {
+    test(`history fails closed on ${label}, including CLI exit and output`, async () => {
+      const scanHistory = root => scanGitHistory(root, fakeGit(action));
+      await assert.rejects(scanHistory('.'), { message });
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grimhold-history-test-'));
+      try {
+        const stdout = [];
+        const stderr = [];
+        const code = await runCli(tmpDir, {
+          scanHistory, log: text => stdout.push(text), error: text => stderr.push(text)
+        });
+        assert.equal(code, 1);
+        assert.deepEqual(stdout, [
+          `[SecretScanner] Scanning directory (up to 25 MB per file, including Unity YAML assets): ${tmpDir}`,
+          '[SecretScanner] Scanning complete repository Git history...'
+        ]);
+        assert.deepEqual(stderr, [`[SecretScanner] [ERROR] Git history scan failed: ${message}. Scan incomplete.`]);
+        assert.deepEqual(fs.readdirSync(tmpDir), []);
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
+  }
+
+  test('history rejects synchronous spawn failure', async () => {
+    await assert.rejects(scanGitHistory('.', () => { throw new Error('synthetic failure'); }),
+      { message: 'could not start git log' });
+  });
+
+  test('successful history waits for process close after stdout ends', async () => {
+    let processHandle;
+    let settled = false;
+    const result = scanGitHistory('.', fakeGit(git => {
+      processHandle = git;
+      git.stdout.end();
+      git.stderr.end();
+    })).then(findings => { settled = true; return findings; });
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(settled, false);
+    processHandle.emit('close', 0);
+    assert.deepEqual(await result, []);
+  });
+
+  test('clean CLI retains success output and exit code', async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grimhold-history-test-'));
+    try {
+      const stdout = [];
+      const stderr = [];
+      const code = await runCli(tmpDir, {
+        scanHistory: root => scanGitHistory(root, fakeGit(git => {
+          git.stdout.end();
+          git.stderr.end();
+          git.stdout.on('end', () => git.emit('close', 0));
+        })),
+        log: text => stdout.push(text), error: text => stderr.push(text)
+      });
+      assert.equal(code, 0);
+      assert.deepEqual(stdout, [
+        `[SecretScanner] Scanning directory (up to 25 MB per file, including Unity YAML assets): ${tmpDir}`,
+        '[SecretScanner] Scanning complete repository Git history...',
+        '[SecretScanner] Scan complete: No exposed credentials, OAuth secrets, or private keys detected in working tree or Git history.'
+      ]);
+      assert.deepEqual(stderr, []);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  test('CLI preserves critical exit and classified development-marker reporting', async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grimhold-history-test-'));
+    try {
+      const stdout = [];
+      const stderr = [];
+      const key = 'ghp_' + 'S'.repeat(36);
+      const code = await runCli(tmpDir, {
+        scanHistory: root => scanGitHistory(root, fakeGit(git => {
+          git.stdout.end([
+            'commit abcdef0123456789', '+++ b/backend/config.js',
+            '@@ -0,0 +1,2 @@', '+' + key,
+            '+WEBHOOK_SECRET=dev-webhook-secret-do-not-use-in-prod'
+          ].join('\n'));
+          git.stderr.end();
+          git.stdout.on('end', () => git.emit('close', 0));
+        })),
+        log: text => stdout.push(text), error: text => stderr.push(text)
+      });
+      assert.equal(code, 1);
+      assert.deepEqual(stdout, [
+        `[SecretScanner] Scanning directory (up to 25 MB per file, including Unity YAML assets): ${tmpDir}`,
+        '[SecretScanner] Scanning complete repository Git history...',
+        '[SecretScanner] [INFO] Detected 1 classified known development secret/marker(s) (redacted):',
+        `  - git:abcdef01:backend/config.js:2 | [KNOWN_DEV_SECRET] Value: ${redact('dev-webhook-secret-do-not-use-in-prod')}`
+      ]);
+      assert.deepEqual(stderr, [
+        '[SecretScanner] [ALERT] Detected 1 critical potential secret(s):',
+        `  - git:abcdef01:backend/config.js:1 | [GITHUB_TOKEN] Value: ${redact(key)}`
+      ]);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
   });
 
   test('redact() replaces middle/trailing characters with asterisks', () => {

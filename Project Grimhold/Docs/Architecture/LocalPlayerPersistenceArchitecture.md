@@ -64,17 +64,29 @@ and applying shop receipt idempotency. No other Commerce component mutates the L
 `LocalProfileStore`, and no replicated inventory shadow participates. Draft, presentation, stock
 and request-identity ownership belong to `CommerceArchitecture.md`.
 
+Cache decoding skips and logs individual invalid, duplicate or foreign-profile shop receipts,
+retaining valid receipts, the shop idempotency watermark and every other profile field, including
+`PendingExtractionCommit`. A rejected shop receipt alone does not trigger backup restoration or
+authenticated corrupt-cache replacement. Each warning identifies only the receipt index and validation
+reason, never raw receipt/profile data. A legacy v2 shop `alreadySecured` response uses ordinary
+reconciliation instead of replaying the advisory ticket locally, even if a damaged receipt was
+skipped. Repository pre-save validation remains strict: an invalid,
+duplicate or foreign-profile receipt rejects the candidate without writing or publishing it.
+Unknown-catalog equipment retains its instance identity and transport-valid modifiers (including
+ID-free pending extraction units); an instance still requires amount one. Template validation resumes
+when the definition is available. Other profile validation and main-file IO safeguards remain unchanged.
+
 The productive `LocalProfileRepository` validates candidate identity and codec compatibility,
 then calls the file store's atomic-write operation before publishing a cloned Snapshot as Ready.
-The current save contract is schema **11**; schemas 1–10 remain readable. Item data and prepared
+The current save contract is schema **13**; schemas 1–12 remain readable. Schema 13 adds the nullable `pendingDefeatCommit` receipt; older profiles without it decode with no pending defeat. Item data and prepared
 Equipment retain the instance block from [Item Instances §§4.1, 6.1](ItemInstanceArchitecture.md#61-local-persistence).
 Codec v10 introduced physical `slot` positions and the separate backend `inventorySchemaVersion`;
 earlier decode assigns list indices as slots (including reservation items), retains the earlier
 schema-specific migrations and marks inventory as version 1. Local decode never migrates the backend.
 A v10 equipment stack decodes into plain instances without IDs only as transient cache state until
-backend hydration; legacy equipment-ownership repair never runs on v11. Cache-only initialization
+backend hydration; legacy equipment-ownership repair never runs on v11 or later. Cache-only initialization
 (including Editor domain reload) can publish the Store without backend hydration. Decoding schemas 1–10 therefore sets `RequiresEquipmentHydration`, preserved by subsequent
-v11 cache saves until an inventory hydration succeeds. Local Equip/Unequip, Stash Equip and remote
+current cache saves until an inventory hydration succeeds. Local Equip/Unequip, Stash Equip and remote
 prepared-equipment updates reject while it is set; gem install requires a backend-issued instance ID.
 Unity never synthesizes IDs for those transient entries (Item Instances §9).
 Pending extraction preserves per-unit modifiers. After a successful backend extraction commit,
@@ -174,7 +186,7 @@ Extraction and unequip still target Loadout, not Stash.
 
 ### Inventory order
 
-Physical Town positions persist through the Store, codec v11 and backend v3. Responses and local
+Physical Town positions persist through the Store, the current codec and backend v3. Responses and local
 lists are ordered by slot, but array index is not a slot address. The Stash screen projects holes
 and pages by slot ranges. Take All / Leave All are a single `POST /character/me/inventory/transfer-all`
 and at most one revision-guarded write: the backend evaluates every source `(slot, lootId)` entry in
@@ -305,6 +317,83 @@ Backup restore is safe only inside the window before the first post-migration wr
 is independent of migration/protocol activation; the TASK-282 "Dividir" UI calls it and reports the remote
 failure while the flag is off.
 
+### Backend error classification and retry (FIX-26)
+
+`BackendErrorClassifier` is pure C# and defines the client operational classes below.
+Unknown codes fail closed as terminal; transport classification remains exclusively in
+`BackendErrorUtility.IsTransportFailure` (including its existing cancellation behavior).
+
+| Class | Codes | Client action |
+| --- | --- | --- |
+| Retryable | `TOO_MANY_REQUESTS`, `CONCURRENT_MUTATION`, `EXTRACTION_RESULT_PENDING`, `NO_AUTHORITATIVE_RESULT` | Bounded backoff for idempotent operations |
+| Conflict | `REVISION_CONFLICT`, `RESULT_CONFLICT`, `RESULT_RESERVATION_MISMATCH`, `RESERVATION_MISMATCH`, `RESERVATION_RAID_MISMATCH` | Stop blind retry; re-read authoritative state before another operation |
+| Terminal | `RESULT_ALREADY_CONSUMED`, `LOADOUT_NOT_EMPTY`, `PREPARED_WEAPON_REQUIRED`, `RESERVATION_ADMITTED`, `RESERVATION_PENDING`, `NO_ACTIVE_RESERVATION`, `EXCEEDS_*`, `HOST_NOT_IN_RAID`, `INVALID_HOST_SIGNATURE`, `UNKNOWN_LOOT_ID`, `INSUFFICIENT_*`, `BUYBACK_ENTRY_NOT_FOUND`, `ITEM_NOT_FOUND`, `INVALID_QUANTITY`, `VALIDATION_FAILED`, `TRANSACTION_RETENTION_EXCEEDED` | No automatic retry; Spanish guidance from `BackendErrorMessages` |
+
+`RESULT_ALREADY_CONSUMED` is an idempotent success **only for a commit**, not for result
+publication. Extraction HTTP clients require authoritative inventory metadata whose
+`lastAppliedExtractionReceipt` matches the exact raid and sequence before returning `alreadySecured`.
+Defeat metadata exposes no raid-bound receipt, so `RESULT_ALREADY_CONSUMED` stays a rejection;
+an exact defeat replay already acknowledged by the server remains success. No default revision or
+locally fabricated inventory is applied. Extraction still passes through `CompleteExtractionAsync`
+and its matching-receipt validation; the remote service does not save extraction revision early.
+For extraction, a failed metadata fetch or hydration retains the pending payload for the existing login recovery.
+This does not resolve superseded pending-receipt recovery described above.
+
+`RemoteIdempotentRetryPolicy.MaxRetries = 3` means **three total attempts**, not three additional
+retries. Retryable and transport failures wait 1 s, then 2 s between attempts; the exponential
+schedule and honored hints are bounded to 30 s. A positive server wait hint is a minimum;
+a hint above 30 s ends in-session retry immediately without waiting (extraction retains login
+recovery), rather than retrying sooner than requested or blocking runner shutdown. Other
+terminal/conflict outcomes return immediately. Exactly five `RemoteInventoryService` operations
+opt into bounded `REVISION_CONFLICT` retry: save/admit/clear/rollback reservation and unified
+extraction commit. Those endpoints re-read authoritative revision **server-side** and do not
+replay a client `expectedRevision`. Defeat commit and both publications retain stop-on-conflict.
+Loss clear treats `EXTRACTION_RESULT_PENDING` as an expected outcome: one attempt, no delay and
+no error-level log for that code.
+
+The existing one-request, revision-guarded Town move/order/split, Equipment and commerce flows
+are not added to this policy: their reconcile-once/stop-without-retry boundaries above remain.
+In-session unified extraction and defeat commits use this single retry budget, never nested
+retry loops. Extraction exhaustion retains the existing retry-at-login recovery. Review finding M4 adds durable defeat login replay after exhaustion: `PendingDefeatCommit` is
+written with the local progression/loss transaction. The record is `{ receipt: { raidId, profileId,
+resultSequence, consolidatedExperience, resultingLevel }, reservationId }`. The played reservation
+ID comes from participant admission (or the current reservation for direct Store callers); login
+never orphan-rolls it back, and completion discards only that exact reservation, preserving a newer
+one. The receipt survives codec round trips and process restart. It carries no loot
+or newly calculated reward. Ordinary hydration preserves pending defeat progression, attributes,
+watermark and receipts until replay confirms the backend outcome. The bootstrapper never rolls
+back this participation's orphan reservation. Both login and the live path use
+`RetryPendingDefeatAsync` through `RemoteInventoryService` and its single bounded retry budget.
+A successful response, including the endpoint's receipt-proven `alreadySecured`, atomically
+hydrates level/XP/attributes/revision and clears only the matching pending record through
+`TryCompleteDefeatCommit`. Invalid/stale responses and repository-write failures leave the current
+snapshot and pending record intact. `RESULT_ALREADY_CONSUMED` without proof remains a rejection.
+A pending defeat does not block new loadout reservations, but another defeat cannot overwrite its
+receipt. Completion and retirement clear only the played reservation ID, never a newer reservation;
+null or empty participant IDs fall back to the current reservation when the defeat is first stored.
+Failures retain the receipt for login retry except `422 NO_AUTHORITATIVE_RESULT`: the backend can no
+longer credit that result, so live and login replay atomically retire the matching receipt and emit
+one warning after the save succeeds. Before ordinary authoritative reconciliation, both callers
+loss-clear the backend reservation with `ClearPendingReservationAsync(pending.ReservationId)`.
+The expected-ID guard targets only the played reservation, never a newer one; an absent played ID
+never invokes unguarded cleanup. If loss-clear fails, retirement still stands and the next login's
+orphan recovery owns cleanup. Reconciliation can replace the former optimistic defeat progression
+now that no pending receipt protects it.
+Retirement is not a successful credit. If the retirement write fails, the receipt remains; if the
+subsequent hydration fails, the receipt stays retired and later ordinary hydration owns progression.
+The local cache commit and Fusion ACK are not delayed by backend retries. Per-operation `BackendCommitFeedback` is a local
+presentation projection, not a second persistence store or replicated gameplay state. The raid
+menu/Results status shows Spanish saving/retrying, deferred-until-login (all extraction failures,
+including terminal/conflict, since the pending record is kept) or defeat login-deferral guidance
+except for an uncreditable result, which explicitly says its defeat XP could not be saved,
+without raw codes and without changing Return eligibility. A second defeat rejected locally with
+`ReservationPending` stops local frame retries and explicitly reports that this defeat could not
+be recorded locally because another defeat is pending; it is not presented as saved or retryable
+at login. Text is cached per feedback state,
+not formatted each frame. Extraction preserves the local loot confirmation and progression
+correction before the backend status on the next line. Extraction reports saved only after
+its existing authoritative hydration succeeds.
+
 ### Progression transaction
 
 `LastAppliedProgressionResultSequence` is the aggregate's at-most-once mechanism. A new
@@ -397,7 +486,7 @@ the same migration. Earlier schemas did not distinguish
 the former exclusive implementation from the temporary non-owning implementation. Decoding treats
 a complete Inventory reference set as the latter and subtracts one unit per prepared slot; if the
 complete set is absent, it preserves Inventory unchanged as an earlier exclusive save. The check is
-all-or-nothing. This describes the schema-4 migration; new saves write schema 11 and never run
+all-or-nothing. This describes the schema-4 migration; new saves write schema 13 and never run
 this legacy ownership repair ([Item Instances §6.1](ItemInstanceArchitecture.md#61-local-persistence)).
 
 TASK-330 originally kept this migration local. The current prepared-Equipment adapter sends all
@@ -530,8 +619,12 @@ An admitted reservation is never rolled back: rollback returns `409 RESERVATION_
 launch never restores its items. No pre-start refund exists: the backend has no server-side "raid
 started" marker, so a refund window from `admittedAt` would be self-attested; it is a separate
 follow-up (FIX-53 does not implement it) and needs backend and Game Design approval. A loss clear or a replacement while an unconsumed
-`AuthoritativeExtractionResult` targets the character returns `409 EXTRACTION_RESULT_PENDING`, so
-extracted loot is never discarded. On login, an admitted reservation without a local pending
+`AuthoritativeExtractionResult` with non-empty `items` or any non-empty `preparedEquipment` slot
+targets the character returns `409 EXTRACTION_RESULT_PENDING`, so extracted loot, including
+equipment-only results, is never discarded. Empty slots are absent, null, `''`, the legacy string
+`'null'` or an empty object `{}` in both defeat validation and the loss-clear database filter.
+Empty ownership is defeat-compatible under the current publish contract and does not block
+loss-clear or subsequent defeat XP credit. On login, an admitted reservation without a local pending
 extraction commit is discarded locally without restoring items and cleared on the backend as a loss;
 a pending extraction commit keeps its retry path. Previously admission deleted the backend
 reservation, which made every player-hosted extraction publish fail with `NO_ACTIVE_RESERVATION`
@@ -568,7 +661,15 @@ Closing the application or crashing mid-Raid remains a loss without any notice: 
 capture it and the loss is only cleared on the next login (accepted exception, FIX-53 S6). Neither the
 notice nor the cleanup changes the rule above: admitted reservations are never rolled back.
 
-The backend retains guarded reservation rollback support for callers that supply a reservation ID. `DELETE /character/me/inventory/reservation?rollback=true`
+**Reservation identity binding (FIX-22).** Unity loss clear and orphan rollback send
+`expectedReservationId`, captured before local confirmation/rollback removes the reservation. The
+participation coordinator retains the launch/reconnect reservation proof after admission consumes
+the local pending snapshot; transport retries resend that same proof, never a newer Store value.
+Login also binds remote-only orphan cleanup to the ID in the authenticated inventory payload.
+Only a participation with no local reservation proof (for example a legacy reconnect ticket with
+no reservation ID) retains the legacy omitted-ID cleanup behavior.
+
+The backend retains guarded reservation clear and rollback support for callers that supply a reservation ID. `DELETE /character/me/inventory/reservation?rollback=true`
 accepts optional `expectedReservationId` (query, or request body when omitted from the query). It must
 be a 1–128 character identifier containing only letters, digits, `_` or `-`; invalid values return
 `400 VALIDATION_FAILED`. A different active ID returns `409 RESERVATION_MISMATCH` without writes.
@@ -603,7 +704,7 @@ durable guarantee.
 
 ## Temporary limitations and failure policy
 
-- The per-profile schema-11 file cache survives process exit but is not backend authority.
+- The per-profile schema-13 file cache survives process exit but is not backend authority.
 - PlayerPrefs never supplies a productive identity. Unsupported or unreadable caches block hydration;
   confirmed corruption can be replaced only through the explicit authenticated flow above.
 - A backend load failure must remain visible and must not be replaced by a generated identity or

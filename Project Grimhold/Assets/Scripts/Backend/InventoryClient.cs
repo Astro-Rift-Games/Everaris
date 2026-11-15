@@ -195,11 +195,14 @@ namespace Grimhold.Backend
 
         /// <summary>
         /// Consumes the pending reservation as a loss, without restoring reserved ownership.
+        /// When supplied, expectedReservationId protects a newer reservation from late cleanup.
         /// </summary>
         public static async Task<(bool success, ClearPendingReservationResult data, BackendError error)>
-            ClearPendingReservationAsync(BackendConfiguration config, string token)
+            ClearPendingReservationAsync(BackendConfiguration config, string token, string expectedReservationId = null)
         {
             var url = $"{config.BaseUrl}/character/me/inventory/reservation";
+            if (expectedReservationId != null)
+                url += "?expectedReservationId=" + System.Uri.EscapeDataString(expectedReservationId);
             using var request = InventoryProtocol.Delete(url);
             request.SetRequestHeader("Authorization", $"Bearer {token}");
             // DELETE needs a download handler to read the response body.
@@ -244,7 +247,13 @@ namespace Grimhold.Backend
             CommitExtractionAsync(BackendConfiguration config, string token, CommitExtractionRequest request)
         {
             var url = $"{config.BaseUrl}/character/me/inventory/extraction";
-            return await PostJson<CommitExtractionRequest, CommitExtractionResult>(config, token, url, request);
+            var response = await PostJson<CommitExtractionRequest, CommitExtractionResult>(config, token, url, request);
+            if (response.success || response.error.error != "RESULT_ALREADY_CONSUMED") return response;
+            var inventory = await GetInventoryAsync(config, token);
+            if (!inventory.success) return (false, default, inventory.error);
+            return MatchesReceipt(inventory.data.lastAppliedExtractionReceipt, request.raidId, request.resultSequence)
+                ? (true, new CommitExtractionResult { alreadySecured = true, loadout = inventory.data.loadout }, default)
+                : response;
         }
 
         /// <summary>
@@ -254,7 +263,17 @@ namespace Grimhold.Backend
             CommitExtractionUnifiedAsync(BackendConfiguration config, string token, CommitExtractionUnifiedRequest request)
         {
             var url = $"{config.BaseUrl}/character/me/extraction/commit";
-            return await PostJson<CommitExtractionUnifiedRequest, CommitExtractionUnifiedResult>(config, token, url, request);
+            var response = await PostJson<CommitExtractionUnifiedRequest, CommitExtractionUnifiedResult>(config, token, url, request);
+            if (response.success || response.error.error != "RESULT_ALREADY_CONSUMED") return response;
+
+            // Already credited is success only at the commit boundary, never at publication.
+            // Read metadata rather than inventing a revision or applying a default snapshot.
+            var inventory = await GetInventoryAsync(config, token);
+            if (!inventory.success) return (false, default, inventory.error);
+            return MatchesReceipt(inventory.data.lastAppliedExtractionReceipt, request.raidId, request.resultSequence)
+                ? (true, new CommitExtractionUnifiedResult
+                    { alreadySecured = true, revision = inventory.data.revision, loadout = inventory.data.loadout }, default)
+                : response;
         }
 
         /// <summary>
@@ -264,8 +283,14 @@ namespace Grimhold.Backend
             CommitDefeatUnifiedAsync(BackendConfiguration config, string token, CommitDefeatUnifiedRequest request)
         {
             var url = $"{config.BaseUrl}/character/me/defeat/commit";
+            // Progression metadata exposes only a sequence watermark, not a raid-bound receipt.
+            // RESULT_ALREADY_CONSUMED alone cannot prove this defeat was credited. Exact idempotent
+            // replays already return success from the server; preserve every other rejection.
             return await PostJson<CommitDefeatUnifiedRequest, CommitDefeatUnifiedResult>(config, token, url, request);
         }
+
+        private static bool MatchesReceipt(ExtractionReceiptData receipt, string raidId, int sequence) =>
+            !string.IsNullOrEmpty(raidId) && sequence > 0 && receipt.raidId == raidId && receipt.resultSequence == sequence;
 
         /// <summary>
         /// Host-only: Publishes the authoritative extraction result signed with an HMAC.
@@ -330,7 +355,8 @@ namespace Grimhold.Backend
                 }
             }
 
-            var err = ParseError(request);
+            var err = BackendRetrySchedule.WithRetryAfter(ParseError(request),
+                request.GetResponseHeader("Retry-After"), System.DateTimeOffset.UtcNow);
             return (false, default, err);
         }
 

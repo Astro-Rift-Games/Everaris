@@ -4,10 +4,12 @@
 const config = require('./config/env');
 const { connectToDatabase } = require('./db/connection');
 const app = require('./app');
+const { checkAuthoritativeResultIndexes } = require('./db/authoritativeResultIndexes');
 
 async function start() {
   try {
     await connectToDatabase(config.mongodbUri);
+    await checkAuthoritativeResultIndexes();
     app.listen(config.port, '0.0.0.0', () => {
       console.log('[Server] Running on port ' + config.port + '.');
     });

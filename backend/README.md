@@ -597,6 +597,42 @@ Cambio de ofertas existentes: `healthpotion` compra **20 → 40**, venta **10 �
 Se incorporan además las ofertas Unity antes ausentes (sin cambiar eligibility legacy de equipo).
 Los valores de gemas provienen de sus LootDefinitions; no se duplica aquí su daño Unity.
 
+## Resultados autoritativos: unicidad y dedupe (FIX-22)
+
+`authoritativeextractionresults` requiere índices **unique** `{resultId:1}` y
+`{raidId:1,accountId:1}`. La publicación concurrente equivalente es idempotente;
+recompensas distintas devuelven `409 RESULT_CONFLICT` y resultados consumidos
+`409 RESULT_ALREADY_CONSUMED`. El índice TTL `{createdAt:1}`, 86400 segundos, no cambia.
+Al arrancar se intenta construir los índices y se comprueba su existencia real: si faltan,
+se registra un error claro **sin cerrar el servidor**; ese aviso no garantiza unicidad.
+
+Desde `backend/` (usa `MONGODB_URI` del entorno/archivo local, nunca imprime la URI):
+
+```sh
+node scripts/dedupe_authoritative_results.js --help
+node scripts/dedupe_authoritative_results.js
+node scripts/dedupe_authoritative_results.js --apply
+```
+
+Por defecto/`--dry-run` no escribe. Agrupa por ambas claves, prioriza consumidos y luego
+el menor `createdAt`; `_id` desempata (fecha ausente se trata como la más antigua).
+Resuelve claves solapadas en ese orden global: cada documento conservado reclama ambas
+claves. No fusiona recompensas ni receipts. `--apply` elimina sólo documentos perdedores de
+esa colección; no toca personajes, otras colecciones ni índices. Summary JSON:
+`dryRun,scanned,duplicateResultIds,duplicateRaidAccounts,kept,plannedDeletes,deleted`.
+Exit 0: éxito/help; 1: fallo de base; 2: argumentos inválidos.
+
+**Despliegue con datos existentes:** el dueño prepara backup y prueba dry-run en una copia;
+pone mantenimiento y drena todos los writers antes del dry-run definitivo y `--apply`.
+Revisar summary (incluidos duplicados consumidos: el script no revierte créditos históricos).
+Después, inspeccionar índices: si existe el antiguo `resultId_1` **no unique**, retirarlo
+explícitamente durante mantenimiento y reconstruirlo como unique; dedupe por sí solo no
+convierte ese índice. Reiniciar el backend para construir/comprobar los índices requeridos,
+verificar ambos unique y el TTL, y sólo entonces reabrir tráfico con writers actualizados.
+No usar `syncIndexes` ni borrar otros índices/colecciones. Una advertencia de arranque requiere
+corrección del dueño antes de considerar desplegada la garantía. Ejecutar esto en Render u
+otro entorno desplegado requiere autorización explícita; esta entrega no lo ejecuta.
+
 ## Atlas Network Access
 
 Si se usa MongoDB Atlas, agregar la IP del equipo en **Network Access** antes de iniciar el servidor.

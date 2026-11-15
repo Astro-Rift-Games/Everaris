@@ -184,7 +184,12 @@ Players keep the same `NetworkPlayer` identity after defeat. The prefab composes
 
 The defeated player then uses the same interaction and transfer route as every
 other container. There is no corpse-specific RPC, transaction, controller,
-registry capability, or presentation mode. Removing the last stack increments
+registry capability, or presentation mode. Post-clear compensation must recapture and exact-clear any remaining player ownership before
+enabling the retained corpse. Capture or exact-clear failure is diagnosed and leaves the corpse
+unavailable in terminal Failed state, rather than exposing duplicated units. Forced-defeat
+liquidation also diagnoses capture/clear failures and publishes its loss summary only after clear.
+
+Removing the last stack increments
 the existing change sequence but does not make the container unavailable or
 despawn the player.
 

@@ -80,6 +80,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
     private bool _raidAdmissionConfirmed;
     private bool _loadoutConfirmationPending;
     private string _reservationParticipationRaidId;
+    private string _reservationParticipationReservationId;
     private NetworkRunner _hostMigrationSourceRunner;
     private Task _participationOutcomeTask = Task.CompletedTask;
     private readonly RaidLossNoticeSlot _lossNotice = new();
@@ -1260,6 +1261,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             _currentProfileId = ticket.LaunchContext.LocalProfileId;
             _currentRaidGenerationId = ticket.LaunchContext.RaidCode.RaidId;
             _reservationParticipationRaidId = _currentRaidGenerationId;
+            _reservationParticipationReservationId = ticket.HasLoadoutReservation ? ticket.LoadoutReservation.ReservationId : null;
             _currentSessionName = ticket.Request.SessionName;
             _currentRole = ticket.Request.Role;
 
@@ -1447,6 +1449,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             _currentProfileId = ticket.ProfileId;
             _currentRaidGenerationId = ticket.RaidGenerationId;
             _reservationParticipationRaidId = _currentRaidGenerationId;
+            _reservationParticipationReservationId = string.IsNullOrEmpty(ticket.ReservationId) ? null : ticket.ReservationId;
             _currentSessionName = ticket.SessionName;
             _currentRole = RaidConnectionRole.Client;
             _activeReconnectTicket = null;
@@ -1829,6 +1832,9 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             _currentProfileId = launchContext.LocalProfileId;
             _currentRaidGenerationId = launchContext.RaidCode.RaidId;
             _reservationParticipationRaidId = _currentRaidGenerationId;
+            _reservationParticipationReservationId = _activeTicket.HasValue && _activeTicket.Value.HasLoadoutReservation
+                ? _activeTicket.Value.LoadoutReservation.ReservationId
+                : ResolveRecoveryStashContext()?.Store?.PendingReservation?.ReservationId;
             _currentSessionName = sessionName;
             _currentRole = role;
             TryConfirmActiveReservation();
@@ -2196,6 +2202,8 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
         // Consume the local departure guard before starting asynchronous work. Repeated Return,
         // Failed-state recovery and reconnect-ticket disposal cannot issue a second loss clear.
         _reservationParticipationRaidId = null;
+        string participationReservationId = _reservationParticipationReservationId;
+        _reservationParticipationReservationId = null;
         if (HasCommittedLocalExtraction(raidId)) return;
 
         ApplicationStashContext context = ResolveRecoveryStashContext();
@@ -2205,7 +2213,13 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             Debug.LogWarning($"[{nameof(SessionConnectionCoordinator)}] Loss cleanup unavailable; login will recover the orphan reservation.");
             return;
         }
-        RegisterParticipationOutcomeTask(ClearLostParticipationReservationAsync(service));
+        // Admission consumes PendingReservation locally. Keep the launch/reconnect proof for this
+        // participation rather than looking up a potentially newer reservation during a retry.
+        string reservationId = participationReservationId ??
+            (_activeTicket.HasValue && _activeTicket.Value.HasLoadoutReservation
+                ? _activeTicket.Value.LoadoutReservation.ReservationId
+                : context.Store.PendingReservation?.ReservationId);
+        RegisterParticipationOutcomeTask(ClearLostParticipationReservationAsync(service, reservationId));
     }
 
     /// <summary>Registers an asynchronous participation outcome (defeat commit, loss clear) to be awaited before runners are destroyed.</summary>
@@ -2272,9 +2286,9 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
         }
     }
 
-    private async Task ClearLostParticipationReservationAsync(RemoteInventoryService service)
+    private async Task ClearLostParticipationReservationAsync(RemoteInventoryService service, string expectedReservationId)
     {
-        var (success, error) = await service.ClearPendingReservationAsync();
+        var (success, error) = await service.ClearPendingReservationAsync(expectedReservationId);
         if (!success && error.error != "EXTRACTION_RESULT_PENDING")
         {
             Debug.LogWarning($"[{nameof(SessionConnectionCoordinator)}] Reservation loss cleanup failed: {error.error} - {error.message}");

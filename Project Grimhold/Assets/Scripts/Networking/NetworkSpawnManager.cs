@@ -275,8 +275,8 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             {
                 if (participantObject != null &&
                     participantObject.TryGetBehaviour(out NetworkRaidParticipant participant) &&
-                    (participant.State == RaidParticipantState.Extracted &&
-                      !participant.IsExtractionProgressionComplete))
+                    ShouldAwaitExtractionCommit(participant.State, participant.IsExtractionProgressionComplete,
+                        participantObject.InputAuthority != PlayerRef.None))
                 {
                     return true;
                 }
@@ -286,8 +286,8 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             {
                 if (participantObject != null &&
                     participantObject.TryGetBehaviour(out NetworkRaidParticipant participant) &&
-                    (participant.State == RaidParticipantState.Extracted &&
-                      !participant.IsExtractionProgressionComplete))
+                    ShouldAwaitExtractionCommit(participant.State, participant.IsExtractionProgressionComplete,
+                        participantObject.InputAuthority != PlayerRef.None))
                 {
                     return true;
                 }
@@ -296,6 +296,9 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             return false;
         }
     }
+
+    internal static bool ShouldAwaitExtractionCommit(RaidParticipantState state, bool complete, bool canAcknowledge) =>
+        state == RaidParticipantState.Extracted && !complete && canAcknowledge;
 
     public IReadOnlyDictionary<ProfileId, NetworkObject> RetainedPendingExtractionParticipants =>
         _retainedPendingExtractionParticipants;
@@ -5726,9 +5729,8 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
 
         if (!defeatApplied)
         {
-            defeatApplied = avatarObject != null
-                ? targetParticipant.TryMarkDefeated(avatarObject)
-                : targetParticipant.TryMarkDefeatedWithoutAvatar();
+            // Absence confirmation already required a resolvable avatar above.
+            defeatApplied = targetParticipant.TryMarkDefeated(avatarObject);
         }
 
         if (!defeatApplied)

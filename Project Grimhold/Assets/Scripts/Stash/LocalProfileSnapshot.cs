@@ -6,7 +6,7 @@ using System.Collections.Generic;
 /// </summary>
 public sealed class LocalProfileSnapshot
 {
-    public const int CurrentSchemaVersion = 12;
+    public const int CurrentSchemaVersion = 13;
     public const int MaxLoadoutSlots = 30;
     public const int MaxAppliedExtractionReceipts = 256;
     public const int MaxAppliedShopTransactionReceipts = 256;
@@ -29,6 +29,7 @@ public sealed class LocalProfileSnapshot
     public PreparedEquipmentLoadout PreparedEquipment { get; set; }
     public PendingLoadoutReservation PendingReservation { get; set; }
     public PendingExtractionCommit PendingExtractionCommit { get; set; }
+    public PendingDefeatCommit PendingDefeatCommit { get; set; }
     public List<ExtractionReceipt> AppliedExtractionReceipts { get; } = new();
     public long ShopIdempotencyWatermark { get; set; } = 0;
     public List<ShopTransactionReceipt> AppliedShopTransactionReceipts { get; } = new();
@@ -57,6 +58,7 @@ public sealed class LocalProfileSnapshot
             PreparedEquipment = PreparedEquipment,
             PendingReservation = PendingReservation?.Clone(),
             PendingExtractionCommit = PendingExtractionCommit,
+            PendingDefeatCommit = PendingDefeatCommit,
             ShopIdempotencyWatermark = ShopIdempotencyWatermark,
             PreparedAbilities = PreparedAbilities,
             QuickSlots = QuickSlots,

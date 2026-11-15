@@ -117,7 +117,13 @@ public static class ApplicationStashServiceBootstrapper
             _configuration.AbilityCatalog,
             _configuration.StashCapacity);
         bool? orphanRollback = null;
-        if (store.PendingExtractionCommit != null)
+        string orphanReservationId = store.PendingReservation?.ReservationId;
+        if (store.PendingDefeatCommit != null)
+        {
+            // Do not orphan-rollback either the played reservation or a later one. The
+            // receipt-bound completion discards only the exact played reservation in one write.
+        }
+        else if (store.PendingExtractionCommit != null)
         {
             Debug.LogWarning($"[{nameof(ApplicationStashServiceBootstrapper)}] Retrying pending extraction commit from a previous session crash.");
             
@@ -145,11 +151,6 @@ public static class ApplicationStashServiceBootstrapper
             else
                 orphanRollback = !admitted;
         }
-        else if (inventoryData.HasValue && !string.IsNullOrEmpty(inventoryData.Value.pendingReservation.reservationId))
-        {
-            Debug.LogWarning($"[{nameof(ApplicationStashServiceBootstrapper)}] Remote inventory has an orphaned reservation '{inventoryData.Value.pendingReservation.reservationId}' but local store has none. Clearing backend reservation as a loss.");
-            orphanRollback = false;
-        }
 
         var stashService = contextObject.AddComponent<InMemoryPlayerStashService>();
         var loadoutService = contextObject.AddComponent<InMemoryPlayerLoadoutService>();
@@ -161,7 +162,7 @@ public static class ApplicationStashServiceBootstrapper
         remoteInventoryService.Initialize(_configuration, store);
         if (orphanRollback.HasValue)
         {
-            _ = ClearOrphanedReservationAsync(remoteInventoryService, orphanRollback.Value);
+            _ = ClearOrphanedReservationAsync(remoteInventoryService, orphanRollback.Value, orphanReservationId);
         }
 
         // Add ProfileReconciliationService to handle automatic retry and hydration on conflicts
@@ -185,6 +186,11 @@ public static class ApplicationStashServiceBootstrapper
             if (!string.IsNullOrEmpty(authToken) && backendConfig != null)
                 _ = RetryPendingExtractionAsync(store, backendConfig, authToken, reconciliationService);
         }
+
+        if (store.PendingDefeatCommit != null)
+            _ = RetryPendingDefeatAsync(store, receipt => remoteInventoryService.CommitDefeatUnifiedAsync(receipt),
+                reconciliationService.ReconcileAsync,
+                async id => (await remoteInventoryService.ClearPendingReservationAsync(id)).success);
 
         _initializedProfileId = profileId;
         Debug.Log($"[{nameof(ApplicationStashServiceBootstrapper)}] Store initialized for ProfileId {profileId.Value}.");
@@ -252,6 +258,7 @@ public static class ApplicationStashServiceBootstrapper
     /// - QuickSlots
     /// - Shop receipts
     /// - PendingExtractionCommit
+    /// - PendingDefeatCommit and its unsent progression/attributes/receipt watermark
     /// - Off Hand weapon assignments
     ///
     /// Every input is validated before anything is written, so a rejected payload leaves the
@@ -307,7 +314,7 @@ public static class ApplicationStashServiceBootstrapper
             if (!PreparedAbilityLoadout.TryRevalidateAfterAttributeChange(
                     snapshot.PreparedAbilities,
                     abilityContext,
-                    state,
+                    snapshot.PendingDefeatCommit != null ? snapshot.CharacterAttributes : state,
                     abilityCatalog,
                     out PreparedAbilityLoadout revalidatedAbilities,
                     out string abilityError))
@@ -394,29 +401,26 @@ public static class ApplicationStashServiceBootstrapper
         if (progressionData.HasValue)
         {
             var prog = progressionData.Value;
-            snapshot.Level = prog.level > 0 ? prog.level : 1;
-            snapshot.CurrentExperience = prog.experience > 0 ? prog.experience : 0;
-            if (prog.lastAppliedProgressionResultSequence > 0)
+            if (snapshot.PendingDefeatCommit == null)
             {
-                snapshot.LastAppliedProgressionResultSequence = prog.lastAppliedProgressionResultSequence;
-                
-                var receipt = new ProgressionReceipt(
-                    "backend-sync",
-                    profileId,
-                    prog.lastAppliedProgressionResultSequence,
-                    snapshot.CurrentExperience,
-                    snapshot.Level);
-                    
-                snapshot.LastProgressionReceipt = receipt;
-                
-                // Limpiar el historial local e inyectar el recibo para pasar la validación estricta del Codec V5
-                snapshot.AppliedProgressionReceipts.Clear();
-                snapshot.AppliedProgressionReceipts.Add(receipt);
-            }
-            else
-            {
-                snapshot.LastAppliedProgressionResultSequence = 0;
-                snapshot.LastProgressionReceipt = null;
+                snapshot.Level = prog.level > 0 ? prog.level : 1;
+                snapshot.CurrentExperience = prog.experience > 0 ? prog.experience : 0;
+                if (prog.lastAppliedProgressionResultSequence > 0)
+                {
+                    snapshot.LastAppliedProgressionResultSequence = prog.lastAppliedProgressionResultSequence;
+                    var receipt = new ProgressionReceipt(
+                        "backend-sync", profileId, prog.lastAppliedProgressionResultSequence,
+                        snapshot.CurrentExperience, snapshot.Level);
+                    snapshot.LastProgressionReceipt = receipt;
+                    snapshot.AppliedProgressionReceipts.Clear();
+                    snapshot.AppliedProgressionReceipts.Add(receipt);
+                }
+                else
+                {
+                    snapshot.LastAppliedProgressionResultSequence = 0;
+                    snapshot.LastProgressionReceipt = null;
+                }
+                snapshot.CharacterAttributes = validatedAttributes.Value;
             }
             
             if (backendUnlockedAbilities != null)
@@ -425,7 +429,6 @@ public static class ApplicationStashServiceBootstrapper
                 snapshot.UnlockedAbilities.AddRange(backendUnlockedAbilities);
             }
 
-            snapshot.CharacterAttributes = validatedAttributes.Value;
             snapshot.PreparedAbilities = validatedAbilities.Value;
             snapshot.RemoteRevision = prog.revision;
         }
@@ -488,6 +491,39 @@ public static class ApplicationStashServiceBootstrapper
                 if (instance != null && instance.HasIdentity && !ids.Add(instance.InstanceId)) return false;
             }
         return true;
+    }
+
+    /// <summary>
+    /// Replays the exact durable receipt through the authenticated remote boundary. Only an
+    /// uncreditable NO_AUTHORITATIVE_RESULT retires a failed receipt, then uses ordinary hydration.
+    /// Other failures, including an unproven consumed result, retain it.
+    /// Shared by login and the live defeat path; the remote service owns bounded transport retries.
+    /// </summary>
+    public static async System.Threading.Tasks.Task<bool> RetryPendingDefeatAsync(
+        LocalProfileStore store,
+        System.Func<ProgressionReceipt, System.Threading.Tasks.Task<(bool success, CommitDefeatUnifiedResult result, BackendError error)>> commit,
+        System.Func<System.Threading.Tasks.Task<bool>> reconcile = null,
+        System.Func<string, System.Threading.Tasks.Task<bool>> clearLoss = null)
+    {
+        var pending = store.PendingDefeatCommit;
+        if (pending == null) return true;
+        var outcome = await commit(pending.Receipt);
+        if (!outcome.success)
+        {
+            if (outcome.error.error == "NO_AUTHORITATIVE_RESULT" &&
+                store.TryRetireDefeatCommit(pending.Receipt) == StashOperationResult.Success)
+            {
+                Debug.LogWarning("[ApplicationStashServiceBootstrapper] Pending defeat retired: the backend can no longer credit this result. Backend progression remains authoritative.");
+                // Never use the service's unguarded omitted-ID fallback for an old receipt.
+                // A failed clear leaves an orphan for the next login, but cannot keep XP pending.
+                if (clearLoss != null && !string.IsNullOrEmpty(pending.ReservationId))
+                    await clearLoss(pending.ReservationId);
+                if (reconcile != null) await reconcile();
+            }
+            // Retirement is not a successful credit; the live feedback must not report Saved.
+            return false;
+        }
+        return store.TryCompleteDefeatCommit(pending.Receipt, outcome.result) == StashOperationResult.Success;
     }
 
     private static async System.Threading.Tasks.Task RetryPendingExtractionAsync(
@@ -582,7 +618,8 @@ public static class ApplicationStashServiceBootstrapper
     public static StashOperationResult TryResolveOrphanedReservation(LocalProfileStore store, bool admitted)
     {
         if (store == null || !store.IsAvailable) return StashOperationResult.InvalidInventory;
-        if (store.PendingExtractionCommit != null) return StashOperationResult.ReservationPending;
+        if (store.PendingExtractionCommit != null || store.PendingDefeatCommit != null)
+            return StashOperationResult.ReservationPending;
         if (store.PendingReservation == null) return StashOperationResult.InvalidInventory;
         string reservationId = store.PendingReservation.ReservationId;
         return admitted
@@ -591,11 +628,11 @@ public static class ApplicationStashServiceBootstrapper
     }
 
     private static async System.Threading.Tasks.Task ClearOrphanedReservationAsync(
-        RemoteInventoryService service, bool rollback)
+        RemoteInventoryService service, bool rollback, string expectedReservationId)
     {
         var (success, error) = rollback
-            ? await service.RollbackPendingReservationAsync()
-            : await service.ClearPendingReservationAsync();
+            ? await service.RollbackPendingReservationAsync(expectedReservationId)
+            : await service.ClearPendingReservationAsync(expectedReservationId);
         // The loss service already warns for this protected authoritative result.
         // Do not retry as rollback, reconcile, or discard a pending extraction.
         if (!success && error.error != "EXTRACTION_RESULT_PENDING")

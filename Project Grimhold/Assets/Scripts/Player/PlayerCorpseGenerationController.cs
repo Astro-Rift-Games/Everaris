@@ -267,18 +267,34 @@ public sealed class PlayerCorpseGenerationController : NetworkBehaviour
             participantLink?.TryResolveParticipant(out participant);
         }
 
-        if (PlayerExpeditionLootSnapshot.TryCapture(_lootReceiver, _weaponEquipment, out PlayerExpeditionLootSnapshot snapshot, out string _))
-        {
-            if (participant != null)
-            {
-                PublishLostResultsSummary(snapshot);
-            }
+        TryLiquidateRemainingOwnership(publishSummary: participant != null);
+    }
 
-            if (_lootReceiver != null && _weaponEquipment != null)
+    private bool TryLiquidateRemainingOwnership(bool publishSummary)
+    {
+        CacheDependencies();
+        PlayerExpeditionLootSnapshot snapshot = null;
+        return TryLiquidateOwnership(
+            () =>
             {
-                snapshot.TryClearExact(_lootReceiver, _weaponEquipment, out _);
-            }
-        }
+                if (PlayerExpeditionLootSnapshot.TryCapture(_lootReceiver, _weaponEquipment, out snapshot, out string error)) return true;
+                Debug.LogError($"{nameof(PlayerCorpseGenerationController)}: Cannot capture remaining ownership for liquidation. {error}", this);
+                return false;
+            },
+            () =>
+            {
+                if (snapshot.TryClearExact(_lootReceiver, _weaponEquipment, out string error)) return true;
+                Debug.LogError($"{nameof(PlayerCorpseGenerationController)}: Cannot clear remaining ownership for liquidation. {error}", this);
+                return false;
+            },
+            () => { if (publishSummary) PublishLostResultsSummary(snapshot); });
+    }
+
+    internal static bool TryLiquidateOwnership(Func<bool> capture, Func<bool> clear, Action publish)
+    {
+        if (!capture() || !clear()) return false;
+        publish();
+        return true;
     }
 
     private void FailAndCompensate(
@@ -294,6 +310,14 @@ public sealed class PlayerCorpseGenerationController : NetworkBehaviour
         PlayerCorpseCompensationAction action = PlayerCorpseCompensationRule.DetermineCompensationAction(playerCleared);
         if (action == PlayerCorpseCompensationAction.PreserveAndEnableCorpse)
         {
+            // A successful clear call is not proof of empty ownership: the post-clear
+            // verification may have found leftovers. Never expose a duplicated corpse.
+            if (!TryLiquidateRemainingOwnership(publishSummary: false))
+            {
+                if (_lootContainer != null && _lootContainer.IsAvailable) _lootContainer.SetAvailability(false);
+                State = GenerationState.Failed;
+                return;
+            }
             if (_lootContainer != null && !_lootContainer.IsAvailable)
             {
                 _lootContainer.SetAvailability(true);

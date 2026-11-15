@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Reflection;
 using NUnit.Framework;
 using UnityEditor;
 
@@ -31,62 +28,28 @@ public sealed class RaidAbsoluteClosureTests
         Assert.That(config.CriticalPressureThresholdSeconds, Is.EqualTo(60));
     }
 
-    [Test]
-    public void NetworkRaidParticipant_DeclaresTryMarkDefeatedWithoutAvatar()
+    [TestCase(RaidParticipantState.Raiding, true, false, true)]
+    [TestCase(RaidParticipantState.Raiding, true, true, true)]
+    [TestCase(RaidParticipantState.Raiding, false, false, false)]
+    [TestCase(RaidParticipantState.Defeated, true, false, false)]
+    [TestCase(RaidParticipantState.Extracted, true, true, false)]
+    [TestCase(RaidParticipantState.Aborted, true, false, false)]
+    public void AvatarlessDefeat_OnlyAuthorityResolvesAnUnresolvedRaiderOnce(
+        RaidParticipantState initial, bool authority, bool disconnected, bool expected)
     {
-        MethodInfo method = typeof(NetworkRaidParticipant).GetMethod(
-            "TryMarkDefeatedWithoutAvatar",
-            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-        Assert.That(method, Is.Not.Null,
-            "NetworkRaidParticipant must provide TryMarkDefeatedWithoutAvatar() to resolve raiding participants without an avatar during absolute collapse.");
-    }
-
-    [Test]
-    public void AbsoluteClosure_SpawnManager_ResolvesParticipantWithoutAvatar()
-    {
-        string source = File.ReadAllText("Assets/Scripts/Networking/NetworkSpawnManager.cs");
-        string method = ReadMethod(source, "public void DefeatRemainingRaidingParticipantsForAbsoluteClosure");
-
-        Assert.That(method, Does.Contain("TryMarkDefeatedWithoutAvatar"),
-            "DefeatRemainingRaidingParticipantsForAbsoluteClosure must invoke TryMarkDefeatedWithoutAvatar() when avatar is unresolvable or after collapse.");
-        Assert.That(method, Does.Not.Contain("participant.TryMarkDefeated(avatar)"),
-            "DefeatRemainingRaidingParticipantsForAbsoluteClosure must not invoke TryMarkDefeated(avatar) with a null or unresolvable avatar.");
-    }
-
-    [Test]
-    public void MatchController_AdvanceClosure_GuardsDeadlineIsRunningAndBounded()
-    {
-        string source = File.ReadAllText("Assets/Scripts/Networking/NetworkMatchController.cs");
-        string method = ReadMethod(source, "private void AdvanceClosure");
-
-        Assert.That(method, Does.Contain("PersistenceDeadline.IsRunning"),
-            "AdvanceClosure must ensure PersistenceDeadline.IsRunning before waiting on pending extraction commits.");
-        Assert.That(method, Does.Contain("!PersistenceDeadline.Expired(Runner)"),
-            "AdvanceClosure must bound persistence wait with PersistenceDeadline.Expired.");
-    }
-
-    private static string ReadMethod(string source, string signature)
-    {
-        int start = source.IndexOf(signature, StringComparison.Ordinal);
-        Assert.That(start, Is.GreaterThanOrEqualTo(0), $"Signature '{signature}' not found.");
-        int bodyStart = source.IndexOf('{', start);
-        Assert.That(bodyStart, Is.GreaterThanOrEqualTo(0));
-
-        int depth = 0;
-        for (int i = bodyStart; i < source.Length; i++)
+        Assert.That(AbsoluteClosureRules.TryResolveDefeat(authority, initial, 7, disconnected,
+            out var state, out int sequence, out var cause), Is.EqualTo(expected));
+        Assert.That(state, Is.EqualTo(expected ? RaidParticipantState.Defeated : initial));
+        Assert.That(sequence, Is.EqualTo(expected ? 8 : 7));
+        Assert.That(cause, Is.EqualTo(!expected ? ExpeditionProgressionFinalizationCause.None
+            : disconnected ? ExpeditionProgressionFinalizationCause.DefeatWhileDisconnectedConfirmed
+            : ExpeditionProgressionFinalizationCause.DefeatConfirmed));
+        if (expected)
         {
-            if (source[i] == '{') depth++;
-            else if (source[i] == '}')
-            {
-                depth--;
-                if (depth == 0)
-                {
-                    return source.Substring(start, i - start + 1);
-                }
-            }
+            Assert.That(AbsoluteClosureRules.TryResolveDefeat(authority, state, sequence, disconnected,
+                out var again, out int againSequence, out _), Is.False);
+            Assert.That(again, Is.EqualTo(state));
+            Assert.That(againSequence, Is.EqualTo(sequence));
         }
-
-        return source.Substring(start);
     }
 }

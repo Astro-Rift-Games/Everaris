@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
+using Grimhold.Backend;
 using UnityEngine;
 
 /// <summary>
@@ -67,10 +68,16 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
     [Networked]
     private TickTimer RetryTimer { get; set; }
 
+    // Local copies of the resolver's authoritative prepared values, carried unchanged in the RPC.
+    private long _pendingConsolidatedExperience;
+    private int _pendingResultingLevel;
+    private long _pendingResultingExperience;
+
     /// <summary>
     /// Gets the local commit state observed by the result presenter.
     /// </summary>
     public ExtractionLootSaveStatus LocalSaveStatus { get; private set; }
+    public BackendCommitFeedback BackendSaveFeedback { get; } = new BackendCommitFeedback(supportsLoginRecovery: true);
 
     private void Awake()
     {
@@ -336,6 +343,10 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
         _pendingAmounts = amounts;
         _pendingResultSequence = resultSequence;
         _pendingExperienceCandidate = experienceCandidate;
+        if (!TryPrepareAuthoritativeProgression(experienceCandidate))
+        {
+            return false;
+        }
         LocalSaveStatus = ExtractionLootSaveStatus.Pending;
         _localCommitAttempted = false;
         return true;
@@ -550,7 +561,10 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
             _pendingHandPacked[0],
             _pendingHandPacked[1],
             _pendingHandPacked[2],
-            _pendingHandPacked[3]);
+            _pendingHandPacked[3],
+            _pendingConsolidatedExperience,
+            _pendingResultingLevel,
+            _pendingResultingExperience);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
@@ -571,9 +585,18 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
         int handAMainPacked,
         int handBMainPacked,
         int handAOffPacked,
-        int handBOffPacked)
+        int handBOffPacked,
+        long consolidatedExperience,
+        int resultingLevel,
+        long resultingExperience)
     {
         int[] handPacked = { handAMainPacked, handBMainPacked, handAOffPacked, handBOffPacked };
+        if (consolidatedExperience < 0 ||
+            !PlayerExpeditionProgressionResolver.IsValidBaseline(resultingLevel, resultingExperience))
+        {
+            LocalSaveStatus = ExtractionLootSaveStatus.PersistenceFailed;
+            return;
+        }
         if (!ValidateIncomingPayload(catalogIndices, amounts) ||
             !ValidateIncomingModifiers(
                 catalogIndices, amounts, modifiedIndices, modifiedPacked,
@@ -605,6 +628,9 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
             return;
         }
 
+        _pendingConsolidatedExperience = consolidatedExperience;
+        _pendingResultingLevel = resultingLevel;
+        _pendingResultingExperience = resultingExperience;
         _pendingWeaponSlot1Idx = weaponSlot1Idx;
         _pendingWeaponSlot2Idx = weaponSlot2Idx;
         _pendingHelmetIdx = helmetIdx;
@@ -699,13 +725,21 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
         int resultingLevel,
         LocalProfileStore store)
     {
+        // RPC retransmission must not open another retry budget for the same extraction.
+        if (BackendSaveFeedback.Status != BackendCommitStatus.None) return;
+        BackendSaveFeedback.Begin();
         ApplicationStashContext context = FindAnyObjectByType<ApplicationStashContext>();
-        if (context == null) return;
+        if (context == null)
+        {
+            BackendSaveFeedback.DeferHydration();
+            return;
+        }
 
         var remoteInventoryService = context.GetComponent<RemoteInventoryService>();
         if (remoteInventoryService == null)
         {
             Debug.LogWarning($"{nameof(PlayerExtractionLootSaver)}: RemoteInventoryService not found. Extraction not persisted to backend.");
+            BackendSaveFeedback.DeferHydration();
             return;
         }
 
@@ -727,10 +761,12 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
         }
 
         var (success, result, error) = await remoteInventoryService.CommitExtractionUnifiedAsync(
-            receipt, items, preparedEquipment, consolidatedExperience, resultingLevel);
-            
+            receipt, items, preparedEquipment, consolidatedExperience, resultingLevel,
+            BackendSaveFeedback.Retrying);
+
         if (!success)
         {
+            BackendSaveFeedback.Complete(false, error);
             Debug.LogError(
                 $"{nameof(PlayerExtractionLootSaver)}: Backend extraction commit failed. " +
                 $"Error={error.error}: {error.message}. " +
@@ -738,9 +774,17 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
         }
         else
         {
+            BackendSaveFeedback.Begin();
             var reconciliation = context.GetComponent<ProfileReconciliationService>();
             if (reconciliation == null || !await reconciliation.CompleteExtractionAsync(receipt, result.revision))
+            {
+                BackendSaveFeedback.DeferHydration();
                 Debug.LogError($"{nameof(PlayerExtractionLootSaver)}: Backend extraction succeeded but authoritative hydration failed. Pending extraction retained for login retry.");
+            }
+            else
+            {
+                BackendSaveFeedback.Complete(true, default);
+            }
         }
     }
 
@@ -871,7 +915,7 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
         return _pendingSnapshot != null && _pendingCatalogIndices != null &&
             _pendingAmounts != null && _pendingCatalogIndices.Length == _pendingAmounts.Length &&
             _pendingCatalogIndices.Length == _pendingSnapshot.Count &&
-            _pendingResultSequence > 0;
+            _pendingResultSequence > 0 && _pendingResultingLevel > 0;
     }
 
     private IReadOnlyList<LootEntry> BuildSnapshot(int[] catalogIndices, int[] amounts)
@@ -1001,88 +1045,14 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
         out int resultingLevel,
         out long resultingExperience)
     {
-        consolidatedExperience = 0L;
-        resultingLevel = 1;
-        resultingExperience = 0L;
-
-        ApplicationStashContext context = FindAnyObjectByType<ApplicationStashContext>();
-        if (context?.Store != null)
-        {
-            resultingLevel = context.Store.GetLevel();
-            resultingExperience = context.Store.GetCurrentExperience();
-        }
-
-        long lootExperience = _pendingExperienceCandidate.HasValue
-            ? _pendingExperienceCandidate.Value.AwardedExperience
-            : 0L;
-
-        if (_participant != null && _participant.TryGetBehaviour(out PlayerExpeditionExperienceLedger ledger))
-        {
-            ExpeditionExperienceSnapshot snapshot = ledger.Snapshot;
-            if (ExpeditionExperienceRules.TryApplyExtractedLootReward(snapshot, lootExperience, out ExpeditionExperienceSnapshot fullSnapshot, out _) &&
-                ExpeditionExperienceResolutionRules.TryResolve(
-                    default,
-                    fullSnapshot,
-                    ExpeditionExperienceResolutionOutcome.Extracted,
-                    ProgressionBalanceDefaults.InitialExpeditionExperienceRetentionPolicy,
-                    out ExpeditionExperienceResolution resolution,
-                    out _))
-            {
-                consolidatedExperience = resolution.ConsolidatedExperience;
-
-                int startingLevel = resultingLevel;
-                long startingExperience = resultingExperience;
-                if (_participant.TryGetBehaviour(out PlayerExpeditionProgressionResolver resolver) &&
-                    resolver.TryGetBaseline(out ExpeditionProgressionBaseline baseline))
-                {
-                    startingLevel = baseline.Level;
-                    startingExperience = baseline.Experience;
-                }
-
-                if (ConsolidatedExperienceApplicationRules.TryApply(
-                        ProgressionBalanceDefaults.InitialExperienceCurve,
-                        default,
-                        startingLevel,
-                        startingExperience,
-                        resolution,
-                        out ConsolidatedExperienceApplication application,
-                        out _))
-                {
-                    resultingLevel = application.Result.ResultingLevel;
-                    resultingExperience = application.Result.ResultingExperience;
-                }
-
-                return true;
-            }
-        }
-
-        if (_pendingExperienceCandidate.HasValue)
-        {
-            consolidatedExperience = lootExperience;
-            int retPoints = ProgressionBalanceDefaults.InitialExpeditionExperienceRetentionPolicy.GetRetentionBasisPoints(
-                ExpeditionExperienceResolutionOutcome.Extracted);
-            var resolution = new ExpeditionExperienceResolution(
-                ExpeditionExperienceResolutionOutcome.Extracted,
-                default,
-                retPoints,
-                consolidatedExperience);
-
-            if (ConsolidatedExperienceApplicationRules.TryApply(
-                    ProgressionBalanceDefaults.InitialExperienceCurve,
-                    default,
-                    resultingLevel,
-                    resultingExperience,
-                    resolution,
-                    out ConsolidatedExperienceApplication application,
-                    out _))
-            {
-                resultingLevel = application.Result.ResultingLevel;
-                resultingExperience = application.Result.ResultingExperience;
-            }
-
-            return true;
-        }
-
-        return false;
+        consolidatedExperience = _pendingConsolidatedExperience;
+        resultingLevel = _pendingResultingLevel;
+        resultingExperience = _pendingResultingExperience;
+        return resultingLevel > 0;
     }
+
+    private bool TryPrepareAuthoritativeProgression(in ExtractedLootExperienceCandidate candidate) =>
+        _participant.TryGetBehaviour(out PlayerExpeditionProgressionResolver resolver) &&
+        resolver.TryPrepareExtractionProgression(candidate.ResultSequence,
+            out _pendingConsolidatedExperience, out _pendingResultingLevel, out _pendingResultingExperience);
 }

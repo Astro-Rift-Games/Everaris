@@ -666,7 +666,7 @@ public sealed class LocalProfilePersistenceEditModeTests
     }
 
     [Test]
-    public void Codec_MigratesVersionElevenToTwelve_PreservingInventoryAndAssigningDefaults()
+    public void Codec_MigratesVersionElevenToCurrent_PreservingInventoryAndAssigningDefaults()
     {
         var profile = new ProfileId("52525252525252525252525252525252");
         // v11 JSON without expeditionId or origin fields
@@ -692,8 +692,9 @@ public sealed class LocalProfilePersistenceEditModeTests
             out _,
             out string error), Is.True, error);
 
-        Assert.That(LocalProfileSnapshot.CurrentSchemaVersion, Is.EqualTo(12));
-        Assert.That(migrated.SchemaVersion, Is.EqualTo(12));
+        Assert.That(LocalProfileSnapshot.CurrentSchemaVersion, Is.EqualTo(13));
+        Assert.That(migrated.SchemaVersion, Is.EqualTo(LocalProfileSnapshot.CurrentSchemaVersion));
+        Assert.That(migrated.PendingDefeatCommit, Is.Null);
         Assert.That(migrated.Stash.Count, Is.EqualTo(1));
         Assert.That(migrated.Stash[0].LootId.Value, Is.EqualTo("healthpotion"));
         Assert.That(migrated.Stash[0].Amount, Is.EqualTo(5));
@@ -708,7 +709,7 @@ public sealed class LocalProfilePersistenceEditModeTests
     }
 
     [Test]
-    public void Codec_EncodesAndDecodesVersionTwelve_PreservingExpeditionIdAndOrigin()
+    public void Codec_EncodesAndDecodesCurrentVersion_PreservingExpeditionIdAndOrigin()
     {
         var profile = new ProfileId("53535353535353535353535353535353");
         var snapshot = new LocalProfileSnapshot
@@ -732,7 +733,7 @@ public sealed class LocalProfilePersistenceEditModeTests
             out _,
             out string error), Is.True, error);
 
-        Assert.That(decoded.SchemaVersion, Is.EqualTo(12));
+        Assert.That(decoded.SchemaVersion, Is.EqualTo(LocalProfileSnapshot.CurrentSchemaVersion));
         Assert.That(decoded.Stash[0].ExpeditionId, Is.EqualTo("exp-alpha"));
         Assert.That(decoded.Stash[0].Origin, Is.EqualTo("Town"));
         Assert.That(decoded.Loadout[0].ExpeditionId, Is.EqualTo("exp-beta"));

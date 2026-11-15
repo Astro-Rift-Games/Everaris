@@ -169,6 +169,14 @@ public sealed class RemoteShopTransactionService : MonoBehaviour, IShopTransacti
         {
             try
             {
+                // A legacy response may prove a durable trade whose local receipt was skipped
+                // during cache recovery. Its advisory ticket cannot prove whether hydration
+                // already copied the reward: reconcile, never apply that ticket a second time.
+                if (_store.InventorySchemaVersion == 2 && response.data.alreadySecured)
+                {
+                    await ReconcileSafelyAsync();
+                    return StashOperationResult.Success;
+                }
                 // V3 equipment identities and gem-inclusive totals belong to the backend.
                 // Hydrate the acknowledged aggregate and receipt in one commit, not a local re-plan.
                 StashOperationResult committed = _store.InventorySchemaVersion == 3

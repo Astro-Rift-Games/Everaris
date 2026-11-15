@@ -100,13 +100,7 @@ public sealed class PlayerExpeditionProgressionResolver : NetworkBehaviour
             return false;
         }
 
-        var result = new ExperienceApplicationResult(
-            baseline.Level,
-            baseline.Experience,
-            CommittedResultingLevel,
-            CommittedResultingExperience,
-            CommittedResultingLevel - baseline.Level);
-        application = new ConsolidatedExperienceApplication(result);
+        application = ReadStoredApplication(baseline);
         return true;
     }
 
@@ -165,29 +159,21 @@ public sealed class PlayerExpeditionProgressionResolver : NetworkBehaviour
         }
 
         ExpeditionExperienceSnapshot snapshot = _ledger.Snapshot;
-        if (!ExpeditionExperienceResolutionRules.TryResolve(
-                default,
-                snapshot,
-                outcome,
-                ProgressionBalanceDefaults.InitialExpeditionExperienceRetentionPolicy,
-                out ExpeditionExperienceResolution resolution,
-                out ExpeditionExperienceResolutionFailure resolutionFailure))
+        ExpeditionExperienceResolution resolution;
+        ConsolidatedExperienceApplication application;
+        if (outcome == ExpeditionExperienceResolutionOutcome.Extracted && CommittedResultingLevel > 0)
         {
-            return PlayerExpeditionProgressionFinalizationResult.FromResolutionFailure(
-                resolutionFailure);
+            // Preparation already calculated this terminal result before publication. The ACK
+            // applied the same loot candidate to the ledger; do not calculate the award again.
+            resolution = new ExpeditionExperienceResolution(outcome, snapshot,
+                CommittedRetentionBasisPoints, CommittedConsolidatedExperience);
+            application = ReadStoredApplication(baseline);
         }
-
-        if (!ConsolidatedExperienceApplicationRules.TryApply(
-                ProgressionBalanceDefaults.InitialExperienceCurve,
-                default,
-                baseline.Level,
-                baseline.Experience,
-                resolution,
-                out ConsolidatedExperienceApplication application,
-                out ConsolidatedExperienceApplicationFailure applicationFailure))
+        else
         {
-            return PlayerExpeditionProgressionFinalizationResult.FromApplicationFailure(
-                applicationFailure);
+            PlayerExpeditionProgressionFinalizationResult calculation = CalculateProgression(
+                snapshot, outcome, baseline, out resolution, out application);
+            if (!calculation.IsCompleted) return calculation;
         }
 
         if (!TryResolveCommittedLevelProgress(
@@ -218,6 +204,77 @@ public sealed class PlayerExpeditionProgressionResolver : NetworkBehaviour
         CommittedNextLevelExperienceRequirement = nextLevelExperienceRequirement;
         CommittedIsMaxLevel = isMaxLevel;
         Committed = true;
+        return Result(PlayerExpeditionProgressionFinalizationStatus.Success);
+    }
+
+    /// <summary>
+    /// Prepares the extraction award once in existing replicated result storage. Committed stays
+    /// false until the persistence ACK and confirmed ledger permit finalization; readers cannot
+    /// expose partial Results. The positive resulting level is written last as the validity marker.
+    /// </summary>
+    public bool TryPrepareExtractionProgression(
+        int resultSequence, out long consolidatedExperience, out int resultingLevel, out long resultingExperience)
+    {
+        consolidatedExperience = 0;
+        resultingLevel = 0;
+        resultingExperience = 0;
+        if (!HasStateAuthority || Committed || _participant == null || _ledger == null || _ledger.IsFrozen ||
+            _participant.ResultSequence != resultSequence ||
+            _participant.ExtractionExperiencePhase != ExtractionExperienceTransactionPhase.AwaitingPersistenceAck ||
+            !_participant.TryGetExtractedLootCandidate(out ExtractedLootExperienceCandidate candidate) ||
+            !TryGetBaseline(out ExpeditionProgressionBaseline baseline))
+            return false;
+
+        if (CommittedResultingLevel == 0)
+        {
+            if (!ExpeditionExperienceRules.TryApplyExtractedLootReward(_ledger.Snapshot,
+                    candidate.AwardedExperience, out ExpeditionExperienceSnapshot snapshot, out _) ||
+                !TryCalculateProgression(snapshot, ExpeditionExperienceResolutionOutcome.Extracted, baseline,
+                    out ExpeditionExperienceResolution resolution, out ConsolidatedExperienceApplication application))
+                return false;
+            CommittedOutcome = resolution.Outcome;
+            CommittedRetentionBasisPoints = resolution.RetentionBasisPoints;
+            CommittedConsolidatedExperience = resolution.ConsolidatedExperience;
+            CommittedResultingExperience = application.Result.ResultingExperience;
+            CommittedResultingLevel = application.Result.ResultingLevel;
+        }
+        consolidatedExperience = CommittedConsolidatedExperience;
+        resultingLevel = CommittedResultingLevel;
+        resultingExperience = CommittedResultingExperience;
+        return true;
+    }
+
+    private ConsolidatedExperienceApplication ReadStoredApplication(in ExpeditionProgressionBaseline baseline) =>
+        new ConsolidatedExperienceApplication(new ExperienceApplicationResult(
+            baseline.Level, baseline.Experience, CommittedResultingLevel, CommittedResultingExperience,
+            CommittedResultingLevel - baseline.Level));
+
+    /// <summary>Pure calculation shared by authoritative extraction preparation and finalization.</summary>
+    public static bool TryCalculateProgression(
+        ExpeditionExperienceSnapshot snapshot,
+        ExpeditionExperienceResolutionOutcome outcome,
+        ExpeditionProgressionBaseline baseline,
+        out ExpeditionExperienceResolution resolution,
+        out ConsolidatedExperienceApplication application) =>
+        CalculateProgression(snapshot, outcome, baseline, out resolution, out application).IsCompleted;
+
+    private static PlayerExpeditionProgressionFinalizationResult CalculateProgression(
+        ExpeditionExperienceSnapshot snapshot,
+        ExpeditionExperienceResolutionOutcome outcome,
+        ExpeditionProgressionBaseline baseline,
+        out ExpeditionExperienceResolution resolution,
+        out ConsolidatedExperienceApplication application)
+    {
+        application = default;
+        if (!ExpeditionExperienceResolutionRules.TryResolve(default, snapshot, outcome,
+                ProgressionBalanceDefaults.InitialExpeditionExperienceRetentionPolicy,
+                out resolution, out ExpeditionExperienceResolutionFailure resolutionFailure))
+            return PlayerExpeditionProgressionFinalizationResult.FromResolutionFailure(resolutionFailure);
+        if (!ConsolidatedExperienceApplicationRules.TryApply(
+                ProgressionBalanceDefaults.InitialExperienceCurve, default, baseline.Level,
+                baseline.Experience, resolution, out application,
+                out ConsolidatedExperienceApplicationFailure applicationFailure))
+            return PlayerExpeditionProgressionFinalizationResult.FromApplicationFailure(applicationFailure);
         return Result(PlayerExpeditionProgressionFinalizationStatus.Success);
     }
 
