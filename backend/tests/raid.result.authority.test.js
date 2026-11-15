@@ -95,6 +95,74 @@ describe('FIX-18 authoritative result validation', () => {
     return { accountId: account._id.toString(), characterId: character._id.toString(), character };
   }
 
+  describe('review result binding', () => {
+    test('equipment-only publication blocks real loss clear and remains extractable', async () => {
+      const raider = await createRaider('equipment', { raidId: RAID_ID });
+      await RaidResultService.publishHostResult(raider.accountId, { raidId: RAID_ID, resultSequence: 1,
+        items: [], preparedEquipment: { weaponSlot1: { lootId: 'arming_sword' } }, experienceGranted: 80 });
+      const before = await stored(raider.accountId);
+      const error = await rejection(InventoryService.clearPendingReservation(raider.accountId));
+      assert.equal(error.statusCode, 409);
+      assert.equal(error.errorCode, 'EXTRACTION_RESULT_PENDING');
+      assert.deepEqual(await stored(raider.accountId), before);
+      assert.equal((await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID })).consumed, false);
+      const committed = await ExtractionCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 });
+      assert.equal(committed.alreadySecured, false);
+      assert.equal((await stored(raider.accountId)).inventory.preparedEquipment.weaponSlot1.lootId, 'arming_sword');
+    });
+
+    test('revision race preserves an attribute spend and defeat retries against the new state', async () => {
+      const raider = await createRaider('revision', { raidId: RAID_ID });
+      await Character.updateOne({ accountId: raider.accountId }, { $set: { 'characterAttributes.availablePoints': 5 } });
+      await RaidResultService.publishHostResult(raider.accountId, { raidId: RAID_ID, resultSequence: 1,
+        items: [], experienceGranted: 80 });
+      const original = AuthoritativeExtractionResult.findOneAndUpdate;
+      let spent;
+      AuthoritativeExtractionResult.findOneAndUpdate = async function(query, update, options) {
+        const result = await original.call(this, query, update, options);
+        if (update.$set?.consumed === true) {
+          await Character.updateOne({ accountId: raider.accountId }, {
+            $inc: { revision: 1, 'characterAttributes.availablePoints': -1, 'characterAttributes.strength': 1 }
+          });
+          spent = await stored(raider.accountId);
+        }
+        return result;
+      };
+      try {
+        const error = await rejection(DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 }));
+        assert.equal(error.statusCode, 409);
+        assert.equal(error.errorCode, 'CONCURRENT_MUTATION');
+        assert.deepEqual(await stored(raider.accountId), spent);
+        assert.equal((await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID })).consumed, false);
+      } finally {
+        AuthoritativeExtractionResult.findOneAndUpdate = original;
+      }
+      await DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 });
+      const committed = await stored(raider.accountId);
+      assert.equal(committed.characterAttributes.strength, spent.characterAttributes.strength);
+      assert.equal(committed.revision, spent.revision + 1);
+      assert.deepEqual(progressionOf(committed), progressed(spent, 80));
+    });
+
+    test('published defeat sequence is stored and cannot be replaced by the commit caller', async () => {
+      const raider = await createRaider('sequence', { raidId: RAID_ID });
+      await RaidResultService.publishHostResult(raider.accountId, { raidId: RAID_ID, resultId: 'opaque-result',
+        resultSequence: 7, items: [], preparedEquipment: {}, experienceGranted: 80 });
+      const result = await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID }).lean();
+      assert.equal(result.resultSequence, 7);
+      const before = await stored(raider.accountId);
+      const error = await rejection(DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 99 }));
+      assert.equal(error.statusCode, 422);
+      assert.equal(error.errorCode, 'NO_AUTHORITATIVE_RESULT');
+      assert.deepEqual(await stored(raider.accountId), before);
+      assert.equal((await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID })).consumed, false);
+      await DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 7 });
+      const afterCommit = await stored(raider.accountId);
+      assert.equal(afterCommit.lastAppliedProgressionResultSequence, 7);
+      assert.equal(afterCommit.lastProgressionReceipt.resultSequence, 7);
+    });
+  });
+
   describe('S1 catalog', () => {
     test('rejects an unsigned result with a lootId outside the catalog with 422 and creates no document', async () => {
       const raider = await createRaider('solo');

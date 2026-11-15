@@ -7,6 +7,32 @@
 
 'use strict';
 
+const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
+
+// The publish contract has no outcome discriminator. Empty ownership is defeat-compatible.
+function isDefeatResult(result) {
+  return !(result.items?.length) && !EQUIPMENT_SLOTS.some(slot => {
+    const value = result.preparedEquipment?.[slot];
+    return value !== undefined && value !== null && value !== '';
+  });
+}
+
+function publishedResultSequence(result) {
+  if (Number.isSafeInteger(result.resultSequence) && result.resultSequence > 0) return result.resultSequence;
+  // Pre-existing results encode the published sequence in the generated result ID.
+  const prefix = `${result.raidId}:${result.characterId || result.accountId}:`;
+  const suffix = result.resultId?.startsWith(prefix) ? result.resultId.slice(prefix.length) : '';
+  const sequence = /^[1-9]\d*$/.test(suffix) ? Number(suffix) : NaN;
+  return Number.isSafeInteger(sequence) ? sequence : null;
+}
+
+function pendingLootResultFilter() {
+  return { $or: [
+    { 'items.0': { $exists: true } },
+    ...EQUIPMENT_SLOTS.map(slot => ({ [`preparedEquipment.${slot}`]: { $exists: true, $nin: [null, ''] } })),
+  ] };
+}
+
 function requireUncreditedResultReservation(character, authResult) {
   if (!authResult.reservationId) return;
   const receipts = [
@@ -55,6 +81,9 @@ function resultReservationFilter(authResult) {
 }
 
 module.exports = {
+  isDefeatResult,
+  publishedResultSequence,
+  pendingLootResultFilter,
   requireUncreditedResultReservation,
   requireResultReservation,
   uncreditedResultReservationFilter,

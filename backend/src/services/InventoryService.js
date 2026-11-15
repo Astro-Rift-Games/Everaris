@@ -26,6 +26,7 @@ const { inventoryVersion, copyEntry, serializeItems, requireMigratedInventory,
 const { TRAINING_WEAPONS, isTrainingWeapon } = require('./TrainingWeapons');
 const { validatePreparedAbilities } = require('./PreparedAbilityValidation');
 const { receiptPush, watermarkUpdate, assertWithinRetention } = require('./ShopReceiptRetention');
+const { pendingLootResultFilter } = require('./ResultReservationBinding');
 
 const { INSTANCE_ID, invalidInventory, createEquipment, validateResultItems, resultEquipmentToInstances,
   equipmentToResult } = require('./ItemInstances');
@@ -163,13 +164,13 @@ function serializePendingReservation(res, sorted = false, version = 2) {
 }
 
 // Authoritative results target the owning account, not a reservation/raid identifier.
-// Only unconsumed results with non-empty extracted items represent loot that must be protected.
-// Defeat results (or empty-bag runs) contain no loot and must not deadlock reservation loss clears.
+// Protect both backpack and equipped ownership; only empty ownership is defeat-compatible.
+// Empty results must not deadlock reservation loss clears before a defeat XP commit.
 async function assertNoPendingExtractionResult(accountId) {
   if (await AuthoritativeExtractionResult.exists({
     accountId,
     consumed: { $ne: true },
-    'items.0': { $exists: true }
+    ...pendingLootResultFilter()
   })) {
     throw { statusCode: 409, errorCode: 'EXTRACTION_RESULT_PENDING', message: 'An authoritative extraction result is pending for this character.' };
   }

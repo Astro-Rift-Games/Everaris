@@ -13,7 +13,7 @@ const Character = require('../models/Character');
 const AuthoritativeExtractionResult = require('../models/AuthoritativeExtractionResult');
 const { requireMigratedInventory } = require('./InventoryEntries');
 const {
-  requireUncreditedResultReservation, uncreditedResultReservationFilter,
+  requireUncreditedResultReservation, uncreditedResultReservationFilter, isDefeatResult, publishedResultSequence,
 } = require('./ResultReservationBinding');
 const {
   computeLevelAndExperience,
@@ -126,6 +126,15 @@ class DefeatCommitService {
 
     requireUncreditedResultReservation(character, authResult);
 
+    const authoritativeSequence = publishedResultSequence(authResult);
+    if (!isDefeatResult(authResult) || authoritativeSequence === null || resultSequence !== authoritativeSequence) {
+      throw {
+        statusCode: 422,
+        errorCode: 'NO_AUTHORITATIVE_RESULT',
+        message: 'No authoritative defeat result found for this sequence.',
+      };
+    }
+
     // ------------------------------------------------------------------
     // 3. Atomically claim authoritative result (distributed lock)
     // ------------------------------------------------------------------
@@ -182,7 +191,7 @@ class DefeatCommitService {
     const progressionReceipt = {
       ...(authResult.reservationId ? { reservationId: authResult.reservationId } : {}),
       raidId,
-      resultSequence,
+      resultSequence: authoritativeSequence,
       consolidatedExperience: experienceToGrant,
       resultingLevel: computed.resultingLevel,
     };
@@ -204,7 +213,7 @@ class DefeatCommitService {
         level: computed.resultingLevel,
         experience: computed.resultingExperience,
         'characterAttributes.availablePoints': newAvailablePoints,
-        lastAppliedProgressionResultSequence: resultSequence,
+        lastAppliedProgressionResultSequence: authoritativeSequence,
         lastProgressionReceipt: progressionReceipt
       },
       $inc: { revision: 1 },
@@ -218,6 +227,7 @@ class DefeatCommitService {
 
     const characterFilter = {
       accountId,
+      revision: character.revision,
       ...(clearsReservation ? { 'inventory.pendingReservation.reservationId': pendingReservation.reservationId } : {}),
       ...uncreditedResultReservationFilter(authResult),
       appliedProgressionReceipts: {

@@ -421,6 +421,21 @@ raidId|resultId|targetIdentifier|sortedItems|sortedEquipment|experienceGranted|i
 
 Any alteration of items, amounts, equipment slots, XP, recipient identity, or raid session invalidates the signature and results in HTTP `401 INVALID_HOST_SIGNATURE`.
 
+### Defeat commit validation
+
+The published payload has no explicit outcome field. A result is defeat-compatible only when
+`items` is empty and every `preparedEquipment` slot is absent, null or empty; equipment-only
+results are extractions, not defeats. An entirely empty extraction is indistinguishable from
+defeat under this existing wire contract. Defeat commits reject incompatible ownership or a
+sequence mismatch with `422 NO_AUTHORITATIVE_RESULT`, without consuming the result.
+The backend stores the producer's positive safe-integer `resultSequence`; for older results it
+can recover that sequence from the generated `<raidId>:<recipientId>:<sequence>` result ID.
+A result with neither source fails closed; the commit caller never supplies the persisted sequence.
+Existing receipt replay and already-consumed/reservation-credit errors retain their precedence.
+Defeat writes are guarded by the character's read `revision` and increment it once. A lost race
+releases the result claim and returns the existing `409 CONCURRENT_MUTATION` for retry, preserving
+concurrent attribute or progression changes.
+
 ### Immutability, Single Consumption, and Anti-Replay Invariants
 1. **Atomic Consumption Lock**: An `AuthoritativeExtractionResult` can only be consumed once. `ExtractionCommitService` acquires an atomic conditional lock (`findOneAndUpdate({ _id, consumed: { $ne: true } }, { $set: { consumed: true } })`).
 2. **Conflict Prevention**: Republishing a different payload for an existing `resultId` is rejected with `409 RESULT_CONFLICT`.

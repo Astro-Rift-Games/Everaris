@@ -414,6 +414,7 @@ class RaidResultService {
     // Create the immutable authoritative result
     await AuthoritativeExtractionResult.create({
       resultId: effectiveResultId,
+      ...(Number.isSafeInteger(resultSequence) && resultSequence > 0 ? { resultSequence } : {}),
       raidId,
       accountId: recipientAccountId,
       reservationId: isDedicatedServerVerified ? null : recipientChar.inventory.pendingReservation.reservationId,

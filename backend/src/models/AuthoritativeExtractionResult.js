@@ -23,6 +23,7 @@ const authoritativeExtractionResultSchema = new mongoose.Schema({
   raidId: { type: String, required: true, index: true },
   accountId: { type: String, required: true, index: true },
   reservationId: { type: String, default: null },
+  resultSequence: { type: Number, min: 1 },
   items: [itemSchema],
   preparedEquipment: { type: preparedEquipmentSchema },
   experienceGranted: { type: Number, required: true, default: 0 },

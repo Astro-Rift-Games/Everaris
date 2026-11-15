@@ -59,7 +59,8 @@ test('DefeatCommitService.commit', async (t) => {
       accountId: 'acc123',
       items: [],
       experienceGranted: 500,
-      consumed: false
+      consumed: false,
+      resultSequence: 1
     });
 
     AuthoritativeExtractionResult.findOneAndUpdate = async (query, update, options) => ({
@@ -74,6 +75,7 @@ test('DefeatCommitService.commit', async (t) => {
     Character.findOneAndUpdate = async (query, update, options) => {
       const char = await Character.findOne(query);
       if (!char) return null;
+      if (query.revision !== undefined && query.revision !== char.revision) return null;
 
       const notMatch = query['appliedProgressionReceipts']?.$not?.$elemMatch;
       if (notMatch) {
@@ -106,6 +108,71 @@ test('DefeatCommitService.commit', async (t) => {
       }
       return char;
     };
+  });
+
+  await t.test('concurrent attribute spend survives stale defeat commit and releases claim', async () => {
+    const stored = makeCharacter();
+    const plain = char => structuredClone({ ...char, markModified: undefined, save: undefined });
+    const snapshot = plain(stored);
+    let reads = 0;
+    let consumed = false;
+    Character.findOne = async () => ++reads === 1 ? snapshot : stored;
+    AuthoritativeExtractionResult.findOneAndUpdate = async (_query, update) => {
+      consumed = update.$set.consumed;
+      if (consumed) {
+        stored.characterAttributes.availablePoints--;
+        stored.characterAttributes.strength++;
+        stored.revision++;
+      }
+      return { consumed };
+    };
+    const before = plain(stored);
+    before.characterAttributes.availablePoints--;
+    before.characterAttributes.strength++;
+    before.revision++;
+    await assert.rejects(DefeatCommitService.commit('acc123', { raidId: 'raid-1', resultSequence: 1 }),
+      err => err.statusCode === 409 && err.errorCode === 'CONCURRENT_MUTATION');
+    assert.deepEqual(plain(stored), before);
+    assert.equal(consumed, false);
+  });
+
+  for (const rewards of [
+    { items: [{ lootId: 'bone', amount: 1 }] },
+    { items: [], preparedEquipment: { weaponSlot1: 'arming_sword' } },
+    { items: [], preparedEquipment: { weaponSlot1: { lootId: 'arming_sword' } } }
+  ]) {
+    await t.test(`rejects extraction rewards as defeat: ${JSON.stringify(rewards)}`, async () => {
+      const char = makeCharacter();
+      const before = structuredClone({ ...char, markModified: undefined, save: undefined });
+      Character.findOne = async () => char;
+      AuthoritativeExtractionResult.findOne = async () => ({ ...rewards, resultSequence: 1 });
+      AuthoritativeExtractionResult.findOneAndUpdate = async () => assert.fail('must not claim result');
+      await assert.rejects(DefeatCommitService.commit('acc123', { raidId: 'raid-1', resultSequence: 1 }),
+        err => err.statusCode === 422 && err.errorCode === 'NO_AUTHORITATIVE_RESULT');
+      assert.deepEqual({ ...char, markModified: undefined, save: undefined }, before);
+    });
+  }
+
+  await t.test('rejects a sequence different from the published defeat sequence without writing', async () => {
+    const char = makeCharacter();
+    const before = structuredClone({ ...char, markModified: undefined, save: undefined });
+    Character.findOne = async () => char;
+    AuthoritativeExtractionResult.findOne = async () => ({ items: [], resultSequence: 7, experienceGranted: 50 });
+    AuthoritativeExtractionResult.findOneAndUpdate = async () => assert.fail('must not claim result');
+    await assert.rejects(DefeatCommitService.commit('acc123', { raidId: 'raid-1', resultSequence: 99 }),
+      err => err.statusCode === 422 && err.errorCode === 'NO_AUTHORITATIVE_RESULT');
+    assert.deepEqual({ ...char, markModified: undefined, save: undefined }, before);
+  });
+
+  await t.test('persists published sequence and preserves empty-equipment defeat', async () => {
+    const char = makeCharacter();
+    Character.findOne = async () => char;
+    AuthoritativeExtractionResult.findOne = async () => ({ items: [], preparedEquipment: { weaponSlot1: null, armor: '' }, resultSequence: 7, experienceGranted: 50 });
+    await DefeatCommitService.commit('acc123', { raidId: 'raid-1', resultSequence: 7 });
+    assert.equal(char.lastAppliedProgressionResultSequence, 7);
+    assert.equal(char.lastProgressionReceipt.resultSequence, 7);
+    assert.equal(char.appliedProgressionReceipts[0].resultSequence, 7);
+    assert.equal(char.revision, 2);
   });
 
   await t.test('throws 404 if character does not exist', async () => {
@@ -164,7 +231,7 @@ test('DefeatCommitService.commit', async (t) => {
 
   // FIX-19: a defeat consumes only the reservation its raid admitted, never a newer one.
   const boundDefeat = (reservationId) => {
-    const result = { _id: 'auth123', raidId: 'raid-1', accountId: 'acc123', items: [], experienceGranted: 500, reservationId };
+    const result = { _id: 'auth123', raidId: 'raid-1', accountId: 'acc123', items: [], resultSequence: 1, experienceGranted: 500, reservationId };
     AuthoritativeExtractionResult.findOne = async () => ({ ...result, consumed: false });
     AuthoritativeExtractionResult.findOneAndUpdate = async () => ({ ...result, consumed: true });
   };
