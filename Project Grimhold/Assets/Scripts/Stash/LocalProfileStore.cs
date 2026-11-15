@@ -2014,7 +2014,6 @@ public sealed class LocalProfileStore : IMissionClaimService
         }
         
         var current = _repository.Snapshot;
-        if (current.PendingDefeatCommit != null) return StashOperationResult.ReservationPending;
         if (current.PendingReservation != null)
         {
             if (!string.Equals(current.PendingReservation.ReservationId, reservationId, StringComparison.Ordinal))
@@ -2304,7 +2303,8 @@ public sealed class LocalProfileStore : IMissionClaimService
         }
 
         // Progression, loss and the retry receipt are accepted in one local write.
-        next.PendingDefeatCommit = new PendingDefeatCommit(receipt, reservationId ?? current.PendingReservation?.ReservationId);
+        next.PendingDefeatCommit = new PendingDefeatCommit(receipt,
+            string.IsNullOrEmpty(reservationId) ? current.PendingReservation?.ReservationId : reservationId);
         next.PendingReservation = null;
 
         var progression = new ExperienceApplicationResult(
@@ -2316,7 +2316,30 @@ public sealed class LocalProfileStore : IMissionClaimService
 
         return Commit(next, progression);
     }
-    /// <summary>Only an exact successful defeat response may retire its pending receipt.</summary>
+    /// <summary>Retires an exact uncreditable defeat receipt; ordinary hydration owns backend progression.</summary>
+    public StashOperationResult TryRetireDefeatCommit(ProgressionReceipt receipt)
+    {
+        lock (_sync)
+        {
+            LocalProfileSnapshot current = _repository.Snapshot;
+            if (!IsAvailable || current == null) return StashOperationResult.PersistenceFailed;
+            if (current.PendingDefeatCommit == null || !current.PendingDefeatCommit.Receipt.Equals(receipt))
+                return StashOperationResult.InvalidInventory;
+            return Commit(CreateRetiredDefeatSnapshot(current));
+        }
+    }
+
+    private static LocalProfileSnapshot CreateRetiredDefeatSnapshot(LocalProfileSnapshot current)
+    {
+        LocalProfileSnapshot next = current.Clone();
+        next.PendingDefeatCommit = null;
+        if (!string.IsNullOrEmpty(current.PendingDefeatCommit.ReservationId) &&
+            next.PendingReservation?.ReservationId == current.PendingDefeatCommit.ReservationId)
+            next.PendingReservation = null;
+        return next;
+    }
+
+    /// <summary>Completes an exact successful defeat response with authoritative progression.</summary>
     public StashOperationResult TryCompleteDefeatCommit(
         ProgressionReceipt receipt, Grimhold.Backend.CommitDefeatUnifiedResult result)
     {
@@ -2331,11 +2354,7 @@ public sealed class LocalProfileStore : IMissionClaimService
                     result.level, result.experience))
                 return StashOperationResult.HydrationFailed;
 
-            LocalProfileSnapshot next = current.Clone();
-            next.PendingDefeatCommit = null;
-            if (!string.IsNullOrEmpty(current.PendingDefeatCommit.ReservationId) &&
-                next.PendingReservation?.ReservationId == current.PendingDefeatCommit.ReservationId)
-                next.PendingReservation = null;
+            LocalProfileSnapshot next = CreateRetiredDefeatSnapshot(current);
             var progression = new Grimhold.Backend.ProgressionData
             {
                 level = result.level, experience = result.experience,

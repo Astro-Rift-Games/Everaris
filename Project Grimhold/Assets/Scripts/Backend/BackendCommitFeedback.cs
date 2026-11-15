@@ -6,10 +6,12 @@ namespace Grimhold.Backend
     public sealed class BackendCommitFeedback
     {
         private readonly bool _supportsLoginRecovery;
+        private readonly bool _retiresMissingDefeatResult;
 
-        public BackendCommitFeedback(bool supportsLoginRecovery = true)
+        public BackendCommitFeedback(bool supportsLoginRecovery = true, bool retiresMissingDefeatResult = false)
         {
             _supportsLoginRecovery = supportsLoginRecovery;
+            _retiresMissingDefeatResult = retiresMissingDefeatResult;
         }
 
         public BackendCommitStatus Status { get; private set; }
@@ -22,6 +24,7 @@ namespace Grimhold.Backend
 
         public void Complete(bool success, BackendError error) => SetState(
             success ? BackendCommitStatus.Saved
+                : _retiresMissingDefeatResult && error.error == "NO_AUTHORITATIVE_RESULT" ? BackendCommitStatus.Failed
                 : _supportsLoginRecovery ? BackendCommitStatus.DeferredUntilLogin : BackendCommitStatus.Failed,
             success ? default : error);
 

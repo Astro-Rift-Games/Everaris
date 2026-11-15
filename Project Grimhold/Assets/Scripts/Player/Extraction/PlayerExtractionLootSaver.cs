@@ -597,9 +597,6 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
             LocalSaveStatus = ExtractionLootSaveStatus.PersistenceFailed;
             return;
         }
-        _pendingConsolidatedExperience = consolidatedExperience;
-        _pendingResultingLevel = resultingLevel;
-        _pendingResultingExperience = resultingExperience;
         if (!ValidateIncomingPayload(catalogIndices, amounts) ||
             !ValidateIncomingModifiers(
                 catalogIndices, amounts, modifiedIndices, modifiedPacked,
@@ -631,6 +628,9 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
             return;
         }
 
+        _pendingConsolidatedExperience = consolidatedExperience;
+        _pendingResultingLevel = resultingLevel;
+        _pendingResultingExperience = resultingExperience;
         _pendingWeaponSlot1Idx = weaponSlot1Idx;
         _pendingWeaponSlot2Idx = weaponSlot2Idx;
         _pendingHelmetIdx = helmetIdx;

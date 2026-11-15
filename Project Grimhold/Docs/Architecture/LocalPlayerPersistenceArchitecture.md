@@ -362,12 +362,20 @@ A successful response, including the endpoint's receipt-proven `alreadySecured`,
 hydrates level/XP/attributes/revision and clears only the matching pending record through
 `TryCompleteDefeatCommit`. Invalid/stale responses and repository-write failures leave the current
 snapshot and pending record intact. `RESULT_ALREADY_CONSUMED` without proof remains a rejection.
-New reservations and another defeat cannot overwrite an unacknowledged defeat; terminal/conflict
-failures retain it for login retry rather than silently discarding earned progression.
+A pending defeat does not block new loadout reservations, but another defeat cannot overwrite its
+receipt. Completion and retirement clear only the played reservation ID, never a newer reservation;
+null or empty participant IDs fall back to the current reservation when the defeat is first stored.
+Failures retain the receipt for login retry except `422 NO_AUTHORITATIVE_RESULT`: the backend can no
+longer credit that result, so live and login replay atomically retire the matching receipt and emit
+one warning after the save succeeds. They then invoke ordinary authoritative reconciliation, which
+can replace the former optimistic defeat progression now that no pending receipt protects it.
+Retirement is not a successful credit. If the retirement write fails, the receipt remains; if the
+subsequent hydration fails, the receipt stays retired and later ordinary hydration owns progression.
 The local cache commit and Fusion ACK are not delayed by backend retries. Per-operation `BackendCommitFeedback` is a local
 presentation projection, not a second persistence store or replicated gameplay state. The raid
 menu/Results status shows Spanish saving/retrying, deferred-until-login (all extraction failures,
-including terminal/conflict, since the pending record is kept) or defeat login-deferral guidance,
+including terminal/conflict, since the pending record is kept) or defeat login-deferral guidance
+except for an uncreditable result, which explicitly says its defeat XP could not be saved,
 without raw codes and without changing Return eligibility. Text is cached per feedback state,
 not formatted each frame. Extraction preserves the local loot confirmation and progression
 correction before the backend status on the next line. Extraction reports saved only after

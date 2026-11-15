@@ -75,7 +75,7 @@ public sealed class RemoteCommitRetryTests
                 string payload = await reader.ReadToEndAsync();
                 Assert.That(payload, Does.Contain("\"raidId\":\"raid-test\""));
                 Assert.That(payload, Does.Contain("\"resultSequence\":1"));
-                context.Response.StatusCode = 409;
+                context.Response.StatusCode = code == "NO_AUTHORITATIVE_RESULT" ? 422 : 409;
                 byte[] body = Encoding.UTF8.GetBytes($"{{\"error\":\"{code}\",\"message\":\"test\"}}");
                 context.Response.ContentLength64 = body.Length;
                 await context.Response.OutputStream.WriteAsync(body, 0, body.Length);
@@ -87,10 +87,14 @@ public sealed class RemoteCommitRetryTests
             Assert.That(result.error.error, Is.EqualTo(code));
             Assert.That(result.error.message, Is.EqualTo("test"));
             Assert.That(delays.Count, Is.EqualTo(expectedAttempts - 1));
-            Assert.That(feedback.Status, Is.EqualTo(BackendCommitStatus.DeferredUntilLogin));
+            bool uncreditableDefeat = defeat && code == "NO_AUTHORITATIVE_RESULT";
+            Assert.That(feedback.Status, Is.EqualTo(uncreditableDefeat
+                ? BackendCommitStatus.Failed : BackendCommitStatus.DeferredUntilLogin));
             string message = BackendErrorMessages.ForCommit(feedback);
             Assert.That(message, Does.StartWith("No se pudo guardar"));
-            Assert.That(message, Does.Contain("se reintentará al iniciar sesión"));
+            Assert.That(message, uncreditableDefeat
+                ? Is.EqualTo("No se pudo guardar la experiencia de la derrota; el servidor ya no puede acreditar este resultado.")
+                : Does.Contain("se reintentará al iniciar sesión"));
         }
         finally
         {

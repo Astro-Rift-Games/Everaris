@@ -126,7 +126,7 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
     private int _localProgressionResultSequence;
     private float _nextProgressionCommitRetryAt;
     private bool _localDefeatCommitCompleted;
-    public BackendCommitFeedback BackendDefeatFeedback { get; } = new BackendCommitFeedback(supportsLoginRecovery: true);
+    public BackendCommitFeedback BackendDefeatFeedback { get; } = new BackendCommitFeedback(supportsLoginRecovery: true, retiresMissingDefeatResult: true);
     private int _authorityDefeatPublishedSequence;
     private bool _authorityDefeatPublishInFlight;
     private int _authoritativeDefeatPublishedSequence;
@@ -523,12 +523,13 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
     {
         BackendDefeatFeedback.Begin();
         BackendError error = default;
+        var reconciliation = service.GetComponent<ProfileReconciliationService>();
         bool saved = await ApplicationStashServiceBootstrapper.RetryPendingDefeatAsync(store, async receipt =>
         {
             var outcome = await service.CommitDefeatUnifiedAsync(receipt, BackendDefeatFeedback.Retrying);
             error = outcome.error;
             return outcome;
-        });
+        }, reconciliation != null ? reconciliation.ReconcileAsync : null);
         BackendDefeatFeedback.Complete(saved, error);
     }
 

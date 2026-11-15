@@ -194,7 +194,8 @@ public static class ApplicationStashServiceBootstrapper
         }
 
         if (store.PendingDefeatCommit != null)
-            _ = RetryPendingDefeatAsync(store, receipt => remoteInventoryService.CommitDefeatUnifiedAsync(receipt));
+            _ = RetryPendingDefeatAsync(store, receipt => remoteInventoryService.CommitDefeatUnifiedAsync(receipt),
+                reconciliationService.ReconcileAsync);
 
         _initializedProfileId = profileId;
         Debug.Log($"[{nameof(ApplicationStashServiceBootstrapper)}] Store initialized for ProfileId {profileId.Value}.");
@@ -498,18 +499,30 @@ public static class ApplicationStashServiceBootstrapper
     }
 
     /// <summary>
-    /// Replays the exact durable receipt through the authenticated remote boundary. Failure,
-    /// including an unproven consumed result, never retires it or applies optimistic state.
+    /// Replays the exact durable receipt through the authenticated remote boundary. Only an
+    /// uncreditable NO_AUTHORITATIVE_RESULT retires a failed receipt, then uses ordinary hydration.
+    /// Other failures, including an unproven consumed result, retain it.
     /// Shared by login and the live defeat path; the remote service owns bounded transport retries.
     /// </summary>
     public static async System.Threading.Tasks.Task<bool> RetryPendingDefeatAsync(
         LocalProfileStore store,
-        System.Func<ProgressionReceipt, System.Threading.Tasks.Task<(bool success, CommitDefeatUnifiedResult result, BackendError error)>> commit)
+        System.Func<ProgressionReceipt, System.Threading.Tasks.Task<(bool success, CommitDefeatUnifiedResult result, BackendError error)>> commit,
+        System.Func<System.Threading.Tasks.Task<bool>> reconcile = null)
     {
         var pending = store.PendingDefeatCommit;
         if (pending == null) return true;
         var outcome = await commit(pending.Receipt);
-        if (!outcome.success) return false;
+        if (!outcome.success)
+        {
+            if (outcome.error.error == "NO_AUTHORITATIVE_RESULT" &&
+                store.TryRetireDefeatCommit(pending.Receipt) == StashOperationResult.Success)
+            {
+                Debug.LogWarning("[ApplicationStashServiceBootstrapper] Pending defeat retired: the backend can no longer credit this result. Backend progression remains authoritative.");
+                if (reconcile != null) await reconcile();
+            }
+            // Retirement is not a successful credit; the live feedback must not report Saved.
+            return false;
+        }
         return store.TryCompleteDefeatCommit(pending.Receipt, outcome.result) == StashOperationResult.Success;
     }
 

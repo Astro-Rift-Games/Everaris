@@ -131,7 +131,6 @@ public sealed class PendingDefeatRecoveryTests
     public void PendingReceipt_CannotBeOverwrittenByAnotherParticipation()
     {
         string before = LocalProfileSaveCodec.Encode(_repository.Snapshot);
-        Assert.That(_store.TryCreateLoadoutReservation("next_reservation", out _), Is.EqualTo(StashOperationResult.ReservationPending));
         Assert.That(_store.TryCommitDefeatProgression(new ProgressionReceipt("other_raid", _profile, 2, 10, 1), 1, 80),
             Is.EqualTo(StashOperationResult.ReservationPending));
         Assert.That(LocalProfileSaveCodec.Encode(_repository.Snapshot), Is.EqualTo(before));
@@ -176,6 +175,84 @@ public sealed class PendingDefeatRecoveryTests
             new CommitDefeatUnifiedResult { level = 1, experience = 75, revision = 4 }, default(BackendError)))), Is.True);
         Assert.That(_store.PendingReservation == null, Is.EqualTo(cleared));
         if (!cleared) Assert.That(_store.PendingReservation.ReservationId, Is.EqualTo(reservationId));
+    }
+
+    [Test]
+    public async Task FailedReplay_DoesNotBlockNewReservation_AndOldCompletionPreservesIt()
+    {
+        Assert.That(await Replay(_ => Task.FromResult((false, default(CommitDefeatUnifiedResult),
+            new BackendError { error = "TIMEOUT" }))), Is.False);
+        // Hydration can supply the next prepared loadout while the old receipt remains pending.
+        var snapshot = _repository.Snapshot.Clone();
+        snapshot.PreparedEquipment = new PreparedEquipmentLoadout(new LootId("arming_sword"), default);
+        Assert.That(_repository.TrySave(snapshot, out _), Is.True);
+        Assert.That(_store.TryCreateLoadoutReservation("next", out var reservation), Is.EqualTo(StashOperationResult.Success));
+        Assert.That(reservation.ReservationId, Is.EqualTo("next"));
+        Assert.That(_store.PendingDefeatCommit.Receipt, Is.EqualTo(_receipt));
+        Assert.That(await Replay(_ => Task.FromResult((true,
+            new CommitDefeatUnifiedResult { level = 1, experience = 75, revision = 4 }, default(BackendError)))), Is.True);
+        Assert.That(_store.PendingReservation.ReservationId, Is.EqualTo("next"));
+        Assert.That(_store.PendingReservation.PreparedEquipment, Is.EqualTo(reservation.PreparedEquipment));
+    }
+
+    [Test]
+    public async Task MissingAuthoritativeResult_RetiresOnce_ThenOrdinaryHydrationUsesBackendProgression()
+    {
+        var snapshot = _repository.Snapshot.Clone();
+        snapshot.PendingReservation = new PendingLoadoutReservation("next", null);
+        Assert.That(_repository.TrySave(snapshot, out _), Is.True);
+        int hydrations = 0;
+        UnityEngine.TestTools.LogAssert.Expect(UnityEngine.LogType.Warning,
+            "[ApplicationStashServiceBootstrapper] Pending defeat retired: the backend can no longer credit this result. Backend progression remains authoritative.");
+        Assert.That(await ApplicationStashServiceBootstrapper.RetryPendingDefeatAsync(_store,
+            _ => Task.FromResult((false, default(CommitDefeatUnifiedResult), new BackendError { error = "NO_AUTHORITATIVE_RESULT" })),
+            () =>
+            {
+                hydrations++;
+                Assert.That(_store.PendingDefeatCommit, Is.Null);
+                return Task.FromResult(_store.ReconcileRemoteState(null,
+                    new ProgressionData { level = 1, experience = 12, revision = 4 }, _catalog, null) == StashOperationResult.Success);
+            }), Is.False, "An uncreditable result must never be presented as saved.");
+        Assert.That(hydrations, Is.EqualTo(1));
+        Assert.That(_store.PendingDefeatCommit, Is.Null);
+        Assert.That(_store.PendingReservation.ReservationId, Is.EqualTo("next"));
+        Assert.That(_store.GetCurrentExperience(), Is.EqualTo(12));
+        string after = LocalProfileSaveCodec.Encode(_repository.Snapshot);
+        Assert.That(await Replay(_ => throw new Exception("Retired record must not replay.")), Is.True);
+        Assert.That(LocalProfileSaveCodec.Encode(_repository.Snapshot), Is.EqualTo(after));
+    }
+
+    [Test]
+    public async Task MissingAuthoritativeResult_SaveFailureRetainsExactPendingState()
+    {
+        string before = LocalProfileSaveCodec.Encode(_repository.Snapshot);
+        _repository.FailSave = true;
+        UnityEngine.TestTools.LogAssert.Expect(UnityEngine.LogType.Error,
+            "[LocalProfileStore] Commit failed. Available=True; Status=Ready; Error=Injected atomic-write failure.");
+        Assert.That(await ApplicationStashServiceBootstrapper.RetryPendingDefeatAsync(_store,
+            _ => Task.FromResult((false, default(CommitDefeatUnifiedResult), new BackendError { error = "NO_AUTHORITATIVE_RESULT" })),
+            () => throw new Exception("Failed retirement must not hydrate.")), Is.False);
+        Assert.That(LocalProfileSaveCodec.Encode(_repository.Snapshot), Is.EqualTo(before));
+    }
+
+    [TestCase(null)]
+    [TestCase("")]
+    public async Task UnsetReservationId_FallsBackToPlayedReservation_AndCompletionClearsIt(string reservationId)
+    {
+        var repository = new FaultingRepository();
+        Assert.That(repository.Initialize(_profile, _catalog), Is.True);
+        var snapshot = repository.Snapshot.Clone();
+        snapshot.PendingReservation = new PendingLoadoutReservation("played", null);
+        Assert.That(repository.TrySave(snapshot, out _), Is.True);
+        var store = new LocalProfileStore(repository, _profile, _catalog);
+        Assert.That(store.TryCommitDefeatProgression(_receipt, 1, 70, reservationId), Is.EqualTo(StashOperationResult.Success));
+        Assert.That(store.PendingDefeatCommit.ReservationId, Is.EqualTo("played"));
+        snapshot = repository.Snapshot.Clone();
+        snapshot.PendingReservation = new PendingLoadoutReservation("played", null);
+        Assert.That(repository.TrySave(snapshot, out _), Is.True);
+        Assert.That(await ApplicationStashServiceBootstrapper.RetryPendingDefeatAsync(store, _ => Task.FromResult((true,
+            new CommitDefeatUnifiedResult { level = 1, experience = 75, revision = 4 }, default(BackendError)))), Is.True);
+        Assert.That(store.PendingReservation, Is.Null);
     }
 
     private Task<bool> Replay(Func<ProgressionReceipt, Task<(bool success, CommitDefeatUnifiedResult result, BackendError error)>> commit) =>

@@ -118,7 +118,7 @@ namespace Tests.EditMode.Presentation
         }
 
         [TestCase("NO_AUTHORITATIVE_RESULT", false, false, "No se pudo guardar; se reintentará al iniciar sesión.")]
-        [TestCase("NO_AUTHORITATIVE_RESULT", false, true, "No se pudo guardar; se reintentará al iniciar sesión.")]
+        [TestCase("NO_AUTHORITATIVE_RESULT", false, true, "No se pudo guardar la experiencia de la derrota; el servidor ya no puede acreditar este resultado.")]
         [TestCase("TIMEOUT", false, true, "No se pudo guardar; se reintentará al iniciar sesión.")]
         [TestCase("RESULT_CONFLICT", false, false, "No se pudo guardar; se reintentará al iniciar sesión.")]
         [TestCase("TOO_MANY_REQUESTS", true, true, "Guardado pendiente; reintentando… Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.")]

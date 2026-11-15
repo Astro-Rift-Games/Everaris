@@ -21,7 +21,21 @@ public sealed class BackendErrorMessagesTests
         Assert.That(BackendErrorMessages.ForError(new BackendError { error = code, message = "raw diagnostic" }), Is.EqualTo(expected));
     }
 
-    [TestCase("NO_AUTHORITATIVE_RESULT")]
+    [Test]
+    public void DefeatMissingResult_DoesNotPromiseLoginReplay()
+    {
+        var holder = new UnityEngine.GameObject("DefeatFeedbackTests");
+        holder.SetActive(false);
+        try
+        {
+            var feedback = holder.AddComponent<NetworkRaidParticipant>().BackendDefeatFeedback;
+            feedback.Complete(false, new BackendError { error = "NO_AUTHORITATIVE_RESULT" });
+            Assert.That(feedback.Status, Is.EqualTo(BackendCommitStatus.Failed));
+            Assert.That(feedback.Message, Is.EqualTo("No se pudo guardar la experiencia de la derrota; el servidor ya no puede acreditar este resultado."));
+        }
+        finally { UnityEngine.Object.DestroyImmediate(holder); }
+    }
+
     [TestCase("TOO_MANY_REQUESTS")]
     [TestCase("CONCURRENT_MUTATION")]
     [TestCase("EXTRACTION_RESULT_PENDING")]
