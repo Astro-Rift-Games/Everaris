@@ -397,7 +397,7 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
             return;
         }
 
-        if (State == RaidParticipantState.Defeated && !_localDefeatCommitCompleted &&
+        if (State == RaidParticipantState.Defeated && ShouldRetryLocalDefeatCommit &&
             _authoritativeDefeatPublishedSequence == ResultSequence)
         {
             TryCommitDefeatProgressionLocally(resolution, application);
@@ -503,9 +503,8 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
             application.Result.ResultingExperience,
             LoadoutReservationId.ToString());
 
-        if (result == StashOperationResult.Success || result == StashOperationResult.AlreadySecured)
+        if (AcceptLocalDefeatCommitResult(result))
         {
-            _localDefeatCommitCompleted = true;
             var remoteService = context.GetComponent<RemoteInventoryService>();
             if (remoteService != null)
             {
@@ -519,6 +518,18 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
         }
     }
 
+    internal bool ShouldRetryLocalDefeatCommit => !_localDefeatCommitCompleted;
+
+    internal bool AcceptLocalDefeatCommitResult(StashOperationResult result)
+    {
+        bool accepted = result == StashOperationResult.Success || result == StashOperationResult.AlreadySecured;
+        if (accepted || result == StashOperationResult.ReservationPending)
+            _localDefeatCommitCompleted = true;
+        if (result == StashOperationResult.ReservationPending)
+            BackendDefeatFeedback.RejectLocalDefeat();
+        return accepted;
+    }
+
     private async Task CommitDefeatToBackendAsync(RemoteInventoryService service, LocalProfileStore store)
     {
         BackendDefeatFeedback.Begin();
@@ -529,7 +540,8 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
             var outcome = await service.CommitDefeatUnifiedAsync(receipt, BackendDefeatFeedback.Retrying);
             error = outcome.error;
             return outcome;
-        }, reconciliation != null ? reconciliation.ReconcileAsync : null);
+        }, reconciliation != null ? reconciliation.ReconcileAsync : null,
+            async id => (await service.ClearPendingReservationAsync(id)).success);
         BackendDefeatFeedback.Complete(saved, error);
     }
 

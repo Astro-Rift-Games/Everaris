@@ -195,7 +195,8 @@ public static class ApplicationStashServiceBootstrapper
 
         if (store.PendingDefeatCommit != null)
             _ = RetryPendingDefeatAsync(store, receipt => remoteInventoryService.CommitDefeatUnifiedAsync(receipt),
-                reconciliationService.ReconcileAsync);
+                reconciliationService.ReconcileAsync,
+                async id => (await remoteInventoryService.ClearPendingReservationAsync(id)).success);
 
         _initializedProfileId = profileId;
         Debug.Log($"[{nameof(ApplicationStashServiceBootstrapper)}] Store initialized for ProfileId {profileId.Value}.");
@@ -507,7 +508,8 @@ public static class ApplicationStashServiceBootstrapper
     public static async System.Threading.Tasks.Task<bool> RetryPendingDefeatAsync(
         LocalProfileStore store,
         System.Func<ProgressionReceipt, System.Threading.Tasks.Task<(bool success, CommitDefeatUnifiedResult result, BackendError error)>> commit,
-        System.Func<System.Threading.Tasks.Task<bool>> reconcile = null)
+        System.Func<System.Threading.Tasks.Task<bool>> reconcile = null,
+        System.Func<string, System.Threading.Tasks.Task<bool>> clearLoss = null)
     {
         var pending = store.PendingDefeatCommit;
         if (pending == null) return true;
@@ -518,6 +520,10 @@ public static class ApplicationStashServiceBootstrapper
                 store.TryRetireDefeatCommit(pending.Receipt) == StashOperationResult.Success)
             {
                 Debug.LogWarning("[ApplicationStashServiceBootstrapper] Pending defeat retired: the backend can no longer credit this result. Backend progression remains authoritative.");
+                // Never use the service's unguarded omitted-ID fallback for an old receipt.
+                // A failed clear leaves an orphan for the next login, but cannot keep XP pending.
+                if (clearLoss != null && !string.IsNullOrEmpty(pending.ReservationId))
+                    await clearLoss(pending.ReservationId);
                 if (reconcile != null) await reconcile();
             }
             // Retirement is not a successful credit; the live feedback must not report Saved.

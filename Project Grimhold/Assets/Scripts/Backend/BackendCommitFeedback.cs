@@ -28,6 +28,9 @@ namespace Grimhold.Backend
                 : _supportsLoginRecovery ? BackendCommitStatus.DeferredUntilLogin : BackendCommitStatus.Failed,
             success ? default : error);
 
+        public void RejectLocalDefeat() => SetState(BackendCommitStatus.Failed,
+            new BackendError { error = "LOCAL_DEFEAT_PENDING" });
+
         public void DeferHydration() => SetState(
             _supportsLoginRecovery ? BackendCommitStatus.DeferredUntilLogin : BackendCommitStatus.Failed, default);
 

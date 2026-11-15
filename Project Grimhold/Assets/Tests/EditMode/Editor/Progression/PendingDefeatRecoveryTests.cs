@@ -210,7 +210,7 @@ public sealed class PendingDefeatRecoveryTests
             {
                 hydrations++;
                 Assert.That(_store.PendingDefeatCommit, Is.Null);
-                return Task.FromResult(_store.ReconcileRemoteState(null,
+                return Task.FromResult(_store.ReconcileRemoteState(BackendInventory("next"),
                     new ProgressionData { level = 1, experience = 12, revision = 4 }, _catalog, null) == StashOperationResult.Success);
             }), Is.False, "An uncreditable result must never be presented as saved.");
         Assert.That(hydrations, Is.EqualTo(1));
@@ -220,6 +220,82 @@ public sealed class PendingDefeatRecoveryTests
         string after = LocalProfileSaveCodec.Encode(_repository.Snapshot);
         Assert.That(await Replay(_ => throw new Exception("Retired record must not replay.")), Is.True);
         Assert.That(LocalProfileSaveCodec.Encode(_repository.Snapshot), Is.EqualTo(after));
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+    }
+
+    [TestCase("played_reservation", true)]
+    [TestCase("played_reservation", false)]
+    [TestCase("newer_reservation", true)]
+    public async Task MissingAuthoritativeResult_DoesNotResurrectPlayedReservationFromBackend(string backendReservation, bool clearSucceeds)
+    {
+        int clears = 0;
+        UnityEngine.TestTools.LogAssert.Expect(UnityEngine.LogType.Warning,
+            "[ApplicationStashServiceBootstrapper] Pending defeat retired: the backend can no longer credit this result. Backend progression remains authoritative.");
+        Assert.That(await ApplicationStashServiceBootstrapper.RetryPendingDefeatAsync(_store,
+            _ => Task.FromResult((false, default(CommitDefeatUnifiedResult), new BackendError { error = "NO_AUTHORITATIVE_RESULT" })),
+            () =>
+            {
+                Assert.That(clears, Is.EqualTo(1), "Loss clear must precede reconciliation.");
+                return Task.FromResult(_store.ReconcileRemoteState(BackendInventory(backendReservation),
+                    new ProgressionData { level = 1, experience = 12, revision = 4 }, _catalog, null) == StashOperationResult.Success);
+            },
+            clearLoss: id =>
+            {
+                clears++;
+                Assert.That(id, Is.EqualTo("played_reservation"));
+                if (clearSucceeds && id == backendReservation) backendReservation = null;
+                return Task.FromResult(clearSucceeds);
+            }), Is.False);
+        Assert.That(clears, Is.EqualTo(1));
+        Assert.That(_store.PendingDefeatCommit, Is.Null);
+        Assert.That(_store.PendingReservation?.ReservationId, Is.EqualTo(backendReservation));
+        Assert.That(_store.GetCurrentExperience(), Is.EqualTo(12));
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+    }
+
+    private static InventoryData BackendInventory(string reservationId) => new InventoryData
+    {
+        inventorySchemaVersion = 3, stash = new InventoryItemData[0], loadout = new InventoryItemData[0], revision = 4,
+        pendingReservation = reservationId == null ? default : new PendingReservationData
+        {
+            reservationId = reservationId, admittedAt = "2026-11-14T00:00:00.000Z", items = new InventoryItemData[0]
+        }
+    };
+
+    [Test]
+    public void SecondDefeat_StopsLocalRetriesAndExplainsThatItWasNotRecorded()
+    {
+        string before = LocalProfileSaveCodec.Encode(_repository.Snapshot);
+        var go = new UnityEngine.GameObject("defeat feedback test");
+        try
+        {
+            var participant = go.AddComponent<NetworkRaidParticipant>();
+            Assert.That(participant.ShouldRetryLocalDefeatCommit, Is.True);
+            var result = _store.TryCommitDefeatProgression(new ProgressionReceipt("other_raid", _profile, 2, 10, 1), 1, 80);
+            Assert.That(participant.AcceptLocalDefeatCommitResult(result), Is.False);
+            Assert.That(participant.ShouldRetryLocalDefeatCommit, Is.False);
+            Assert.That(participant.BackendDefeatFeedback.Status, Is.EqualTo(BackendCommitStatus.Failed));
+            Assert.That(participant.BackendDefeatFeedback.Message, Is.EqualTo(
+                "No se pudo registrar esta derrota localmente porque hay otra derrota pendiente de guardar."));
+            Assert.That(LocalProfileSaveCodec.Encode(_repository.Snapshot), Is.EqualTo(before));
+        }
+        finally { UnityEngine.Object.DestroyImmediate(go); }
+    }
+
+    [TestCase(StashOperationResult.Success, true)]
+    [TestCase(StashOperationResult.AlreadySecured, true)]
+    [TestCase(StashOperationResult.InvalidInventory, false)]
+    public void LocalDefeatDecision_PreservesAcceptedAndRetryableOutcomes(StashOperationResult result, bool accepted)
+    {
+        var go = new UnityEngine.GameObject("defeat decision test");
+        try
+        {
+            var participant = go.AddComponent<NetworkRaidParticipant>();
+            Assert.That(participant.AcceptLocalDefeatCommitResult(result), Is.EqualTo(accepted));
+            Assert.That(participant.ShouldRetryLocalDefeatCommit, Is.EqualTo(!accepted));
+            Assert.That(participant.BackendDefeatFeedback.Status, Is.EqualTo(BackendCommitStatus.None));
+        }
+        finally { UnityEngine.Object.DestroyImmediate(go); }
     }
 
     [Test]

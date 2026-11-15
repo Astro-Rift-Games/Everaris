@@ -42,6 +42,8 @@ namespace Grimhold.Backend
             BackendCommitStatus.Saving => "Guardando el resultado de la incursión…",
             BackendCommitStatus.Retrying => "Guardado pendiente; reintentando… " + ForError(feedback.Error),
             BackendCommitStatus.DeferredUntilLogin => "No se pudo guardar; se reintentará al iniciar sesión.",
+            BackendCommitStatus.Failed when feedback.Error.error == "LOCAL_DEFEAT_PENDING" =>
+                "No se pudo registrar esta derrota localmente porque hay otra derrota pendiente de guardar.",
             BackendCommitStatus.Failed when feedback.Error.error == "NO_AUTHORITATIVE_RESULT" =>
                 "No se pudo guardar la experiencia de la derrota; el servidor ya no puede acreditar este resultado.",
             BackendCommitStatus.Failed => "No se pudo guardar. " + ForError(feedback.Error),
