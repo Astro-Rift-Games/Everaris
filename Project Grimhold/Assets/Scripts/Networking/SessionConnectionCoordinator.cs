@@ -1025,7 +1025,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             if (!started)
             {
                 TransitionTo(SessionConnectionState.Failed);
-                return SessionTransitionResult.ConnectionFailed;
+                return SessionStartFailurePolicy.Classify(_hubLauncher.LastStartShutdownReason);
             }
 
             TransitionTo(SessionConnectionState.Town);
@@ -1143,6 +1143,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             bool started = false;
             bool availabilityWaitLogged = false;
             ShutdownReason lastObservedShutdownReason = ShutdownReason.Ok;
+            ShutdownReason? startFailureReason = null;
             int coordinatedAttempt = 0;
             float deadline = Time.realtimeSinceStartup + _clientSessionAvailabilityTimeoutSeconds;
             while (!started)
@@ -1171,6 +1172,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
                 }
 
                 ShutdownReason lastReason = _raidLauncher.LastStartShutdownReason;
+                startFailureReason = lastReason;
                 float remainingSeconds = deadline - Time.realtimeSinceStartup;
                 bool hostSessionPending = ShouldRetryRaidSessionAvailability(
                                               ticket.LaunchContext,
@@ -1224,9 +1226,10 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
                     return SessionTransitionResult.ConnectionFailed;
                 }
 
+                SessionTransitionResult failure = SessionStartFailurePolicy.Classify(startFailureReason);
                 return recoverTownOnFailure
-                    ? await RecoverTownAfterRaidFailureAsync(SessionTransitionResult.ConnectionFailed)
-                    : await CleanupFailedRaidAttemptAsync(SessionTransitionResult.ConnectionFailed);
+                    ? await RecoverTownAfterRaidFailureAsync(failure)
+                    : await CleanupFailedRaidAttemptAsync(failure);
             }
 
             TransitionTo(SessionConnectionState.Raid);
@@ -1338,7 +1341,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             if (!hubShutdown)
             {
                 TransitionTo(SessionConnectionState.Failed);
-                return await RecoverTownAfterFailedReconnectAsync();
+                return await RecoverTownAfterFailedReconnectAsync(SessionTransitionResult.ConnectionFailed);
             }
 
             bool connected = false;
@@ -1413,7 +1416,8 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
                     DiscardActiveReconnectTicket();
                 }
 
-                return await RecoverTownAfterFailedReconnectAsync();
+                return await RecoverTownAfterFailedReconnectAsync(
+                    SessionStartFailurePolicy.Classify(attemptThrew ? null : reason));
             }
 
             TransitionTo(SessionConnectionState.Raid);
@@ -1440,10 +1444,11 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
         }
     }
 
-    private async Task<SessionTransitionResult> RecoverTownAfterFailedReconnectAsync()
+    private async Task<SessionTransitionResult> RecoverTownAfterFailedReconnectAsync(SessionTransitionResult failure)
     {
         TransitionTo(SessionConnectionState.ReturningTown);
         bool recovered;
+        ShutdownReason? recoveryStartReason = null;
         try
         {
             await ShutdownActiveRunnersAsync();
@@ -1459,6 +1464,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
 
             CancellationToken cancellationToken = _isQuitting ? new CancellationToken(true) : CancellationToken.None;
             recovered = await _hubLauncher.StartHubSessionAsync(_townSceneName, cancellationToken);
+            if (!recovered) recoveryStartReason = _hubLauncher.LastStartShutdownReason;
         }
         catch (Exception exception)
         {
@@ -1468,12 +1474,12 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
 
         if (!recovered)
         {
-            return EnterRecoveryFailed();
+            return EnterRecoveryFailed(recoveryStartReason);
         }
 
         TransitionTo(SessionConnectionState.Town);
-        CompleteTownEntry(SessionTransitionResult.ConnectionFailed);
-        return SessionTransitionResult.ConnectionFailed;
+        CompleteTownEntry(failure);
+        return failure;
     }
 
     public static bool ShouldDiscardReconnectTicket(ShutdownReason reason, bool attemptThrew) =>
@@ -1651,8 +1657,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
 
             if (!started)
             {
-                TransitionTo(SessionConnectionState.Failed);
-                return SessionTransitionResult.RecoveryFailed;
+                return EnterRecoveryFailed(_hubLauncher.LastStartShutdownReason);
             }
 
             TransitionTo(SessionConnectionState.Town);
@@ -1793,7 +1798,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
                 }
 
                 TransitionTo(SessionConnectionState.Failed);
-                return SessionTransitionResult.ConnectionFailed;
+                return SessionStartFailurePolicy.Classify(_raidLauncher.LastStartShutdownReason);
             }
 
             TransitionTo(SessionConnectionState.Raid);
@@ -1887,6 +1892,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
         UpdateTicketState(SessionConnectionState.ReturningTown);
 
         bool recovered;
+        ShutdownReason? recoveryStartReason = null;
         try
         {
             bool shutdownSucceeded = await ShutdownActiveRunnersAsync();
@@ -1898,6 +1904,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             CancellationToken cancellationToken = _activeTransitionCancellation?.Token ?? CancellationToken.None;
             recovered = shutdownSucceeded &&
                 await _hubLauncher.StartHubSessionAsync(_townSceneName, cancellationToken);
+            if (shutdownSucceeded && !recovered) recoveryStartReason = _hubLauncher.LastStartShutdownReason;
         }
         catch (Exception exception)
         {
@@ -1914,7 +1921,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
 
         if (!recovered)
         {
-            return EnterRecoveryFailed();
+            return EnterRecoveryFailed(recoveryStartReason);
         }
 
         TransitionTo(SessionConnectionState.Town);
@@ -1939,15 +1946,18 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
     /// Terminal outcome of a Town recovery that could not restore a usable runner: enters
     /// <see cref="SessionConnectionState.Failed"/> and publishes the consumable result.
     /// </summary>
-    private SessionTransitionResult EnterRecoveryFailed()
+    private SessionTransitionResult EnterRecoveryFailed(ShutdownReason? startReason = null)
     {
         if (State != SessionConnectionState.Failed)
         {
             TransitionTo(SessionConnectionState.Failed);
         }
 
-        _pendingTransitionFailure = SessionTransitionResult.RecoveryFailed;
-        return SessionTransitionResult.RecoveryFailed;
+        SessionTransitionResult failure = SessionStartFailurePolicy.Classify(startReason) == SessionTransitionResult.ServiceUnavailable
+            ? SessionTransitionResult.ServiceUnavailable
+            : SessionTransitionResult.RecoveryFailed;
+        _pendingTransitionFailure = failure;
+        return failure;
     }
 
     private async Task<SessionTransitionResult> CleanupFailedRaidAttemptAsync(
@@ -2409,7 +2419,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
 
             if (!started)
             {
-                TransitionTo(SessionConnectionState.Failed);
+                EnterRecoveryFailed(_hubLauncher.LastStartShutdownReason);
                 return;
             }
 

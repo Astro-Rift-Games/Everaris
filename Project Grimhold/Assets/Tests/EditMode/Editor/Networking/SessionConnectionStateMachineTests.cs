@@ -988,7 +988,8 @@ public sealed class SessionConnectionStateMachineTests
 
             var recovery = (Task<SessionTransitionResult>)InvokePrivateMethod(
                 coordinator,
-                "RecoverTownAfterFailedReconnectAsync");
+                "RecoverTownAfterFailedReconnectAsync",
+                SessionTransitionResult.ConnectionFailed);
             SessionTransitionResult result = await recovery;
 
             Assert.That(result, Is.EqualTo(SessionTransitionResult.RecoveryFailed));

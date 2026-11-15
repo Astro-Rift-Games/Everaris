@@ -528,6 +528,14 @@ closes both gates for local Animation/VFX/gameplay testing without a backend:
 
 ## Failure and recovery
 
+Fusion start failures are classified by `SessionStartFailurePolicy`: `PhotonCloudTimeout` and
+`MaxCcuReached` publish `ServiceUnavailable`; all other or unknown start reasons remain
+`ConnectionFailed`. Both launchers retain their last start reason. This classification does not
+change availability retries, reconnect terminal reasons, timing, or recovery attempts. If Town
+recovery itself fails, its distinguishable service failure is published as `ServiceUnavailable`;
+otherwise the existing `RecoveryFailed` outcome takes precedence. The main-menu Town entry label
+also uses the shared Spanish `SessionTransitionFailureText` catalog, never result enum names.
+
 If shutdown fails, the coordinator reports the appropriate shutdown or recovery result and
 enters `Failed`. If raid startup fails after Town was left, the coordinator performs exactly
 one recovery attempt: it cleans any partial runner and starts a fresh Shared Town runner. A
@@ -537,8 +545,8 @@ successful recovery returns the original raid failure while leaving the applicat
 Recovery is exception-tolerant (FIX-05). Runner shutdown, the wait for an in-flight
 reservation-loss clear and Town runner startup are guarded: an exception is logged and
 classified as a failed recovery instead of escaping the caller's `catch` block. A failed
-recovery always ends in `Failed` with `RecoveryFailed` published through the consume-once
-transition failure channel (`TryConsumeLastTransitionFailure`), never in `ReturningTown`. The
+recovery always ends in `Failed` with `RecoveryFailed` (or a distinguishable
+`ServiceUnavailable` start failure) published through the consume-once transition failure channel (`TryConsumeLastTransitionFailure`), never in `ReturningTown`. The
 coordinated launch task started from a launch release is fire-and-forget, so it publishes any
 non-successful result through the same channel for the Town UI and observes any fault itself.
 

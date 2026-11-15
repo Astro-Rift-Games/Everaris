@@ -20,6 +20,7 @@ public sealed class HubSessionLauncher : MonoBehaviour, ISessionRunnerOwner
     private NetworkPrefabRef _socialPlayerPrefab;
 
     public NetworkRunner Runner => _runner;
+    public ShutdownReason LastStartShutdownReason { get; private set; } = ShutdownReason.Ok;
     public event Action<NetworkRunner, ShutdownReason> RunnerShutdownObserved;
 
     public Task<bool> StartHubSessionAsync()
@@ -46,9 +47,13 @@ public sealed class HubSessionLauncher : MonoBehaviour, ISessionRunnerOwner
         }
 
         if (_isStarting || _runner != null)
+        {
+            LastStartShutdownReason = ShutdownReason.Error;
             return false;
+        }
 
         _isStarting = true;
+        LastStartShutdownReason = ShutdownReason.Ok;
 
         try
         {
@@ -58,6 +63,7 @@ public sealed class HubSessionLauncher : MonoBehaviour, ISessionRunnerOwner
 
             if (!HubRunnerFactory.TryCreate(in joinData, _socialPlayerPrefab, out var composition))
             {
+                LastStartShutdownReason = ShutdownReason.Error;
                 Debug.LogError("[HubSessionLauncher] Failed to create runner composition via factory.", this);
                 return false;
             }
@@ -86,6 +92,7 @@ public sealed class HubSessionLauncher : MonoBehaviour, ISessionRunnerOwner
 
             if (!result.Ok)
             {
+                LastStartShutdownReason = result.ShutdownReason;
                 Debug.LogError($"[HubSessionLauncher] Fusion failed to start Shared Mode. Reason: {result.ShutdownReason}", this);
                 await ShutdownAndDestroyRunnerAsync();
                 return false;
@@ -105,11 +112,13 @@ public sealed class HubSessionLauncher : MonoBehaviour, ISessionRunnerOwner
         }
         catch (OperationCanceledException)
         {
+            LastStartShutdownReason = ShutdownReason.Error;
             await ShutdownAndDestroyRunnerAsync();
             return false;
         }
         catch (Exception ex)
         {
+            LastStartShutdownReason = ShutdownReason.Error;
             Debug.LogException(ex, this);
             await ShutdownAndDestroyRunnerAsync();
             throw;
