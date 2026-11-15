@@ -38,6 +38,13 @@ public sealed class BackendRetryScheduleTests
         Assert.That(BackendRetrySchedule.DelayMilliseconds(error, 1), Is.EqualTo(12000));
     }
 
+    [TestCase(30f, false)]
+    [TestCase(30.001f, true)]
+    [TestCase(float.PositiveInfinity, true)]
+    [TestCase(float.NaN, false)]
+    public void WaitBudget_ExceedsOnlyForHintsAboveThirtySeconds(float seconds, bool expected) =>
+        Assert.That(BackendRetrySchedule.ExceedsWaitBudget(new BackendError { retryAfter = seconds }), Is.EqualTo(expected));
+
     [TestCase(3600f)]
     [TestCase(float.MaxValue)]
     public void AbsurdWaitHint_IsBounded(float seconds) =>
