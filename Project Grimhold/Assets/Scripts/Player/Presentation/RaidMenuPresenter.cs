@@ -1002,9 +1002,16 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         {
             lootStatus = ExtractionLootSaveStatus.Pending;
         }
+        return ResolveExtractionPersistenceFeedback(lootStatus, _hasProgressionCorrection,
+            CurrentBackendFeedback(), out canRetryPersistence);
+    }
+
+    internal static string ResolveExtractionPersistenceFeedback(ExtractionLootSaveStatus lootStatus,
+        bool hasProgressionCorrection, string backendFeedback, out bool canRetryPersistence)
+    {
         string lootFeedback = lootStatus switch
         {
-            ExtractionLootSaveStatus.Committed => _hasProgressionCorrection
+            ExtractionLootSaveStatus.Committed => hasProgressionCorrection
                 ? "Botín asegurado.\n(Progresión ajustada por el servidor)."
                 : "Botín asegurado.",
             ExtractionLootSaveStatus.PersistenceFailed =>
@@ -1013,9 +1020,8 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         };
         canRetryPersistence =
             lootStatus == ExtractionLootSaveStatus.PersistenceFailed;
-        string backendFeedback = CurrentBackendFeedback();
         return !canRetryPersistence && !string.IsNullOrEmpty(backendFeedback)
-            ? backendFeedback : lootFeedback;
+            ? lootFeedback + "\n" + backendFeedback : lootFeedback;
     }
 
     private NetworkMatchController GetMatchController() => _runner != null

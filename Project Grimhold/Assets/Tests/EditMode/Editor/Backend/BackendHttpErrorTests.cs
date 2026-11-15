@@ -44,10 +44,15 @@ public sealed class BackendHttpErrorTests
         finally { Object.DestroyImmediate(config); }
     }
 
-    [TestCase("extraction", 17)]
-    [TestCase("defeat", 17)]
-    [TestCase("legacy", 0)]
-    public async Task ConsumedCommit_IsIdempotentSuccessWithAuthoritativeMetadata(string client, int expectedRevision)
+    [TestCase("extraction", "raid-test", 1, true, 17)]
+    [TestCase("legacy", "raid-test", 1, true, 0)]
+    [TestCase("extraction", null, 0, false, 0)]
+    [TestCase("extraction", "another-raid", 1, false, 0)]
+    [TestCase("extraction", "raid-test", 2, false, 0)]
+    [TestCase("legacy", null, 0, false, 0)]
+    [TestCase("legacy", "another-raid", 1, false, 0)]
+    [TestCase("defeat", null, 0, false, 0)]
+    public async Task ConsumedCommit_RequiresProofOfExactReceipt(string client, string raid, int sequence, bool credited, int expectedRevision)
     {
         var probe = new TcpListener(IPAddress.Loopback, 0);
         probe.Start();
@@ -72,13 +77,13 @@ public sealed class BackendHttpErrorTests
             {
                 var metadata = await next;
                 Assert.That(metadata.Request.HttpMethod, Is.EqualTo("GET"));
-                await Respond(metadata, 200, "{\"revision\":17,\"level\":4,\"experience\":12,\"loadout\":[]}");
+                await Respond(metadata, 200, $"{{\"revision\":17,\"level\":4,\"experience\":12,\"loadout\":[],\"lastAppliedExtractionReceipt\":{{\"raidId\":\"{raid}\",\"resultSequence\":{sequence}}}}}");
             }
             var outcome = await request;
-            Assert.That(outcome.success, Is.True);
-            Assert.That(outcome.secured, Is.True);
+            Assert.That(outcome.success, Is.EqualTo(credited));
+            Assert.That(outcome.secured, Is.EqualTo(credited));
             Assert.That(outcome.revision, Is.EqualTo(expectedRevision));
-            Assert.That(outcome.error.error, Is.Null.Or.Empty);
+            Assert.That(outcome.error.error, credited ? Is.Null.Or.Empty : Is.EqualTo("RESULT_ALREADY_CONSUMED"));
         }
         finally { Object.DestroyImmediate(config); }
     }
@@ -96,15 +101,15 @@ public sealed class BackendHttpErrorTests
     {
         if (client == "defeat")
         {
-            var r = await InventoryClient.CommitDefeatUnifiedAsync(config, "test", default);
+            var r = await InventoryClient.CommitDefeatUnifiedAsync(config, "test", new CommitDefeatUnifiedRequest { raidId = "raid-test", resultSequence = 1 });
             return (r.success, r.data.alreadySecured, r.data.revision, r.error);
         }
         if (client == "legacy")
         {
-            var r = await InventoryClient.CommitExtractionAsync(config, "test", default);
+            var r = await InventoryClient.CommitExtractionAsync(config, "test", new CommitExtractionRequest { raidId = "raid-test", resultSequence = 1 });
             return (r.success, r.data.alreadySecured, 0, r.error); // This legacy DTO has no revision.
         }
-        var result = await InventoryClient.CommitExtractionUnifiedAsync(config, "test", default);
+        var result = await InventoryClient.CommitExtractionUnifiedAsync(config, "test", new CommitExtractionUnifiedRequest { raidId = "raid-test", resultSequence = 1 });
         return (result.success, result.data.alreadySecured, result.data.revision, result.error);
     }
 

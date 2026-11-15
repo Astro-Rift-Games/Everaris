@@ -117,6 +117,7 @@ public static class ApplicationStashServiceBootstrapper
             _configuration.AbilityCatalog,
             _configuration.StashCapacity);
         bool? orphanRollback = null;
+        string orphanReservationId = store.PendingReservation?.ReservationId;
         if (store.PendingExtractionCommit != null)
         {
             Debug.LogWarning($"[{nameof(ApplicationStashServiceBootstrapper)}] Retrying pending extraction commit from a previous session crash.");
@@ -149,6 +150,7 @@ public static class ApplicationStashServiceBootstrapper
         {
             Debug.LogWarning($"[{nameof(ApplicationStashServiceBootstrapper)}] Remote inventory has an orphaned reservation '{inventoryData.Value.pendingReservation.reservationId}' but local store has none. Clearing backend reservation as a loss.");
             orphanRollback = false;
+            orphanReservationId = inventoryData.Value.pendingReservation.reservationId;
         }
 
         var stashService = contextObject.AddComponent<InMemoryPlayerStashService>();
@@ -161,7 +163,7 @@ public static class ApplicationStashServiceBootstrapper
         remoteInventoryService.Initialize(_configuration, store);
         if (orphanRollback.HasValue)
         {
-            _ = ClearOrphanedReservationAsync(remoteInventoryService, orphanRollback.Value);
+            _ = ClearOrphanedReservationAsync(remoteInventoryService, orphanRollback.Value, orphanReservationId);
         }
 
         // Add ProfileReconciliationService to handle automatic retry and hydration on conflicts
@@ -591,11 +593,11 @@ public static class ApplicationStashServiceBootstrapper
     }
 
     private static async System.Threading.Tasks.Task ClearOrphanedReservationAsync(
-        RemoteInventoryService service, bool rollback)
+        RemoteInventoryService service, bool rollback, string expectedReservationId)
     {
         var (success, error) = rollback
-            ? await service.RollbackPendingReservationAsync()
-            : await service.ClearPendingReservationAsync();
+            ? await service.RollbackPendingReservationAsync(expectedReservationId)
+            : await service.ClearPendingReservationAsync(expectedReservationId);
         // The loss service already warns for this protected authoritative result.
         // Do not retry as rollback, reconcile, or discard a pending extraction.
         if (!success && error.error != "EXTRACTION_RESULT_PENDING")

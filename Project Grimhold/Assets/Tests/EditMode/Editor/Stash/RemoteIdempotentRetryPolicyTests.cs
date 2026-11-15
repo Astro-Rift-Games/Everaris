@@ -41,6 +41,24 @@ public class RemoteIdempotentRetryPolicyTests
     }
 
     [Test]
+    public async Task ExcessiveServerWait_StopsAfterOneAttemptWithoutDelayOrRetryNotice()
+    {
+        int attempts = 0, delays = 0, notices = 0;
+        RemoteIdempotentRetryPolicy.DelayAsync = ms => { delays++; return Task.CompletedTask; };
+        var outcome = await RemoteIdempotentRetryPolicy.ExecuteWithRetryAsync(() =>
+        {
+            attempts++;
+            return Task.FromResult((false, 0, new BackendError { error = "TOO_MANY_REQUESTS", retryAfter = 3600 }));
+        }, error => notices++);
+        Assert.That(outcome.success, Is.False);
+        Assert.That(outcome.error.error, Is.EqualTo("TOO_MANY_REQUESTS"));
+        Assert.That(outcome.error.retryAfter, Is.EqualTo(3600));
+        Assert.That(attempts, Is.EqualTo(1));
+        Assert.That(delays, Is.Zero);
+        Assert.That(notices, Is.Zero);
+    }
+
+    [Test]
     public async Task ExecuteWithRetry_Success_DirectlyReturnsSuccess()
     {
         int attempts = 0;
@@ -68,6 +86,26 @@ public class RemoteIdempotentRetryPolicyTests
         Assert.That(success, Is.False);
         Assert.That(error.error, Is.EqualTo("REVISION_CONFLICT"));
         Assert.That(attempts, Is.EqualTo(1));
+    }
+
+    [Test]
+    public async Task RevisionConflict_ExplicitServerRevisionReadOptIn_RetriesOnce()
+    {
+        int attempts = 0;
+        var delays = new System.Collections.Generic.List<int>();
+        RemoteIdempotentRetryPolicy.DelayAsync = ms => { delays.Add(ms); return Task.CompletedTask; };
+        var outcome = await RemoteIdempotentRetryPolicy.ExecuteWithRetryAsync(() =>
+        {
+            attempts++;
+            return Task.FromResult(attempts == 1
+                ? (false, 0, new BackendError { error = "REVISION_CONFLICT" })
+                : (true, 42, default(BackendError)));
+        }, retryRevisionConflict: true);
+        Assert.That(outcome.success, Is.True);
+        Assert.That(outcome.result, Is.EqualTo(42));
+        Assert.That(outcome.error.error, Is.Null.Or.Empty);
+        Assert.That(attempts, Is.EqualTo(2));
+        Assert.That(delays, Is.EqualTo(new[] { 0 }));
     }
 
     [TestCase("TOO_MANY_REQUESTS")]

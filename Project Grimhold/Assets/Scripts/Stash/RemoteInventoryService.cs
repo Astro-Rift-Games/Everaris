@@ -298,7 +298,7 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             {
                 _mutationLock.Release();
             }
-        });
+        }, retryRevisionConflict: true);
     }
 
     /// <summary>
@@ -333,13 +333,14 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             {
                 _mutationLock.Release();
             }
-        });
+        }, retryRevisionConflict: true);
     }
 
     /// <summary>
     /// Consumes the active raid reservation as a loss, without rollback.
+    /// The expected id is captured across retries so a newer reservation cannot be cleared.
     /// </summary>
-    public Task<(bool success, BackendError error)> ClearPendingReservationAsync()
+    public Task<(bool success, BackendError error)> ClearPendingReservationAsync(string expectedReservationId = null)
     {
         if (string.IsNullOrEmpty(AuthToken))
         {
@@ -352,7 +353,7 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             await _mutationLock.WaitAsync();
             try
             {
-                var (success, result, error) = await InventoryClient.ClearPendingReservationAsync(_backendConfig, AuthToken);
+                var (success, result, error) = await InventoryClient.ClearPendingReservationAsync(_backendConfig, AuthToken, expectedReservationId);
                 if (!success && error.error == "EXTRACTION_RESULT_PENDING")
                 {
                     Debug.LogWarning($"[{nameof(RemoteInventoryService)}] Loss clear skipped: EXTRACTION_RESULT_PENDING - {error.message}");
@@ -371,7 +372,7 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             {
                 _mutationLock.Release();
             }
-        });
+        }, retryRevisionConflict: true, stopOnError: "EXTRACTION_RESULT_PENDING");
     }
 
     /// <summary>
@@ -409,7 +410,7 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             {
                 _mutationLock.Release();
             }
-        });
+        }, retryRevisionConflict: true);
     }
 
     /// <summary>
@@ -496,15 +497,11 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
                     ApplicationAuthContext.Instance?.HandleUnauthorizedSession();
                 }
 
-                if (success && _store != null)
-                {
-                    _store.SetRemoteRevision(result.revision);
-                    if (result.alreadySecured)
-                    {
-                        Debug.Log($"[{nameof(RemoteInventoryService)}] Unified extraction already secured on backend " +
-                                  $"(raidId={receipt.RaidId}, seq={receipt.ResultSequence}). No action needed.");
-                    }
-                }
+                // Extraction revision/ownership are accepted together only by the receipt-bound
+                // authoritative hydration, never through an early revision-only save.
+                if (success && result.alreadySecured)
+                    Debug.Log($"[{nameof(RemoteInventoryService)}] Unified extraction already secured on backend " +
+                              $"(raidId={receipt.RaidId}, seq={receipt.ResultSequence}). Awaiting authoritative hydration.");
 
                 return (success, result, error);
             }
@@ -512,7 +509,7 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             {
                 _mutationLock.Release();
             }
-        }, onRetry);
+        }, onRetry, retryRevisionConflict: true);
     }
 
     public Task<(bool success, CommitDefeatUnifiedResult result, BackendError error)> CommitDefeatUnifiedAsync(

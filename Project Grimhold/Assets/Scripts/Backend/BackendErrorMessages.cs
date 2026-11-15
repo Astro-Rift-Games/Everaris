@@ -11,7 +11,9 @@ namespace Grimhold.Backend
             {
                 case "TOO_MANY_REQUESTS":
                     return error.retryAfter > 0 && !float.IsInfinity(error.retryAfter)
-                        ? $"Demasiadas solicitudes. Espera {System.Math.Ceiling(error.retryAfter):0} segundos antes de volver a intentarlo."
+                        ? error.retryAfter >= 60
+                            ? $"Demasiadas solicitudes. Espera {System.Math.Ceiling(error.retryAfter / 60d):0} minutos antes de volver a intentarlo."
+                            : $"Demasiadas solicitudes. Espera {System.Math.Ceiling(error.retryAfter):0} segundos antes de volver a intentarlo."
                         : "Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.";
                 case "EXTRACTION_RESULT_PENDING":
                 case "NO_AUTHORITATIVE_RESULT":
@@ -33,7 +35,9 @@ namespace Grimhold.Backend
             };
         }
 
-        public static string ForCommit(BackendCommitFeedback feedback) => feedback == null ? string.Empty : feedback.Status switch
+        public static string ForCommit(BackendCommitFeedback feedback) => feedback?.Message ?? string.Empty;
+
+        internal static string FormatCommit(BackendCommitFeedback feedback) => feedback.Status switch
         {
             BackendCommitStatus.Saving => "Guardando el resultado de la incursión…",
             BackendCommitStatus.Retrying => "Guardado pendiente; reintentando… " + ForError(feedback.Error),

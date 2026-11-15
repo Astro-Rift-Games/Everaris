@@ -121,13 +121,17 @@ test('expected-ID rollback HTTP contract', async t => {
     assert.strictEqual(second.status, 200); assert.deepStrictEqual(second.body, first.body);
     assert.deepStrictEqual(stored, before); assert.strictEqual(writes, 1);
   });
-  await t.test('stale client cannot delete newer reservation or change revision', async () => {
-    stored.inventory.pendingReservation.reservationId = 'newer';
-    const before = structuredClone(stored);
-    const response = await remove('expected');
-    assert.strictEqual(response.status, 409); assert.strictEqual(response.body.error, 'RESERVATION_MISMATCH');
-    assert.deepStrictEqual(stored, before); assert.strictEqual(writes, 0);
-  });
+  for (const rollback of [false, true]) {
+    await t.test(`stale client cannot ${rollback ? 'roll back' : 'clear'} newer reservation or change revision`, async () => {
+      stored.inventory.pendingReservation.reservationId = 'newer';
+      const before = structuredClone(stored);
+      const response = await request(app)
+        .delete(`/character/me/inventory/reservation?expectedReservationId=expected${rollback ? '&rollback=true' : ''}`)
+        .set('Authorization', `Bearer ${token}`);
+      assert.strictEqual(response.status, 409); assert.strictEqual(response.body.error, 'RESERVATION_MISMATCH');
+      assert.deepStrictEqual(stored, before); assert.strictEqual(writes, 0);
+    });
+  }
   await t.test('expected identity participates in atomic filter even if revision is unchanged', async () => {
     race = true;
     const before = structuredClone(stored);

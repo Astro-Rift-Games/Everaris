@@ -14,32 +14,26 @@ namespace Grimhold.Backend
 
         public BackendCommitStatus Status { get; private set; }
         public BackendError Error { get; private set; }
-        public void Begin()
-        {
-            Status = BackendCommitStatus.Saving;
-            Error = default;
-        }
+        public string Message { get; private set; } = string.Empty;
 
-        public void Retrying(BackendError error)
+        public void Begin() => SetState(BackendCommitStatus.Saving, default);
+
+        public void Retrying(BackendError error) => SetState(BackendCommitStatus.Retrying, error);
+
+        public void Complete(bool success, BackendError error) => SetState(
+            success ? BackendCommitStatus.Saved
+                : _supportsLoginRecovery ? BackendCommitStatus.DeferredUntilLogin : BackendCommitStatus.Failed,
+            success ? default : error);
+
+        public void DeferHydration() => SetState(
+            _supportsLoginRecovery ? BackendCommitStatus.DeferredUntilLogin : BackendCommitStatus.Failed, default);
+
+        private void SetState(BackendCommitStatus status, BackendError error)
         {
-            Status = BackendCommitStatus.Retrying;
+            Status = status;
             Error = error;
-        }
-
-        public void Complete(bool success, BackendError error)
-        {
-            Error = success ? default : error;
-            Status = success ? BackendCommitStatus.Saved
-                : _supportsLoginRecovery &&
-                  (BackendErrorClassifier.Classify(error.error) == BackendErrorClass.Retryable ||
-                   BackendErrorUtility.IsTransportFailure(error.error))
-                    ? BackendCommitStatus.DeferredUntilLogin : BackendCommitStatus.Failed;
-        }
-
-        public void DeferHydration()
-        {
-            Status = _supportsLoginRecovery ? BackendCommitStatus.DeferredUntilLogin : BackendCommitStatus.Failed;
-            Error = default;
+            // Presentation reads this every frame; format only when the operation changes.
+            Message = BackendErrorMessages.FormatCommit(this);
         }
     }
 }
