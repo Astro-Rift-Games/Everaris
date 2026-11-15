@@ -12,6 +12,7 @@ public sealed class DownedPostProcessBlend
     private float _transition;
     private float _reserve = 1f;
     private float _revive;
+    private bool _wasDowned;
 
     public DownedPostProcessBlend(DownedPostProcessConfig config)
     {
@@ -24,6 +25,7 @@ public sealed class DownedPostProcessBlend
         _transition = 0f;
         _reserve = 1f;
         _revive = 0f;
+        _wasDowned = false;
     }
 
     /// <summary>
@@ -48,7 +50,8 @@ public sealed class DownedPostProcessBlend
 
     private void Advance(bool isDowned, float reserveFraction, bool isReviving, float reviveProgress, float deltaTime)
     {
-        bool entering = isDowned && _transition <= 0f;
+        bool entering = isDowned && (!_wasDowned || _transition <= 0f);
+        _wasDowned = isDowned;
         float duration = isDowned ? _config.FadeInSeconds : _config.FadeOutSeconds;
         _transition = Mathf.MoveTowards(_transition, isDowned ? 1f : 0f, deltaTime / duration);
 
@@ -64,7 +67,9 @@ public sealed class DownedPostProcessBlend
             : Mathf.MoveTowards(_reserve, reserveTarget, deltaTime / _config.ReserveResponseSeconds);
 
         float reviveTarget = isReviving ? Clamp01Finite(reviveProgress, 0f) : 0f;
-        _revive = Mathf.MoveTowards(_revive, reviveTarget, deltaTime / _config.ReviveResponseSeconds);
+        _revive = entering
+            ? reviveTarget
+            : Mathf.MoveTowards(_revive, reviveTarget, deltaTime / _config.ReviveResponseSeconds);
     }
 
     private DownedPostProcessFrame Evaluate()

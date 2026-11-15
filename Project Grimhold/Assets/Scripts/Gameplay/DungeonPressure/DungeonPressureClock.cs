@@ -183,21 +183,30 @@ public static class DungeonPressureClock
                 if (remainingTicks <= 0)
                 {
                     remainingTicks = 0;
-                    phase = DungeonPressurePhase.Collapse;
-                    if (collapseDurationSecs > 0)
+
+                    if (phase == DungeonPressurePhase.CriticalPressure && totalElapsedSecs < minCollapseStartElapsedSecs)
                     {
-                        if (totalDurationSecs > 0 && totalElapsedTicks > 0)
-                        {
-                            int totalClosureTicks = Mathf.CeilToInt((totalDurationSecs + collapseDurationSecs) / deltaTime);
-                            collapseRemainingTicks = Mathf.Max(0, totalClosureTicks - totalElapsedTicks);
-                        }
-                        else if (collapseRemainingTicks <= 0)
-                        {
-                            collapseRemainingTicks = Mathf.CeilToInt(collapseDurationSecs / deltaTime);
-                        }
+                        // Minimum elapsed raid time for Collapse has not been reached.
+                        // Remain in CriticalPressure with timer held at 0 until minCollapseStartElapsedSecs is reached.
                     }
-                    currentInstability = 0;
-                    phaseElapsedTicks = 0;
+                    else
+                    {
+                        phase = DungeonPressurePhase.Collapse;
+                        if (collapseDurationSecs > 0)
+                        {
+                            if (totalDurationSecs > 0 && totalElapsedTicks > 0)
+                            {
+                                int totalClosureTicks = Mathf.CeilToInt((totalDurationSecs + collapseDurationSecs) / deltaTime);
+                                collapseRemainingTicks = Mathf.Max(0, totalClosureTicks - totalElapsedTicks);
+                            }
+                            else if (collapseRemainingTicks <= 0)
+                            {
+                                collapseRemainingTicks = Mathf.CeilToInt(collapseDurationSecs / deltaTime);
+                            }
+                        }
+                        currentInstability = 0;
+                        phaseElapsedTicks = 0;
+                    }
                 }
                 else
                 {
@@ -210,20 +219,27 @@ public static class DungeonPressureClock
 
                     if (newPhase > phase)
                     {
-                        phase = newPhase;
-                        currentInstability = 0;
-                        phaseElapsedTicks = 0;
-
-                        if (phase == DungeonPressurePhase.Collapse && collapseDurationSecs > 0 && collapseRemainingTicks <= 0)
+                        if (newPhase == DungeonPressurePhase.Collapse && totalElapsedSecs < minCollapseStartElapsedSecs)
                         {
-                            if (totalDurationSecs > 0 && totalElapsedTicks > 0)
+                            // Hold at CriticalPressure until minCollapseStartElapsedSecs is reached.
+                        }
+                        else
+                        {
+                            phase = newPhase;
+                            currentInstability = 0;
+                            phaseElapsedTicks = 0;
+
+                            if (phase == DungeonPressurePhase.Collapse && collapseDurationSecs > 0 && collapseRemainingTicks <= 0)
                             {
-                                int totalClosureTicks = Mathf.CeilToInt((totalDurationSecs + collapseDurationSecs) / deltaTime);
-                                collapseRemainingTicks = Mathf.Max(0, totalClosureTicks - totalElapsedTicks);
-                            }
-                            else
-                            {
-                                collapseRemainingTicks = Mathf.CeilToInt(collapseDurationSecs / deltaTime);
+                                if (totalDurationSecs > 0 && totalElapsedTicks > 0)
+                                {
+                                    int totalClosureTicks = Mathf.CeilToInt((totalDurationSecs + collapseDurationSecs) / deltaTime);
+                                    collapseRemainingTicks = Mathf.Max(0, totalClosureTicks - totalElapsedTicks);
+                                }
+                                else
+                                {
+                                    collapseRemainingTicks = Mathf.CeilToInt(collapseDurationSecs / deltaTime);
+                                }
                             }
                         }
                     }

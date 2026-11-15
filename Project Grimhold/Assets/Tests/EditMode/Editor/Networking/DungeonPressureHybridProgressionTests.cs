@@ -512,4 +512,220 @@ public class DungeonPressureHybridProgressionTests
         Assert.IsFalse(config.Validate(out error));
         StringAssert.Contains("MinCollapseStartElapsedSeconds must be greater than 0", error);
     }
+
+    [Test]
+    public void Step_InstabilityAdvances_CollapseHeldUntilEightMinutes_AndClosesAt17Min()
+    {
+        // Defaults: totalDuration = 900s, reinforcementsThreshold = 300s, criticalThreshold = 120s, collapseDuration = 120s
+        // Min collapse start = 480s (08:00). Total closure = 1020s (17:00).
+        int remainingTicks = 900 * 60;
+        int collapseRemainingTicks = 0;
+        DungeonPressureState state = DungeonPressureState.Running;
+        DungeonPressurePhase phase = DungeonPressurePhase.Normal;
+        int currentInstability = 0;
+        int phaseElapsedTicks = 0;
+        int totalElapsedTicks = 0;
+
+        // Step to 180s (3:00) in Normal
+        for (int i = 0; i < 180 * 60; i++)
+        {
+            DungeonPressureClock.Step(
+                ref remainingTicks,
+                ref collapseRemainingTicks,
+                ref state,
+                ref phase,
+                ref currentInstability,
+                ref phaseElapsedTicks,
+                ref totalElapsedTicks,
+                isRaidInProgress: true,
+                isRaidClosingOrFinished: false,
+                reinforcementsThresholdSecs: 300,
+                criticalPressureThresholdSecs: 120,
+                collapseDurationSecs: 120,
+                totalDurationSecs: 900,
+                instabilityThreshold: 100,
+                minIntervalSecs: 180,
+                minCollapseStartElapsedSecs: 480,
+                deltaTime: DeltaTime);
+        }
+
+        Assert.AreEqual(DungeonPressurePhase.Normal, phase);
+
+        // Instability advance E0 -> E1 at 180s
+        currentInstability = 100;
+        DungeonPressureClock.Step(
+            ref remainingTicks,
+            ref collapseRemainingTicks,
+            ref state,
+            ref phase,
+            ref currentInstability,
+            ref phaseElapsedTicks,
+            ref totalElapsedTicks,
+            isRaidInProgress: true,
+            isRaidClosingOrFinished: false,
+            reinforcementsThresholdSecs: 300,
+            criticalPressureThresholdSecs: 120,
+            collapseDurationSecs: 120,
+            totalDurationSecs: 900,
+            instabilityThreshold: 100,
+            minIntervalSecs: 180,
+            minCollapseStartElapsedSecs: 480,
+            deltaTime: DeltaTime);
+
+        Assert.AreEqual(DungeonPressurePhase.Reinforcements, phase);
+
+        // Step 120s more (totalElapsed = 300s / 5:00)
+        for (int i = 0; i < 120 * 60; i++)
+        {
+            DungeonPressureClock.Step(
+                ref remainingTicks,
+                ref collapseRemainingTicks,
+                ref state,
+                ref phase,
+                ref currentInstability,
+                ref phaseElapsedTicks,
+                ref totalElapsedTicks,
+                isRaidInProgress: true,
+                isRaidClosingOrFinished: false,
+                reinforcementsThresholdSecs: 300,
+                criticalPressureThresholdSecs: 120,
+                collapseDurationSecs: 120,
+                totalDurationSecs: 900,
+                instabilityThreshold: 100,
+                minIntervalSecs: 120,
+                minCollapseStartElapsedSecs: 480,
+                deltaTime: DeltaTime);
+        }
+
+        Assert.AreEqual(DungeonPressurePhase.Reinforcements, phase);
+
+        // Instability advance E1 -> E2 at 300s
+        currentInstability = 100;
+        DungeonPressureClock.Step(
+            ref remainingTicks,
+            ref collapseRemainingTicks,
+            ref state,
+            ref phase,
+            ref currentInstability,
+            ref phaseElapsedTicks,
+            ref totalElapsedTicks,
+            isRaidInProgress: true,
+            isRaidClosingOrFinished: false,
+            reinforcementsThresholdSecs: 300,
+            criticalPressureThresholdSecs: 120,
+            collapseDurationSecs: 120,
+            totalDurationSecs: 900,
+            instabilityThreshold: 100,
+            minIntervalSecs: 120,
+            minCollapseStartElapsedSecs: 480,
+            deltaTime: DeltaTime);
+
+        Assert.AreEqual(DungeonPressurePhase.CriticalPressure, phase);
+
+        // Now step 120s more (remainingTicks runs out to 0 at totalElapsed = 420s = 07:00)
+        for (int i = 0; i < 120 * 60; i++)
+        {
+            DungeonPressureClock.Step(
+                ref remainingTicks,
+                ref collapseRemainingTicks,
+                ref state,
+                ref phase,
+                ref currentInstability,
+                ref phaseElapsedTicks,
+                ref totalElapsedTicks,
+                isRaidInProgress: true,
+                isRaidClosingOrFinished: false,
+                reinforcementsThresholdSecs: 300,
+                criticalPressureThresholdSecs: 120,
+                collapseDurationSecs: 120,
+                totalDurationSecs: 900,
+                instabilityThreshold: 100,
+                minIntervalSecs: 60,
+                minCollapseStartElapsedSecs: 480,
+                deltaTime: DeltaTime);
+        }
+
+        // At 420s (7:00), remainingTicks is 0, but totalElapsed < 480s.
+        // MUST REMAIN IN CRITICAL PRESSURE with timer held at 0!
+        Assert.AreEqual(DungeonPressurePhase.CriticalPressure, phase, "At 420s (07:00), phase must remain CriticalPressure because minCollapseStart (480s / 08:00) has not been reached.");
+        Assert.AreEqual(0, remainingTicks, "Remaining ticks should be held at 0 while waiting for minCollapseStart.");
+
+        // Step 59 seconds more (to 479s)
+        for (int i = 0; i < 59 * 60; i++)
+        {
+            DungeonPressureClock.Step(
+                ref remainingTicks,
+                ref collapseRemainingTicks,
+                ref state,
+                ref phase,
+                ref currentInstability,
+                ref phaseElapsedTicks,
+                ref totalElapsedTicks,
+                isRaidInProgress: true,
+                isRaidClosingOrFinished: false,
+                reinforcementsThresholdSecs: 300,
+                criticalPressureThresholdSecs: 120,
+                collapseDurationSecs: 120,
+                totalDurationSecs: 900,
+                instabilityThreshold: 100,
+                minIntervalSecs: 60,
+                minCollapseStartElapsedSecs: 480,
+                deltaTime: DeltaTime);
+        }
+
+        Assert.AreEqual(DungeonPressurePhase.CriticalPressure, phase, "At 479s, phase must still remain CriticalPressure.");
+
+        // Step remaining ticks to reach 480s (08:00)
+        int ticksTo480 = (480 * 60) - totalElapsedTicks;
+        for (int i = 0; i < ticksTo480; i++)
+        {
+            DungeonPressureClock.Step(
+                ref remainingTicks,
+                ref collapseRemainingTicks,
+                ref state,
+                ref phase,
+                ref currentInstability,
+                ref phaseElapsedTicks,
+                ref totalElapsedTicks,
+                isRaidInProgress: true,
+                isRaidClosingOrFinished: false,
+                reinforcementsThresholdSecs: 300,
+                criticalPressureThresholdSecs: 120,
+                collapseDurationSecs: 120,
+                totalDurationSecs: 900,
+                instabilityThreshold: 100,
+                minIntervalSecs: 60,
+                minCollapseStartElapsedSecs: 480,
+                deltaTime: DeltaTime);
+        }
+
+        // Now that totalElapsed >= 480s, Collapse starts!
+        Assert.AreEqual(DungeonPressurePhase.Collapse, phase, "At 480s (08:00), Collapse phase must begin.");
+
+        // And verify absolute closure still arrives at exactly 1020s (17:00)
+        while (collapseRemainingTicks > 0)
+        {
+            DungeonPressureClock.Step(
+                ref remainingTicks,
+                ref collapseRemainingTicks,
+                ref state,
+                ref phase,
+                ref currentInstability,
+                ref phaseElapsedTicks,
+                ref totalElapsedTicks,
+                isRaidInProgress: true,
+                isRaidClosingOrFinished: false,
+                reinforcementsThresholdSecs: 300,
+                criticalPressureThresholdSecs: 120,
+                collapseDurationSecs: 120,
+                totalDurationSecs: 900,
+                instabilityThreshold: 100,
+                minIntervalSecs: 60,
+                minCollapseStartElapsedSecs: 480,
+                deltaTime: DeltaTime);
+        }
+
+        Assert.AreEqual(DungeonPressureState.Stopped, state);
+        Assert.AreEqual(1020 * 60, totalElapsedTicks, "Raid must close at exactly 1020s (17:00).");
+    }
 }

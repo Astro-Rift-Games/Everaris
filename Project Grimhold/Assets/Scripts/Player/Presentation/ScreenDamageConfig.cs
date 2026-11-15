@@ -6,6 +6,8 @@ public sealed class ScreenDamageConfig : ScriptableObject
     [SerializeField, Range(0f, 1f)] private float _healthyThreshold = .7f;
     [SerializeField, Range(0f, 1f)] private float _criticalThreshold = .4f;
     [SerializeField, Range(0f, 1f)] private float _agonyThreshold = .2f;
+    [Tooltip("Minimum fraction of maximum health lost in a single step to trigger a sudden loss hit flash (default: 5%).")]
+    [SerializeField, Range(0.01f, 0.5f)] private float _suddenLossThreshold = .05f;
     [SerializeField] private AnimationCurve _severityCurve = AnimationCurve.Linear(0, 0, 1, 1);
     [SerializeField, Min(.01f)] private float _responseSeconds = .18f;
     [SerializeField, Min(.01f)] private float _flashInSeconds = .05f;
@@ -34,6 +36,7 @@ public sealed class ScreenDamageConfig : ScriptableObject
     public float HealthyThreshold => Mathf.Clamp(_healthyThreshold, .01f, 1f);
     public float CriticalThreshold => Mathf.Clamp(_criticalThreshold, .001f, HealthyThreshold);
     public float AgonyThreshold => Mathf.Clamp(_agonyThreshold, .001f, CriticalThreshold);
+    public float SuddenLossThreshold => Mathf.Clamp(_suddenLossThreshold, .001f, 1f);
     public float ResponseSeconds => Mathf.Max(.01f, _responseSeconds);
     public float FlashInSeconds => Mathf.Max(.01f, _flashInSeconds);
     public float FlashOutSeconds => Mathf.Max(.01f, _flashOutSeconds);

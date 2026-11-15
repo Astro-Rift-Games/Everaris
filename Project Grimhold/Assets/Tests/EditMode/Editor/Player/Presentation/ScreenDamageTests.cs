@@ -40,6 +40,46 @@ namespace Tests.EditMode.Player.Presentation
             Assert.That(_state.Flash, Is.EqualTo(0).Within(.0001f));
         }
         [Test]
+        public void Step_HealthLossBelowSuddenLossThreshold_DoesNotTriggerFlash()
+        {
+            _state.Step(100, 100, true, 0, 1);
+            // 2% chip damage (below 5% default sudden loss threshold)
+            _state.Step(98, 100, true, 0, 1);
+            _state.Step(98, 100, true, .05f, 1);
+            Assert.That(_state.Flash, Is.Zero, "Minor chip damage below sudden loss threshold must not trigger hit flash.");
+        }
+        [Test]
+        public void Step_HealthLossAtOrAboveSuddenLossThreshold_TriggersFlash()
+        {
+            _state.Step(100, 100, true, 0, 1);
+            // 6% damage (at or above 5% default sudden loss threshold)
+            _state.Step(94, 100, true, 0, 1);
+            _state.Step(94, 100, true, .05f, 1);
+            Assert.That(_state.Flash, Is.EqualTo(1).Within(.0001f), "Damage meeting or exceeding sudden loss threshold must trigger hit flash.");
+        }
+        [Test]
+        public void Accessibility_CachedIntensityReflectsChangesWithoutPerFramePlayerPrefsRead()
+        {
+            try
+            {
+                ScreenDamageAccessibility.SetIntensity(0.75f);
+                Assert.That(ScreenDamageAccessibility.Intensity, Is.EqualTo(0.75f));
+
+                // Change PlayerPrefs directly in disk/store without SetIntensity
+                PlayerPrefs.SetFloat("Grimhold.Presentation.ScreenDamageIntensity", 0.2f);
+                // Cached value remains 0.75f in memory (no disk read per frame)
+                Assert.That(ScreenDamageAccessibility.Intensity, Is.EqualTo(0.75f));
+
+                // SetIntensity updates both cache and PlayerPrefs
+                ScreenDamageAccessibility.SetIntensity(0.4f);
+                Assert.That(ScreenDamageAccessibility.Intensity, Is.EqualTo(0.4f));
+            }
+            finally
+            {
+                ScreenDamageAccessibility.SetIntensity(1f);
+            }
+        }
+        [Test]
         public void Step_HealingAndMaximumChanges_DoNotGenerateImpact()
         {
             _state.Step(50, 100, true, 0, 1);

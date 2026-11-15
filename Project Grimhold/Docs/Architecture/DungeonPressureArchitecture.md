@@ -54,6 +54,22 @@ This document defines the technical contracts and ownership boundaries for the s
 - **Stage 8 (Debug):** Provides a strict `#if UNITY_EDITOR` overlay for timeline manipulation and spawn verification.
 - **Stage 9 (Ambient Communication & Collapse Presentation - #479, #520):** `DungeonPressureAmbientPresenter` translates the replicated `DungeonPressurePhase` into global environmental presentation without modifying gameplay or adding networked state. Uses `DungeonAmbientConfig` for global light modulation, screen shake (entry shake, sustained continuous tremor, and periodic interval tremors) via `CameraShakeController`, native URP post-process vignette modulation via `Volume` and `Vignette`, and falling ceiling debris & dust particles via `ParticleSystem` following active camera viewport. Modulates local props (torches, braziers) via `DungeonLightProp` and `DungeonLightPropConfig` with customizable effect patterns (`Steady`, `TorchFlicker`, `UnstableFlicker`, `Pulse`) and unlit sprite/flame extinction. `DungeonPressureAudioPresenter` transitions background music to Collapse track with crossfade and triggers synchronized tremor SFX. Supports late join, host migration, and offline editor preview idempotently without replaying past transition shakes.
 
+### 5.1 Hybrid Instability Progression (Doc 20 §7-§8, TASK-238, FIX-83, FIX-84)
+
+The Dungeon Pressure timeline progresses through two concurrent drivers: elapsed expedition time and player-generated instability events.
+
+* **Instability Events & Point Values:**
+  - **PvE Monster Defeats (`TryRecordEnemyDefeat`):** Ordinary enemies (+5), Elite enemies (+15), Bosses (+50), Reinforcement enemies (+2 regardless of tier).
+  - **PvP Combat Exclusion:** Defeating other players does not generate instability (`DamageResolver.TryRecordFatalInstability` checks `!_registry.IsPlayerEntity(targetId)`).
+  - **Treasure First Acquisitions (`TryRecordTreasureFirstAcquisition`):** ConventionalTreasure (+10), DivineTreasure (+20), CursedTreasure (+25), ChaosTreasure (+30). Unknown families warn and fall back to conventional points.
+* **Saturation & Phase Advances:**
+  - Instability points accumulate up to the active phase's threshold (`_e0InstabilityThreshold`, `_e1InstabilityThreshold`, `_e2InstabilityThreshold`, default: 100/100/100) and saturate at the cap while awaiting minimum phase intervals (`_e0MinIntervalSeconds`: 180s, `_e1MinIntervalSeconds`: 120s, `_e2MinIntervalSeconds`: 60s).
+  - When the threshold is satisfied and the minimum phase interval has elapsed, the phase advances immediately and accumulated instability points/overflow reset to 0.
+* **Minimum Collapse Start (E3) & Absolute Closure:**
+  - Collapse (E3) cannot start before `_minCollapseStartElapsedSeconds` (default: 480s / 08:00) by any route (instability or time expiration). If instability advances compress the remaining time to 0 before 08:00, the controller remains in `CriticalPressure` with `RemainingTicks` held at 0 until `totalElapsedSecs >= 480s`.
+  - Absolute closure remains strictly anchored at `TotalDurationSeconds + CollapseDurationSeconds` (default: 900s + 120s = 1020s / 17:00). When early Collapse triggers at or after 08:00, `CollapseRemainingTicks` extends to `(TotalDurationSeconds + CollapseDurationSeconds) - totalElapsedSeconds`, ensuring the 17:00 hard closure deadline is never compromised.
+  - Instability thresholds must be strictly positive (`> 0`); values `<= 0` are rejected by `DungeonPressureConfig.Validate()`.
+
 ## 6. Verification Criteria Mapping
 
 | Criterio de Aceptación (#455, #478, #479, #520) | Sección / Entidad |

@@ -364,6 +364,7 @@ Presentation only; it never writes networked state and adds no replicated fields
   zero (eased so damage chunks never pop); a revive session (assisted or self) gradually recovers
   part of the colour. Reserve and revive values are latched when Downed ends so the fade-out keeps
   the last look instead of darkening on the cleared reserve.
+* **Architecture Decision (Polling vs Events, FIX-85).** `LocalPlayerDownedPostProcessPresenter` performs read-only polling in `Update` (`Tick`) of the avatar's replicated state (`IsDowned`, `ReserveFraction`, `TryGetReviveProgress`). This deliberate decision preserves the pure frame-based interpolation of `DownedPostProcessBlend` (easing reserve depletion, responsive revive color, and volume weight curves) without coupling the authoritative simulation to client UI event buses or introducing event subscription lifecycle overhead. Re-entering Downed mid-fade-out tracks cycle changes (`isDowned && !_wasDowned`) to reset reserve and revive values cleanly to the new cycle.
 * **Out of scope.** The Defeat overlay owns definitive Defeat presentation; this effect only fades out.
 
 ## 10. Accelerated Resolution (Planned, no task)
