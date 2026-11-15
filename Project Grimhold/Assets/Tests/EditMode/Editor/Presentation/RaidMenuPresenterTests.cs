@@ -694,6 +694,75 @@ namespace Tests.EditMode.Presentation
             Assert.That(ReadPrivateField<bool>(_presenter, "_returnRequested"), Is.False);
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Presenter_FailedReturn_RestoresOnlyDefeatedInventoryBlock(bool isAlive)
+        {
+            SetPresenterBoundState(isAlive);
+            var inventory = _holder.AddComponent<RaidInventoryPresenter>();
+            SetPrivateField(_presenter, "_inventoryPresenter", inventory);
+            SetPrivateField(_presenter, "_returnStarted", true);
+            SetPrivateField(_presenter, "_returnRequested", true);
+            inventory.SetGameplayMutationsBlocked(false);
+
+            InvokePrivateMethod(_presenter, "RestorePresentationAfterFailedReturn",
+                new object[] { SessionTransitionResult.LoadoutConfirmationFailed });
+
+            Assert.That(inventory.GameplayMutationsBlocked, Is.EqualTo(!isAlive));
+            Assert.That(_presenter.IsOpen, Is.True);
+            Assert.That(ReadSuppressionCount(_inputReader), Is.EqualTo(1));
+            Assert.That(ReadPrivateField<bool>(_presenter, "_returnStarted"), Is.False);
+            Assert.That(ReadPrivateField<bool>(_presenter, "_returnRequested"), Is.False);
+            SessionTransitionFailureText.TryGetMessage(SessionTransitionResult.LoadoutConfirmationFailed, out string expected);
+            Assert.That(_view.StatusText.text, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Presenter_HostWaitStartingAfterFailure_ReplacesStaleFailureWithWait()
+        {
+            SetPresenterBoundState();
+            InvokePrivateMethod(_presenter, "RestorePresentationAfterFailedReturn",
+                new object[] { SessionTransitionResult.ShutdownFailed });
+
+            InvokePrivateMethod(_presenter, "ObserveHostReturnWait", new object[] { true, true, 2 });
+            InvokePrivateMethod(_presenter, "RefreshViewContent");
+
+            Assert.That(_view.StatusText.text, Is.EqualTo(
+                "Esperando a que los demás participantes salgan de la expedición (2 restantes)."));
+        }
+
+        [Test]
+        public void Presenter_FailureAfterHostWaitStarts_RemainsVisibleDuringCountRefresh()
+        {
+            SetPresenterBoundState();
+            InvokePrivateMethod(_presenter, "ObserveHostReturnWait", new object[] { true, true, 2 });
+            InvokePrivateMethod(_presenter, "RestorePresentationAfterFailedReturn",
+                new object[] { SessionTransitionResult.ShutdownFailed });
+
+            InvokePrivateMethod(_presenter, "ObserveHostReturnWait", new object[] { true, true, 1 });
+            InvokePrivateMethod(_presenter, "RefreshViewContent");
+
+            SessionTransitionFailureText.TryGetMessage(SessionTransitionResult.ShutdownFailed, out string expected);
+            Assert.That(_view.StatusText.text, Is.EqualTo(expected));
+            Assert.That(_presenter.IsOpen, Is.True);
+        }
+
+        [TestCase(true, true, 9.99f, false)]
+        [TestCase(true, true, 10f, true)]
+        [TestCase(true, true, 10.01f, true)]
+        [TestCase(false, true, 9f, true)]
+        [TestCase(true, false, 9f, true)]
+        [TestCase(false, false, 11f, false)]
+        public void Presenter_HostWaitRefresh_ThrottlesCountsButNeverPendingChanges(
+            bool previousPending, bool pending, float now, bool expected)
+        {
+            SetPrivateField(_presenter, "_observedHostReturnPending", previousPending);
+            SetPrivateField(_presenter, "_nextHostReturnWaitRefreshAt", 10f);
+
+            Assert.That(InvokePrivateMethod(_presenter, "ShouldRefreshHostReturnWait",
+                new object[] { pending, now }), Is.EqualTo(expected));
+        }
+
         private static System.Collections.Generic.IEnumerable<SessionTransitionResult> TransitionFailures()
         {
             foreach (SessionTransitionResult result in System.Enum.GetValues(typeof(SessionTransitionResult)))

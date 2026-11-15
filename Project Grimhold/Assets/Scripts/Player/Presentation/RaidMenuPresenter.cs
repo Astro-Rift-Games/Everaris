@@ -11,6 +11,7 @@ using UnityEngine;
 public sealed class RaidMenuPresenter : MonoBehaviour
 {
     private const float NoTargetRefreshSeconds = 0.5f;
+    private const float HostReturnWaitRefreshSeconds = 0.5f;
 
     [SerializeField] private RaidMenuView _view;
 
@@ -18,6 +19,8 @@ public sealed class RaidMenuPresenter : MonoBehaviour
     private PlayerInputReader _inputReader;
     private RaidInventoryPresenter _inventoryPresenter;
     private NetworkRunner _runner;
+    private NetworkSpawnManager _hostReturnWaitSpawnManager;
+    private float _nextHostReturnWaitRefreshAt;
     private NetworkRaidParticipant _participant;
     private PlayerExpeditionProgressionResolver _progressionResolver;
     private PlayerExtractionLootSaver _extractionLootSaver;
@@ -70,6 +73,7 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         _inputReader = inputReader;
         _inventoryPresenter = inventoryPresenter;
         _runner = runner;
+        _hostReturnWaitSpawnManager = runner.GetComponent<NetworkSpawnManager>();
         _extractionLootSaver = character.GetComponent<PlayerExtractionLootSaver>();
         _lootCatalog = character.GetComponent<PlayerLootReceiver>()?.LootCatalog;
         RaidAvatarParticipantLink participantLink = character.GetComponent<RaidAvatarParticipantLink>();
@@ -137,6 +141,8 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         _inputReader = null;
         _inventoryPresenter = null;
         _runner = null;
+        _hostReturnWaitSpawnManager = null;
+        _nextHostReturnWaitRefreshAt = 0f;
         _participant = null;
         _progressionResolver = null;
         _extractionLootSaver = null;
@@ -470,9 +476,14 @@ public sealed class RaidMenuPresenter : MonoBehaviour
     {
         SessionConnectionCoordinator coordinator = SessionConnectionCoordinator.Instance;
         bool pending = coordinator != null && coordinator.IsHostResultsReturnPending;
-        NetworkSpawnManager spawnManager = pending && _runner != null
-            ? _runner.GetComponent<NetworkSpawnManager>()
-            : null;
+        float now = Time.unscaledTime;
+        if (!ShouldRefreshHostReturnWait(pending, now))
+        {
+            return;
+        }
+
+        _nextHostReturnWaitRefreshAt = now + HostReturnWaitRefreshSeconds;
+        NetworkSpawnManager spawnManager = pending ? _hostReturnWaitSpawnManager : null;
         bool hasRemote = spawnManager != null && spawnManager.HasConnectedRemoteParticipants;
         int remaining = 0;
         if (hasRemote)
@@ -491,12 +502,23 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         ObserveHostReturnWait(pending, hasRemote, remaining);
     }
 
+    // The coordinator's pending latch is observed every frame; only the presentation count
+    // is sampled. Never delay the start/end of a wait behind the count refresh interval.
+    private bool ShouldRefreshHostReturnWait(bool pending, float now) =>
+        pending != _observedHostReturnPending ||
+        (pending && now >= _nextHostReturnWaitRefreshAt);
+
     private void ObserveHostReturnWait(bool pending, bool hasRemote, int remaining)
     {
         if (pending == _observedHostReturnPending && hasRemote == _observedHostReturnHasRemote &&
             remaining == _observedHostReturnRemoteCount)
         {
             return;
+        }
+
+        if (pending && !_observedHostReturnPending)
+        {
+            _returnFailure = null;
         }
 
         _observedHostReturnPending = pending;
@@ -1140,6 +1162,12 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         if (!_isBound)
         {
             return;
+        }
+
+        if (IsLocalDefeated())
+        {
+            _inventoryPresenter?.SetGameplayMutationsBlocked(true);
+            EnsureInputSuppression();
         }
 
         if (!IsOpen)
