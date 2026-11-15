@@ -20,6 +20,7 @@ const { buildCanonicalResultString } = require('../src/utils/raidResultCanonical
 const { createEquipment } = require('../src/services/ItemInstances');
 const { computeLevelAndExperience, computeAttributePointsGranted } = require('../src/config/progressionBalance');
 const { EQUIPMENT_SLOTS } = require('../src/config/equipmentSlots');
+const { isDefeatResult, pendingLootResultFilter } = require('../src/services/ResultReservationBinding');
 
 const RAID_CODE = '482913';
 const RAID_ID = `raid-${RAID_CODE}`;
@@ -183,8 +184,79 @@ describe('FIX-18 authoritative result validation', () => {
       assert.deepEqual(await stored(raider.accountId), committed);
     });
 
+    for (const staleSnapshot of [false, true]) {
+      test(`duplicate waits for the held defeat claim (stale unconsumed snapshot: ${staleSnapshot})`, async () => {
+        const raider = await createRaider('heldClaim', { raidId: RAID_ID });
+        await RaidResultService.publishHostResult(raider.accountId, { raidId: RAID_ID, resultSequence: 1,
+          items: [], experienceGranted: 80 });
+        const snapshot = await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID });
+        const before = await stored(raider.accountId);
+        const originalWrite = Character.findOneAndUpdate;
+        const originalLookup = AuthoritativeExtractionResult.findOne;
+        let notifyHeld;
+        const held = new Promise(resolve => { notifyHeld = resolve; });
+        Character.findOneAndUpdate = async function(query, update, options) {
+          if (query.accountId === raider.accountId && update.$set?.lastProgressionReceipt) {
+            notifyHeld();
+            await new Promise(resolve => setTimeout(resolve, 400));
+          }
+          return originalWrite.call(this, query, update, options);
+        };
+        let outcomes;
+        try {
+          const winner = DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 });
+          await held;
+          if (staleSnapshot) AuthoritativeExtractionResult.findOne = async () => snapshot;
+          outcomes = await Promise.allSettled([winner,
+            DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 })]);
+        } finally {
+          Character.findOneAndUpdate = originalWrite;
+          AuthoritativeExtractionResult.findOne = originalLookup;
+        }
+        assert.deepEqual(outcomes.map(o => o.status), ['fulfilled', 'fulfilled']);
+        const [winner, duplicate] = outcomes.map(o => o.value);
+        assert.equal(winner.alreadySecured, false);
+        assert.deepEqual(duplicate, { ...winner, alreadySecured: true });
+        const committed = await stored(raider.accountId);
+        assert.deepEqual(progressionOf(committed), progressed(before, 80));
+        assert.equal(committed.revision, before.revision + 1);
+        assert.equal(committed.appliedProgressionReceipts.length, 1);
+        assert.equal(committed.inventory.pendingReservation, undefined);
+        assert.equal((await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID })).consumed, true);
+        assert.equal((await DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 })).alreadySecured, true);
+        assert.deepEqual(await stored(raider.accountId), committed);
+      });
+    }
+
+    const slotEncodings = [
+      [undefined, false], [null, false], ['', false], ['null', false], [{}, false],
+      [[], false], [[{}], false], [['null'], false], [[null], false], [[''], false],
+      [[{}, 'null', null, ''], false],
+      ['arming_sword', true], [{ lootId: 'arming_sword' }, true],
+      [['arming_sword'], true], [[{ lootId: 'arming_sword' }], true],
+      [[null, 'arming_sword', {}], true], [[{}, { lootId: 'arming_sword' }, ''], true],
+      [0, true], [false, true], [[null, 0], true], [['', false], true],
+    ];
+    for (const slot of EQUIPMENT_SLOTS) {
+      test(`JS and real Mongo ownership parity matrix in ${slot}, including array encodings`, async () => {
+        for (const [value, owned] of slotEncodings) {
+          const result = new AuthoritativeExtractionResult({ raidId: RAID_ID, accountId: 'parity',
+            resultId: `parity-${slot}`, items: [], preparedEquipment: value === undefined ? {} : { [slot]: value } });
+          await AuthoritativeExtractionResult.collection.insertOne(result.toObject());
+          try {
+            const label = `${slot}: ${JSON.stringify(value)}`;
+            const mongoOwned = Boolean(await AuthoritativeExtractionResult.findOne({ _id: result._id, ...pendingLootResultFilter() }));
+            assert.equal(mongoOwned, owned, `Mongo ${label}`);
+            assert.equal(!isDefeatResult(result), owned, `JS ${label}`);
+          } finally {
+            await AuthoritativeExtractionResult.deleteOne({ _id: result._id });
+          }
+        }
+      });
+    }
+
     // Insert legacy persisted results directly: the current producer normalizes equipment.
-    for (const empty of [{}, 'null']) {
+    for (const empty of [{}, 'null', [], [{}], ['null'], [null], [''], [{}, 'null', null, '']]) {
       test(`real Mongo empty slots ${JSON.stringify(empty)} allow loss clear and defeat credit`, async () => {
         const raider = await createRaider('emptySlots', { raidId: RAID_ID });
         await AuthoritativeExtractionResult.collection.insertOne({ raidId: RAID_ID, accountId: raider.accountId,

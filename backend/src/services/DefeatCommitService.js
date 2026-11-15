@@ -22,6 +22,27 @@ const {
 
 const MAX_PROGRESSION_RECEIPTS = 256;
 const MAX_COMMIT_ATTEMPTS = 3;
+const RECEIPT_POLL_ATTEMPTS = 10;
+const RECEIPT_POLL_INTERVAL_MS = 50;
+
+// consumed is also the in-flight claim marker. Only an exact durable receipt
+// proves success; bound the wait and never acquire or release another request's claim.
+async function waitForProgressionReceipt(accountId, raidId, resultSequence) {
+  for (let attempt = 0; attempt <= RECEIPT_POLL_ATTEMPTS; attempt++) {
+    if (attempt > 0) await new Promise(resolve => setTimeout(resolve, RECEIPT_POLL_INTERVAL_MS));
+    const character = await Character.findOne({ accountId });
+    if (character?.appliedProgressionReceipts?.some(r => r.raidId === raidId && r.resultSequence === resultSequence)) {
+      return {
+        alreadySecured: true,
+        level: character.level,
+        experience: character.experience,
+        characterAttributes: serializeAttributes(character.characterAttributes),
+        revision: character.revision || 0,
+      };
+    }
+  }
+  return null;
+}
 
 function serializeAttributes(attrs) {
   if (!attrs) {
@@ -109,6 +130,8 @@ class DefeatCommitService {
     }
 
     if (authResult.consumed) {
+      const replay = await waitForProgressionReceipt(accountId, raidId, resultSequence);
+      if (replay) return replay;
       throw {
         statusCode: 409,
         errorCode: 'RESULT_ALREADY_CONSUMED',
@@ -147,28 +170,8 @@ class DefeatCommitService {
     );
 
     if (!claimedResult) {
-      let refreshedChar = await Character.findOne({ accountId });
-      let alreadyApplied = (refreshedChar?.appliedProgressionReceipts || []).some(
-        r => r.raidId === raidId && r.resultSequence === resultSequence
-      );
-
-      for (let attempt = 0; attempt < 6 && !alreadyApplied; attempt++) {
-        await new Promise(resolve => setTimeout(resolve, 50));
-        refreshedChar = await Character.findOne({ accountId });
-        alreadyApplied = (refreshedChar?.appliedProgressionReceipts || []).some(
-          r => r.raidId === raidId && r.resultSequence === resultSequence
-        );
-      }
-
-      if (alreadyApplied) {
-        return {
-          alreadySecured: true,
-          level: refreshedChar.level,
-          experience: refreshedChar.experience,
-          characterAttributes: serializeAttributes(refreshedChar.characterAttributes),
-          revision: refreshedChar.revision || 0
-        };
-      }
+      const replay = await waitForProgressionReceipt(accountId, raidId, resultSequence);
+      if (replay) return replay;
 
       throw {
         statusCode: 409,

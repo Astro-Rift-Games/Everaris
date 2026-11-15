@@ -211,6 +211,31 @@ test('DefeatCommitService.commit', async (t) => {
     );
   });
 
+  for (const consumed of [false, true]) {
+    await t.test(`receipt polling stays bounded and does not accept an unrelated receipt (consumed snapshot: ${consumed})`, async () => {
+      const char = makeCharacter({ appliedProgressionReceipts: [{ raidId: 'raid-other', resultSequence: 1 }] });
+      const before = { ...char, markModified: undefined, save: undefined };
+      const snapshot = structuredClone(before);
+      let reads = 0;
+      let claims = 0;
+      Character.findOne = async () => { reads++; return char; };
+      Character.findOneAndUpdate = async () => assert.fail('duplicate must not write character');
+      AuthoritativeExtractionResult.findOne = async () => ({ raidId: 'raid-1', items: [], resultSequence: 1, consumed });
+      AuthoritativeExtractionResult.findOneAndUpdate = async () => { claims++; return null; };
+      await assert.rejects(DefeatCommitService.commit('acc123', { raidId: 'raid-1', resultSequence: 1 }), err => {
+        assert.equal(err.statusCode, 409);
+        assert.equal(err.errorCode, 'RESULT_ALREADY_CONSUMED');
+        assert.equal(err.message, consumed
+          ? 'This authoritative result has already been consumed and cannot be claimed again.'
+          : 'This authoritative result has already been consumed.');
+        return true;
+      });
+      assert.equal(reads, 12, 'initial read plus eleven bounded receipt reads');
+      assert.equal(claims, consumed ? 0 : 1, 'never release or reacquire a held claim');
+      assert.deepEqual({ ...char, markModified: undefined, save: undefined }, snapshot);
+    });
+  }
+
   await t.test('applies defeat progression, clears reservation, and saves progression receipt', async () => {
     const char = makeCharacter({
       level: 1,

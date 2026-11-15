@@ -9,12 +9,18 @@
 
 const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
 
+const EMPTY_EQUIPMENT_ENCODINGS = [null, '', 'null', {}];
+
+function ownsEquipment(value) {
+  return value !== undefined && value !== null && value !== '' && value !== 'null' &&
+    !(typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0);
+}
+
 // The publish contract has no outcome discriminator. Empty ownership is defeat-compatible.
 function isDefeatResult(result) {
   return !(result.items?.length) && !EQUIPMENT_SLOTS.some(slot => {
     const value = result.preparedEquipment?.[slot];
-    return value !== undefined && value !== null && value !== '' && value !== 'null' &&
-      !(typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0);
+    return Array.isArray(value) ? value.some(ownsEquipment) : ownsEquipment(value);
   });
 }
 
@@ -31,7 +37,12 @@ function publishedResultSequence(result) {
 function pendingLootResultFilter() {
   return { $or: [
     { 'items.0': { $exists: true } },
-    ...EQUIPMENT_SLOTS.map(slot => ({ [`preparedEquipment.${slot}`]: { $exists: true, $nin: [null, '', 'null', {}] } })),
+    // $nin alone excludes a mixed array if even one element is empty. Check
+    // array elements separately so any owned element protects the result.
+    ...EQUIPMENT_SLOTS.flatMap(slot => [
+      { [`preparedEquipment.${slot}`]: { $exists: true, $not: { $type: 'array' }, $nin: EMPTY_EQUIPMENT_ENCODINGS } },
+      { [`preparedEquipment.${slot}`]: { $elemMatch: { $nin: EMPTY_EQUIPMENT_ENCODINGS } } },
+    ]),
   ] };
 }
 
