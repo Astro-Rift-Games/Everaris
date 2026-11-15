@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1073,
-  "canonicalEntries": 1070,
+  "rawCommits": 1086,
+  "canonicalEntries": 1083,
   "before": {
-    "Bug Fixes": 139,
-    "Documentation": 101,
+    "Documentation": 106,
+    "Bug Fixes": 147,
     "Other Changes": 360,
     "Architecture & Infrastructure": 23,
     "Tests": 41,
@@ -12,8 +12,8 @@
     "Refactoring": 14
   },
   "after": {
-    "Bug Fixes": 155,
-    "Documentation": 117,
+    "Documentation": 122,
+    "Bug Fixes": 163,
     "Other Changes": 168,
     "Maintenance": 21,
     "Tests": 46,
@@ -23,18 +23,18 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Inventory & Loot": 441,
+    "Persistence & Backend": 260,
+    "Documentation": 406,
+    "Tests": 687,
+    "Unassigned": 32,
+    "Extraction": 158,
+    "Networking & Sessions": 324,
     "Combat": 373,
-    "Inventory & Loot": 432,
-    "Networking & Sessions": 323,
-    "Persistence & Backend": 251,
     "Build & Tooling": 560,
-    "Tests": 679,
     "Abilities": 132,
-    "Documentation": 401,
-    "Extraction": 154,
     "UI": 324,
     "World & Visibility": 141,
-    "Unassigned": 31,
     "Audio": 36,
     "Art & Animation": 237,
     "Input": 30,
@@ -42,8 +42,8 @@
   },
   "canonical": {
     "sections": {
-      "Bug Fixes": 154,
-      "Documentation": 117,
+      "Documentation": 122,
+      "Bug Fixes": 162,
       "Other Changes": 167,
       "Maintenance": 21,
       "Tests": 46,
@@ -52,18 +52,18 @@
       "Refactoring": 27
     },
     "systems": {
+      "Inventory & Loot": 441,
+      "Persistence & Backend": 260,
+      "Documentation": 404,
+      "Tests": 685,
+      "Unassigned": 32,
+      "Extraction": 158,
+      "Networking & Sessions": 324,
       "Combat": 371,
-      "Inventory & Loot": 432,
-      "Networking & Sessions": 323,
-      "Persistence & Backend": 251,
       "Build & Tooling": 558,
-      "Tests": 677,
       "Abilities": 130,
-      "Documentation": 399,
-      "Extraction": 154,
       "UI": 323,
       "World & Visibility": 139,
-      "Unassigned": 31,
       "Audio": 36,
       "Art & Animation": 234,
       "Input": 30,
@@ -34547,8 +34547,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 196,
-      "canonicalEntries": 196
+      "originalCommits": 209,
+      "canonicalEntries": 209
     },
     {
       "key": "v0.5.0",
@@ -34592,6 +34592,1006 @@
     }
   ],
   "commits": [
+    {
+      "sha": "c9c5d70a131d7b68f7c598bb2d27bd7539a3da86",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c9c5d70a131d7b68f7c598bb2d27bd7539a3da86",
+      "subject": "docs(odd): note pending FIX-19 manual validation",
+      "body": "",
+      "date": "2026-11-14T20:46:52-03:00",
+      "files": [
+        "odd/tasks/fix-19-reservation-inventory-guard.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "odd",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/fix-19-reservation-inventory-guard.md",
+          "supports": "Inventory & Loot"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "e0da9488f003cfa5663b49d086eb146aa47cade8",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e0da9488f003cfa5663b49d086eb146aa47cade8",
+      "subject": "docs(odd): tidy FIX-19 tracker log",
+      "body": "",
+      "date": "2026-11-14T20:43:40-03:00",
+      "files": [
+        "odd/tasks/fix-19-reservation-inventory-guard.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "odd",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/fix-19-reservation-inventory-guard.md",
+          "supports": "Inventory & Loot"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "5c8fd724d8b923e8b5ff467583039d580d289d23",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/5c8fd724d8b923e8b5ff467583039d580d289d23",
+      "subject": "docs(odd): record FIX-19 final verification",
+      "body": "",
+      "date": "2026-11-14T20:39:30-03:00",
+      "files": [
+        "odd/tasks/fix-19-reservation-inventory-guard.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "odd",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/fix-19-reservation-inventory-guard.md",
+          "supports": "Inventory & Loot"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "2066a9394bca49c9345ec9ca77f1d92f3fed7ad9",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2066a9394bca49c9345ec9ca77f1d92f3fed7ad9",
+      "subject": "fix(defeat): clear a bound defeat's own reservation even without recorded admission",
+      "body": "Admission is fire-and-forget, so a defeat bound to its reservation could leave it pending and a later launch restored the lost items. Adds a real-DB integration test for the reservation lock, its atomic write filter and per-lootId preservation (FIX-19).\n",
+      "date": "2026-11-14T20:31:09-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md",
+        "backend/src/services/DefeatCommitService.js",
+        "backend/tests/defeat.commit.test.js",
+        "backend/tests/integration/reservation.guard.integration.test.js",
+        "odd/tasks/fix-19-reservation-inventory-guard.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "defeat",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/fix-19-reservation-inventory-guard.md",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/DefeatCommitService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/defeat.commit.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/reservation.guard.integration.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/defeat.commit.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/reservation.guard.integration.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "fd4d1c1c8af8e93ea47dbe6d219770d84763de2a",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/fd4d1c1c8af8e93ea47dbe6d219770d84763de2a",
+      "subject": "docs(persistence): document backend reservation ownership and restoration (FIX-19)",
+      "body": "",
+      "date": "2026-11-14T20:19:56-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md",
+        "odd/tasks/fix-19-reservation-inventory-guard.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "persistence",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Documentation"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/fix-19-reservation-inventory-guard.md",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "persistence",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "persistence",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "c73793134bf19766f9b7624f37340fee5b0f5e0c",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c73793134bf19766f9b7624f37340fee5b0f5e0c",
+      "subject": "fix(defeat): clear only the admitted reservation the defeated raid used",
+      "body": "The defeat commit unset any pending reservation, so committing an older defeat after a new launch dropped the newer reservation and its items. It now clears the reservation only when it is admitted and matches the result's reservationId (or, for unbound results, the reservation's raid), and pins that reservation in the atomic filter (FIX-19).\n",
+      "date": "2026-11-14T20:19:03-03:00",
+      "files": [
+        "backend/src/services/DefeatCommitService.js",
+        "backend/tests/defeat.commit.test.js"
+      ],
+      "originalType": "fix",
+      "originalScope": "defeat",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/DefeatCommitService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/defeat.commit.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/defeat.commit.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "daa0af816ad2c34ec9273bee631f0086a8323be6",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/daa0af816ad2c34ec9273bee631f0086a8323be6",
+      "subject": "fix(inventory): restore every unit of a replaced or rolled back reservation",
+      "body": "Legacy (v1) characters only recovered an unadmitted reservation when the active loadout and equipment were empty; otherwise replacing it or rolling it back dropped its items. restoreReservation now merges legacy entries and both paths always restore, so the per-lootId total is unchanged in every schema version (FIX-19).\n",
+      "date": "2026-11-14T20:15:25-03:00",
+      "files": [
+        "backend/src/services/InventoryService.js",
+        "backend/tests/inventory.slots.test.js"
+      ],
+      "originalType": "fix",
+      "originalScope": "inventory",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.slots.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "scope",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.slots.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.slots.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "1ba7040f1fa3dbc747a376ca30872710237883e6",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/1ba7040f1fa3dbc747a376ca30872710237883e6",
+      "subject": "fix(inventory): reject stash, loadout and equipment mutations while a reservation is pending",
+      "body": "moveToLoadout, moveToStash and updatePreparedEquipment now return 409 RESERVATION_PENDING in every schema version and filter their write on the absence of a pending reservation, so a reserved item cannot be moved or re-equipped from under the reservation (FIX-19).\n",
+      "date": "2026-11-14T20:12:32-03:00",
+      "files": [
+        "backend/src/services/InventoryService.js",
+        "backend/tests/inventory.slots.test.js",
+        "odd/tasks/fix-19-reservation-inventory-guard.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "inventory",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.slots.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/fix-19-reservation-inventory-guard.md",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "scope",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.slots.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.slots.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "e5ce2a1a875865c08847ddbde1f3d402d35fe8c8",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e5ce2a1a875865c08847ddbde1f3d402d35fe8c8",
+      "subject": "docs(odd): close FIX-18 execution tracker",
+      "body": "",
+      "date": "2026-11-14T19:44:02-03:00",
+      "files": [
+        "odd/tasks/fix-18-authoritative-result-validation.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "odd",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "unassigned-system",
+          "message": "No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system."
+        }
+      ],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "bc2905f8811f3b9b87e10f618f8a5e13091a1320",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bc2905f8811f3b9b87e10f618f8a5e13091a1320",
+      "subject": "fix(extraction): credit each reservation once and keep defeat XP after loss clear",
+      "body": "FIX-18 (T5, re-verification finding). Receipts now record the reservationId\nthey credited; extraction and defeat commits reject a second credit for the\nsame reservation, checked and enforced atomically. Only extraction still\nrequires the reservation to be pending and bound to the result's raid, so a\ndefeat committed after the loss clear keeps its legitimate XP.\n",
+      "date": "2026-11-14T19:34:20-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+        "backend/src/models/Character.js",
+        "backend/src/services/DefeatCommitService.js",
+        "backend/src/services/ExtractionCommitService.js",
+        "backend/src/services/ResultReservationBinding.js",
+        "backend/tests/raid.result.authority.test.js",
+        "odd/tasks/fix-18-authoritative-result-validation.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "extraction",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Persistence & Backend",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ExtractionCommitService.js",
+          "supports": "Extraction"
+        },
+        {
+          "source": "scope",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/Character.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/DefeatCommitService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ExtractionCommitService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ResultReservationBinding.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/raid.result.authority.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/raid.result.authority.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "35c2ed960e1cd67534259252f2ea9cc982076e53",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/35c2ed960e1cd67534259252f2ea9cc982076e53",
+      "subject": "fix(extraction): gate defeat commits and exact catalog matching",
+      "body": "FIX-18 (T4, verification findings). Defeat commits now apply the same\nresult-to-reservation gate as extraction commits (shared\nResultReservationBinding), so a re-bound or replaced reservation can no longer\ncredit a second raid. Catalog matching is exact, so padded lootIds are\nrejected instead of stored padded, and non-list items are rejected for signed\nresults too.\n",
+      "date": "2026-11-14T19:19:19-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+        "backend/src/config/itemCatalog.js",
+        "backend/src/services/DefeatCommitService.js",
+        "backend/src/services/ExtractionCommitService.js",
+        "backend/src/services/RaidResultService.js",
+        "backend/src/services/ResultReservationBinding.js",
+        "backend/tests/raid.result.authority.test.js",
+        "odd/tasks/fix-18-authoritative-result-validation.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "extraction",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Persistence & Backend",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ExtractionCommitService.js",
+          "supports": "Extraction"
+        },
+        {
+          "source": "scope",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/itemCatalog.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/DefeatCommitService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ExtractionCommitService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/RaidResultService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ResultReservationBinding.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/raid.result.authority.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/raid.result.authority.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "3134b7fbae7b756fc98337b5b1cf21668949836b",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3134b7fbae7b756fc98337b5b1cf21668949836b",
+      "subject": "fix(extraction): bind raid results to the admitted reservation",
+      "body": "FIX-18 (T2, T3 docs). The raid admission ticket binds the pending reservation\nto raid-<raidCode>; admitted reservations cannot be re-bound to another raid.\nUnsigned results require the recipient reservation (and a non-recipient host)\nto be bound to the published raid, store the reservationId, and the extraction\ncommit only credits a result whose reservation is still pending and bound to\nits raid. One reservation credits at most one raid (5000 XP, 30 slots).\nExtractionArchitecture documents the new checks and error codes.\n",
+      "date": "2026-11-14T19:04:53-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+        "backend/src/models/AuthoritativeExtractionResult.js",
+        "backend/src/models/Character.js",
+        "backend/src/services/ExtractionCommitService.js",
+        "backend/src/services/RaidResultService.js",
+        "backend/src/services/SessionTicketService.js",
+        "backend/tests/integration/admission.integration.test.js",
+        "backend/tests/integration/item.instances.test.js",
+        "backend/tests/inventory.instances.test.js",
+        "backend/tests/inventory.protocol.test.js",
+        "backend/tests/inventory.slots.test.js",
+        "backend/tests/inventory.training.test.js",
+        "backend/tests/raid.result.authority.test.js",
+        "backend/tests/raid.result.test.js",
+        "odd/tasks/fix-18-authoritative-result-validation.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "extraction",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "Persistence & Backend",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/AuthoritativeExtractionResult.js",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ExtractionCommitService.js",
+          "supports": "Extraction"
+        },
+        {
+          "source": "scope",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.instances.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.protocol.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.slots.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.training.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/SessionTicketService.js",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/AuthoritativeExtractionResult.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/Character.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ExtractionCommitService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/RaidResultService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/SessionTicketService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/admission.integration.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/item.instances.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.instances.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.protocol.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.slots.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.training.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/raid.result.authority.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/raid.result.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/admission.integration.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/item.instances.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.instances.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.protocol.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.slots.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.training.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/raid.result.authority.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/raid.result.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "37c1ca785ddc522f6404d6bb695508fc32128044",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/37c1ca785ddc522f6404d6bb695508fc32128044",
+      "subject": "fix(extraction): reject published results with loot outside the game catalog",
+      "body": "FIX-18 (T1). Published extraction results, signed or not, must name items from\nthe backend item registry (union of the backend catalogs after alias\nnormalization); unknown loot or equipment is rejected with 422 UNKNOWN_LOOT_ID\nbefore any document is created. A parity test keeps the registry a superset of\nUnity's LootDefinitions. Fixtures that published non-existent ids now use real\ncatalog ids.\n",
+      "date": "2026-11-14T18:55:39-03:00",
+      "files": [
+        "backend/src/config/itemCatalog.js",
+        "backend/src/services/RaidResultService.js",
+        "backend/tests/integration/admission.integration.test.js",
+        "backend/tests/integration/extraction.authoritative.test.js",
+        "backend/tests/item.catalog.parity.test.js",
+        "backend/tests/raid.result.authority.test.js",
+        "backend/tests/raid.result.test.js",
+        "odd/tasks/fix-18-authoritative-result-validation.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "extraction",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/extraction.authoritative.test.js",
+          "supports": "Extraction"
+        },
+        {
+          "source": "scope",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "loot",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/itemCatalog.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/RaidResultService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/admission.integration.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/extraction.authoritative.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/item.catalog.parity.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/raid.result.authority.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/raid.result.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/admission.integration.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/extraction.authoritative.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/item.catalog.parity.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/raid.result.authority.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/raid.result.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "50bdc895e7ef755fe7b9d04151058f4fa0bca5db",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/50bdc895e7ef755fe7b9d04151058f4fa0bca5db",

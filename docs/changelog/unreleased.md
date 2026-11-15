@@ -4,11 +4,11 @@
 
 Release: Unreleased
 
-196 original commits; 196 canonical entries.
+209 original commits; 209 canonical entries.
 
 ## Canonical classification
 
-73 features; 61 bug fixes; 1 refactoring; 1 architecture & infrastructure; 27 documentation; 17 tests; 10 maintenance; 6 other changes
+73 features; 69 bug fixes; 1 refactoring; 1 architecture & infrastructure; 32 documentation; 17 tests; 10 maintenance; 6 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -17,19 +17,632 @@ Release: Unreleased
 | Audio | 4 | 2 | 0 | 0 | 0 | 0 |
 | Build & Tooling | 47 | 44 | 1 | 1 | 20 | 6 |
 | Combat | 34 | 11 | 0 | 0 | 12 | 0 |
-| Documentation | 26 | 21 | 0 | 0 | 11 | 0 |
-| Extraction | 13 | 10 | 0 | 0 | 9 | 3 |
+| Documentation | 26 | 25 | 0 | 0 | 12 | 0 |
+| Extraction | 13 | 14 | 0 | 0 | 9 | 3 |
 | Input | 0 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 55 | 37 | 1 | 1 | 19 | 3 |
+| Inventory & Loot | 55 | 42 | 1 | 1 | 23 | 3 |
 | Movement | 3 | 2 | 0 | 0 | 0 | 0 |
-| Networking & Sessions | 23 | 25 | 0 | 0 | 17 | 2 |
-| Persistence & Backend | 27 | 24 | 0 | 1 | 11 | 3 |
-| Tests | 70 | 55 | 1 | 1 | 27 | 4 |
+| Networking & Sessions | 23 | 26 | 0 | 0 | 17 | 2 |
+| Persistence & Backend | 27 | 32 | 0 | 1 | 12 | 3 |
+| Tests | 70 | 63 | 1 | 1 | 27 | 4 |
 | UI | 28 | 13 | 1 | 0 | 12 | 1 |
-| Unassigned | 0 | 1 | 0 | 0 | 12 | 0 |
+| Unassigned | 0 | 1 | 0 | 0 | 13 | 0 |
 | World & Visibility | 19 | 8 | 0 | 0 | 3 | 1 |
 
 ## Original commit records
+
+### c9c5d70a131d7b68f7c598bb2d27bd7539a3da86
+
+[c9c5d70a131d7b68f7c598bb2d27bd7539a3da86](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c9c5d70a131d7b68f7c598bb2d27bd7539a3da86)
+
+Date: 2026-11-14T20:46:52-03:00 · Classification: Documentation (explicit) · Systems: Inventory & Loot
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): note pending FIX-19 manual validation
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-19-reservation-inventory-guard.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Inventory &amp; Loot: odd/tasks/fix-19-reservation-inventory-guard.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### e0da9488f003cfa5663b49d086eb146aa47cade8
+
+[e0da9488f003cfa5663b49d086eb146aa47cade8](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e0da9488f003cfa5663b49d086eb146aa47cade8)
+
+Date: 2026-11-14T20:43:40-03:00 · Classification: Documentation (explicit) · Systems: Inventory & Loot
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): tidy FIX-19 tracker log
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-19-reservation-inventory-guard.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Inventory &amp; Loot: odd/tasks/fix-19-reservation-inventory-guard.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 5c8fd724d8b923e8b5ff467583039d580d289d23
+
+[5c8fd724d8b923e8b5ff467583039d580d289d23](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/5c8fd724d8b923e8b5ff467583039d580d289d23)
+
+Date: 2026-11-14T20:39:30-03:00 · Classification: Documentation (explicit) · Systems: Inventory & Loot
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record FIX-19 final verification
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-19-reservation-inventory-guard.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Inventory &amp; Loot: odd/tasks/fix-19-reservation-inventory-guard.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 2066a9394bca49c9345ec9ca77f1d92f3fed7ad9
+
+[2066a9394bca49c9345ec9ca77f1d92f3fed7ad9](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2066a9394bca49c9345ec9ca77f1d92f3fed7ad9)
+
+Date: 2026-11-14T20:31:09-03:00 · Classification: Bug Fixes (explicit) · Systems: Inventory & Loot, Persistence & Backend, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(defeat): clear a bound defeat's own reservation even without recorded admission
+```
+
+#### Original body
+
+```text
+Admission is fire-and-forget, so a defeat bound to its reservation could leave it pending and a later launch restored the lost items. Adds a real-DB integration test for the reservation lock, its atomic write filter and per-lootId preservation (FIX-19).
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+backend/src/services/DefeatCommitService.js
+backend/tests/defeat.commit.test.js
+backend/tests/integration/reservation.guard.integration.test.js
+odd/tasks/fix-19-reservation-inventory-guard.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Inventory &amp; Loot: odd/tasks/fix-19-reservation-inventory-guard.md
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Persistence &amp; Backend: backend/src/services/DefeatCommitService.js
+- path → Persistence &amp; Backend: backend/tests/defeat.commit.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/reservation.guard.integration.test.js
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Tests: backend/tests/defeat.commit.test.js
+- path → Tests: backend/tests/integration/reservation.guard.integration.test.js
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### fd4d1c1c8af8e93ea47dbe6d219770d84763de2a
+
+[fd4d1c1c8af8e93ea47dbe6d219770d84763de2a](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/fd4d1c1c8af8e93ea47dbe6d219770d84763de2a)
+
+Date: 2026-11-14T20:19:56-03:00 · Classification: Documentation (explicit) · Systems: Inventory & Loot, Persistence & Backend, Documentation
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(persistence): document backend reservation ownership and restoration (FIX-19)
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+odd/tasks/fix-19-reservation-inventory-guard.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Inventory &amp; Loot: odd/tasks/fix-19-reservation-inventory-guard.md
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- scope → Persistence &amp; Backend: persistence
+- message-term → Persistence &amp; Backend: persistence
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### c73793134bf19766f9b7624f37340fee5b0f5e0c
+
+[c73793134bf19766f9b7624f37340fee5b0f5e0c](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c73793134bf19766f9b7624f37340fee5b0f5e0c)
+
+Date: 2026-11-14T20:19:03-03:00 · Classification: Bug Fixes (explicit) · Systems: Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(defeat): clear only the admitted reservation the defeated raid used
+```
+
+#### Original body
+
+```text
+The defeat commit unset any pending reservation, so committing an older defeat after a new launch dropped the newer reservation and its items. It now clears the reservation only when it is admitted and matches the result's reservationId (or, for unbound results, the reservation's raid), and pins that reservation in the atomic filter (FIX-19).
+```
+
+#### Changed paths
+
+```text
+backend/src/services/DefeatCommitService.js
+backend/tests/defeat.commit.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Persistence &amp; Backend: backend/src/services/DefeatCommitService.js
+- path → Persistence &amp; Backend: backend/tests/defeat.commit.test.js
+- path → Tests: backend/tests/defeat.commit.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### daa0af816ad2c34ec9273bee631f0086a8323be6
+
+[daa0af816ad2c34ec9273bee631f0086a8323be6](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/daa0af816ad2c34ec9273bee631f0086a8323be6)
+
+Date: 2026-11-14T20:15:25-03:00 · Classification: Bug Fixes (explicit) · Systems: Inventory & Loot, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(inventory): restore every unit of a replaced or rolled back reservation
+```
+
+#### Original body
+
+```text
+Legacy (v1) characters only recovered an unadmitted reservation when the active loadout and equipment were empty; otherwise replacing it or rolling it back dropped its items. restoreReservation now merges legacy entries and both paths always restore, so the per-lootId total is unchanged in every schema version (FIX-19).
+```
+
+#### Changed paths
+
+```text
+backend/src/services/InventoryService.js
+backend/tests/inventory.slots.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- path → Inventory &amp; Loot: backend/tests/inventory.slots.test.js
+- scope → Inventory &amp; Loot: inventory
+- message-term → Inventory &amp; Loot: inventory
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/tests/inventory.slots.test.js
+- path → Tests: backend/tests/inventory.slots.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 1ba7040f1fa3dbc747a376ca30872710237883e6
+
+[1ba7040f1fa3dbc747a376ca30872710237883e6](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/1ba7040f1fa3dbc747a376ca30872710237883e6)
+
+Date: 2026-11-14T20:12:32-03:00 · Classification: Bug Fixes (explicit) · Systems: Inventory & Loot, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(inventory): reject stash, loadout and equipment mutations while a reservation is pending
+```
+
+#### Original body
+
+```text
+moveToLoadout, moveToStash and updatePreparedEquipment now return 409 RESERVATION_PENDING in every schema version and filter their write on the absence of a pending reservation, so a reserved item cannot be moved or re-equipped from under the reservation (FIX-19).
+```
+
+#### Changed paths
+
+```text
+backend/src/services/InventoryService.js
+backend/tests/inventory.slots.test.js
+odd/tasks/fix-19-reservation-inventory-guard.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- path → Inventory &amp; Loot: backend/tests/inventory.slots.test.js
+- path → Inventory &amp; Loot: odd/tasks/fix-19-reservation-inventory-guard.md
+- scope → Inventory &amp; Loot: inventory
+- message-term → Inventory &amp; Loot: inventory
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/tests/inventory.slots.test.js
+- path → Tests: backend/tests/inventory.slots.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### e5ce2a1a875865c08847ddbde1f3d402d35fe8c8
+
+[e5ce2a1a875865c08847ddbde1f3d402d35fe8c8](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e5ce2a1a875865c08847ddbde1f3d402d35fe8c8)
+
+Date: 2026-11-14T19:44:02-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): close FIX-18 execution tracker
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-18-authoritative-result-validation.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### bc2905f8811f3b9b87e10f618f8a5e13091a1320
+
+[bc2905f8811f3b9b87e10f618f8a5e13091a1320](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bc2905f8811f3b9b87e10f618f8a5e13091a1320)
+
+Date: 2026-11-14T19:34:20-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Persistence & Backend, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(extraction): credit each reservation once and keep defeat XP after loss clear
+```
+
+#### Original body
+
+```text
+FIX-18 (T5, re-verification finding). Receipts now record the reservationId
+they credited; extraction and defeat commits reject a second credit for the
+same reservation, checked and enforced atomically. Only extraction still
+requires the reservation to be pending and bound to the result's raid, so a
+defeat committed after the loss clear keeps its legitimate XP.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+backend/src/models/Character.js
+backend/src/services/DefeatCommitService.js
+backend/src/services/ExtractionCommitService.js
+backend/src/services/ResultReservationBinding.js
+backend/tests/raid.result.authority.test.js
+odd/tasks/fix-18-authoritative-result-validation.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Extraction: backend/src/services/ExtractionCommitService.js
+- scope → Extraction: extraction
+- message-term → Extraction: extraction
+- path → Persistence &amp; Backend: backend/src/models/Character.js
+- path → Persistence &amp; Backend: backend/src/services/DefeatCommitService.js
+- path → Persistence &amp; Backend: backend/src/services/ExtractionCommitService.js
+- path → Persistence &amp; Backend: backend/src/services/ResultReservationBinding.js
+- path → Persistence &amp; Backend: backend/tests/raid.result.authority.test.js
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Tests: backend/tests/raid.result.authority.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 35c2ed960e1cd67534259252f2ea9cc982076e53
+
+[35c2ed960e1cd67534259252f2ea9cc982076e53](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/35c2ed960e1cd67534259252f2ea9cc982076e53)
+
+Date: 2026-11-14T19:19:19-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Persistence & Backend, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(extraction): gate defeat commits and exact catalog matching
+```
+
+#### Original body
+
+```text
+FIX-18 (T4, verification findings). Defeat commits now apply the same
+result-to-reservation gate as extraction commits (shared
+ResultReservationBinding), so a re-bound or replaced reservation can no longer
+credit a second raid. Catalog matching is exact, so padded lootIds are
+rejected instead of stored padded, and non-list items are rejected for signed
+results too.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+backend/src/config/itemCatalog.js
+backend/src/services/DefeatCommitService.js
+backend/src/services/ExtractionCommitService.js
+backend/src/services/RaidResultService.js
+backend/src/services/ResultReservationBinding.js
+backend/tests/raid.result.authority.test.js
+odd/tasks/fix-18-authoritative-result-validation.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Extraction: backend/src/services/ExtractionCommitService.js
+- scope → Extraction: extraction
+- message-term → Extraction: extraction
+- path → Persistence &amp; Backend: backend/src/config/itemCatalog.js
+- path → Persistence &amp; Backend: backend/src/services/DefeatCommitService.js
+- path → Persistence &amp; Backend: backend/src/services/ExtractionCommitService.js
+- path → Persistence &amp; Backend: backend/src/services/RaidResultService.js
+- path → Persistence &amp; Backend: backend/src/services/ResultReservationBinding.js
+- path → Persistence &amp; Backend: backend/tests/raid.result.authority.test.js
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Tests: backend/tests/raid.result.authority.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 3134b7fbae7b756fc98337b5b1cf21668949836b
+
+[3134b7fbae7b756fc98337b5b1cf21668949836b](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3134b7fbae7b756fc98337b5b1cf21668949836b)
+
+Date: 2026-11-14T19:04:53-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Inventory & Loot, Networking & Sessions, Persistence & Backend, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(extraction): bind raid results to the admitted reservation
+```
+
+#### Original body
+
+```text
+FIX-18 (T2, T3 docs). The raid admission ticket binds the pending reservation
+to raid-<raidCode>; admitted reservations cannot be re-bound to another raid.
+Unsigned results require the recipient reservation (and a non-recipient host)
+to be bound to the published raid, store the reservationId, and the extraction
+commit only credits a result whose reservation is still pending and bound to
+its raid. One reservation credits at most one raid (5000 XP, 30 slots).
+ExtractionArchitecture documents the new checks and error codes.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+backend/src/models/AuthoritativeExtractionResult.js
+backend/src/models/Character.js
+backend/src/services/ExtractionCommitService.js
+backend/src/services/RaidResultService.js
+backend/src/services/SessionTicketService.js
+backend/tests/integration/admission.integration.test.js
+backend/tests/integration/item.instances.test.js
+backend/tests/inventory.instances.test.js
+backend/tests/inventory.protocol.test.js
+backend/tests/inventory.slots.test.js
+backend/tests/inventory.training.test.js
+backend/tests/raid.result.authority.test.js
+backend/tests/raid.result.test.js
+odd/tasks/fix-18-authoritative-result-validation.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Extraction: backend/src/models/AuthoritativeExtractionResult.js
+- path → Extraction: backend/src/services/ExtractionCommitService.js
+- scope → Extraction: extraction
+- message-term → Extraction: extraction
+- path → Inventory &amp; Loot: backend/tests/inventory.instances.test.js
+- path → Inventory &amp; Loot: backend/tests/inventory.protocol.test.js
+- path → Inventory &amp; Loot: backend/tests/inventory.slots.test.js
+- path → Inventory &amp; Loot: backend/tests/inventory.training.test.js
+- path → Networking &amp; Sessions: backend/src/services/SessionTicketService.js
+- path → Persistence &amp; Backend: backend/src/models/AuthoritativeExtractionResult.js
+- path → Persistence &amp; Backend: backend/src/models/Character.js
+- path → Persistence &amp; Backend: backend/src/services/ExtractionCommitService.js
+- path → Persistence &amp; Backend: backend/src/services/RaidResultService.js
+- path → Persistence &amp; Backend: backend/src/services/SessionTicketService.js
+- path → Persistence &amp; Backend: backend/tests/integration/admission.integration.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/item.instances.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.instances.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.protocol.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.slots.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.training.test.js
+- path → Persistence &amp; Backend: backend/tests/raid.result.authority.test.js
+- path → Persistence &amp; Backend: backend/tests/raid.result.test.js
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Tests: backend/tests/integration/admission.integration.test.js
+- path → Tests: backend/tests/integration/item.instances.test.js
+- path → Tests: backend/tests/inventory.instances.test.js
+- path → Tests: backend/tests/inventory.protocol.test.js
+- path → Tests: backend/tests/inventory.slots.test.js
+- path → Tests: backend/tests/inventory.training.test.js
+- path → Tests: backend/tests/raid.result.authority.test.js
+- path → Tests: backend/tests/raid.result.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 37c1ca785ddc522f6404d6bb695508fc32128044
+
+[37c1ca785ddc522f6404d6bb695508fc32128044](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/37c1ca785ddc522f6404d6bb695508fc32128044)
+
+Date: 2026-11-14T18:55:39-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Inventory & Loot, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(extraction): reject published results with loot outside the game catalog
+```
+
+#### Original body
+
+```text
+FIX-18 (T1). Published extraction results, signed or not, must name items from
+the backend item registry (union of the backend catalogs after alias
+normalization); unknown loot or equipment is rejected with 422 UNKNOWN_LOOT_ID
+before any document is created. A parity test keeps the registry a superset of
+Unity's LootDefinitions. Fixtures that published non-existent ids now use real
+catalog ids.
+```
+
+#### Changed paths
+
+```text
+backend/src/config/itemCatalog.js
+backend/src/services/RaidResultService.js
+backend/tests/integration/admission.integration.test.js
+backend/tests/integration/extraction.authoritative.test.js
+backend/tests/item.catalog.parity.test.js
+backend/tests/raid.result.authority.test.js
+backend/tests/raid.result.test.js
+odd/tasks/fix-18-authoritative-result-validation.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: backend/tests/integration/extraction.authoritative.test.js
+- scope → Extraction: extraction
+- message-term → Extraction: extraction
+- message-term → Inventory &amp; Loot: loot
+- path → Persistence &amp; Backend: backend/src/config/itemCatalog.js
+- path → Persistence &amp; Backend: backend/src/services/RaidResultService.js
+- path → Persistence &amp; Backend: backend/tests/integration/admission.integration.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/extraction.authoritative.test.js
+- path → Persistence &amp; Backend: backend/tests/item.catalog.parity.test.js
+- path → Persistence &amp; Backend: backend/tests/raid.result.authority.test.js
+- path → Persistence &amp; Backend: backend/tests/raid.result.test.js
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/integration/admission.integration.test.js
+- path → Tests: backend/tests/integration/extraction.authoritative.test.js
+- path → Tests: backend/tests/item.catalog.parity.test.js
+- path → Tests: backend/tests/raid.result.authority.test.js
+- path → Tests: backend/tests/raid.result.test.js
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 50bdc895e7ef755fe7b9d04151058f4fa0bca5db
 
