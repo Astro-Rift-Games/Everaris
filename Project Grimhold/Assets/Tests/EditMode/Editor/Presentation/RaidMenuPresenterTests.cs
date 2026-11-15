@@ -118,8 +118,8 @@ namespace Tests.EditMode.Presentation
         }
 
         [TestCase("NO_AUTHORITATIVE_RESULT", false, false, "No se pudo guardar; se reintentará al iniciar sesión.")]
-        [TestCase("NO_AUTHORITATIVE_RESULT", false, true, "No se pudo guardar. El resultado de la incursión aún se está procesando.")]
-        [TestCase("TIMEOUT", false, true, "No se pudo guardar. No se pudo conectar con el servidor. Comprueba tu conexión.")]
+        [TestCase("NO_AUTHORITATIVE_RESULT", false, true, "No se pudo guardar; se reintentará al iniciar sesión.")]
+        [TestCase("TIMEOUT", false, true, "No se pudo guardar; se reintentará al iniciar sesión.")]
         [TestCase("RESULT_CONFLICT", false, false, "No se pudo guardar; se reintentará al iniciar sesión.")]
         [TestCase("TOO_MANY_REQUESTS", true, true, "Guardado pendiente; reintentando… Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.")]
         public void BackendCommitStatus_AppearsInResultsWithoutReplacingSummary(string code, bool retrying, bool defeat, string expected)

@@ -72,15 +72,15 @@ unchanged.
 
 The productive `LocalProfileRepository` validates candidate identity and codec compatibility,
 then calls the file store's atomic-write operation before publishing a cloned Snapshot as Ready.
-The current save contract is schema **11**; schemas 1–10 remain readable. Item data and prepared
+The current save contract is schema **13**; schemas 1–12 remain readable. Schema 13 adds the nullable `pendingDefeatCommit` receipt; older profiles without it decode with no pending defeat. Item data and prepared
 Equipment retain the instance block from [Item Instances §§4.1, 6.1](ItemInstanceArchitecture.md#61-local-persistence).
 Codec v10 introduced physical `slot` positions and the separate backend `inventorySchemaVersion`;
 earlier decode assigns list indices as slots (including reservation items), retains the earlier
 schema-specific migrations and marks inventory as version 1. Local decode never migrates the backend.
 A v10 equipment stack decodes into plain instances without IDs only as transient cache state until
-backend hydration; legacy equipment-ownership repair never runs on v11. Cache-only initialization
+backend hydration; legacy equipment-ownership repair never runs on v11 or later. Cache-only initialization
 (including Editor domain reload) can publish the Store without backend hydration. Decoding schemas 1–10 therefore sets `RequiresEquipmentHydration`, preserved by subsequent
-v11 cache saves until an inventory hydration succeeds. Local Equip/Unequip, Stash Equip and remote
+current cache saves until an inventory hydration succeeds. Local Equip/Unequip, Stash Equip and remote
 prepared-equipment updates reject while it is set; gem install requires a backend-issued instance ID.
 Unity never synthesizes IDs for those transient entries (Item Instances §9).
 Pending extraction preserves per-unit modifiers. After a successful backend extraction commit,
@@ -180,7 +180,7 @@ Extraction and unequip still target Loadout, not Stash.
 
 ### Inventory order
 
-Physical Town positions persist through the Store, codec v11 and backend v3. Responses and local
+Physical Town positions persist through the Store, the current codec and backend v3. Responses and local
 lists are ordered by slot, but array index is not a slot address. The Stash screen projects holes
 and pages by slot ranges. Take All / Leave All are a single `POST /character/me/inventory/transfer-all`
 and at most one revision-guarded write: the backend evaluates every source `(slot, lootId)` entry in
@@ -348,14 +348,26 @@ no error-level log for that code.
 The existing one-request, revision-guarded Town move/order/split, Equipment and commerce flows
 are not added to this policy: their reconcile-once/stop-without-retry boundaries above remain.
 In-session unified extraction and defeat commits use this single retry budget, never nested
-retry loops. Extraction exhaustion retains the existing retry-at-login recovery. Defeat has no
-durable login replay today: after exhaustion its Results status honestly reports that saving
-failed, without promising another attempt at login. Durable defeat replay is a separate pending
-item (review finding M4, `odd/tasks/review-findings-2026-11-15.md`), outside FIX-26.
+retry loops. Extraction exhaustion retains the existing retry-at-login recovery. Review finding M4 adds durable defeat login replay after exhaustion: `PendingDefeatCommit` is
+written with the local progression/loss transaction. The record is `{ receipt: { raidId, profileId,
+resultSequence, consolidatedExperience, resultingLevel }, reservationId }`. The played reservation
+ID comes from participant admission (or the current reservation for direct Store callers); login
+never orphan-rolls it back, and completion discards only that exact reservation, preserving a newer
+one. The receipt survives codec round trips and process restart. It carries no loot
+or newly calculated reward. Ordinary hydration preserves pending defeat progression, attributes,
+watermark and receipts until replay confirms the backend outcome. The bootstrapper never rolls
+back this participation's orphan reservation. Both login and the live path use
+`RetryPendingDefeatAsync` through `RemoteInventoryService` and its single bounded retry budget.
+A successful response, including the endpoint's receipt-proven `alreadySecured`, atomically
+hydrates level/XP/attributes/revision and clears only the matching pending record through
+`TryCompleteDefeatCommit`. Invalid/stale responses and repository-write failures leave the current
+snapshot and pending record intact. `RESULT_ALREADY_CONSUMED` without proof remains a rejection.
+New reservations and another defeat cannot overwrite an unacknowledged defeat; terminal/conflict
+failures retain it for login retry rather than silently discarding earned progression.
 The local cache commit and Fusion ACK are not delayed by backend retries. Per-operation `BackendCommitFeedback` is a local
 presentation projection, not a second persistence store or replicated gameplay state. The raid
 menu/Results status shows Spanish saving/retrying, deferred-until-login (all extraction failures,
-including terminal/conflict, since the pending record is kept) or defeat failure guidance,
+including terminal/conflict, since the pending record is kept) or defeat login-deferral guidance,
 without raw codes and without changing Return eligibility. Text is cached per feedback state,
 not formatted each frame. Extraction preserves the local loot confirmation and progression
 correction before the backend status on the next line. Extraction reports saved only after
@@ -453,7 +465,7 @@ the same migration. Earlier schemas did not distinguish
 the former exclusive implementation from the temporary non-owning implementation. Decoding treats
 a complete Inventory reference set as the latter and subtracts one unit per prepared slot; if the
 complete set is absent, it preserves Inventory unchanged as an earlier exclusive save. The check is
-all-or-nothing. This describes the schema-4 migration; new saves write schema 11 and never run
+all-or-nothing. This describes the schema-4 migration; new saves write schema 13 and never run
 this legacy ownership repair ([Item Instances §6.1](ItemInstanceArchitecture.md#61-local-persistence)).
 
 TASK-330 originally kept this migration local. The current prepared-Equipment adapter sends all
@@ -651,7 +663,7 @@ durable guarantee.
 
 ## Temporary limitations and failure policy
 
-- The per-profile schema-11 file cache survives process exit but is not backend authority.
+- The per-profile schema-13 file cache survives process exit but is not backend authority.
 - PlayerPrefs never supplies a productive identity. Unsupported or unreadable caches block hydration;
   confirmed corruption can be replaced only through the explicit authenticated flow above.
 - A backend load failure must remain visible and must not be replaced by a generated identity or

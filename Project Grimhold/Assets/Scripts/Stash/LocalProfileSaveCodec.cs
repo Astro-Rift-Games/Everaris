@@ -37,6 +37,7 @@ public static class LocalProfileSaveCodec
         public string preparedBoots;
         public ReservationData pendingReservation;
         public PendingExtractionCommitData pendingExtractionCommit;
+        public PendingDefeatCommitData pendingDefeatCommit;
         public ReceiptData[] appliedExtractionReceipts;
         public long shopIdempotencyWatermark;
         public ShopReceiptData[] appliedShopTransactionReceipts;
@@ -106,6 +107,13 @@ public static class LocalProfileSaveCodec
         public string preparedBoots;
         public long consolidatedExperience;
         public int resultingLevel;
+    }
+
+    [Serializable]
+    private sealed class PendingDefeatCommitData
+    {
+        public ProgressionReceiptData receipt;
+        public string reservationId;
     }
 
     [Serializable]
@@ -210,6 +218,11 @@ public static class LocalProfileSaveCodec
                 preparedBoots = snapshot.PendingExtractionCommit.PreparedEquipment.Boots.Value,
                 consolidatedExperience = snapshot.PendingExtractionCommit.ConsolidatedExperience,
                 resultingLevel = snapshot.PendingExtractionCommit.ResultingLevel
+            },
+            pendingDefeatCommit = snapshot.PendingDefeatCommit == null ? null : new PendingDefeatCommitData
+            {
+                receipt = ToProgressionReceipt(snapshot.PendingDefeatCommit.Receipt),
+                reservationId = snapshot.PendingDefeatCommit.ReservationId
             },
             appliedExtractionReceipts = ToReceipts(snapshot.AppliedExtractionReceipts),
             shopIdempotencyWatermark = snapshot.ShopIdempotencyWatermark,
@@ -414,6 +427,17 @@ public static class LocalProfileSaveCodec
         else if (!TryReadProgression(data, expectedProfileId, candidate, out error))
         {
             return false;
+        }
+
+        if (data.pendingDefeatCommit != null)
+        {
+            if (!TryReadProgressionReceipt(data.pendingDefeatCommit.receipt, expectedProfileId, out var defeatReceipt) ||
+                defeatReceipt.ResultSequence > candidate.LastAppliedProgressionResultSequence)
+            {
+                error = "Pending defeat commit contains invalid receipt data.";
+                return false;
+            }
+            candidate.PendingDefeatCommit = new PendingDefeatCommit(defeatReceipt, data.pendingDefeatCommit.reservationId);
         }
 
         bool hasPendingExtractionData = data.pendingExtractionCommit != null &&

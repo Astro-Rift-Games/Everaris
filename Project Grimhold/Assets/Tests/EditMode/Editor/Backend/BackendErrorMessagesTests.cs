@@ -26,7 +26,7 @@ public sealed class BackendErrorMessagesTests
     [TestCase("CONCURRENT_MUTATION")]
     [TestCase("EXTRACTION_RESULT_PENDING")]
     [TestCase("TIMEOUT")]
-    public void DefeatExhaustion_DoesNotPromiseLoginReplay(string code)
+    public void DefeatExhaustion_PromisesDurableLoginReplay(string code)
     {
         var holder = new UnityEngine.GameObject("DefeatFeedbackTests");
         holder.SetActive(false);
@@ -37,9 +37,8 @@ public sealed class BackendErrorMessagesTests
             feedback.Retrying(new BackendError { error = code });
             Assert.That(BackendErrorMessages.ForCommit(feedback), Does.StartWith("Guardado pendiente; reintentando…"));
             feedback.Complete(false, new BackendError { error = code, message = "raw diagnostic" });
-            Assert.That(feedback.Status, Is.EqualTo(BackendCommitStatus.Failed));
-            Assert.That(BackendErrorMessages.ForCommit(feedback), Does.StartWith("No se pudo guardar."));
-            Assert.That(BackendErrorMessages.ForCommit(feedback), Does.Not.Contain("se reintentará"));
+            Assert.That(feedback.Status, Is.EqualTo(BackendCommitStatus.DeferredUntilLogin));
+            Assert.That(BackendErrorMessages.ForCommit(feedback), Is.EqualTo("No se pudo guardar; se reintentará al iniciar sesión."));
             Assert.That(BackendErrorMessages.ForCommit(feedback), Does.Not.Contain("raw diagnostic"));
             Assert.That(BackendErrorMessages.ForCommit(feedback), Does.Not.Contain(code));
         }

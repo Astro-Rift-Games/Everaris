@@ -126,7 +126,7 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
     private int _localProgressionResultSequence;
     private float _nextProgressionCommitRetryAt;
     private bool _localDefeatCommitCompleted;
-    public BackendCommitFeedback BackendDefeatFeedback { get; } = new BackendCommitFeedback(supportsLoginRecovery: false);
+    public BackendCommitFeedback BackendDefeatFeedback { get; } = new BackendCommitFeedback(supportsLoginRecovery: true);
     private int _authorityDefeatPublishedSequence;
     private bool _authorityDefeatPublishInFlight;
     private int _authoritativeDefeatPublishedSequence;
@@ -500,7 +500,8 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
         StashOperationResult result = context.Store.TryCommitDefeatProgression(
             receipt,
             application.Result.ResultingLevel,
-            application.Result.ResultingExperience);
+            application.Result.ResultingExperience,
+            LoadoutReservationId.ToString());
 
         if (result == StashOperationResult.Success || result == StashOperationResult.AlreadySecured)
         {
@@ -508,17 +509,27 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
             var remoteService = context.GetComponent<RemoteInventoryService>();
             if (remoteService != null)
             {
-                Task defeatTask = CommitDefeatToBackendAsync(remoteService, receipt);
+                Task defeatTask = CommitDefeatToBackendAsync(remoteService, context.Store);
                 SessionConnectionCoordinator.Instance?.RegisterParticipationOutcomeTask(defeatTask);
+            }
+            else
+            {
+                BackendDefeatFeedback.DeferHydration();
             }
         }
     }
 
-    private async Task CommitDefeatToBackendAsync(RemoteInventoryService service, ProgressionReceipt receipt)
+    private async Task CommitDefeatToBackendAsync(RemoteInventoryService service, LocalProfileStore store)
     {
         BackendDefeatFeedback.Begin();
-        var outcome = await service.CommitDefeatUnifiedAsync(receipt, BackendDefeatFeedback.Retrying);
-        BackendDefeatFeedback.Complete(outcome.success, outcome.error);
+        BackendError error = default;
+        bool saved = await ApplicationStashServiceBootstrapper.RetryPendingDefeatAsync(store, async receipt =>
+        {
+            var outcome = await service.CommitDefeatUnifiedAsync(receipt, BackendDefeatFeedback.Retrying);
+            error = outcome.error;
+            return outcome;
+        });
+        BackendDefeatFeedback.Complete(saved, error);
     }
 
     /// <summary>

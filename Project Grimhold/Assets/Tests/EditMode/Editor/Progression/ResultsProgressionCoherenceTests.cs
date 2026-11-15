@@ -6,8 +6,6 @@ using NUnit.Framework;
 
 public sealed class ResultsProgressionCoherenceTests
 {
-    private const string SaverPath =
-        "Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs";
     private const string PresenterPath =
         "Assets/Scripts/Player/Presentation/RaidMenuPresenter.cs";
 
@@ -72,12 +70,13 @@ public sealed class ResultsProgressionCoherenceTests
     [Test]
     public void ExtractionLootSaver_CalculatesConsolidatedExperienceWithFullExpeditionLedger()
     {
-        string source = File.ReadAllText(SaverPath);
-
-        Assert.That(source, Does.Contain("ExpeditionExperienceRules"),
-            "PlayerExtractionLootSaver must use ExpeditionExperienceRules to combine ledger experience with extracted loot.");
-        Assert.That(source, Does.Not.Contain("new ExpeditionExperienceResolution(\n                ExpeditionExperienceResolutionOutcome.Extracted,\n                default,\n                10000,"),
-            "PlayerExtractionLootSaver must not hardcode 10000 basis points or ignore the expedition ledger.");
+        Assert.That(PlayerExpeditionProgressionResolver.TryCalculateProgression(
+            new ExpeditionExperienceSnapshot(100, 50, 20, 30),
+            ExpeditionExperienceResolutionOutcome.Extracted,
+            new ExpeditionProgressionBaseline(1, 0), out var resolution, out var application), Is.True);
+        Assert.That(resolution.ConsolidatedExperience, Is.EqualTo(200));
+        Assert.That(application.Result.ResultingLevel, Is.EqualTo(2));
+        Assert.That(application.Result.ResultingExperience, Is.EqualTo(100));
     }
 
     [Test]

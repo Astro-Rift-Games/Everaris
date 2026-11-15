@@ -548,7 +548,8 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
 
                 if (success && _store != null)
                 {
-                    _store.SetRemoteRevision(result.revision);
+                    // A pending defeat accepts revision and progression together with receipt retirement.
+                    if (_store.PendingDefeatCommit == null) _store.SetRemoteRevision(result.revision);
                     if (result.alreadySecured)
                     {
                         Debug.Log($"[{nameof(RemoteInventoryService)}] Defeat progression already secured on backend " +

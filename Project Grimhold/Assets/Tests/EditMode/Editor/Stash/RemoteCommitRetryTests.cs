@@ -87,12 +87,10 @@ public sealed class RemoteCommitRetryTests
             Assert.That(result.error.error, Is.EqualTo(code));
             Assert.That(result.error.message, Is.EqualTo("test"));
             Assert.That(delays.Count, Is.EqualTo(expectedAttempts - 1));
-            Assert.That(feedback.Status, Is.EqualTo(!defeat
-                ? BackendCommitStatus.DeferredUntilLogin : BackendCommitStatus.Failed));
+            Assert.That(feedback.Status, Is.EqualTo(BackendCommitStatus.DeferredUntilLogin));
             string message = BackendErrorMessages.ForCommit(feedback);
             Assert.That(message, Does.StartWith("No se pudo guardar"));
-            if (defeat) Assert.That(message, Does.Not.Contain("se reintentará al iniciar sesión"));
-            else Assert.That(message, Does.Contain("se reintentará al iniciar sesión"));
+            Assert.That(message, Does.Contain("se reintentará al iniciar sesión"));
         }
         finally
         {
