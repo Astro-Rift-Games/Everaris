@@ -341,7 +341,14 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
 
     private RaidLaunchPreparationResult ObserveLaunchReservationSave()
     {
-        if (_launchReservationSave == null) return RaidLaunchPreparationResult.Success;
+        if (_launchReservationSave == null)
+        {
+            if (!RaidLaunchBackend.RequiresConfirmation(ApplicationAuthContext.Instance))
+                return RaidLaunchPreparationResult.Success;
+
+            TryReleaseActiveTicket();
+            return RejectLaunchPreparation(ExpeditionPreparationResult.ReservationFailed, RaidLaunchPreparationResult.Rejected);
+        }
         if (!_launchReservationSave.IsCompleted) return LaunchNotReady(RaidLaunchNotReadyReason.ReservationSavePending);
         ExpeditionPreparationResult reason = ExpeditionPreparationResult.ReservationFailed;
         if (_launchReservationSave.Status == TaskStatus.RanToCompletion)
@@ -1171,6 +1178,9 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
                     break;
                 }
 
+                // Backend admission failures are terminal, never session-availability probes.
+                if (_raidLauncher.LastLaunchFailure.HasValue) break;
+
                 ShutdownReason lastReason = _raidLauncher.LastStartShutdownReason;
                 startFailureReason = lastReason;
                 float remainingSeconds = deadline - Time.realtimeSinceStartup;
@@ -1226,7 +1236,17 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
                     return SessionTransitionResult.ConnectionFailed;
                 }
 
-                SessionTransitionResult failure = SessionStartFailurePolicy.Classify(startFailureReason);
+                SessionTransitionResult failure = _raidLauncher.LastLaunchFailure ?? SessionStartFailurePolicy.Classify(startFailureReason);
+                if (_raidLauncher.LastLaunchWasUnauthorized)
+                {
+                    // Auth invalidation already reset identity/stash. Never bootstrap Town with
+                    // those cleared dependencies or roll back using a newly generated profile.
+                    await CleanupFailedRaidAttemptAsync(failure);
+                    _ticketReleasePending = true;
+                    TransitionTo(SessionConnectionState.Failed);
+                    _pendingTransitionFailure = failure;
+                    return failure;
+                }
                 return recoverTownOnFailure
                     ? await RecoverTownAfterRaidFailureAsync(failure)
                     : await CleanupFailedRaidAttemptAsync(failure);
@@ -1798,7 +1818,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
                 }
 
                 TransitionTo(SessionConnectionState.Failed);
-                return SessionStartFailurePolicy.Classify(_raidLauncher.LastStartShutdownReason);
+                return _raidLauncher.LastLaunchFailure ?? SessionStartFailurePolicy.Classify(_raidLauncher.LastStartShutdownReason);
             }
 
             TransitionTo(SessionConnectionState.Raid);
@@ -1969,6 +1989,11 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             return SessionTransitionResult.RecoveryFailed;
         }
 
+        if (_raidLauncher != null && _raidLauncher.LastLaunchFailure.HasValue &&
+            !_raidLauncher.LastLaunchWasUnauthorized && !TryReleaseActiveTicket())
+        {
+            return SessionTransitionResult.LoadoutRollbackFailed;
+        }
         return failure;
     }
 

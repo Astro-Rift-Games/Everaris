@@ -59,10 +59,18 @@ public sealed class FusionSessionLauncher : MonoBehaviour, ISessionRunnerOwner
     private LauncherShutdownListener _shutdownListener;
     private NetworkRunner _hostMigrationSourceRunner;
 
+    private IRaidLaunchBackend _launchBackend = new RaidLaunchBackend();
+
+    /// <summary>Overrides the HTTP boundary without replacing admission, storage or runner lifecycle.</summary>
+    public void InitializeLaunchBackend(IRaidLaunchBackend backend) =>
+        _launchBackend = backend ?? throw new ArgumentNullException(nameof(backend));
+
     public NetworkRunner Runner => _runner;
     public static int RaidPlayerCapacity => RaidSessionRules.MaxParticipants;
     public NetworkMatchController MatchController => _matchController;
     public ShutdownReason LastStartShutdownReason { get; private set; } = ShutdownReason.Ok;
+    public SessionTransitionResult? LastLaunchFailure { get; private set; }
+    public bool LastLaunchWasUnauthorized { get; private set; }
     public event Action<NetworkRunner, ShutdownReason> RunnerShutdownObserved;
 
     /// <summary>
@@ -230,6 +238,10 @@ public sealed class FusionSessionLauncher : MonoBehaviour, ISessionRunnerOwner
         PendingLoadoutReservation loadoutReservation = null,
         CancellationToken cancellationToken = default)
     {
+        LastLaunchFailure = null;
+        LastLaunchWasUnauthorized = false;
+        LastStartShutdownReason = ShutdownReason.Ok;
+
         if (!startupContext.IsValid)
             throw new ArgumentException("Invalid startup context provided to session launcher.");
 
@@ -321,26 +333,24 @@ public sealed class FusionSessionLauncher : MonoBehaviour, ISessionRunnerOwner
 
             localAdmissionData = admissionData;
             ApplicationAuthContext authContext = ApplicationAuthContext.Instance;
-            if (authContext != null && authContext.IsAuthenticated &&
-                authContext.BackendConfig != null && !string.IsNullOrEmpty(authContext.Token))
+            if (RaidLaunchBackend.RequiresConfirmation(authContext))
             {
-                if (profileContext.TryGetComponent(out RemoteInventoryService remoteInventoryService))
+                var save = await _launchBackend.SaveReservationAsync(profileContext, loadoutReservation);
+                cancellationToken.ThrowIfCancellationRequested();
+                if (!save.success)
                 {
-                    await remoteInventoryService.SavePendingReservationAsync(loadoutReservation);
-                    cancellationToken.ThrowIfCancellationRequested();
+                    return AbortRequiredTicket(profileId, save.error, "reservation_save");
                 }
 
-                var (ticketOk, ticketData, ticketError) = await CharacterClient.GetAuthoritativeRaidAdmissionTicketAsync(
-                    authContext.BackendConfig,
-                    authContext.Token,
-                    launchContext.RaidCode.Value,
-                    loadoutReservation.ReservationId);
+                var (ticketOk, ticketData, ticketError) = await _launchBackend.RequestTicketAsync(
+                    authContext, launchContext, loadoutReservation);
                 cancellationToken.ThrowIfCancellationRequested();
 
                 if (!ticketOk && ticketError.error == BackendErrorUtility.Unauthorized)
                 {
                     TraceTicket("TicketFailed", profileId.Value, $"category={ticketError.error} fallback=none (session handled as unauthorized)");
                     authContext.HandleUnauthorizedSession();
+                    return AbortRequiredTicket(profileId, ticketError, "ticket_request");
                 }
                 else if (ticketOk && !string.IsNullOrEmpty(ticketData.ticket) &&
                          AuthoritativeRaidAdmissionTicketCodec.TryDecode(ticketData.ticket, out AuthoritativeRaidAdmissionTicket decodedAuthTicket) &&
@@ -386,15 +396,9 @@ public sealed class FusionSessionLauncher : MonoBehaviour, ISessionRunnerOwner
                 }
                 else
                 {
-                    Debug.LogWarning(
-                        $"[FusionSessionLauncher] Could not obtain authoritative raid admission ticket ({ticketError.error ?? "DECODE_FAILED"}). Proceeding with local admission snapshot.",
-                        this);
-                    TraceTicket(
-                        "TicketFallbackToLocalSnapshot",
-                        profileId.Value,
-                        $"requestOk={ticketOk} category={ticketError.error ?? (ticketOk ? "EMPTY_OR_DECODE_FAILED" : "UNKNOWN")} " +
-                        $"ticketChars={(ticketData.ticket != null ? ticketData.ticket.Length : 0)} " +
-                        "outcome=local_snapshot_used (the Host will reject a payload without an authoritative ticket)");
+                    return AbortRequiredTicket(profileId,
+                        ticketOk ? new BackendError { error = "EMPTY_OR_DECODE_FAILED" } : ticketError,
+                        ticketOk ? "ticket_decode" : "ticket_request");
                 }
             }
             else
@@ -625,6 +629,18 @@ public sealed class FusionSessionLauncher : MonoBehaviour, ISessionRunnerOwner
         {
             _isStarting = false;
         }
+    }
+
+    private bool AbortRequiredTicket(ProfileId profile, BackendError error, string stage)
+    {
+        LastStartShutdownReason = ShutdownReason.Error;
+        LastLaunchWasUnauthorized = error.error == BackendErrorUtility.Unauthorized;
+        LastLaunchFailure = BackendErrorUtility.IsTransportFailure(error.error)
+            ? SessionTransitionResult.ServiceUnavailable
+            : SessionTransitionResult.LoadoutReservationFailed;
+        TraceTicket("TicketRequiredAbort", profile.Value,
+            $"stage={stage} category={error.error ?? "UNKNOWN"} outcome=launch_aborted");
+        return false;
     }
 
     private async Task<bool> WaitForLocalRaidAdmissionAsync(
