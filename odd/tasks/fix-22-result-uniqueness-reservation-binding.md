@@ -1,0 +1,32 @@
+# FIX-22 — Unique authoritative results and reservationId-bound reservation operations
+
+HacknPlan FIX-22 (ID 692), parent FIX-US-04 (ID 685); coordinate with FIX-18. Worktree `ProjectGrimhold-fix-22-26`, branch `fix/fix-22-fix-26` from `origin/New-Testing` (`63023d61`), shared with FIX-26 (`odd/tasks/fix-26-backend-error-classification.md`).
+Execution tracker only: scope and acceptance come from the HacknPlan item; nothing here re-scopes it.
+
+## Specs
+
+Quoted verbatim from HacknPlan #692.
+
+- **S1** (Objetivo): "Que publicaciones concurrentes no creen resultados duplicados y que un reintento tardío de limpieza/rollback no afecte una reserva más nueva."
+- **S2** (Alcance 1): "Restricción de unicidad estricta para resultados autoritativos por expedición y cuenta de jugador, tratando las publicaciones duplicadas como operaciones idempotentes confirmadas." Frontera: "control de duplicados en la publicación de incursiones; entregables observables: aceptación idempotente sin generar dobles acreditaciones de recompensas."
+- **S3** (Alcance 2): "Vinculación obligatoria de las operaciones de cancelación y reversión de reservas al identificador específico de la reserva en curso." Frontera: "API de reservas de inventario; entregables observables: rechazo de reversiones que no correspondan exactamente a la reserva activa."
+- **S4** (AC1): "Dos publicaciones concurrentes idénticas dejan un único documento."
+- **S5** (AC2): "Un DELETE con reservationId distinto del actual no modifica la reserva vigente."
+- **S6** (Validación): "Test de backend que reproduzca el defecto: RED observado antes del cambio y GREEN después." / "npm test completo y, si se tocan rutas de persistencia concurrente, npm run test:concurrency y test:integration (MongoDB local de test)." / "Prueba contra el entorno desplegado sólo con autorización explícita; no se cierra sin evidencia registrada."
+- Out of scope (verbatim): "Cambios de flujo de reserva fuera de estos condicionales."
+
+## Tasks
+
+| ID | Specs | Route | Commit |
+| --- | --- | --- | --- |
+| T1 | S1, S2, S4, S6 | worker, TDD (node): unique indexes `resultId` and `(raidId, accountId)` on `AuthoritativeExtractionResult`; publish catches E11000, re-reads and reuses the existing equivalence (`alreadyPublished` / `RESULT_CONFLICT` / `RESULT_ALREADY_CONSUMED`); RED concurrency test | — |
+| T2 | S2, S6 | worker: dry-run-by-default dedupe script under `backend/scripts/` keeping the consumed or oldest result, plus a startup log when the unique index is missing (L3) | — |
+| T3 | S1, S3, S5 | worker, TDD (Unity EditMode): every Unity clear/rollback sends the local `reservationId` (`ClearPendingReservationAsync` callers `SessionConnectionCoordinator` and `ApplicationStashServiceBootstrapper`, id-less orphan rollback at login); backend id stays optional (L3); backend test pins AC2 | — |
+| T4 | S6 | human: deployed check only with explicit authorization; run the dedupe script on Render if needed | — |
+
+## Log
+
+- **L1** (user, 2026-11-15): "mientras en nuevo worktree podemos continuar con fix-22 y 26?"
+- **L2** (exploration, worktree `63023d61`; paths under `backend/src/`): `models/AuthoritativeExtractionResult.js` `resultId` (:21), `raidId` (:23), `accountId` (:24) indexed non-unique, no compound index, 24 h TTL on `createdAt` (:33), Mongoose autoIndex only. `services/RaidResultService.js` check `findOne({$or:[{resultId},{raidId,accountId}]})` (:373) then bare `create` (:415), no E11000 handling (raw 500); equivalence semantics: consumed -> 409 `RESULT_ALREADY_CONSUMED`, equivalent -> `alreadyPublished: true`, else 409 `RESULT_CONFLICT`; helper `utils/mongoErrors.js:4` `isDuplicateKeyError`. `ExtractionCommitService.js:53` `findOne({raidId, accountId})` unsorted; FIX-18 binding prevents double credit but not duplicate publication. Reservation DELETE `routes/inventory.routes.js:234-242` with optional `expectedReservationId`; `InventoryService.js:1017-1052` guards only when defined (mismatch -> 409 `RESERVATION_MISMATCH`). Unity: `RollbackPendingReservationAsync(expectedReservationId)` used by the coordinator (FIX-02); `ClearPendingReservationAsync()` sends no id (`SessionConnectionCoordinator.cs:~2239`, `ApplicationStashServiceBootstrapper.cs:~598`); orphan rollback at `ApplicationStashServiceBootstrapper.cs:~597` sends no id; `RemoteIdempotentRetryPolicy.cs:27` re-sends on transport failure. Tests: `npm test` (top-level), `test:concurrency`, `test:integration` with `mongodb-memory-server` (`tests/support/memoryMongo.js`); race template `tests/concurrency/auth.register.real.test.js:11-47`.
+- **L3** (user, 2026-11-15, decisions): DELETE: "Unity siempre manda el id (Rec.)" — the three Unity callers send the local reservationId; the backend keeps it optional (no public contract change). Existing duplicates: "Script de dedupe + chequeo (Rec.)" — dry-run-by-default dedupe script keeping the consumed or oldest result and a startup log when the unique index is missing; running it on Render is the owner's.
+- **L4** (T1/T2 implementation evidence): `node --require ./tests/setup.js --test tests/concurrency/raid.result.real.test.js`: RED exit 1, 0/4 (three publication races stored two documents; unique indexes absent); GREEN exit 0, 4/4, then 5/5 with sequential replay/conflict/consumed-lock preservation. Unique indexes now arbitrate both identity keys; duplicate-key recovery uses the unchanged equivalence semantics. Existing commit path unchanged; replay grants loot/XP and increments revision only once; 24-hour TTL verified. `node --require ./tests/setup.js --test tests/authoritative.results.maintenance.test.js`: initial missing-module RED, then behavioral RED exit 1, 0/3 against empty seams; GREEN exit 0, 3/3 after implementation and one correction to the startup test (Mongoose builds the compound index even when the legacy resultId index blocks that index). Dry-run default, explicit apply, consumed/oldest selection, overlapping-key dedupe, other-collection preservation, rerun and non-fatal startup diagnostics covered against memory Mongo. Final suites from `backend/`: `npm test` exit 0, 746/746; `npm run test:concurrency` exit 0, 29/29; `npm run test:integration` exit 0, 245/245. No commits or deployed operations. Existing non-unique `resultId_1` must be replaced explicitly after owner-run maintenance/dedupe; startup reports missing unique indexes but does not stop service. S1 concurrency half/S2/S4 implemented; S6 backend evidence recorded, deployed validation still pending T4. T3 unchanged.

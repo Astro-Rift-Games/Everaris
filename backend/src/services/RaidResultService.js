@@ -11,6 +11,7 @@ const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
 const { requireMigratedInventory, inventoryVersion } = require('./InventoryEntries');
 const { validateResultItems, validateResultEquipment } = require('./ItemInstances');
 const { isKnownLootId } = require('../config/itemCatalog');
+const { isDuplicateKeyError } = require('../utils/mongoErrors');
 // Payload equality includes instance modifiers; the legacy HMAC wire contract is unchanged.
 function stableStringify(value) {
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(',')}]`;
@@ -370,14 +371,15 @@ class RaidResultService {
     }
 
     // Check for existing result (immutability and conflict prevention)
-    const existing = await AuthoritativeExtractionResult.findOne({
+    const existingQuery = {
       $or: [
         { resultId: effectiveResultId },
         { raidId, accountId: recipientAccountId }
       ]
-    });
+    };
+    const existing = await AuthoritativeExtractionResult.findOne(existingQuery);
 
-    if (existing) {
+    function resolveExisting(existing) {
       if (existing.consumed) {
         throw {
           statusCode: 409,
@@ -411,21 +413,30 @@ class RaidResultService {
       };
     }
 
-    // Create the immutable authoritative result
-    await AuthoritativeExtractionResult.create({
-      resultId: effectiveResultId,
-      raidId,
-      accountId: recipientAccountId,
-      reservationId: isDedicatedServerVerified ? null : recipientChar.inventory.pendingReservation.reservationId,
-      ...(characterId ? { characterId } : {}),
-      items: resultItems,
-      preparedEquipment: resultEquipment,
-      experienceGranted: experienceGranted || 0,
-      hostSignature: rawSignature,
-      consumed: false,
-      consumedAt: null,
-      issuedAt: issuedAt ? new Date(issuedAt) : new Date()
-    });
+    if (existing) return resolveExisting(existing);
+
+    // Unique indexes arbitrate concurrent check/create publications.
+    try {
+      await AuthoritativeExtractionResult.create({
+        resultId: effectiveResultId,
+        raidId,
+        accountId: recipientAccountId,
+        reservationId: isDedicatedServerVerified ? null : recipientChar.inventory.pendingReservation.reservationId,
+        ...(characterId ? { characterId } : {}),
+        items: resultItems,
+        preparedEquipment: resultEquipment,
+        experienceGranted: experienceGranted || 0,
+        hostSignature: rawSignature,
+        consumed: false,
+        consumedAt: null,
+        issuedAt: issuedAt ? new Date(issuedAt) : new Date()
+      });
+    } catch (error) {
+      if (!isDuplicateKeyError(error)) throw error;
+      const winner = await AuthoritativeExtractionResult.findOne(existingQuery);
+      if (!winner) throw error;
+      return resolveExisting(winner);
+    }
 
     return {
       status: 'published',
