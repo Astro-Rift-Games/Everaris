@@ -118,14 +118,20 @@ public sealed class DungeonPressureConfig : ScriptableObject
             return _conventionalTreasurePoints;
         }
 
-        return family switch
+        switch (family)
         {
-            "ConventionalTreasure" => _conventionalTreasurePoints,
-            "DivineTreasure" => _divineTreasurePoints,
-            "CursedTreasure" => _cursedTreasurePoints,
-            "ChaosTreasure" => _chaosTreasurePoints,
-            _ => _conventionalTreasurePoints
-        };
+            case "ConventionalTreasure":
+                return _conventionalTreasurePoints;
+            case "DivineTreasure":
+                return _divineTreasurePoints;
+            case "CursedTreasure":
+                return _cursedTreasurePoints;
+            case "ChaosTreasure":
+                return _chaosTreasurePoints;
+            default:
+                Debug.LogWarning($"[DungeonPressureConfig] Unknown treasure family '{family}', defaulting to conventional points ({_conventionalTreasurePoints}).");
+                return _conventionalTreasurePoints;
+        }
     }
 
     [Header("Phase Policies")]
@@ -183,9 +189,9 @@ public sealed class DungeonPressureConfig : ScriptableObject
             error = "MinCollapseStartElapsedSeconds must be greater than 0.";
             return false;
         }
-        if (_e0InstabilityThreshold < 0 || _e1InstabilityThreshold < 0 || _e2InstabilityThreshold < 0)
+        if (_e0InstabilityThreshold <= 0 || _e1InstabilityThreshold <= 0 || _e2InstabilityThreshold <= 0)
         {
-            error = "Instability thresholds cannot be negative.";
+            error = "Instability thresholds must be strictly greater than 0.";
             return false;
         }
         if (_e0MinIntervalSeconds < 0 || _e1MinIntervalSeconds < 0 || _e2MinIntervalSeconds < 0)

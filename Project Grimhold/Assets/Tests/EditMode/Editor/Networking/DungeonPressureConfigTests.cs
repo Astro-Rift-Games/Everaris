@@ -170,4 +170,16 @@ public class DungeonPressureConfigTests
         Assert.IsFalse(config.Validate(out string error));
         StringAssert.Contains("MaxSpawnsPerAttempt is < 1", error);
     }
+
+    [TestCase("_e0InstabilityThreshold")]
+    [TestCase("_e1InstabilityThreshold")]
+    [TestCase("_e2InstabilityThreshold")]
+    public void Validate_InstabilityThresholdZeroOrNegative_ReturnsFalse(string fieldName)
+    {
+        var config = CreateValidConfig();
+        typeof(DungeonPressureConfig).GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance).SetValue(config, 0);
+
+        Assert.IsFalse(config.Validate(out string error));
+        StringAssert.Contains("Instability thresholds must be strictly greater than 0", error);
+    }
 }
