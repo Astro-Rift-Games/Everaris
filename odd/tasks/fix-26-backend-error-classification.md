@@ -24,7 +24,7 @@ Quoted verbatim from HacknPlan #697.
 | T2 | S3, S5, S6 | worker, TDD: exponential backoff for retryables honoring `Retry-After` / `retryAfter` (captured into `BackendError`), bounded attempts; bounded in-session retry of extraction/defeat commits before the existing retry-at-login (L4) | — |
 | T3 | S1, S3, S6 | worker, TDD: Spanish messages per class/code; commit failures shown in the raid menu/Results status text (L4); login `TOO_MANY_REQUESTS` text | — |
 | T5 | S2, S3, S5, S6 | worker, TDD: verify follow-up B1 opt-in revision-conflict retry for the five server-re-read operations, B2 bounded wait hint, B3 Results keeps local + backend text; A1, A2, A4, A5, A7, A8 (L13) — done (manual in T4) | `db75c46e` |
-| T6 | S3, S5 | worker, TDD: verify L18 probes P1 (transport -> REVISION_CONFLICT -> success with opt-in) and P2 (wait budget boundary), singular "1 minuto" wording | — |
+| T6 | S3, S5 | worker, TDD: verify L18 probes P1 (transport -> REVISION_CONFLICT -> success with opt-in) and P2 (wait budget boundary), singular "1 minuto" wording — done | `2b815194` |
 | T4 | S6 | human: manual Host + Client validation with logs | — |
 
 ## Log
