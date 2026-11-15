@@ -3,6 +3,9 @@
 const { describe, test, before, after, mock } = require('node:test');
 const assert = require('node:assert/strict');
 const mongoose = require('mongoose');
+const crypto = require('node:crypto');
+const env = require('../../src/config/env');
+const { buildCanonicalResultString } = require('../../src/utils/raidResultCanonicalizer');
 const { startMemoryMongo } = require('../support/memoryMongo');
 const Character = require('../../src/models/Character');
 const Result = require('../../src/models/AuthoritativeExtractionResult');
@@ -23,7 +26,7 @@ async function race(accountId, payloads) {
     return result;
   });
   try {
-    return await Promise.allSettled(payloads.map(payload => RaidResultService.publishHostResult(accountId, payload)));
+    return await Promise.allSettled(payloads.map((payload, index) => RaidResultService.publishHostResult(Array.isArray(accountId) ? accountId[index] : accountId, payload)));
   } finally {
     stub.mock.restore();
   }
@@ -134,6 +137,101 @@ describe('FIX-22 concurrent authoritative publication', () => {
         message: 'This authoritative extraction result has already been consumed and cannot be overwritten.' });
     assert.deepEqual(await Character.findOne({ accountId }).lean(), committed);
     assert.equal(await Result.countDocuments({ raidId: 'raid-consumed' }), 1);
+  });
+
+  for (const mismatch of ['account', 'raid']) {
+    for (const concurrent of [false, true]) {
+      test(`reused resultId rejects a different ${mismatch} (${concurrent ? 'race' : 'sequential'})`, async () => {
+        const raidId = `raid-identity-${mismatch}-${concurrent}`;
+        const first = await raider(raidId);
+        const second = mismatch === 'account' ? await raider(raidId) : first;
+        const accounts = [first.accountId, second.accountId];
+        const requests = [payload(raidId), payload(mismatch === 'raid' ? `${raidId}-other` : raidId, `${raidId}:1`)]
+          .map((request, index) => {
+            const signed = { ...request, targetAccountId: accounts[index] };
+            signed.hostSignature = crypto.createHmac('sha256', env.webhookSecret)
+              .update(buildCanonicalResultString({ ...signed, preparedEquipment: {}, issuedAt: '' })).digest('hex');
+            return signed;
+          });
+        const charactersBefore = await Character.find({ accountId: { $in: accounts } }).lean();
+        let results;
+        let storedBefore;
+        if (concurrent) {
+          results = await race(accounts, requests);
+        } else {
+          const value = await RaidResultService.publishHostResult(accounts[0], requests[0]);
+          storedBefore = await Result.find({ resultId: requests[0].resultId }).lean();
+          results = [{ status: 'fulfilled', value }, ...(await Promise.allSettled([
+            RaidResultService.publishHostResult(accounts[1], requests[1])
+          ]))];
+        }
+        assert.equal(results.filter(r => r.status === 'fulfilled').length, 1);
+        const rejected = results.filter(r => r.status === 'rejected');
+        assert.equal(rejected.length, 1);
+        assert.deepEqual(rejected[0].reason, { statusCode: 409, errorCode: 'RESULT_CONFLICT',
+          message: 'An authoritative extraction result already exists with conflicting rewards.' });
+        const winnerIndex = results.findIndex(r => r.status === 'fulfilled');
+        const winnerRequest = requests[winnerIndex];
+        assert.deepEqual(results[winnerIndex].value, { status: 'published', alreadyPublished: false,
+          raidId: winnerRequest.raidId, accountId: accounts[winnerIndex], resultId: winnerRequest.resultId });
+        const stored = await Result.find({ resultId: winnerRequest.resultId }).lean();
+        assert.equal(stored.length, 1);
+        assert.equal(stored[0].raidId, winnerRequest.raidId);
+        assert.equal(stored[0].accountId, accounts[winnerIndex]);
+        assert.equal(stored[0].consumed, false);
+        assert.equal(await Result.countDocuments({ raidId: requests[1 - winnerIndex].raidId,
+          accountId: accounts[1 - winnerIndex] }), 0);
+        if (storedBefore) assert.deepEqual(stored, storedBefore);
+        assert.deepEqual(await Character.find({ accountId: { $in: accounts } }).lean(), charactersBefore);
+      });
+    }
+  }
+
+  test('a winner consumed before the loser re-reads returns RESULT_ALREADY_CONSUMED (S4)', async () => {
+    const raidId = 'raid-consumed-race';
+    const { accountId } = await raider(raidId);
+    const before = await Character.findOne({ accountId }).lean();
+    const findOne = Result.findOne.bind(Result);
+    let arrivals = 0;
+    let release;
+    const gate = new Promise(resolve => { release = resolve; });
+    const stub = mock.method(Result, 'findOne', async (...args) => {
+      const arrival = ++arrivals;
+      if (arrival <= 2) {
+        const result = await findOne(...args);
+        if (arrival === 2) release();
+        await gate;
+        return result;
+      }
+      await Result.updateMany({ raidId }, { $set: { consumed: true } });
+      return findOne(...args);
+    });
+    let results;
+    try {
+      results = await Promise.allSettled([0, 1].map(() => RaidResultService.publishHostResult(accountId, payload(raidId))));
+    } finally {
+      stub.mock.restore();
+    }
+    assert.equal(await Result.countDocuments({ raidId }), 1);
+    assert.equal(results.filter(r => r.status === 'fulfilled').length, 1);
+    assert.equal(results.find(r => r.status === 'fulfilled').value.alreadyPublished, false);
+    assert.deepEqual(results.find(r => r.status === 'rejected').reason,
+      { statusCode: 409, errorCode: 'RESULT_ALREADY_CONSUMED',
+        message: 'This authoritative extraction result has already been consumed and cannot be overwritten.' });
+    assert.deepEqual(await Character.findOne({ accountId }).lean(), before);
+  });
+
+  test('many ungated identical publications leave one document and one first publication (S4)', async () => {
+    const raidId = 'raid-burst';
+    const { accountId } = await raider(raidId);
+    const before = await Character.findOne({ accountId }).lean();
+    const results = await Promise.all(Array.from({ length: 8 }, () => RaidResultService.publishHostResult(accountId, payload(raidId))));
+    assert.equal(await Result.countDocuments({ raidId, accountId }), 1);
+    assert.equal(results.filter(r => r.alreadyPublished === false).length, 1);
+    for (const result of results) assert.deepEqual(result, {
+      status: 'published', alreadyPublished: result.alreadyPublished, raidId, accountId, resultId: `${raidId}:1`
+    });
+    assert.deepEqual(await Character.findOne({ accountId }).lean(), before);
   });
 
   test('unique indexes coexist with the unchanged 24-hour TTL index', async () => {

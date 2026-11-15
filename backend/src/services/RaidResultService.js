@@ -380,6 +380,14 @@ class RaidResultService {
     const existing = await AuthoritativeExtractionResult.findOne(existingQuery);
 
     function resolveExisting(existing) {
+      if (existing.raidId !== raidId || existing.accountId !== recipientAccountId) {
+        throw {
+          statusCode: 409,
+          errorCode: 'RESULT_CONFLICT',
+          message: 'An authoritative extraction result already exists with conflicting rewards.',
+        };
+      }
+
       if (existing.consumed) {
         throw {
           statusCode: 409,
