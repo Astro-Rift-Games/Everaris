@@ -117,6 +117,33 @@ namespace Tests.EditMode.Presentation
             Object.DestroyImmediate(_holder);
         }
 
+        [TestCase("NO_AUTHORITATIVE_RESULT", false, false, "No se pudo guardar; se reintentará al iniciar sesión.")]
+        [TestCase("NO_AUTHORITATIVE_RESULT", false, true, "No se pudo guardar. El resultado de la incursión aún se está procesando.")]
+        [TestCase("TIMEOUT", false, true, "No se pudo guardar. No se pudo conectar con el servidor. Comprueba tu conexión.")]
+        [TestCase("RESULT_CONFLICT", false, false, "No se pudo guardar. El estado ha cambiado. Actualiza tus datos antes de continuar.")]
+        [TestCase("TOO_MANY_REQUESTS", true, true, "Guardado pendiente; reintentando… Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.")]
+        public void BackendCommitStatus_AppearsInResultsWithoutReplacingSummary(string code, bool retrying, bool defeat, string expected)
+        {
+            var participantObject = new GameObject("DefeatFeedbackSource");
+            participantObject.SetActive(false);
+            participantObject.transform.SetParent(_holder.transform);
+            var feedback = defeat
+                ? participantObject.AddComponent<NetworkRaidParticipant>().BackendDefeatFeedback
+                : new Grimhold.Backend.BackendCommitFeedback();
+            var error = new Grimhold.Backend.BackendError { error = code, message = "raw diagnostics" };
+            feedback.Begin();
+            if (retrying) feedback.Retrying(error);
+            else feedback.Complete(false, error);
+            string text = RaidMenuPresenter.ResolveBackendFeedback(feedback);
+            var result = CreateResult(defeat ? ExpeditionExperienceResolutionOutcome.Defeated
+                : ExpeditionExperienceResolutionOutcome.Extracted, 5000, 25, 100, false);
+            PresentResult(result, text, canReturn: true);
+            Assert.That(_view.StatusText.text, Is.EqualTo(expected));
+            Assert.That(_progressionResultsRoot.activeSelf, Is.True);
+            Assert.That(_progressionExperienceText.text, Does.Contain("Conservación: 50%"));
+            Assert.That(_view.AbandonButton.interactable, Is.True);
+        }
+
         [Test]
         public void View_PresentAliveState_SetsAliveTitleAndEnablesResumeButton()
         {

@@ -244,7 +244,12 @@ namespace Grimhold.Backend
             CommitExtractionAsync(BackendConfiguration config, string token, CommitExtractionRequest request)
         {
             var url = $"{config.BaseUrl}/character/me/inventory/extraction";
-            return await PostJson<CommitExtractionRequest, CommitExtractionResult>(config, token, url, request);
+            var response = await PostJson<CommitExtractionRequest, CommitExtractionResult>(config, token, url, request);
+            if (response.success || response.error.error != "RESULT_ALREADY_CONSUMED") return response;
+            var inventory = await GetInventoryAsync(config, token);
+            return inventory.success
+                ? (true, new CommitExtractionResult { alreadySecured = true, loadout = inventory.data.loadout }, default)
+                : (false, default, inventory.error);
         }
 
         /// <summary>
@@ -254,7 +259,16 @@ namespace Grimhold.Backend
             CommitExtractionUnifiedAsync(BackendConfiguration config, string token, CommitExtractionUnifiedRequest request)
         {
             var url = $"{config.BaseUrl}/character/me/extraction/commit";
-            return await PostJson<CommitExtractionUnifiedRequest, CommitExtractionUnifiedResult>(config, token, url, request);
+            var response = await PostJson<CommitExtractionUnifiedRequest, CommitExtractionUnifiedResult>(config, token, url, request);
+            if (response.success || response.error.error != "RESULT_ALREADY_CONSUMED") return response;
+
+            // Already credited is success only at the commit boundary, never at publication.
+            // Read metadata rather than inventing a revision or applying a default snapshot.
+            var inventory = await GetInventoryAsync(config, token);
+            return inventory.success
+                ? (true, new CommitExtractionUnifiedResult
+                    { alreadySecured = true, revision = inventory.data.revision, loadout = inventory.data.loadout }, default)
+                : (false, default, inventory.error);
         }
 
         /// <summary>
@@ -264,7 +278,18 @@ namespace Grimhold.Backend
             CommitDefeatUnifiedAsync(BackendConfiguration config, string token, CommitDefeatUnifiedRequest request)
         {
             var url = $"{config.BaseUrl}/character/me/defeat/commit";
-            return await PostJson<CommitDefeatUnifiedRequest, CommitDefeatUnifiedResult>(config, token, url, request);
+            var response = await PostJson<CommitDefeatUnifiedRequest, CommitDefeatUnifiedResult>(config, token, url, request);
+            if (response.success || response.error.error != "RESULT_ALREADY_CONSUMED") return response;
+
+            var progression = await ProgressionClient.GetProgressionAsync(config, token);
+            return progression.success
+                ? (true, new CommitDefeatUnifiedResult
+                    {
+                        alreadySecured = true, revision = progression.data.revision,
+                        level = progression.data.level, experience = progression.data.experience,
+                        characterAttributes = progression.data.characterAttributes
+                    }, default)
+                : (false, default, progression.error);
         }
 
         /// <summary>
@@ -330,7 +355,8 @@ namespace Grimhold.Backend
                 }
             }
 
-            var err = ParseError(request);
+            var err = BackendRetrySchedule.WithRetryAfter(ParseError(request),
+                request.GetResponseHeader("Retry-After"), System.DateTimeOffset.UtcNow);
             return (false, default, err);
         }
 

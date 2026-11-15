@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
+using Grimhold.Backend;
 using UnityEngine;
 
 /// <summary>
@@ -71,6 +72,7 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
     /// Gets the local commit state observed by the result presenter.
     /// </summary>
     public ExtractionLootSaveStatus LocalSaveStatus { get; private set; }
+    public BackendCommitFeedback BackendSaveFeedback { get; } = new BackendCommitFeedback(supportsLoginRecovery: true);
 
     private void Awake()
     {
@@ -699,13 +701,21 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
         int resultingLevel,
         LocalProfileStore store)
     {
+        // RPC retransmission must not open another retry budget for the same extraction.
+        if (BackendSaveFeedback.Status != BackendCommitStatus.None) return;
+        BackendSaveFeedback.Begin();
         ApplicationStashContext context = FindAnyObjectByType<ApplicationStashContext>();
-        if (context == null) return;
+        if (context == null)
+        {
+            BackendSaveFeedback.DeferHydration();
+            return;
+        }
 
         var remoteInventoryService = context.GetComponent<RemoteInventoryService>();
         if (remoteInventoryService == null)
         {
             Debug.LogWarning($"{nameof(PlayerExtractionLootSaver)}: RemoteInventoryService not found. Extraction not persisted to backend.");
+            BackendSaveFeedback.DeferHydration();
             return;
         }
 
@@ -727,10 +737,12 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
         }
 
         var (success, result, error) = await remoteInventoryService.CommitExtractionUnifiedAsync(
-            receipt, items, preparedEquipment, consolidatedExperience, resultingLevel);
-            
+            receipt, items, preparedEquipment, consolidatedExperience, resultingLevel,
+            BackendSaveFeedback.Retrying);
+
         if (!success)
         {
+            BackendSaveFeedback.Complete(false, error);
             Debug.LogError(
                 $"{nameof(PlayerExtractionLootSaver)}: Backend extraction commit failed. " +
                 $"Error={error.error}: {error.message}. " +
@@ -738,9 +750,17 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
         }
         else
         {
+            BackendSaveFeedback.Begin();
             var reconciliation = context.GetComponent<ProfileReconciliationService>();
             if (reconciliation == null || !await reconciliation.CompleteExtractionAsync(receipt, result.revision))
+            {
+                BackendSaveFeedback.DeferHydration();
                 Debug.LogError($"{nameof(PlayerExtractionLootSaver)}: Backend extraction succeeded but authoritative hydration failed. Pending extraction retained for login retry.");
+            }
+            else
+            {
+                BackendSaveFeedback.Complete(true, default);
+            }
         }
     }
 

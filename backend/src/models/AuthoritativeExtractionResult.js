@@ -18,7 +18,7 @@ const authoritativeExtractionResultSchema = new mongoose.Schema({
     default: function() {
       return this._id ? this._id.toString() : new mongoose.Types.ObjectId().toString();
     },
-    index: true
+    unique: true
   },
   raidId: { type: String, required: true, index: true },
   accountId: { type: String, required: true, index: true },
@@ -33,5 +33,7 @@ const authoritativeExtractionResultSchema = new mongoose.Schema({
   issuedAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now, expires: 86400 } // TTL index: documents expire after 24 hours
 });
+
+authoritativeExtractionResultSchema.index({ raidId: 1, accountId: 1 }, { unique: true });
 
 module.exports = mongoose.model('AuthoritativeExtractionResult', authoritativeExtractionResultSchema);

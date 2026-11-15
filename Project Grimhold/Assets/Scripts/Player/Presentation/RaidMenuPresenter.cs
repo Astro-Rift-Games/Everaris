@@ -44,6 +44,7 @@ public sealed class RaidMenuPresenter : MonoBehaviour
     private RaidParticipantState _observedParticipantState;
     private bool _observedExtractionFinalizationComplete;
     private ExtractionLootSaveStatus _observedSaveStatus;
+    private string _observedBackendFeedback = string.Empty;
     private RaidResultsLootKind _observedResultsLootKind;
     private NetworkMatchController.MatchPhase _observedMatchPhase;
 
@@ -155,6 +156,7 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         _observedParticipantState = RaidParticipantState.Raiding;
         _observedExtractionFinalizationComplete = false;
         _observedSaveStatus = ExtractionLootSaveStatus.None;
+        _observedBackendFeedback = string.Empty;
         _observedResultsLootKind = RaidResultsLootKind.None;
         _observedMatchPhase = NetworkMatchController.MatchPhase.WaitingForPlayers;
         _view?.Clear();
@@ -590,7 +592,9 @@ public sealed class RaidMenuPresenter : MonoBehaviour
             HasPersistentResultScreen() && TryCaptureProgressionResult();
         bool capturedResult = !hadProgressionResultSnapshot &&
             hasProgressionResultSnapshot;
-        bool resultChanged = state != _observedParticipantState ||
+        string backendFeedback = CurrentBackendFeedback();
+        bool resultChanged = backendFeedback != _observedBackendFeedback ||
+                             state != _observedParticipantState ||
                              finalizationComplete != _observedExtractionFinalizationComplete ||
                              saveStatus != _observedSaveStatus ||
                              resultsLootKind != _observedResultsLootKind ||
@@ -598,6 +602,7 @@ public sealed class RaidMenuPresenter : MonoBehaviour
                                  _observedMatchPhase,
                                  matchPhase,
                                  HasPersistentResultScreen());
+        _observedBackendFeedback = backendFeedback;
         _observedParticipantState = state;
         _observedExtractionFinalizationComplete = finalizationComplete;
         _observedSaveStatus = saveStatus;
@@ -969,6 +974,14 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         return _view.GetOutcomeTitle(outcome);
     }
 
+    internal static string ResolveBackendFeedback(Grimhold.Backend.BackendCommitFeedback feedback) =>
+        Grimhold.Backend.BackendErrorMessages.ForCommit(feedback);
+
+    private string CurrentBackendFeedback() => ResolveBackendFeedback(
+        _participant != null && _participant.State == RaidParticipantState.Defeated
+            ? _participant.BackendDefeatFeedback
+            : _extractionLootSaver?.BackendSaveFeedback);
+
     private string GetPersistenceFeedback(out bool canRetryPersistence)
     {
         canRetryPersistence = false;
@@ -976,7 +989,7 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         if (_participant == null ||
             _participant.State != RaidParticipantState.Extracted)
         {
-            return string.Empty;
+            return CurrentBackendFeedback();
         }
 
         ExtractionLootSaveStatus lootStatus = _extractionLootSaver != null
@@ -1000,7 +1013,9 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         };
         canRetryPersistence =
             lootStatus == ExtractionLootSaveStatus.PersistenceFailed;
-        return lootFeedback;
+        string backendFeedback = CurrentBackendFeedback();
+        return !canRetryPersistence && !string.IsNullOrEmpty(backendFeedback)
+            ? backendFeedback : lootFeedback;
     }
 
     private NetworkMatchController GetMatchController() => _runner != null

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
+using Grimhold.Backend;
 using UnityEngine;
 
 /// <summary>
@@ -125,6 +126,7 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
     private int _localProgressionResultSequence;
     private float _nextProgressionCommitRetryAt;
     private bool _localDefeatCommitCompleted;
+    public BackendCommitFeedback BackendDefeatFeedback { get; } = new BackendCommitFeedback(supportsLoginRecovery: false);
     private int _authorityDefeatPublishedSequence;
     private bool _authorityDefeatPublishInFlight;
     private int _authoritativeDefeatPublishedSequence;
@@ -506,13 +508,18 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
             var remoteService = context.GetComponent<RemoteInventoryService>();
             if (remoteService != null)
             {
-                Task defeatTask = remoteService.CommitDefeatUnifiedAsync(receipt);
+                Task defeatTask = CommitDefeatToBackendAsync(remoteService, receipt);
                 SessionConnectionCoordinator.Instance?.RegisterParticipationOutcomeTask(defeatTask);
             }
         }
     }
 
-
+    private async Task CommitDefeatToBackendAsync(RemoteInventoryService service, ProgressionReceipt receipt)
+    {
+        BackendDefeatFeedback.Begin();
+        var outcome = await service.CommitDefeatUnifiedAsync(receipt, BackendDefeatFeedback.Retrying);
+        BackendDefeatFeedback.Complete(outcome.success, outcome.error);
+    }
 
     /// <summary>
     /// Associates the only controllable avatar with this participant.

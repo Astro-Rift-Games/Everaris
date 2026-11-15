@@ -7,5 +7,7 @@ namespace Grimhold.Backend
     {
         public string error;
         public string message;
+        // Optional seconds supplied by the server; zero means no wait hint.
+        public float retryAfter;
     }
 }
