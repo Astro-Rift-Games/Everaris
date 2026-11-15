@@ -4,32 +4,3085 @@
 
 Release: Unreleased
 
-213 original commits; 213 canonical entries.
+250 original commits; 250 canonical entries.
 
 ## Canonical classification
 
-73 features; 72 bug fixes; 1 refactoring; 1 architecture & infrastructure; 33 documentation; 17 tests; 10 maintenance; 6 other changes
+77 features; 87 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 6 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 8 | 9 | 1 | 0 | 9 | 1 |
-| Art & Animation | 10 | 9 | 1 | 0 | 7 | 0 |
+| Art & Animation | 10 | 9 | 1 | 0 | 9 | 0 |
 | Audio | 4 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 47 | 47 | 1 | 1 | 20 | 6 |
+| Build & Tooling | 51 | 57 | 1 | 1 | 22 | 6 |
 | Combat | 34 | 12 | 0 | 0 | 12 | 0 |
-| Documentation | 26 | 27 | 0 | 0 | 12 | 0 |
-| Extraction | 13 | 14 | 0 | 0 | 9 | 3 |
+| Documentation | 29 | 38 | 0 | 0 | 13 | 0 |
+| Extraction | 15 | 21 | 0 | 0 | 9 | 3 |
 | Input | 0 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 55 | 42 | 1 | 1 | 23 | 3 |
-| Movement | 3 | 2 | 0 | 0 | 0 | 0 |
-| Networking & Sessions | 23 | 27 | 0 | 0 | 17 | 2 |
-| Persistence & Backend | 27 | 32 | 0 | 1 | 12 | 3 |
-| Tests | 70 | 66 | 1 | 1 | 27 | 4 |
-| UI | 28 | 13 | 1 | 0 | 12 | 1 |
-| Unassigned | 0 | 1 | 0 | 0 | 14 | 0 |
+| Inventory & Loot | 56 | 51 | 1 | 1 | 24 | 3 |
+| Movement | 3 | 2 | 0 | 0 | 2 | 0 |
+| Networking & Sessions | 27 | 33 | 0 | 0 | 18 | 2 |
+| Persistence & Backend | 28 | 46 | 0 | 1 | 19 | 3 |
+| Tests | 74 | 81 | 1 | 1 | 29 | 4 |
+| UI | 31 | 18 | 1 | 0 | 12 | 1 |
+| Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
 | World & Visibility | 19 | 9 | 0 | 0 | 3 | 1 |
 
 ## Original commit records
+
+### cfa17b1d5825a983c12f4caeae44493d6ffd12bb
+
+[cfa17b1d5825a983c12f4caeae44493d6ffd12bb](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/cfa17b1d5825a983c12f4caeae44493d6ffd12bb)
+
+Date: 2026-11-15T05:02:44-03:00 · Classification: Maintenance (explicit) · Systems: Movement, Art & Animation, Documentation
+
+Flags: secondary
+
+#### Original subject
+
+```text
+chore(art): keep Movement art sources out of New-Testing
+```
+
+#### Original body
+
+```text
+A documentation commit had unintentionally added 192 ArtSources/Movement files; remove them from the tracked tree (they stay in history and on disk) so the art can be committed separately.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-N.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-NE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-NW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-S.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-SE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-SW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-N.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-NE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-NW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-S.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-SE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-SW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-N.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-NE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-NW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-N.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-NE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-NW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-S.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-SE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-SW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-S.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-SE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-SW.aseprite
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-N.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-NE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-NW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-S.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-SE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-SW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-N.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-NE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-NW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-S.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-SE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-SW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-N.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-NE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-NW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-S.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-SE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-SW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-N.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-NE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-NW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-S.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-SE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-SW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-N.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-NE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-NW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-S.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-SE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-SW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-N.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-NE.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-NW.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-S.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-SE.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-SW.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-N.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-NE.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-NW.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-S.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-SE.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-SW.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-Sprint-Comparison-2x6.aseprite
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-Sprint-Comparison-2x6.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S-SE-SW.aseprite
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S-SE-SW.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S.aseprite
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S.gif
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-SW-Sheet.png
+```
+
+#### Classification evidence
+
+- type → Maintenance: chore
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-N.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-NE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-NW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-S.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-SE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-SW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-N.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-NE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-NW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-S.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-SE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-SW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-N.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-NE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-NW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-N.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-NE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-NW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-S.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-SE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-SW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-S.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-SE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-SW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-N.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-NE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-NW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-S.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-SE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-SW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-N.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-NE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-NW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-S.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-SE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-SW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-N.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-NE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-NW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-S.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-SE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-SW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-N.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-NE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-NW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-S.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-SE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-SW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-N.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-NE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-NW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-S.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-SE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-SW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-N.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-NE.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-NW.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-S.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-SE.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-SW.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-N.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-NE.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-NW.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-S.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-SE.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-SW.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-Sprint-Comparison-2x6.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-Sprint-Comparison-2x6.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S-SE-SW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S-SE-SW.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-SW-Sheet.png
+- message-term → Movement: Movement
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-N.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-NE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-NW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-S.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-SE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-SW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-N.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-NE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-NW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-S.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-SE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-SW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-N.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-NE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-NW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-N.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-NE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-NW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-S.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-SE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-SW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-S.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-SE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-SW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-N.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-NE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-NW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-S.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-SE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-SW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-N.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-NE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-NW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-S.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-SE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-SW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-N.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-NE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-NW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-S.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-SE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-SW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-N.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-NE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-NW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-S.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-SE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-SW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-N.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-NE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-NW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-S.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-SE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-SW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-N.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-NE.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-NW.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-S.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-SE.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-SW.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-N.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-NE.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-NW.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-S.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-SE.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-SW.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-Sprint-Comparison-2x6.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-Sprint-Comparison-2x6.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S-SE-SW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S-SE-SW.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-SW-Sheet.png
+- scope → Art &amp; Animation: art
+- message-term → Documentation: documentation
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 6178558aa557ce5225462f3fb99e561d1b72c687
+
+[6178558aa557ce5225462f3fb99e561d1b72c687](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6178558aa557ce5225462f3fb99e561d1b72c687)
+
+Date: 2026-11-15T04:46:57-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record review MINOR batch verification
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/review-findings-2026-11-15.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### d62ddd04e4b38f58e430c4b7244246708f850f4b
+
+[d62ddd04e4b38f58e430c4b7244246708f850f4b](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/d62ddd04e4b38f58e430c4b7244246708f850f4b)
+
+Date: 2026-11-15T04:28:04-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Inventory & Loot, Networking & Sessions, UI, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix: address review MINOR findings in closure, corpse, retries and local profile
+```
+
+#### Original body
+
+```text
+Closure no longer waits for extractors without Input Authority and arms a missing persistence timer; corpse enabling clears leftovers first; defeat publication and local retries are throttled with cached lookups; the server-correction notice needs confirmed hydration; unknown-catalog equipment keeps its modifiers; receipts stay strict on save; dead branches removed and source-grep tests replaced with behavioral ones.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/AbsoluteClosureRules.cs
+Project Grimhold/Assets/Scripts/Networking/NetworkMatchController.cs
+Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs
+Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs
+Project Grimhold/Assets/Scripts/Player/PlayerCorpseGenerationController.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/RaidMenuPresenter.cs
+Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileRepository.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteShopTransactionService.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PendingExtractionRetentionClosureTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAbsoluteClosureTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerCorpseCompensationTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ResultsProgressionCoherenceTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileResilienceTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileShopReceiptRecoveryTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteShopTransactionServiceTests.cs
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+Project Grimhold/Docs/Architecture/LootInteractionArchitecture.md
+Project Grimhold/Docs/Architecture/RaidGenerationLifecycleArchitecture.md
+odd/tasks/review-findings-2026-11-15.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PendingExtractionRetentionClosureTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Docs/Architecture/LootInteractionArchitecture.md
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/AbsoluteClosureRules.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/NetworkMatchController.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PendingExtractionRetentionClosureTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAbsoluteClosureTests.cs
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/RaidMenuPresenter.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileRepository.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileResilienceTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileShopReceiptRecoveryTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PendingExtractionRetentionClosureTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAbsoluteClosureTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerCorpseCompensationTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ResultsProgressionCoherenceTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileResilienceTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileShopReceiptRecoveryTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteShopTransactionServiceTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/LootInteractionArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/RaidGenerationLifecycleArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PendingExtractionRetentionClosureTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAbsoluteClosureTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerCorpseCompensationTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ResultsProgressionCoherenceTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileResilienceTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileShopReceiptRecoveryTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteShopTransactionServiceTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 47b5582f0fa0e56da20460979569c2f43232b734
+
+[47b5582f0fa0e56da20460979569c2f43232b734](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/47b5582f0fa0e56da20460979569c2f43232b734)
+
+Date: 2026-11-15T04:12:51-03:00 · Classification: Bug Fixes (explicit) · Systems: Inventory & Loot, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend): align array equipment ownership and wait briefly for duplicate defeat receipts
+```
+
+#### Original body
+
+```text
+Empty-only equipment arrays count as empty in both the defeat predicate and the Mongo filter; a duplicate defeat that meets a held claim polls the exact receipt for a bounded time before answering RESULT_ALREADY_CONSUMED.
+```
+
+#### Changed paths
+
+```text
+backend/src/services/DefeatCommitService.js
+backend/src/services/ResultReservationBinding.js
+backend/tests/defeat.commit.test.js
+backend/tests/inventory.lifecycle.test.js
+backend/tests/raid.result.authority.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Inventory &amp; Loot: backend/tests/inventory.lifecycle.test.js
+- message-term → Inventory &amp; Loot: equipment
+- path → Persistence &amp; Backend: backend/src/services/DefeatCommitService.js
+- path → Persistence &amp; Backend: backend/src/services/ResultReservationBinding.js
+- path → Persistence &amp; Backend: backend/tests/defeat.commit.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.lifecycle.test.js
+- path → Persistence &amp; Backend: backend/tests/raid.result.authority.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/defeat.commit.test.js
+- path → Tests: backend/tests/inventory.lifecycle.test.js
+- path → Tests: backend/tests/raid.result.authority.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### f24c76cc87158325df78602776a44300f6472a55
+
+[f24c76cc87158325df78602776a44300f6472a55](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f24c76cc87158325df78602776a44300f6472a55)
+
+Date: 2026-11-15T02:19:41-03:00 · Classification: Documentation (explicit) · Systems: Persistence & Backend
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record FIX-26 T6 commit
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-26-backend-error-classification.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Persistence &amp; Backend: odd/tasks/fix-26-backend-error-classification.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 2b815194ac4d6be6f7df53189798308507a7f41f
+
+[2b815194ac4d6be6f7df53189798308507a7f41f](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2b815194ac4d6be6f7df53189798308507a7f41f)
+
+Date: 2026-11-15T02:19:41-03:00 · Classification: Tests (explicit) · Systems: Persistence & Backend, Build & Tooling, Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+test(backend-client): pin revision-conflict opt-in and wait budget; singular minute wording (FIX-26)
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteIdempotentRetryPolicyTests.cs
+odd/tasks/fix-26-backend-error-classification.md
+```
+
+#### Classification evidence
+
+- type → Tests: test
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs
+- path → Persistence &amp; Backend: odd/tasks/fix-26-backend-error-classification.md
+- scope → Persistence &amp; Backend: backend-client
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteIdempotentRetryPolicyTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteIdempotentRetryPolicyTests.cs
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 34d869aeeb7b4353a5643569e43add6ec30c1f4c
+
+[34d869aeeb7b4353a5643569e43add6ec30c1f4c](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/34d869aeeb7b4353a5643569e43add6ec30c1f4c)
+
+Date: 2026-11-15T04:03:18-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record final M4 verification
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/review-findings-2026-11-15.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### 026c4b2038a1b9dc3e3d39e5fbe277d58bc30ef0
+
+[026c4b2038a1b9dc3e3d39e5fbe277d58bc30ef0](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/026c4b2038a1b9dc3e3d39e5fbe277d58bc30ef0)
+
+Date: 2026-11-15T04:02:08-03:00 · Classification: Bug Fixes (explicit) · Systems: Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(security): fail closed when the git history secret scan errors
+```
+
+#### Original body
+
+```text
+Spawn, stream, signal and non-zero git exits now fail the scan instead of reporting a clean history; the CLI reuses the tested parser, skips ignored extensions and reports diff line numbers.
+```
+
+#### Changed paths
+
+```text
+backend/tests/security.scan.test.js
+odd/tasks/review-findings-2026-11-15.md
+tools/security/README.md
+tools/security/scan-secrets.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Persistence &amp; Backend: backend/tests/security.scan.test.js
+- path → Build &amp; Tooling: tools/security/README.md
+- path → Build &amp; Tooling: tools/security/scan-secrets.js
+- path → Tests: backend/tests/security.scan.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 73e5d78be415b9230fa63cfb19912fb908c3e043
+
+[73e5d78be415b9230fa63cfb19912fb908c3e043](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/73e5d78be415b9230fa63cfb19912fb908c3e043)
+
+Date: 2026-11-15T03:55:29-03:00 · Classification: Bug Fixes (explicit) · Systems: Networking & Sessions, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(progression): clear the played reservation on the backend before retiring a defeat
+```
+
+#### Original body
+
+```text
+Retiring an uncreditable defeat now loss-clears its played reservation (expected-id guarded) before reconciliation, so hydration cannot bring it back; a guarded second defeat stops retrying every frame and tells the player it was not recorded.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Backend/BackendCommitFeedback.cs
+Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs
+Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+odd/tasks/review-findings-2026-11-15.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendCommitFeedback.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### b052281b67192b8d87eeb32b8a953b1bd45e43ab
+
+[b052281b67192b8d87eeb32b8a953b1bd45e43ab](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/b052281b67192b8d87eeb32b8a953b1bd45e43ab)
+
+Date: 2026-11-15T03:47:35-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record M4 re-verification findings
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/review-findings-2026-11-15.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### e610b845f024f41d140618e61be86cb7894b16a8
+
+[e610b845f024f41d140618e61be86cb7894b16a8](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e610b845f024f41d140618e61be86cb7894b16a8)
+
+Date: 2026-11-15T03:35:56-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Inventory & Loot, Networking & Sessions, UI, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(progression): a pending defeat no longer locks raids; retire uncreditable defeats
+```
+
+#### Original body
+
+```text
+A pending defeat stops blocking new reservations (a second pending defeat stays guarded), a replay answered with NO_AUTHORITATIVE_RESULT retires the record with one warning and hydrates backend progression, cleanup stays bound to the played reservation, and the commit RPC validates the payload before storing rewards.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Backend/BackendCommitFeedback.cs
+Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs
+Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs
+Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+odd/tasks/review-findings-2026-11-15.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendCommitFeedback.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### a0638e1128e1f31f646b2f2d7b21c03014f6528d
+
+[a0638e1128e1f31f646b2f2d7b21c03014f6528d](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a0638e1128e1f31f646b2f2d7b21c03014f6528d)
+
+Date: 2026-11-15T03:08:04-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Inventory & Loot, Networking & Sessions, UI, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(progression): single authoritative extraction XP and durable defeat commits
+```
+
+#### Original body
+
+```text
+State Authority prepares the extraction projection once through the resolver's pure calculation and its existing replicated fields, and publication and the Input Authority commit reuse it (no added network words). Defeat commits are persisted as a pending record, replayed live and at login, and retired only on a receipt-proven backend response.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs
+Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs
+Project Grimhold/Assets/Scripts/Progression/PlayerExpeditionProgressionResolver.cs
+Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileSnapshot.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+Project Grimhold/Assets/Scripts/Stash/PendingDefeatCommit.cs
+Project Grimhold/Assets/Scripts/Stash/PendingDefeatCommit.cs.meta
+Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthoritativeProgressionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthoritativeProgressionTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ResultsProgressionCoherenceTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+odd/tasks/review-findings-2026-11-15.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthoritativeProgressionTests.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthoritativeProgressionTests.cs.meta
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- message-term → Extraction: extraction
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileSnapshot.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthoritativeProgressionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthoritativeProgressionTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ResultsProgressionCoherenceTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthoritativeProgressionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthoritativeProgressionTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/PendingDefeatRecoveryTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ResultsProgressionCoherenceTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### e2e3957722dc6aeef8f5183f9ad391a062d224af
+
+[e2e3957722dc6aeef8f5183f9ad391a062d224af](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e2e3957722dc6aeef8f5183f9ad391a062d224af)
+
+Date: 2026-11-15T02:12:09-03:00 · Classification: Documentation (explicit) · Systems: Persistence & Backend
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record FIX-22 T3 and FIX-26 T5 verification
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-22-result-uniqueness-reservation-binding.md
+odd/tasks/fix-26-backend-error-classification.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Persistence &amp; Backend: odd/tasks/fix-26-backend-error-classification.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 89ddb2339f9ae0fcf77198cce0c2a635de6872db
+
+[89ddb2339f9ae0fcf77198cce0c2a635de6872db](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/89ddb2339f9ae0fcf77198cce0c2a635de6872db)
+
+Date: 2026-11-15T02:04:16-03:00 · Classification: Documentation (explicit) · Systems: Persistence & Backend
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record FIX-26 T5 commit
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-26-backend-error-classification.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Persistence &amp; Backend: odd/tasks/fix-26-backend-error-classification.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### db75c46e93420406b14fb587d00ebb2e4bbd0aff
+
+[db75c46e93420406b14fb587d00ebb2e4bbd0aff](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/db75c46e93420406b14fb587d00ebb2e4bbd0aff)
+
+Date: 2026-11-15T02:04:16-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Inventory & Loot, UI, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend-client): restore server-side revision retries and bound wait hints (FIX-26)
+```
+
+#### Original body
+
+```text
+Five operations whose server re-reads the revision retry REVISION_CONFLICT again, honored wait hints are capped and longer ones end retrying, Results keeps the local confirmation alongside the backend status, consumed defeats are not reported as saved without receipt proof, and loss-clear stops on EXTRACTION_RESULT_PENDING.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Backend/BackendCommitFeedback.cs
+Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+Project Grimhold/Assets/Scripts/Backend/BackendRetrySchedule.cs
+Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/RaidMenuPresenter.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteIdempotentRetryPolicy.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteIdempotentRetryPolicyTests.cs
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+odd/tasks/fix-26-backend-error-classification.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/RaidMenuPresenter.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendCommitFeedback.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendRetrySchedule.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+- path → Persistence &amp; Backend: odd/tasks/fix-26-backend-error-classification.md
+- scope → Persistence &amp; Backend: backend-client
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteIdempotentRetryPolicyTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteIdempotentRetryPolicyTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### a408f12d51cf11dbbfb76e6feb534829d02b13bc
+
+[a408f12d51cf11dbbfb76e6feb534829d02b13bc](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a408f12d51cf11dbbfb76e6feb534829d02b13bc)
+
+Date: 2026-11-15T01:33:14-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record FIX-22 T3 commit
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-22-result-uniqueness-reservation-binding.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### af6f06793e943da5cfe21fac9801b4f971654bf1
+
+[af6f06793e943da5cfe21fac9801b4f971654bf1](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/af6f06793e943da5cfe21fac9801b4f971654bf1)
+
+Date: 2026-11-15T01:33:14-03:00 · Classification: Bug Fixes (explicit) · Systems: Inventory & Loot, Networking & Sessions, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(reservation): bind Unity clear and orphan rollback requests to the reservation id (FIX-22)
+```
+
+#### Original body
+
+```text
+Clear, orphan clear/rollback and participation loss cleanup forward the captured reservationId across transport retries so a late retry cannot touch a newer reservation; the backend id stays optional.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+backend/tests/inventory.reservation.test.js
+odd/tasks/fix-22-result-uniqueness-reservation-binding.md
+odd/tasks/fix-26-backend-error-classification.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+- path → Inventory &amp; Loot: backend/tests/inventory.reservation.test.js
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Persistence &amp; Backend: backend/tests/inventory.reservation.test.js
+- path → Persistence &amp; Backend: odd/tasks/fix-26-backend-error-classification.md
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+- path → Tests: backend/tests/inventory.reservation.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 39b83f839a631948cf6b3b673965364516a97e1f
+
+[39b83f839a631948cf6b3b673965364516a97e1f](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/39b83f839a631948cf6b3b673965364516a97e1f)
+
+Date: 2026-11-15T01:45:55-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record M1 verification
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/review-findings-2026-11-15.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### fdc45375fa15c2ad8a149f00605b1fd44e57fcae
+
+[fdc45375fa15c2ad8a149f00605b1fd44e57fcae](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/fdc45375fa15c2ad8a149f00605b1fd44e57fcae)
+
+Date: 2026-11-15T01:41:21-03:00 · Classification: Bug Fixes (explicit) · Systems: Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(stash): skip an invalid shop receipt instead of rejecting the whole local profile
+```
+
+#### Original body
+
+```text
+A malformed, duplicate or foreign-profile receipt is dropped with one warning; the rest of the profile, including the pending extraction commit, decodes and the backup no longer overwrites main.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileShopReceiptRecoveryTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileShopReceiptRecoveryTests.cs.meta
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+odd/tasks/review-findings-2026-11-15.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileShopReceiptRecoveryTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileShopReceiptRecoveryTests.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileShopReceiptRecoveryTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileShopReceiptRecoveryTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileShopReceiptRecoveryTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LocalProfileShopReceiptRecoveryTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 77c88b168b7b7b90a12d6a510c638535c4696f8c
+
+[77c88b168b7b7b90a12d6a510c638535c4696f8c](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/77c88b168b7b7b90a12d6a510c638535c4696f8c)
+
+Date: 2026-11-15T01:25:04-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record fix-22/26 merge into review findings
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/review-findings-2026-11-15.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### 7385f1843761b902befeecf30534085708ebde84
+
+[7385f1843761b902befeecf30534085708ebde84](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7385f1843761b902befeecf30534085708ebde84)
+
+Date: 2026-11-15T01:16:34-03:00 · Classification: Features (explicit) · Systems: Extraction, Inventory & Loot, Networking & Sessions, UI, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(backend-client): classify backend errors and back off retryable responses (FIX-26)
+```
+
+#### Original body
+
+```text
+Every extraction, reservation and commerce code is classified as retryable, conflict or terminal; retries use exponential backoff honoring Retry-After, extraction and defeat commits retry in session before the existing login recovery, and the raid menu and login show Spanish status messages.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Backend/AuthenticationClient.cs
+Project Grimhold/Assets/Scripts/Backend/BackendCommitFeedback.cs
+Project Grimhold/Assets/Scripts/Backend/BackendCommitFeedback.cs.meta
+Project Grimhold/Assets/Scripts/Backend/BackendError.cs
+Project Grimhold/Assets/Scripts/Backend/BackendErrorClassifier.cs
+Project Grimhold/Assets/Scripts/Backend/BackendErrorClassifier.cs.meta
+Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs.meta
+Project Grimhold/Assets/Scripts/Backend/BackendRetrySchedule.cs
+Project Grimhold/Assets/Scripts/Backend/BackendRetrySchedule.cs.meta
+Project Grimhold/Assets/Scripts/Backend/CharacterClient.cs
+Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs
+Project Grimhold/Assets/Scripts/Backend/ProgressionClient.cs
+Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs
+Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/RaidMenuPresenter.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteIdempotentRetryPolicy.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorClassifierTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorClassifierTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/LoginFlowControllerTownTicketTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteIdempotentRetryPolicyTests.cs
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+odd/tasks/fix-26-backend-error-classification.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Extraction: Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- message-term → Extraction: extraction
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/NetworkRaidParticipant.cs
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/RaidMenuPresenter.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- message-term → UI: menu
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/AuthenticationClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendCommitFeedback.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendCommitFeedback.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendError.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendErrorClassifier.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendErrorClassifier.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendRetrySchedule.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendRetrySchedule.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/CharacterClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/ProgressionClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorClassifierTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorClassifierTests.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/LoginFlowControllerTownTicketTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+- path → Persistence &amp; Backend: odd/tasks/fix-26-backend-error-classification.md
+- scope → Persistence &amp; Backend: backend-client
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorClassifierTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorClassifierTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/LoginFlowControllerTownTicketTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteIdempotentRetryPolicyTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorClassifierTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorClassifierTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendRetryScheduleTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/LoginFlowControllerTownTicketTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteCommitRetryTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteIdempotentRetryPolicyTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### bcf6be3410d2da8bacc4384a108239f9c7be76cb
+
+[bcf6be3410d2da8bacc4384a108239f9c7be76cb](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bcf6be3410d2da8bacc4384a108239f9c7be76cb)
+
+Date: 2026-11-15T00:59:40-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record FIX-22 T5 commit
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-22-result-uniqueness-reservation-binding.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### 7c16e9500ccfe5aafd2989cb5b25378b75bcbeff
+
+[7c16e9500ccfe5aafd2989cb5b25378b75bcbeff](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7c16e9500ccfe5aafd2989cb5b25378b75bcbeff)
+
+Date: 2026-11-15T00:59:40-03:00 · Classification: Bug Fixes (explicit) · Systems: Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend): reject reused result ids for another raid or account (FIX-22)
+```
+
+#### Original body
+
+```text
+A stored result whose raid or account differs from the request is now a RESULT_CONFLICT on both the sequential and duplicate-key paths; adds race, burst and legacy-index startup probes.
+```
+
+#### Changed paths
+
+```text
+backend/src/services/RaidResultService.js
+backend/tests/authoritative.results.startup.test.js
+backend/tests/concurrency/raid.result.real.test.js
+odd/tasks/fix-22-result-uniqueness-reservation-binding.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Persistence &amp; Backend: backend/src/services/RaidResultService.js
+- path → Persistence &amp; Backend: backend/tests/authoritative.results.startup.test.js
+- path → Persistence &amp; Backend: backend/tests/concurrency/raid.result.real.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/authoritative.results.startup.test.js
+- path → Tests: backend/tests/concurrency/raid.result.real.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 69eca1dedb020a6aa372342f4d8689cd12440df4
+
+[69eca1dedb020a6aa372342f4d8689cd12440df4](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/69eca1dedb020a6aa372342f4d8689cd12440df4)
+
+Date: 2026-11-15T00:37:46-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Persistence & Backend, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend): make authoritative raid results unique per raid and account (FIX-22)
+```
+
+#### Original body
+
+```text
+Add unique indexes on resultId and (raidId, accountId), resolve duplicate-key races through the existing idempotent/conflict semantics, add a dry-run-by-default dedupe script and a non-fatal startup index check.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+backend/README.md
+backend/scripts/dedupe_authoritative_results.js
+backend/src/db/authoritativeResultIndexes.js
+backend/src/models/AuthoritativeExtractionResult.js
+backend/src/server.js
+backend/src/services/RaidResultService.js
+backend/tests/authoritative.results.maintenance.test.js
+backend/tests/concurrency/raid.result.real.test.js
+odd/tasks/fix-22-result-uniqueness-reservation-binding.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Extraction: backend/src/models/AuthoritativeExtractionResult.js
+- message-term → Extraction: raid results
+- path → Persistence &amp; Backend: backend/README.md
+- path → Persistence &amp; Backend: backend/scripts/dedupe\_authoritative\_results.js
+- path → Persistence &amp; Backend: backend/src/db/authoritativeResultIndexes.js
+- path → Persistence &amp; Backend: backend/src/models/AuthoritativeExtractionResult.js
+- path → Persistence &amp; Backend: backend/src/server.js
+- path → Persistence &amp; Backend: backend/src/services/RaidResultService.js
+- path → Persistence &amp; Backend: backend/tests/authoritative.results.maintenance.test.js
+- path → Persistence &amp; Backend: backend/tests/concurrency/raid.result.real.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Tests: backend/tests/authoritative.results.maintenance.test.js
+- path → Tests: backend/tests/concurrency/raid.result.real.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### ca7894affd1537f41a4a96c052585357706de65a
+
+[ca7894affd1537f41a4a96c052585357706de65a](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ca7894affd1537f41a4a96c052585357706de65a)
+
+Date: 2026-11-15T01:23:04-03:00 · Classification: Documentation (explicit) · Systems: Persistence & Backend
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record review findings backend re-verification
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/review-findings-2026-11-15.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- message-term → Persistence &amp; Backend: backend
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### c2c4f1d3713f430fb918078496a8d02c6e5b453b
+
+[c2c4f1d3713f430fb918078496a8d02c6e5b453b](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c2c4f1d3713f430fb918078496a8d02c6e5b453b)
+
+Date: 2026-11-15T01:11:35-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Inventory & Loot, Persistence & Backend, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend): recover legacy defeat sequences and retry defeat revision races server-side
+```
+
+#### Original body
+
+```text
+Accept Unity's <raidId>:<characterId>:<seq> result ids, re-read and re-apply defeat commits for up to three revision races while holding the result claim, and treat {} and 'null' equipment slots as empty in both the predicate and the Mongo filter.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+backend/src/services/DefeatCommitService.js
+backend/src/services/ResultReservationBinding.js
+backend/tests/defeat.commit.test.js
+backend/tests/inventory.lifecycle.test.js
+backend/tests/raid.result.authority.test.js
+backend/tests/result.reservation.binding.test.js
+odd/tasks/review-findings-2026-11-15.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Inventory &amp; Loot: backend/tests/inventory.lifecycle.test.js
+- message-term → Inventory &amp; Loot: equipment
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Persistence &amp; Backend: backend/src/services/DefeatCommitService.js
+- path → Persistence &amp; Backend: backend/src/services/ResultReservationBinding.js
+- path → Persistence &amp; Backend: backend/tests/defeat.commit.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.lifecycle.test.js
+- path → Persistence &amp; Backend: backend/tests/raid.result.authority.test.js
+- path → Persistence &amp; Backend: backend/tests/result.reservation.binding.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Tests: backend/tests/defeat.commit.test.js
+- path → Tests: backend/tests/inventory.lifecycle.test.js
+- path → Tests: backend/tests/raid.result.authority.test.js
+- path → Tests: backend/tests/result.reservation.binding.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 2e6a7684180bcb132adef4fc34e23a80a1876d35
+
+[2e6a7684180bcb132adef4fc34e23a80a1876d35](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2e6a7684180bcb132adef4fc34e23a80a1876d35)
+
+Date: 2026-11-15T00:49:27-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Inventory & Loot, Persistence & Backend, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend): guard defeat commits and protect equipment-only results from loss-clear
+```
+
+#### Original body
+
+```text
+Defeat commits now write behind a revision guard, consume only defeat-compatible results bound to the published sequence, and the loss-clear guard keeps any extraction result that carries loot or prepared equipment.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+backend/src/models/AuthoritativeExtractionResult.js
+backend/src/services/DefeatCommitService.js
+backend/src/services/InventoryService.js
+backend/src/services/RaidResultService.js
+backend/src/services/ResultReservationBinding.js
+backend/tests/defeat.commit.test.js
+backend/tests/inventory.lifecycle.test.js
+backend/tests/raid.result.authority.test.js
+backend/tests/reservation.loss-clear.test.js
+odd/tasks/review-findings-2026-11-15.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Extraction: backend/src/models/AuthoritativeExtractionResult.js
+- message-term → Extraction: extraction
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- path → Inventory &amp; Loot: backend/tests/inventory.lifecycle.test.js
+- message-term → Inventory &amp; Loot: equipment
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Persistence &amp; Backend: backend/src/models/AuthoritativeExtractionResult.js
+- path → Persistence &amp; Backend: backend/src/services/DefeatCommitService.js
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/src/services/RaidResultService.js
+- path → Persistence &amp; Backend: backend/src/services/ResultReservationBinding.js
+- path → Persistence &amp; Backend: backend/tests/defeat.commit.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.lifecycle.test.js
+- path → Persistence &amp; Backend: backend/tests/raid.result.authority.test.js
+- path → Persistence &amp; Backend: backend/tests/reservation.loss-clear.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Tests: backend/tests/defeat.commit.test.js
+- path → Tests: backend/tests/inventory.lifecycle.test.js
+- path → Tests: backend/tests/raid.result.authority.test.js
+- path → Tests: backend/tests/reservation.loss-clear.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### f16a457b4e7648185b28be9a43f4881cae0e8165
+
+[f16a457b4e7648185b28be9a43f4881cae0e8165](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f16a457b4e7648185b28be9a43f4881cae0e8165)
+
+Date: 2026-11-15T00:05:00-03:00 · Classification: Documentation (explicit) · Systems: Persistence & Backend
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record FIX-55 commits
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-55-backend-confirmed-launch.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Persistence &amp; Backend: odd/tasks/fix-55-backend-confirmed-launch.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### ad82c68278e791350fdb9f391e1c32d60c814507
+
+[ad82c68278e791350fdb9f391e1c32d60c814507](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ad82c68278e791350fdb9f391e1c32d60c814507)
+
+Date: 2026-11-15T00:04:59-03:00 · Classification: Tests (explicit) · Systems: Networking & Sessions, Persistence & Backend, Build & Tooling, Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+test(networking): pin FIX-55 rollback on the production launch path
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs
+odd/tasks/fix-55-backend-confirmed-launch.md
+```
+
+#### Classification evidence
+
+- type → Tests: test
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs
+- scope → Networking &amp; Sessions: networking
+- message-term → Networking &amp; Sessions: networking
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs
+- path → Persistence &amp; Backend: odd/tasks/fix-55-backend-confirmed-launch.md
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 23af5607f88717ec5f97a2b659c514a8dbb1b8d8
+
+[23af5607f88717ec5f97a2b659c514a8dbb1b8d8](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/23af5607f88717ec5f97a2b659c514a8dbb1b8d8)
+
+Date: 2026-11-14T23:46:11-03:00 · Classification: Bug Fixes (explicit) · Systems: Networking & Sessions, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(networking): require backend-confirmed reservation and ticket to launch (FIX-55)
+```
+
+#### Original body
+
+```text
+Host and Client now abort before creating the raid runner when the authenticated reservation save or authoritative admission ticket fails, with no local-snapshot fallback; offline play is unchanged. Rejections publish LoadoutReservationFailed and transport failures ServiceUnavailable through the existing rollback recovery.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/FusionSessionLauncher.cs
+Project Grimhold/Assets/Scripts/Networking/IRaidLaunchBackend.cs
+Project Grimhold/Assets/Scripts/Networking/IRaidLaunchBackend.cs.meta
+Project Grimhold/Assets/Scripts/Networking/RaidLaunchBackend.cs
+Project Grimhold/Assets/Scripts/Networking/RaidLaunchBackend.cs.meta
+Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs.meta
+Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+odd/tasks/fix-55-backend-confirmed-launch.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/FusionSessionLauncher.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/IRaidLaunchBackend.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/IRaidLaunchBackend.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidLaunchBackend.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidLaunchBackend.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md
+- scope → Networking &amp; Sessions: networking
+- message-term → Networking &amp; Sessions: networking
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Networking/IRaidLaunchBackend.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Networking/IRaidLaunchBackend.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Networking/RaidLaunchBackend.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Networking/RaidLaunchBackend.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+- path → Persistence &amp; Backend: odd/tasks/fix-55-backend-confirmed-launch.md
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/BackendConfirmedLaunchTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 2fec96ffe17f6f2d6108498a7fd1e7e4d6e5621a
+
+[2fec96ffe17f6f2d6108498a7fd1e7e4d6e5621a](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2fec96ffe17f6f2d6108498a7fd1e7e4d6e5621a)
+
+Date: 2026-11-14T22:41:05-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record FIX-14 follow-up verification
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-14-transition-failure-messages.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### acdb4a70606eb7c10d00f03c08a591d6575d01a8
+
+[acdb4a70606eb7c10d00f03c08a591d6575d01a8](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/acdb4a70606eb7c10d00f03c08a591d6575d01a8)
+
+Date: 2026-11-14T22:34:36-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record FIX-14 verification and PlayMode evidence
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-14-transition-failure-messages.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### 1e4dba4313eb551d8137f9c0207a3c2685115e06
+
+[1e4dba4313eb551d8137f9c0207a3c2685115e06](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/1e4dba4313eb551d8137f9c0207a3c2685115e06)
+
+Date: 2026-11-14T22:25:41-03:00 · Classification: Bug Fixes (explicit) · Systems: Inventory & Loot, UI, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(presentation): keep defeated block and fresh Host wait after failed return (FIX-14)
+```
+
+#### Original body
+
+```text
+Re-block inventory mutations for a defeated player whose return fails, let a new Host wait replace a stale failure, and cache/throttle the wait count.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/Presentation/RaidMenuPresenter.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+odd/tasks/fix-14-transition-failure-messages.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Inventory &amp; Loot: inventory
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/RaidMenuPresenter.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 1ac9b639052ab3cda683380d99e3b40cdab1af8a
+
+[1ac9b639052ab3cda683380d99e3b40cdab1af8a](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/1ac9b639052ab3cda683380d99e3b40cdab1af8a)
+
+Date: 2026-11-14T22:11:01-03:00 · Classification: Features (explicit) · Systems: Networking & Sessions, UI, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(networking): report multiplayer service failures distinctly (FIX-14)
+```
+
+#### Original body
+
+```text
+Classify Fusion start failures so cloud timeouts and CCU limits publish ServiceUnavailable on Town start, raid join, reconnect and recovery, and show the main-menu Town failure with catalog text.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/MainMenuController.cs
+Project Grimhold/Assets/Scripts/Networking/HubSessionLauncher.cs
+Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+Project Grimhold/Assets/Scripts/Networking/SessionStartFailurePolicy.cs
+Project Grimhold/Assets/Scripts/Networking/SessionStartFailurePolicy.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionConnectionStateMachineTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailureCoordinatorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailureCoordinatorTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailurePolicyTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailurePolicyTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuTransitionFailureTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuTransitionFailureTests.cs.meta
+Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md
+odd/tasks/fix-14-transition-failure-messages.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/HubSessionLauncher.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionStartFailurePolicy.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionStartFailurePolicy.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionConnectionStateMachineTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailureCoordinatorTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailureCoordinatorTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailurePolicyTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailurePolicyTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md
+- scope → Networking &amp; Sessions: networking
+- message-term → Networking &amp; Sessions: networking
+- path → UI: Project Grimhold/Assets/Scripts/MainMenuController.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuTransitionFailureTests.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuTransitionFailureTests.cs.meta
+- message-term → UI: menu
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionConnectionStateMachineTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailureCoordinatorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailureCoordinatorTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailurePolicyTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailurePolicyTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuTransitionFailureTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuTransitionFailureTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionConnectionStateMachineTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailureCoordinatorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailureCoordinatorTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailurePolicyTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/SessionStartFailurePolicyTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuTransitionFailureTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuTransitionFailureTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### f68674f34e84ccc7901fb970cf25211e2d44221f
+
+[f68674f34e84ccc7901fb970cf25211e2d44221f](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f68674f34e84ccc7901fb970cf25211e2d44221f)
+
+Date: 2026-11-14T21:59:01-03:00 · Classification: Features (explicit) · Systems: Extraction, Networking & Sessions, UI, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(presentation): surface return failures and Host wait in raid menu (FIX-14)
+```
+
+#### Original body
+
+```text
+Town preparation consumes transition failures continuously; the raid menu shows each return failure with catalog text, re-enables Return, explains a pending Host return with the remaining participants, and drops the dead AbandonRaidAsync.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/RaidHostReturnWaitText.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/RaidHostReturnWaitText.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/RaidMenuPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/RaidMenuView.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationPresenter.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidHostReturnWaitTextTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidHostReturnWaitTextTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidTransitionFailurePresenterTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidTransitionFailurePresenterTests.cs.meta
+Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMenuPlayModeTests.cs
+Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md
+odd/tasks/fix-14-transition-failure-messages.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Extraction: Project Grimhold/Assets/Scripts/Player/Presentation/RaidHostReturnWaitText.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Player/Presentation/RaidHostReturnWaitText.cs.meta
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidHostReturnWaitTextTests.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidHostReturnWaitTextTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+- path → Networking &amp; Sessions: Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/RaidMenuPresenter.cs
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/RaidMenuView.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → UI: Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMenuPlayModeTests.cs
+- message-term → UI: menu
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidHostReturnWaitTextTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidHostReturnWaitTextTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidTransitionFailurePresenterTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidTransitionFailurePresenterTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidHostReturnWaitTextTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidHostReturnWaitTextTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMenuPresenterTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidTransitionFailurePresenterTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidTransitionFailurePresenterTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMenuPlayModeTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### ae7f7957891cc39055fbeedb2936bd6867fac8cb
+
+[ae7f7957891cc39055fbeedb2936bd6867fac8cb](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ae7f7957891cc39055fbeedb2936bd6867fac8cb)
+
+Date: 2026-11-14T21:39:04-03:00 · Classification: Features (explicit) · Systems: Networking & Sessions, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(presentation): add readable transition failure catalog (FIX-14)
+```
+
+#### Original body
+
+```text
+Map every failed SessionTransitionResult to Spanish player text, add ServiceUnavailable, and stop the Town preparation view from printing enum names.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/SessionTransitionResult.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/SessionTransitionFailureText.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/SessionTransitionFailureText.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationView.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SessionTransitionFailureTextTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SessionTransitionFailureTextTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidTransitionFailureViewTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidTransitionFailureViewTests.cs.meta
+odd/tasks/fix-14-transition-failure-messages.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionTransitionResult.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Player/Presentation/SessionTransitionFailureText.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Player/Presentation/SessionTransitionFailureText.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SessionTransitionFailureTextTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SessionTransitionFailureTextTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SessionTransitionFailureTextTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SessionTransitionFailureTextTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidTransitionFailureViewTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidTransitionFailureViewTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SessionTransitionFailureTextTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SessionTransitionFailureTextTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidTransitionFailureViewTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidTransitionFailureViewTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### e99a16e5bf22011cd2759e9d8a397c6f9920da27
+
+[e99a16e5bf22011cd2759e9d8a397c6f9920da27](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e99a16e5bf22011cd2759e9d8a397c6f9920da27)
+
+Date: 2026-11-14T21:16:11-03:00 · Classification: Documentation (explicit) · Systems: Movement, Inventory & Loot, Art & Animation
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record FIX-19 deploy on New-Testing
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-N.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-NE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-NW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-S.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-SE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-SW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-N.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-NE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-NW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-S.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-SE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-SW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-N.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-NE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-NW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-N.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-NE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-NW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-S.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-SE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-SW.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-S.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-SE.aseprite
+Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-SW.aseprite
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-N.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-NE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-NW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-S.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-SE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-SW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-N.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-NE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-NW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-S.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-SE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-SW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-N.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-NE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-NW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-S.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-SE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-SW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-N.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-NE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-NW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-S.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-SE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-SW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-N.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-NE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-NW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-S.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-SE.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-SW.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-N.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-NE.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-NW.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-S.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-SE.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-SW.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-N.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-NE.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-NW.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-S.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-SE.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-SW.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-Sprint-Comparison-2x6.aseprite
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-Sprint-Comparison-2x6.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S-SE-SW.aseprite
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S-SE-SW.gif
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S.aseprite
+Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S.gif
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-SW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-N-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-NE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-NW-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-S-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-SE-Sheet.png
+Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-SW-Sheet.png
+odd/tasks/fix-19-reservation-inventory-guard.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-N.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-NE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-NW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-S.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-SE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-SW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-N.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-NE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-NW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-S.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-SE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-SW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-N.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-NE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-NW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-N.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-NE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-NW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-S.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-SE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-SW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-S.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-SE.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-SW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-N.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-NE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-NW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-S.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-SE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-SW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-N.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-NE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-NW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-S.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-SE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-SW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-N.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-NE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-NW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-S.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-SE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-SW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-N.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-NE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-NW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-S.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-SE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-SW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-N.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-NE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-NW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-S.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-SE.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-SW.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-N.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-NE.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-NW.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-S.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-SE.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-SW.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-N.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-NE.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-NW.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-S.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-SE.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-SW.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-Sprint-Comparison-2x6.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-Sprint-Comparison-2x6.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S-SE-SW.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S-SE-SW.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S.aseprite
+- path → Movement: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S.gif
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-SW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-N-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-NE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-NW-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-S-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-SE-Sheet.png
+- path → Movement: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-SW-Sheet.png
+- path → Inventory &amp; Loot: odd/tasks/fix-19-reservation-inventory-guard.md
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-N.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-NE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-NW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-S.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-SE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Locomotion-SW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-N.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-NE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-NW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-S.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-SE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Sprint-SW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-N.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-NE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-NW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-N.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-NE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-NW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-S.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-SE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-Original-SW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-S.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-SE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Aseprite/Player/Player-Walk-SW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-N.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-NE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-NW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-S.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-SE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Directions/Player-Body-SW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Idle/Player-Body-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Body/Walk/Player-Body-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-N.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-NE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-NW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-S.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-SE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Directions/Player-Head-SW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Idle/Player-Head-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Head/Walk/Player-Head-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-N.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-NE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-NW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-S.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-SE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Directions/Player-LeftHand-SW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Idle/Player-LeftHand-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-N.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-NE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-NW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-S.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-SE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Directions/Player-Legs-SW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Idle/Player-Legs-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/Legs/Walk/Player-Legs-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-N.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-NE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-NW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-S.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-SE.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Directions/Player-RightHand-SW.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Idle/Player-RightHand-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/OriginalBackup/RightHand/Walk/Player-RightHand-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-N.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-NE.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-NW.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-S.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-SE.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Sprint-SW.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-N.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-NE.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-NW.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-S.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-SE.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-SW.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-Sprint-Comparison-2x6.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-Sprint-Comparison-2x6.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S-SE-SW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S-SE-SW.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Previews/Player-Walk-vs-Sprint-S.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Body/Player-Body-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Head/Player-Head-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/LeftHand/Player-LeftHand-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/Legs/Player-Legs-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Sprint/RightHand/Player-RightHand-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Body/Player-Body-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Head/Player-Head-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/LeftHand/Player-LeftHand-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/Legs/Player-Legs-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSources/Movement/Sheets/Walk/RightHand/Player-RightHand-Walk-SW-Sheet.png
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### af9e3f516471504a43ad24f0f9f56a6d1728c213
 
