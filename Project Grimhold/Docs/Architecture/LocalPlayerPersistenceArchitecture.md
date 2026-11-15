@@ -493,6 +493,26 @@ ownership are observed, confirmation consumes the local reservation. On restart,
 backend reservation data; bootstrap retries pending extraction or rolls back an orphaned reservation
 through the existing paths.
 
+### Backend-confirmed launch (FIX-55)
+
+With an authenticated backend session (authenticated auth context, backend configuration and non-empty
+token), Town preparation never ACKs without a successful reservation save; an absent remote inventory
+service rejects preparation as `ReservationFailed` and releases the local ticket through FIX-02.
+Before starting a fresh Raid runner, both Host and Client also require a confirmed reservation save
+and an obtained, decoded authoritative admission ticket. Neither role may fall back to a local
+snapshot after a backend rejection, transport failure, Unauthorized or ticket decode failure.
+Offline/Editor without that authenticated backend session keeps its existing local-snapshot path.
+The Host's own seat data is unchanged; this policy adds a symmetric gate, not Host ticket hydration.
+
+Ordinary pre-admission aborts use the existing FIX-02 rollback/ticket-release recovery: restore local
+ownership without loss/duplication and request backend rollback guarded by the reservation id.
+Backend rollback remains asynchronous with its existing bounded retry; immediate remote consistency
+is not proved when backend access fails. Unauthorized keeps the existing invalidation order, which
+can reset identity and stash before Networking sees the response. Networking then ends in `Failed`
+with the pending reservation retained, without dereferencing the reset store or starting Town.
+Under Unauthorized or backend-unreachable conditions, consistency is deferred to the next login/backend
+access through the existing orphan resolution (FIX-02), not promised immediately after the abort.
+
 ### Backend reservation lifetime
 
 The backend `inventory.pendingReservation` outlives admission: it is the recipient proof that

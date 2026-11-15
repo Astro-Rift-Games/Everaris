@@ -65,6 +65,7 @@ public sealed class TownRaidPreparationPresenter : NetworkBehaviour
         }
 
         RefreshPreparationPresentation(false);
+        ConsumeTransitionFailure();
 
         // Consumed once, so a rejected launch revision reports to the player exactly one time.
         SessionConnectionCoordinator coordinator = SessionConnectionCoordinator.Instance;
@@ -120,8 +121,13 @@ public sealed class TownRaidPreparationPresenter : NetworkBehaviour
             _dialoguePresenter.DialogueCompletedNormally += OnDialogueCompletedNormally;
         }
 
+        ConsumeTransitionFailure();
+    }
+
+    private void ConsumeTransitionFailure()
+    {
         SessionConnectionCoordinator coordinator = SessionConnectionCoordinator.Instance;
-        if (coordinator != null && coordinator.TryConsumeLastTransitionFailure(out SessionTransitionResult failure))
+        if (_view != null && coordinator != null && coordinator.TryConsumeLastTransitionFailure(out SessionTransitionResult failure))
         {
             _view.ShowTransitionFailure(failure);
         }

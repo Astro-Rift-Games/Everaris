@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Fusion;
 using UnityEngine;
 
@@ -12,6 +11,7 @@ using UnityEngine;
 public sealed class RaidMenuPresenter : MonoBehaviour
 {
     private const float NoTargetRefreshSeconds = 0.5f;
+    private const float HostReturnWaitRefreshSeconds = 0.5f;
 
     [SerializeField] private RaidMenuView _view;
 
@@ -19,6 +19,8 @@ public sealed class RaidMenuPresenter : MonoBehaviour
     private PlayerInputReader _inputReader;
     private RaidInventoryPresenter _inventoryPresenter;
     private NetworkRunner _runner;
+    private NetworkSpawnManager _hostReturnWaitSpawnManager;
+    private float _nextHostReturnWaitRefreshAt;
     private NetworkRaidParticipant _participant;
     private PlayerExpeditionProgressionResolver _progressionResolver;
     private PlayerExtractionLootSaver _extractionLootSaver;
@@ -34,6 +36,11 @@ public sealed class RaidMenuPresenter : MonoBehaviour
     private SoloAbandonFailureNotice _abandonFailureNotice;
     private bool _returnRequested;
     private bool _returnStarted;
+    private SessionTransitionResult? _returnFailure;
+    private string _hostReturnWaitMessage;
+    private bool _observedHostReturnPending;
+    private bool _observedHostReturnHasRemote;
+    private int _observedHostReturnRemoteCount = -1;
     private bool _hostClosureAcknowledged;
     private bool _hasProgressionResultSnapshot;
     private bool _hasProgressionCorrection;
@@ -66,6 +73,7 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         _inputReader = inputReader;
         _inventoryPresenter = inventoryPresenter;
         _runner = runner;
+        _hostReturnWaitSpawnManager = runner.GetComponent<NetworkSpawnManager>();
         _extractionLootSaver = character.GetComponent<PlayerExtractionLootSaver>();
         _lootCatalog = character.GetComponent<PlayerLootReceiver>()?.LootCatalog;
         RaidAvatarParticipantLink participantLink = character.GetComponent<RaidAvatarParticipantLink>();
@@ -133,6 +141,8 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         _inputReader = null;
         _inventoryPresenter = null;
         _runner = null;
+        _hostReturnWaitSpawnManager = null;
+        _nextHostReturnWaitRefreshAt = 0f;
         _participant = null;
         _progressionResolver = null;
         _extractionLootSaver = null;
@@ -145,6 +155,11 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         _abandonFailureNotice = null;
         _returnRequested = false;
         _returnStarted = false;
+        _returnFailure = null;
+        _hostReturnWaitMessage = null;
+        _observedHostReturnPending = false;
+        _observedHostReturnHasRemote = false;
+        _observedHostReturnRemoteCount = -1;
         _hostClosureAcknowledged = false;
         _hasProgressionResultSnapshot = false;
         _hasProgressionCorrection = false;
@@ -223,15 +238,6 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         }
     }
 
-    public Task AbandonRaidAsync()
-    {
-        if (!IsLocalDefeated())
-        {
-            _participant?.RequestAbandon();
-        }
-        return Task.CompletedTask;
-    }
-
     private void OnEnable()
     {
         if (!_isBound)
@@ -262,6 +268,8 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         ObserveCharacterState(_character.IsAlive);
         ObserveParticipantState();
         UpdateSpectator();
+        ObserveTransitionFailure(SessionConnectionCoordinator.Instance);
+        RefreshHostReturnWait();
     }
 
     private void ApplyInitialPresentation()
@@ -433,21 +441,90 @@ public sealed class RaidMenuPresenter : MonoBehaviour
             return;
         }
 
+        _returnFailure = null;
         _returnRequested = true;
         if (TryResolveOperationalLocalRole(out bool isHost) && isHost &&
             !ShouldRouteHostReturnThroughParticipant())
         {
-            SessionConnectionCoordinator coordinator = SessionConnectionCoordinator.Instance;
-            if (coordinator == null || !coordinator.RequestHostResultsReturn())
-            {
-                _returnRequested = false;
-            }
+            RequestHostResultsReturn(SessionConnectionCoordinator.Instance);
         }
         else
         {
             _participant.RequestReturn();
         }
 
+        RefreshViewContent();
+    }
+
+    private void RequestHostResultsReturn(SessionConnectionCoordinator coordinator)
+    {
+        if (coordinator == null || !coordinator.RequestHostResultsReturn())
+        {
+            RestorePresentationAfterFailedReturn(SessionTransitionResult.InvalidState);
+        }
+    }
+
+    private void ObserveTransitionFailure(SessionConnectionCoordinator coordinator)
+    {
+        if (coordinator != null && coordinator.TryConsumeLastTransitionFailure(out SessionTransitionResult failure))
+        {
+            RestorePresentationAfterFailedReturn(failure);
+        }
+    }
+
+    private void RefreshHostReturnWait()
+    {
+        SessionConnectionCoordinator coordinator = SessionConnectionCoordinator.Instance;
+        bool pending = coordinator != null && coordinator.IsHostResultsReturnPending;
+        float now = Time.unscaledTime;
+        if (!ShouldRefreshHostReturnWait(pending, now))
+        {
+            return;
+        }
+
+        _nextHostReturnWaitRefreshAt = now + HostReturnWaitRefreshSeconds;
+        NetworkSpawnManager spawnManager = pending ? _hostReturnWaitSpawnManager : null;
+        bool hasRemote = spawnManager != null && spawnManager.HasConnectedRemoteParticipants;
+        int remaining = 0;
+        if (hasRemote)
+        {
+            // Closure waits for every connected peer, including terminal participants. Counting
+            // only Raiding participants would show zero for precisely the Results wait we explain.
+            foreach (PlayerRef player in _runner.ActivePlayers)
+            {
+                if (player != _runner.LocalPlayer)
+                {
+                    remaining++;
+                }
+            }
+        }
+
+        ObserveHostReturnWait(pending, hasRemote, remaining);
+    }
+
+    // The coordinator's pending latch is observed every frame; only the presentation count
+    // is sampled. Never delay the start/end of a wait behind the count refresh interval.
+    private bool ShouldRefreshHostReturnWait(bool pending, float now) =>
+        pending != _observedHostReturnPending ||
+        (pending && now >= _nextHostReturnWaitRefreshAt);
+
+    private void ObserveHostReturnWait(bool pending, bool hasRemote, int remaining)
+    {
+        if (pending == _observedHostReturnPending && hasRemote == _observedHostReturnHasRemote &&
+            remaining == _observedHostReturnRemoteCount)
+        {
+            return;
+        }
+
+        if (pending && !_observedHostReturnPending)
+        {
+            _returnFailure = null;
+        }
+
+        _observedHostReturnPending = pending;
+        _observedHostReturnHasRemote = hasRemote;
+        _observedHostReturnRemoteCount = remaining;
+        RaidHostReturnWaitText.TryGetMessage(pending, hasRemote, remaining, out _hostReturnWaitMessage);
         RefreshViewContent();
     }
 
@@ -506,6 +583,15 @@ public sealed class RaidMenuPresenter : MonoBehaviour
             {
                 _view.PresentAbandonFailure();
             }
+        }
+
+        if (_hostReturnWaitMessage != null)
+        {
+            _view.ShowStatusMessage(_hostReturnWaitMessage);
+        }
+        if (_returnFailure.HasValue)
+        {
+            _view.ShowTransitionFailure(_returnFailure.Value);
         }
     }
 
@@ -1039,6 +1125,7 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         {
             if (SessionConnectionCoordinator.Instance == null)
             {
+                RestorePresentationAfterFailedReturn(SessionTransitionResult.InvalidState);
                 return;
             }
 
@@ -1052,21 +1139,26 @@ public sealed class RaidMenuPresenter : MonoBehaviour
             Debug.LogError(
                 $"{nameof(RaidMenuPresenter)} participant return did not complete. Result={result}.",
                 this);
-            RestorePresentationAfterFailedReturn();
+            RestorePresentationAfterFailedReturn(result);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception, this);
-            RestorePresentationAfterFailedReturn();
+            if (this != null)
+            {
+                RestorePresentationAfterFailedReturn(SessionTransitionResult.ConnectionFailed);
+            }
         }
     }
 
     /// <summary>
     /// Releases the local return latch so a failed transition never leaves the player without UI.
     /// </summary>
-    private void RestorePresentationAfterFailedReturn()
+    private void RestorePresentationAfterFailedReturn(SessionTransitionResult result)
     {
+        _returnFailure = result;
         _returnStarted = false;
+        _returnRequested = false;
         if (!_isBound)
         {
             return;
@@ -1074,8 +1166,8 @@ public sealed class RaidMenuPresenter : MonoBehaviour
 
         if (IsLocalDefeated())
         {
-            EnterDefeatedPresentation();
-            return;
+            _inventoryPresenter?.SetGameplayMutationsBlocked(true);
+            EnsureInputSuppression();
         }
 
         if (!IsOpen)

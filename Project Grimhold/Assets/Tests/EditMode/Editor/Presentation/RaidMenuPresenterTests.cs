@@ -509,7 +509,7 @@ namespace Tests.EditMode.Presentation
             SetPrivateField(_presenter, "_returnStarted", true);
             _presenter.CloseMenu();
 
-            InvokePrivateMethod(_presenter, "RestorePresentationAfterFailedReturn");
+            InvokePrivateMethod(_presenter, "RestorePresentationAfterFailedReturn", new object[] { SessionTransitionResult.ConnectionFailed });
 
             Assert.That(ReadPrivateField<bool>(_presenter, "_returnStarted"), Is.False);
             Assert.That(_presenter.IsOpen, Is.True);
@@ -660,6 +660,183 @@ namespace Tests.EditMode.Presentation
             Assert.That(menuToggleRaised, Is.True);
         }
 
+        [Test]
+        public void Presenter_PendingHostWait_UpdatesRemainingCountAndKeepsReturnDisabled()
+        {
+            SetPresenterBoundState(isAlive: false);
+            SetPrivateField(_presenter, "_hasProgressionResultSnapshot", true);
+            SetPrivateField(_presenter, "_progressionResultSnapshot", CreateResult(
+                ExpeditionExperienceResolutionOutcome.Defeated, 2000, 20, 100, false));
+            SetPrivateField(_presenter, "_returnRequested", true);
+            _view.PresentExtractedState(true);
+            InvokePrivateMethod(_presenter, "ObserveHostReturnWait", new object[] { true, true, 2 });
+            Assert.That(_view.StatusText.text, Is.EqualTo("Esperando a que los demás participantes salgan de la expedición (2 restantes)."));
+            Assert.That(_view.AbandonButton.interactable, Is.False);
+            InvokePrivateMethod(_presenter, "RefreshViewContent");
+            Assert.That(_view.StatusText.text, Does.Contain("2 restantes"));
+            InvokePrivateMethod(_presenter, "ObserveHostReturnWait", new object[] { true, true, 1 });
+            Assert.That(_view.StatusText.text, Does.Contain("1 restantes"));
+            InvokePrivateMethod(_presenter, "ObserveHostReturnWait", new object[] { false, false, 0 });
+            Assert.That(_view.StatusText.text, Does.Not.Contain("Esperando"));
+        }
+
+        [Test]
+        public void Presenter_HostWaitFailure_ReplacesNoticeWithCatalogMessageAndAllowsRetry()
+        {
+            SetPresenterBoundState();
+            SetPrivateField(_presenter, "_returnRequested", true);
+            InvokePrivateMethod(_presenter, "ObserveHostReturnWait", new object[] { true, true, 2 });
+            InvokePrivateMethod(_presenter, "RestorePresentationAfterFailedReturn", new object[] { SessionTransitionResult.ShutdownFailed });
+            InvokePrivateMethod(_presenter, "ObserveHostReturnWait", new object[] { false, false, 0 });
+            SessionTransitionFailureText.TryGetMessage(SessionTransitionResult.ShutdownFailed, out string expected);
+            Assert.That(_view.StatusText.text, Is.EqualTo(expected));
+            Assert.That(_view.AbandonButton.interactable, Is.True);
+            Assert.That(ReadPrivateField<bool>(_presenter, "_returnRequested"), Is.False);
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Presenter_FailedReturn_RestoresOnlyDefeatedInventoryBlock(bool isAlive)
+        {
+            SetPresenterBoundState(isAlive);
+            var inventory = _holder.AddComponent<RaidInventoryPresenter>();
+            SetPrivateField(_presenter, "_inventoryPresenter", inventory);
+            SetPrivateField(_presenter, "_returnStarted", true);
+            SetPrivateField(_presenter, "_returnRequested", true);
+            inventory.SetGameplayMutationsBlocked(false);
+
+            InvokePrivateMethod(_presenter, "RestorePresentationAfterFailedReturn",
+                new object[] { SessionTransitionResult.LoadoutConfirmationFailed });
+
+            Assert.That(inventory.GameplayMutationsBlocked, Is.EqualTo(!isAlive));
+            Assert.That(_presenter.IsOpen, Is.True);
+            Assert.That(ReadSuppressionCount(_inputReader), Is.EqualTo(1));
+            Assert.That(ReadPrivateField<bool>(_presenter, "_returnStarted"), Is.False);
+            Assert.That(ReadPrivateField<bool>(_presenter, "_returnRequested"), Is.False);
+            SessionTransitionFailureText.TryGetMessage(SessionTransitionResult.LoadoutConfirmationFailed, out string expected);
+            Assert.That(_view.StatusText.text, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Presenter_HostWaitStartingAfterFailure_ReplacesStaleFailureWithWait()
+        {
+            SetPresenterBoundState();
+            InvokePrivateMethod(_presenter, "RestorePresentationAfterFailedReturn",
+                new object[] { SessionTransitionResult.ShutdownFailed });
+
+            InvokePrivateMethod(_presenter, "ObserveHostReturnWait", new object[] { true, true, 2 });
+            InvokePrivateMethod(_presenter, "RefreshViewContent");
+
+            Assert.That(_view.StatusText.text, Is.EqualTo(
+                "Esperando a que los demás participantes salgan de la expedición (2 restantes)."));
+        }
+
+        [Test]
+        public void Presenter_FailureAfterHostWaitStarts_RemainsVisibleDuringCountRefresh()
+        {
+            SetPresenterBoundState();
+            InvokePrivateMethod(_presenter, "ObserveHostReturnWait", new object[] { true, true, 2 });
+            InvokePrivateMethod(_presenter, "RestorePresentationAfterFailedReturn",
+                new object[] { SessionTransitionResult.ShutdownFailed });
+
+            InvokePrivateMethod(_presenter, "ObserveHostReturnWait", new object[] { true, true, 1 });
+            InvokePrivateMethod(_presenter, "RefreshViewContent");
+
+            SessionTransitionFailureText.TryGetMessage(SessionTransitionResult.ShutdownFailed, out string expected);
+            Assert.That(_view.StatusText.text, Is.EqualTo(expected));
+            Assert.That(_presenter.IsOpen, Is.True);
+        }
+
+        [TestCase(true, true, 9.99f, false)]
+        [TestCase(true, true, 10f, true)]
+        [TestCase(true, true, 10.01f, true)]
+        [TestCase(false, true, 9f, true)]
+        [TestCase(true, false, 9f, true)]
+        [TestCase(false, false, 11f, false)]
+        public void Presenter_HostWaitRefresh_ThrottlesCountsButNeverPendingChanges(
+            bool previousPending, bool pending, float now, bool expected)
+        {
+            SetPrivateField(_presenter, "_observedHostReturnPending", previousPending);
+            SetPrivateField(_presenter, "_nextHostReturnWaitRefreshAt", 10f);
+
+            Assert.That(InvokePrivateMethod(_presenter, "ShouldRefreshHostReturnWait",
+                new object[] { pending, now }), Is.EqualTo(expected));
+        }
+
+        private static System.Collections.Generic.IEnumerable<SessionTransitionResult> TransitionFailures()
+        {
+            foreach (SessionTransitionResult result in System.Enum.GetValues(typeof(SessionTransitionResult)))
+                if (result != SessionTransitionResult.Succeeded)
+                    yield return result;
+        }
+
+        [TestCaseSource(nameof(TransitionFailures))]
+        public void Presenter_ReturnFailure_ShowsCatalogMessageAndReleasesBothLatches(SessionTransitionResult result)
+        {
+            SetPresenterBoundState();
+            SetPrivateField(_presenter, "_returnRequested", true);
+            SetPrivateField(_presenter, "_returnStarted", true);
+
+            InvokePrivateMethod(_presenter, "RestorePresentationAfterFailedReturn", new object[] { result });
+
+            SessionTransitionFailureText.TryGetMessage(result, out string expected);
+            Assert.That(_presenter.IsOpen, Is.True);
+            Assert.That(_view.StatusText.text, Is.EqualTo(expected));
+            Assert.That(ReadPrivateField<bool>(_presenter, "_returnRequested"), Is.False);
+            Assert.That(ReadPrivateField<bool>(_presenter, "_returnStarted"), Is.False);
+            Assert.That(_view.AbandonButton.interactable, Is.True);
+            InvokePrivateMethod(_presenter, "RefreshViewContent");
+            Assert.That(_view.StatusText.text, Is.EqualTo(expected), "A refresh must not erase the failure.");
+        }
+
+        [Test]
+        public void Presenter_RejectedHostRequest_ShowsReasonWithoutLatchingReturn()
+        {
+            SetPresenterBoundState();
+            var coordinator = _holder.AddComponent<SessionConnectionCoordinator>();
+            InvokePrivateMethod(_presenter, "RequestHostResultsReturn", new object[] { coordinator });
+            SessionTransitionFailureText.TryGetMessage(SessionTransitionResult.InvalidState, out string expected);
+            Assert.That(_view.StatusText.text, Is.EqualTo(expected));
+            Assert.That(ReadPrivateField<bool>(_presenter, "_returnRequested"), Is.False);
+            Assert.That(_view.AbandonButton.interactable, Is.True);
+        }
+
+        [Test]
+        public void Presenter_PendingHostReturnFailure_IsConsumedOnceAndReleasesReturn()
+        {
+            SetPresenterBoundState();
+            var coordinator = _holder.AddComponent<SessionConnectionCoordinator>();
+            SetPrivateField(coordinator, "_operationActive", true);
+            SetPrivateField(coordinator, "_hostResultsReturnRequested", true);
+            SetPrivateField(coordinator, "_hostResultsReturnStarted", true);
+            SetPrivateField(_presenter, "_returnRequested", true);
+            var completion = (System.Threading.Tasks.Task)InvokePrivateMethod(coordinator, "CompletePendingHostResultsReturnAsync");
+            Assert.That(completion.IsCompletedSuccessfully, Is.True);
+
+            InvokePrivateMethod(_presenter, "ObserveTransitionFailure", new object[] { coordinator });
+
+            SessionTransitionFailureText.TryGetMessage(SessionTransitionResult.Busy, out string expected);
+            Assert.That(_view.StatusText.text, Is.EqualTo(expected));
+            Assert.That(ReadPrivateField<bool>(_presenter, "_returnRequested"), Is.False);
+            Assert.That(_view.AbandonButton.interactable, Is.True);
+            Assert.That(coordinator.TryConsumeLastTransitionFailure(out _), Is.False);
+            _view.StatusText.text = "Sin novedades";
+            InvokePrivateMethod(_presenter, "ObserveTransitionFailure", new object[] { coordinator });
+            Assert.That(_view.StatusText.text, Is.EqualTo("Sin novedades"));
+        }
+
+        [TestCaseSource(nameof(TransitionFailures))]
+        public void View_TransitionFailure_PreservesTheEligibleReturnAction(SessionTransitionResult result)
+        {
+            _view.PresentExtractedState(true);
+            InvokePrivateMethod(_view, "ShowTransitionFailure", new object[] { result });
+            SessionTransitionFailureText.TryGetMessage(result, out string expected);
+            Assert.That(_view.StatusText.text, Is.EqualTo(expected));
+            Assert.That(_view.AbandonButton.interactable, Is.True);
+            Assert.That(_view.AbandonButtonText.text, Is.EqualTo("Volver al pueblo"));
+            Assert.That(_view.TitleText.text, Is.EqualTo("EXTRACCIÓN EXITOSA"));
+        }
+
         private void SetPresenterBoundState(bool isAlive = true)
         {
             SetPrivateField(_presenter, "_inputReader", _inputReader);
@@ -751,7 +928,7 @@ namespace Tests.EditMode.Presentation
 
         private static object InvokePrivateMethod(object target, string methodName, object[] parameters = null)
         {
-            MethodInfo method = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo method = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             Assert.That(method, Is.Not.Null, $"Method '{methodName}' not found on {target.GetType()}");
             return method.Invoke(target, parameters);
         }

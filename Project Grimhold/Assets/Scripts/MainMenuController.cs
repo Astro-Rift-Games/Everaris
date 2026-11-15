@@ -395,7 +395,7 @@ public sealed class MainMenuController : MonoBehaviour
 
             if (result != SessionTransitionResult.Succeeded)
             {
-                SetStatus($"Failed to enter Town: {result}.");
+                ShowTownConnectionFailure(result);
                 UiPanelVisibility.SetVisible(menuPanel, true);
                 SetUIInteractable(true);
             }
@@ -411,6 +411,14 @@ public sealed class MainMenuController : MonoBehaviour
             SetStatus($"Failed to enter Town: {ex.Message}");
             UiPanelVisibility.SetVisible(menuPanel, true);
             SetUIInteractable(true);
+        }
+    }
+
+    private void ShowTownConnectionFailure(SessionTransitionResult result)
+    {
+        if (SessionTransitionFailureText.TryGetMessage(result, out string message))
+        {
+            SetStatus(message);
         }
     }
 

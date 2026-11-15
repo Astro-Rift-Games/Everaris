@@ -208,16 +208,22 @@ plus the margin, so a member that completes the connection inside its own budget
 `BootstrapFailure` caused by misalignment. `RaidAdmissionWindowsTests` pins
 `HostAdmissionSeconds >= ClientSessionAvailabilitySeconds + ClientAdmissionSeconds + HostAdmissionMarginSeconds`.
 
-### FIX-06 diagnostics: admission payload arrival order and ticket fallback
+### FIX-06 diagnostics and FIX-55 backend-confirmed launch
 
 The Client sends its admission payload once (`NetworkMatchController.TrySubmitClientAdmissionPayload`, from
 `Spawned` or the first tick the admission data exists) and never resends it. The Host rejects and disconnects a
 sender that is not yet registered in `NetworkSpawnManager.TryHandleRemoteAdmissionPayload`. Whether a payload can
-reach the Host before `OnPlayerJoined` registers the sender, and whether a failed authoritative-ticket request
-silently degrades to the local snapshot (`FusionSessionLauncher`), is a code-reading suspicion that is not yet
-reproduced. These diagnostics exist only to reproduce or rule it out; they change no behavior (no resend, no retry,
-no change to accept/reject decisions or to the ticket fallback). A fix, or a documented not-reproducible closure,
-waits for a Host + Client run.
+reach the Host before `OnPlayerJoined` registers the sender remains a code-reading suspicion awaiting a
+Host + Client reproduction. Arrival-order diagnostics change no resend or payload accept/reject behavior.
+
+FIX-55 replaces the ticket-fallback path: with an authenticated backend session (authenticated auth context,
+backend configuration and non-empty token), every role requires a successful reservation save and an obtained,
+decoded authoritative admission ticket before creating its fresh Raid runner. A rejection, Unauthorized,
+transport failure or unusable ticket aborts instead of continuing with the local snapshot. Town preparation
+also rejects a missing remote inventory service before ACK. Offline/Editor without that backend session
+keeps the local snapshot and `TicketSkipped`. The Host's own seat admission data is unchanged; symmetry is
+in the launch gate, not a new ticket-hydration policy. FIX-06 S22's explicit ticket-failure half is implemented
+by this gate; arrival-order reproduction/resend is separate.
 
 Every line shares the greppable prefix `[RaidAdmissionTrace]` (`RaidAdmissionDiagnostics.FormatTrace`):
 `event=<E> player=<PlayerRef> profile=<id|n/a> tick=<Runner.Tick|n/a> t=<Time.realtimeSinceStartup> detail=<...>`.
@@ -229,14 +235,23 @@ tokens and payload bytes never are.
 | Host (`NetworkSpawnManager`) | `PlayerJoined` (with `registered=` at that moment), `AdmissionRegistered`, `AdmissionRejected` (`reason=`), `AwaitingPayload`, `PayloadReceived` (`senderRegistered=`), `PayloadRejected` (`reason=sender_not_registered` / `ticket_evaluation_failed` / `finalize_failed`), `PayloadDeferred`, `DeferredVerificationCompleted`, `PayloadAccepted`, `PayloadIgnored`, `DisconnectIssued` (`reason=`) |
 | Host (`NetworkMatchController`) | `ChunkReceived`, `DisconnectIssued` (`payload_rejected_no_resend`, `malformed_chunk_stream`) |
 | Client (`NetworkMatchController`) | `ClientPayloadNotReady` (once), `ClientPayloadSent` (`sentOnce=true`), `ClientPayloadSkipped` (`already_sent_no_resend`) |
-| Client (`FusionSessionLauncher`) | `TicketObtained`, `TicketFailed` (unauthorized), `TicketFallbackToLocalSnapshot` (failure category), `TicketSkipped` (no authenticated session), `TicketVerificationCompleted` / `TicketVerificationFaulted` (outcome of the fire-and-forget verification) |
+| Host/Client (`FusionSessionLauncher`) | `TicketObtained`, `TicketFailed` (unauthorized), `TicketRequiredAbort` (stage and failure category; no runner start), `TicketSkipped` (no authenticated session), `TicketVerificationCompleted` / `TicketVerificationFaulted` (outcome of the fire-and-forget verification) |
 
 The early-payload suspicion is confirmed when the Host log shows `PayloadReceived ... senderRegistered=False`
 followed by `PayloadRejected reason=sender_not_registered` and `DisconnectIssued`, with a later `PlayerJoined` /
 `AdmissionRegistered` for the same `PlayerRef` (read the order within the Host log by line order, `tick=` and `t=`; `t=` is
 per-process and is not comparable between the Host and Client logs).
-The ticket suspicion is confirmed when a `TicketFallbackToLocalSnapshot` on the Client is followed by
-`PayloadRejected reason=ticket_evaluation_failed` on the Host.
+`TicketRequiredAbort` now identifies reservation-save, ticket-request and ticket-decode aborts without
+logging credentials or ticket contents. No authenticated `TicketFallbackToLocalSnapshot` is emitted.
+
+No new Duo cancellation channel is introduced (FIX-55 owner decision). If a member aborts before creating
+its Raid runner, the Host never observes that member's `OnPlayerLeft`; the existing 75 s Host admission
+window (from bootstrap) ends in `BootstrapFailure`. If the Host aborts before creating its session, the
+Client exhausts its approximately 40 s availability window from its own launch. A connected member lost
+before admission still triggers FIX-03 at the next Host tick. Once a Client observes `BootstrapFailure`,
+it exits on the next admission poll (~50 ms); a non-bootstrap admission closure uses the existing 0.5 s
+grace. Immediate notice for the never-connected case is a follow-up; these are static timing bounds,
+not recorded multi-process runtime evidence.
 
 ### Raid runner lifecycle
 
@@ -352,6 +367,13 @@ without it (`HostHandoffPolicy.ShouldRouteHostReturnThroughParticipant`):
   until `OnPlayerLeft`, and the query is additionally guarded by `NetworkRunner.ActivePlayers`.
   Therefore `Finished` alone can remain in Results indefinitely, and a pending Host return
   cannot shut down the runner while a remote Client still belongs to it.
+
+`IsHostResultsReturnPending` exposes the request latch read-only for presentation; reading it
+never starts or consumes a return. While that request waits on
+`NetworkSpawnManager.HasConnectedRemoteParticipants`, the raid menu explains the wait in Spanish.
+Its remaining count reads the runner's connected remote `ActivePlayers`, including terminal peers,
+not only Raiding participants. If retained routing still blocks shutdown but no active count is
+available, the notice keeps the reason without inventing a count. None of this changes the return gate.
 
 A Client remains on the participant route in both cases.
 
@@ -521,6 +543,27 @@ closes both gates for local Animation/VFX/gameplay testing without a backend:
 
 ## Failure and recovery
 
+Reservation-save and authoritative-ticket aborts publish `LoadoutReservationFailed` for backend rejection,
+Unauthorized or invalid/undecodable ticket data. Transport errors identified by the existing
+`BackendErrorUtility.IsTransportFailure` publish `ServiceUnavailable`. These typed launcher failures never
+enter the `GameNotFound`/`GameClosed` session-availability retry loop. Ordinary aborts use the existing
+FIX-02 rollback and Town recovery; the original failure survives a successful Town recovery and reaches
+the continuously bound FIX-14 presenter and Spanish catalog (never enum names).
+
+Unauthorized keeps authentication invalidation order unchanged. Since the response can arrive after
+identity/stash reset, Networking leaves a defined `Failed` state with a consumable `LoadoutReservationFailed`
+and a disarmed pending ticket; it does not start Town using cleared dependencies. The reservation is
+resolved by existing login orphan recovery. Under Unauthorized or backend-unreachable conditions, S4
+consistency is deferred until the next login/backend access; no immediate remote consistency is claimed.
+
+Fusion start failures are classified by `SessionStartFailurePolicy`: `PhotonCloudTimeout` and
+`MaxCcuReached` publish `ServiceUnavailable`; all other or unknown start reasons remain
+`ConnectionFailed`. Both launchers retain their last start reason. This classification does not
+change availability retries, reconnect terminal reasons, timing, or recovery attempts. If Town
+recovery itself fails, its distinguishable service failure is published as `ServiceUnavailable`;
+otherwise the existing `RecoveryFailed` outcome takes precedence. The main-menu Town entry label
+also uses the shared Spanish `SessionTransitionFailureText` catalog, never result enum names.
+
 If shutdown fails, the coordinator reports the appropriate shutdown or recovery result and
 enters `Failed`. If raid startup fails after Town was left, the coordinator performs exactly
 one recovery attempt: it cleans any partial runner and starts a fresh Shared Town runner. A
@@ -530,10 +573,19 @@ successful recovery returns the original raid failure while leaving the applicat
 Recovery is exception-tolerant (FIX-05). Runner shutdown, the wait for an in-flight
 reservation-loss clear and Town runner startup are guarded: an exception is logged and
 classified as a failed recovery instead of escaping the caller's `catch` block. A failed
-recovery always ends in `Failed` with `RecoveryFailed` published through the consume-once
-transition failure channel (`TryConsumeLastTransitionFailure`), never in `ReturningTown`. The
+recovery always ends in `Failed` with `RecoveryFailed` (or a distinguishable
+`ServiceUnavailable` start failure) published through the consume-once transition failure channel (`TryConsumeLastTransitionFailure`), never in `ReturningTown`. The
 coordinated launch task started from a launch release is fire-and-forget, so it publishes any
 non-successful result through the same channel for the Town UI and observes any fault itself.
+
+The Town preparation presenter consumes that channel both at binding and continuously while bound.
+The bound raid menu also observes `TryConsumeLastTransitionFailure`, including failures already
+published by the pending Host Results return. Consumption is once-only, not a second failure store
+or a new transition trigger. Participant return failures, rejected Host Results requests and return
+exceptions show Spanish text from `SessionTransitionFailureText` in the existing raid status label.
+The menu releases its local request/start latches after a failure, so eligible Return actions are
+available again; their authoritative eligibility rules remain unchanged. Corpse-generation abandon
+failure feedback remains on its existing participant failure-sequence path.
 
 ### Stale launch ticket and reservation recovery
 

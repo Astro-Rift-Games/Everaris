@@ -78,14 +78,14 @@ namespace Tests.PlayMode.Presentation
             Assert.That(menuView.IsOpen, Is.False);
             Assert.That(ReadSuppressionCount(_inputReader), Is.Zero);
 
-            var abandonTask = menuPresenter.AbandonRaidAsync();
-            while (!abandonTask.IsCompleted)
-            {
-                yield return null;
-            }
+            menuPresenter.OpenMenu();
+            menuView.AbandonButton.onClick.Invoke();
+            Assert.That(menuView.AbandonButtonText.text, Is.EqualTo("Confirmar abandono"));
+            Assert.That(_runner.IsRunning, Is.True);
+            menuView.AbandonButton.onClick.Invoke();
+            yield return null;
 
-            Assert.That(abandonTask.IsCompletedSuccessfully, Is.True);
-            // Abandon is a request to the Raid lifecycle, which rejects it for the operational Host (0748702e7).
+            // Abandon is only a participant lifecycle request, never an immediate runner shutdown.
             Assert.That(_runner.IsRunning, Is.True);
         }
 

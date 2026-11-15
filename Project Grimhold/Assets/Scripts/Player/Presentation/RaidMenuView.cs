@@ -229,6 +229,18 @@ public sealed class RaidMenuView : MonoBehaviour
             "Seguís en la incursión con tu equipamiento.");
     }
 
+    /// <summary>Updates informational status without changing Results or action eligibility.</summary>
+    public void ShowStatusMessage(string message) => SetText(_statusText, message);
+
+    /// <summary>Shows a readable transition failure without changing the available actions.</summary>
+    public void ShowTransitionFailure(SessionTransitionResult result)
+    {
+        if (SessionTransitionFailureText.TryGetMessage(result, out string message))
+        {
+            SetText(_statusText, message);
+        }
+    }
+
     /// <summary>Presents role-aware actions for a defeated local participant.</summary>
     public void PresentDefeatedState(bool canReturn, bool isSpectating)
     {
