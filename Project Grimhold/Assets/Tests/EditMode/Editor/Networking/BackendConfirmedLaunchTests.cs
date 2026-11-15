@@ -1,12 +1,14 @@
 #if UNITY_EDITOR && UNITY_INCLUDE_TESTS
 using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Fusion;
 using Grimhold.Backend;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.TestTools;
 using Assert = NUnit.Framework.Assert;
 using Object = UnityEngine.Object;
 
@@ -129,6 +131,32 @@ public sealed class BackendConfirmedLaunchTests
         Assert.That(_store.GetPreparedEquipment(), Is.EqualTo(_equipment));
         Assert.That(_store.GetLoadout(), Is.Empty);
         Assert.That(_coordinator.ActiveTicket, Is.Null);
+    }
+
+    [TestCase(GameMode.Host, "ticket", "NO_ACTIVE_RESERVATION")]
+    [TestCase(GameMode.Client, "save", "RESERVATION_REJECTED")]
+    public async Task ProductionRecovery_BackendAbort_RollsBackStoreThroughFix02(GameMode mode, string stage, string error)
+    {
+        Set(_launcher, "_isStarting", false);
+        // Fail Town recovery deterministically, after its FIX-02 rollback, without starting a runner.
+        Set(_coordinator, "_townSceneName", "FIX55_UnbuiltTownScene");
+        var ticket = Reserve(mode);
+        _backend.Stage = stage;
+        _backend.Error = error;
+        Connecting();
+
+        LogAssert.Expect(UnityEngine.LogType.Exception, new Regex("ArgumentException"));
+        var result = await _coordinator.EnterRaidAsync(ticket);
+
+        Assert.That(result, Is.EqualTo(SessionTransitionResult.RecoveryFailed));
+        Assert.That(_coordinator.State, Is.EqualTo(SessionConnectionState.Failed));
+        Assert.That(_launcher.Runner, Is.Null);
+        Assert.That(_launcher.LastLaunchFailure, Is.EqualTo(SessionTransitionResult.LoadoutReservationFailed));
+        Assert.That(_backend.Saves, Is.EqualTo(1));
+        Assert.That(_backend.Requests, Is.EqualTo(stage == "save" ? 0 : 1));
+        Assert.That(_store.PendingReservation, Is.Null);
+        Assert.That(_store.GetPreparedEquipment(), Is.EqualTo(_equipment));
+        Assert.That(_store.GetLoadout(), Is.Empty);
     }
 
     [Test]
