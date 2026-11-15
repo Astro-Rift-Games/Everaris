@@ -21,7 +21,7 @@ Quoted verbatim from HacknPlan #735.
 | --- | --- | --- | --- |
 | T1 | S1-S4, S5 | worker, TDD: with an authenticated backend session, the launch (Host and Client) aborts before the runner starts when the reservation save is not confirmed or the authoritative admission ticket cannot be obtained/decoded; no local-snapshot fallback; offline keeps the local snapshot (L2); the abort goes through the existing FIX-02 rollback recovery and publishes a catalog-backed `SessionTransitionResult` — done | `23af5607` |
 | T2 | S1, S2 | worker: architecture docs state the symmetric policy (`RemoteIdentityAndAuthArchitecture.md`, `LobbyAndSessionTransitionArchitecture.md` FIX-06 diagnostics/fallback section, `LocalPlayerPersistenceArchitecture.md` reservation before launch) — done | `23af5607` |
-| T4 | S4, S5 | worker, TDD: production-path S4 test through public `EnterRaidAsync(ticket)` (verify A1) — done | T4 commit |
+| T4 | S4, S5 | worker, TDD: production-path S4 test through public `EnterRaidAsync(ticket)` (verify A1) — done | `ad82c682` |
 | T3 | S5 | human: manual Solo (Editor) + Duo (multi-process) validation with logs, together with FIX-14 T6 (L3) | — |
 
 ## Log
