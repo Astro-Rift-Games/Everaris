@@ -64,6 +64,12 @@ and applying shop receipt idempotency. No other Commerce component mutates the L
 `LocalProfileStore`, and no replicated inventory shadow participates. Draft, presentation, stock
 and request-identity ownership belong to `CommerceArchitecture.md`.
 
+Cache decoding skips and logs individual invalid, duplicate or foreign-profile shop receipts,
+retaining valid receipts, the shop idempotency watermark and every other profile field, including
+`PendingExtractionCommit`. A rejected shop receipt alone does not trigger backup restoration or
+authenticated corrupt-cache replacement. Other profile validation and main-file IO safeguards remain
+unchanged.
+
 The productive `LocalProfileRepository` validates candidate identity and codec compatibility,
 then calls the file store's atomic-write operation before publishing a cloned Snapshot as Ready.
 The current save contract is schema **11**; schemas 1–10 remain readable. Item data and prepared

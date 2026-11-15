@@ -581,16 +581,16 @@ public static class LocalProfileSaveCodec
             {
                 if (receiptData == null || !Guid.TryParse(receiptData.transactionId, out Guid parsedGuid))
                 {
-                    error = "Applied shop transaction receipts contain invalid transaction ID.";
-                    return false;
+                    UnityEngine.Debug.LogWarning("[LocalProfileSaveCodec] Skipping invalid, duplicate or foreign-profile shop transaction receipt.");
+                    continue;
                 }
                 var txId = new ShopTransactionId(receiptData.timestamp, parsedGuid);
                 var receipt = new ShopTransactionReceipt(txId, expectedProfileId);
                 
                 if (!receipt.IsValid || !string.Equals(receiptData.profileId, expectedProfileId.Value, StringComparison.Ordinal) || !seen.Add(receipt))
                 {
-                    error = "Applied shop transaction receipts contain invalid or duplicate data.";
-                    return false;
+                    UnityEngine.Debug.LogWarning("[LocalProfileSaveCodec] Skipping invalid, duplicate or foreign-profile shop transaction receipt.");
+                    continue;
                 }
 
                 candidate.AppliedShopTransactionReceipts.Add(receipt);
