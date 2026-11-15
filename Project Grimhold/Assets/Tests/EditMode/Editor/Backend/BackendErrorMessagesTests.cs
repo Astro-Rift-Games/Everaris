@@ -46,6 +46,31 @@ public sealed class BackendErrorMessagesTests
         finally { UnityEngine.Object.DestroyImmediate(holder); }
     }
 
+    [TestCase(60f, "1")]
+    [TestCase(61f, "2")]
+    [TestCase(900f, "15")]
+    public void RateLimit_LongWaitUsesMinutes(float seconds, string minutes)
+    {
+        Assert.That(BackendErrorMessages.ForError(new BackendError { error = "TOO_MANY_REQUESTS", retryAfter = seconds }),
+            Is.EqualTo($"Demasiadas solicitudes. Espera {minutes} minutos antes de volver a intentarlo."));
+    }
+
+    [TestCase(true)]
+    [TestCase(false)]
+    public void CommitFeedback_TextIsCachedUntilStateChanges(bool extraction)
+    {
+        var feedback = new BackendCommitFeedback(extraction);
+        feedback.Retrying(new BackendError { error = "TOO_MANY_REQUESTS", retryAfter = 61 });
+        string retrying = BackendErrorMessages.ForCommit(feedback);
+        Assert.That(BackendErrorMessages.ForCommit(feedback), Is.SameAs(retrying));
+        feedback.Complete(false, new BackendError { error = "RESULT_CONFLICT" });
+        string failed = BackendErrorMessages.ForCommit(feedback);
+        Assert.That(failed, Is.Not.EqualTo(retrying));
+        Assert.That(BackendErrorMessages.ForCommit(feedback), Is.SameAs(failed));
+        feedback.Begin();
+        Assert.That(BackendErrorMessages.ForCommit(feedback), Is.EqualTo("Guardando el resultado de la incursión…"));
+    }
+
     [Test]
     public void RateLimit_IncludesRoundedUpWaitHint()
     {
@@ -55,8 +80,8 @@ public sealed class BackendErrorMessagesTests
 
     [TestCase("NO_AUTHORITATIVE_RESULT", BackendCommitStatus.DeferredUntilLogin, "No se pudo guardar; se reintentará al iniciar sesión.")]
     [TestCase("TIMEOUT", BackendCommitStatus.DeferredUntilLogin, "No se pudo guardar; se reintentará al iniciar sesión.")]
-    [TestCase("RESULT_CONFLICT", BackendCommitStatus.Failed, "No se pudo guardar. El estado ha cambiado. Actualiza tus datos antes de continuar.")]
-    [TestCase("RESERVATION_PENDING", BackendCommitStatus.Failed, "No se pudo guardar. Ya tienes una reserva de incursión pendiente.")]
+    [TestCase("RESULT_CONFLICT", BackendCommitStatus.DeferredUntilLogin, "No se pudo guardar; se reintentará al iniciar sesión.")]
+    [TestCase("RESERVATION_PENDING", BackendCommitStatus.DeferredUntilLogin, "No se pudo guardar; se reintentará al iniciar sesión.")]
     public void Commit_ExposesRetryingThenCorrectFinalDisposition(string code, BackendCommitStatus expected, string text)
     {
         var feedback = new BackendCommitFeedback();

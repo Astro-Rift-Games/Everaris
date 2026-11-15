@@ -22,7 +22,7 @@ public sealed class RemoteCommitRetryTests
     [TestCase(true, "EXTRACTION_RESULT_PENDING", 3)]
     [TestCase(false, "RESERVATION_PENDING", 1)]
     [TestCase(true, "RESERVATION_PENDING", 1)]
-    [TestCase(false, "REVISION_CONFLICT", 1)]
+    [TestCase(false, "REVISION_CONFLICT", 3)]
     [TestCase(true, "REVISION_CONFLICT", 1)]
     public async Task Commit_PublicHttpBoundary_BoundsRetriesAndReportsDisposition(bool defeat, string code, int expectedAttempts)
     {
@@ -87,12 +87,12 @@ public sealed class RemoteCommitRetryTests
             Assert.That(result.error.error, Is.EqualTo(code));
             Assert.That(result.error.message, Is.EqualTo("test"));
             Assert.That(delays.Count, Is.EqualTo(expectedAttempts - 1));
-            Assert.That(feedback.Status, Is.EqualTo(!defeat && expectedAttempts == 3
+            Assert.That(feedback.Status, Is.EqualTo(!defeat
                 ? BackendCommitStatus.DeferredUntilLogin : BackendCommitStatus.Failed));
             string message = BackendErrorMessages.ForCommit(feedback);
             Assert.That(message, Does.StartWith("No se pudo guardar"));
             if (defeat) Assert.That(message, Does.Not.Contain("se reintentará al iniciar sesión"));
-            else if (expectedAttempts == 3) Assert.That(message, Does.Contain("se reintentará al iniciar sesión"));
+            else Assert.That(message, Does.Contain("se reintentará al iniciar sesión"));
         }
         finally
         {
@@ -206,6 +206,100 @@ public sealed class RemoteCommitRetryTests
         finally
         {
             RemoteIdempotentRetryPolicy.BackoffMs = 1000;
+            RemoteIdempotentRetryPolicy.DelayAsync = Task.Delay;
+            Object.DestroyImmediate(root);
+            Object.DestroyImmediate(authObject);
+            Object.DestroyImmediate(config);
+        }
+    }
+
+    [TestCase("save", 2, "REVISION_CONFLICT")]
+    [TestCase("admit", 2, "REVISION_CONFLICT")]
+    [TestCase("clear", 2, "REVISION_CONFLICT")]
+    [TestCase("rollback", 2, "REVISION_CONFLICT")]
+    [TestCase("extraction", 2, "REVISION_CONFLICT")]
+    [TestCase("publish-extraction", 1, "REVISION_CONFLICT")]
+    [TestCase("publish-defeat", 1, "REVISION_CONFLICT")]
+    [TestCase("clear", 1, "EXTRACTION_RESULT_PENDING")]
+    [TestCase("defeat", 1, "RESULT_ALREADY_CONSUMED")]
+    public async Task OperationSpecificRetry_PublicHttpBoundary(string operation, int expectedAttempts, string code)
+    {
+        var probe = new TcpListener(IPAddress.Loopback, 0);
+        probe.Start();
+        int port = ((IPEndPoint)probe.LocalEndpoint).Port;
+        probe.Stop();
+        using var listener = new HttpListener();
+        listener.Prefixes.Add($"http://localhost:{port}/");
+        listener.Start();
+        var config = ScriptableObject.CreateInstance<BackendConfiguration>();
+        config.BaseUrl = $"http://localhost:{port}";
+        var authObject = new GameObject("RevisionRetryAuth");
+        var root = new GameObject("RevisionRetryService");
+        var delays = new List<int>();
+        RemoteIdempotentRetryPolicy.DelayAsync = ms => { delays.Add(ms); return Task.CompletedTask; };
+        try
+        {
+            var auth = authObject.AddComponent<ApplicationAuthContext>();
+            if (ApplicationAuthContext.Instance != auth)
+                typeof(ApplicationAuthContext).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(auth, null);
+            auth.Initialize("test-token", new CharacterData { characterId = "test-profile", name = "Test" }, default);
+            var service = root.AddComponent<RemoteInventoryService>();
+            typeof(RemoteInventoryService).GetField("_backendConfig", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(service, config);
+            var catalog = UnityEditor.AssetDatabase.LoadAssetAtPath<LootDefinitionCatalog>(
+                "Assets/Scriptable Objects/Loot/Catalogs/LootDefinitionCatalog.asset");
+            var profile = new ProfileId("47474747474747474747474747474747");
+            var repository = new InMemoryLocalProfileRepository();
+            Assert.That(repository.Initialize(profile, catalog), Is.True);
+            var store = new LocalProfileStore(repository, profile, catalog);
+            typeof(RemoteInventoryService).GetField("_store", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(service, store);
+            int revisionBefore = store.RemoteRevision;
+            var feedback = new BackendCommitFeedback(operation != "defeat");
+            if (operation == "defeat")
+                LogAssert.Expect(LogType.Error, "[RemoteInventoryService] CommitDefeatUnifiedAsync failed (raidId=raid-test, seq=1): Error=RESULT_ALREADY_CONSUMED: ");
+            var receipt = new ExtractionReceipt("raid-test", new ProfileId("test-profile"), 1);
+            Task<(bool success, BackendError error)> request = operation switch
+            {
+                "save" => service.SavePendingReservationAsync(new PendingLoadoutReservation("reservation-test", System.Array.Empty<StashItem>(), default)),
+                "admit" => service.MarkPendingReservationAdmittedAsync("reservation-test"),
+                "clear" => service.ClearPendingReservationAsync("reservation-test"),
+                "rollback" => service.RollbackPendingReservationAsync("reservation-test"),
+                "extraction" => Commit(service, false, feedback),
+                "defeat" => Commit(service, true, feedback),
+                "publish-extraction" => service.PublishExtractionResultAsync(receipt, System.Array.Empty<StashItem>(), default, 0),
+                _ => service.PublishDefeatResultAsync("raid-test", receipt.ProfileId, 1, 0)
+            };
+            int attempts = 0;
+            while (attempts < 3)
+            {
+                var next = listener.GetContextAsync();
+                var completed = await Task.WhenAny(next, request, Task.Delay(5000));
+                if (completed == request) break;
+                Assert.That(completed, Is.SameAs(next));
+                var context = await next;
+                bool reject = attempts == 0 || code == "EXTRACTION_RESULT_PENDING";
+                context.Response.StatusCode = reject ? 409 : 201;
+                byte[] body = Encoding.UTF8.GetBytes(reject ? $"{{\"error\":\"{code}\"}}" : "{\"revision\":9}");
+                attempts++;
+                context.Response.ContentLength64 = body.Length;
+                await context.Response.OutputStream.WriteAsync(body, 0, body.Length);
+                context.Response.Close();
+            }
+            var outcome = await request;
+            feedback.Complete(outcome.success, outcome.error);
+            Assert.That(outcome.success, Is.EqualTo(expectedAttempts == 2));
+            if (operation == "defeat")
+            {
+                Assert.That(feedback.Status, Is.EqualTo(BackendCommitStatus.Failed));
+                Assert.That(BackendErrorMessages.ForCommit(feedback), Does.Not.Contain("Resultado guardado."));
+            }
+            Assert.That(outcome.error.error, expectedAttempts == 2 ? Is.Null.Or.Empty : Is.EqualTo(code));
+            Assert.That(store.RemoteRevision, Is.EqualTo(operation == "extraction" || expectedAttempts == 1 ? revisionBefore : 9),
+                "Extraction must not advance revision before receipt-bound hydration; rejection must leave it unchanged.");
+            Assert.That(attempts, Is.EqualTo(expectedAttempts));
+            Assert.That(delays.Count, Is.EqualTo(expectedAttempts - 1));
+        }
+        finally
+        {
             RemoteIdempotentRetryPolicy.DelayAsync = Task.Delay;
             Object.DestroyImmediate(root);
             Object.DestroyImmediate(authObject);

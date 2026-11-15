@@ -298,7 +298,7 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             {
                 _mutationLock.Release();
             }
-        });
+        }, retryRevisionConflict: true);
     }
 
     /// <summary>
@@ -333,7 +333,7 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             {
                 _mutationLock.Release();
             }
-        });
+        }, retryRevisionConflict: true);
     }
 
     /// <summary>
@@ -372,7 +372,7 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             {
                 _mutationLock.Release();
             }
-        });
+        }, retryRevisionConflict: true, stopOnError: "EXTRACTION_RESULT_PENDING");
     }
 
     /// <summary>
@@ -410,7 +410,7 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             {
                 _mutationLock.Release();
             }
-        });
+        }, retryRevisionConflict: true);
     }
 
     /// <summary>
@@ -497,15 +497,11 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
                     ApplicationAuthContext.Instance?.HandleUnauthorizedSession();
                 }
 
-                if (success && _store != null)
-                {
-                    _store.SetRemoteRevision(result.revision);
-                    if (result.alreadySecured)
-                    {
-                        Debug.Log($"[{nameof(RemoteInventoryService)}] Unified extraction already secured on backend " +
-                                  $"(raidId={receipt.RaidId}, seq={receipt.ResultSequence}). No action needed.");
-                    }
-                }
+                // Extraction revision/ownership are accepted together only by the receipt-bound
+                // authoritative hydration, never through an early revision-only save.
+                if (success && result.alreadySecured)
+                    Debug.Log($"[{nameof(RemoteInventoryService)}] Unified extraction already secured on backend " +
+                              $"(raidId={receipt.RaidId}, seq={receipt.ResultSequence}). Awaiting authoritative hydration.");
 
                 return (success, result, error);
             }
@@ -513,7 +509,7 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             {
                 _mutationLock.Release();
             }
-        }, onRetry);
+        }, onRetry, retryRevisionConflict: true);
     }
 
     public Task<(bool success, CommitDefeatUnifiedResult result, BackendError error)> CommitDefeatUnifiedAsync(

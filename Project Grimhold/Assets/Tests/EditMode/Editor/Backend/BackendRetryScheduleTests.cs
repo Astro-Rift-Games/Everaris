@@ -20,7 +20,7 @@ public sealed class BackendRetryScheduleTests
     [TestCase("invalid", 4f, 4000)]
     [TestCase("-1", 0f, 1000)]
     [TestCase(null, -5f, 1000)]
-    [TestCase("45", 0f, 45000)]
+    [TestCase("30", 0f, 30000)]
     public void WaitHint_IsRespectedWithoutShorteningBackoff(string header, float bodySeconds, int expected)
     {
         var error = JsonUtility.FromJson<BackendError>("{\"error\":\"TOO_MANY_REQUESTS\",\"retryAfter\":" +
@@ -36,6 +36,24 @@ public sealed class BackendRetryScheduleTests
         var now = new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var error = BackendRetrySchedule.WithRetryAfter(default, now.AddSeconds(12).ToString("r"), now);
         Assert.That(BackendRetrySchedule.DelayMilliseconds(error, 1), Is.EqualTo(12000));
+    }
+
+    [TestCase(3600f)]
+    [TestCase(float.MaxValue)]
+    public void AbsurdWaitHint_IsBounded(float seconds) =>
+        Assert.That(BackendRetrySchedule.DelayMilliseconds(new BackendError { retryAfter = seconds }, 1), Is.EqualTo(30000));
+
+    [TestCase("1.5")]
+    [TestCase("+2")]
+    [TestCase(" 2 ")]
+    [TestCase("2026-01-01T00:00:12Z")]
+    [TestCase("January 1, 2026 00:00:12 +00:00")]
+    public void RetryAfter_RejectsNonIntegerAndNonRfc1123Date(string header)
+    {
+        var now = new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var error = BackendRetrySchedule.WithRetryAfter(default, header, now);
+        Assert.That(error.retryAfter, Is.Zero);
+        Assert.That(BackendRetrySchedule.DelayMilliseconds(error, 1), Is.EqualTo(1000));
     }
 
     [Test]

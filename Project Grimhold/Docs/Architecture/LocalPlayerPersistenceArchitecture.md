@@ -318,20 +318,26 @@ Unknown codes fail closed as terminal; transport classification remains exclusiv
 | Terminal | `RESULT_ALREADY_CONSUMED`, `LOADOUT_NOT_EMPTY`, `PREPARED_WEAPON_REQUIRED`, `RESERVATION_ADMITTED`, `RESERVATION_PENDING`, `NO_ACTIVE_RESERVATION`, `EXCEEDS_*`, `HOST_NOT_IN_RAID`, `INVALID_HOST_SIGNATURE`, `UNKNOWN_LOOT_ID`, `INSUFFICIENT_*`, `BUYBACK_ENTRY_NOT_FOUND`, `ITEM_NOT_FOUND`, `INVALID_QUANTITY`, `VALIDATION_FAILED`, `TRANSACTION_RETENTION_EXCEEDED` | No automatic retry; Spanish guidance from `BackendErrorMessages` |
 
 `RESULT_ALREADY_CONSUMED` is an idempotent success **only for a commit**, not for result
-publication. The HTTP commit clients read authoritative inventory/progression metadata before
-returning `alreadySecured`; no default revision or locally fabricated inventory is applied.
-Extraction still passes through `CompleteExtractionAsync` and its matching-receipt validation.
+publication. Extraction HTTP clients require authoritative inventory metadata whose
+`lastAppliedExtractionReceipt` matches the exact raid and sequence before returning `alreadySecured`.
+Defeat metadata exposes no raid-bound receipt, so `RESULT_ALREADY_CONSUMED` stays a rejection;
+an exact defeat replay already acknowledged by the server remains success. No default revision or
+locally fabricated inventory is applied. Extraction still passes through `CompleteExtractionAsync`
+and its matching-receipt validation; the remote service does not save extraction revision early.
 For extraction, a failed metadata fetch or hydration retains the pending payload for the existing login recovery.
 This does not resolve superseded pending-receipt recovery described above.
 
 `RemoteIdempotentRetryPolicy.MaxRetries = 3` means **three total attempts**, not three additional
 retries. Retryable and transport failures wait 1 s, then 2 s between attempts; the exponential
-schedule caps at 30 s if the attempt budget is later increased. A positive server wait hint is a
-minimum and may exceed that client cap. Terminal/conflict outcomes return immediately. None of
-the eight currently wrapped operations in `RemoteInventoryService` (save/admit/clear/rollback
-reservation, unified extraction/defeat commit, extraction/defeat publication) re-reads authoritative
-revision state in its closure, so **none retries `REVISION_CONFLICT`**. Only a future closure that
-explicitly re-reads revision state may opt into such conflict recovery.
+schedule and honored hints are bounded to 30 s. A positive server wait hint is a minimum;
+a hint above 30 s ends in-session retry immediately without waiting (extraction retains login
+recovery), rather than retrying sooner than requested or blocking runner shutdown. Other
+terminal/conflict outcomes return immediately. Exactly five `RemoteInventoryService` operations
+opt into bounded `REVISION_CONFLICT` retry: save/admit/clear/rollback reservation and unified
+extraction commit. Those endpoints re-read authoritative revision **server-side** and do not
+replay a client `expectedRevision`. Defeat commit and both publications retain stop-on-conflict.
+Loss clear treats `EXTRACTION_RESULT_PENDING` as an expected outcome: one attempt, no delay and
+no error-level log for that code.
 
 The existing one-request, revision-guarded Town move/order/split, Equipment and commerce flows
 are not added to this policy: their reconcile-once/stop-without-retry boundaries above remain.
@@ -342,8 +348,11 @@ failed, without promising another attempt at login. Durable defeat replay is a s
 item (review finding M4, `odd/tasks/review-findings-2026-11-15.md`), outside FIX-26.
 The local cache commit and Fusion ACK are not delayed by backend retries. Per-operation `BackendCommitFeedback` is a local
 presentation projection, not a second persistence store or replicated gameplay state. The raid
-menu/Results status shows Spanish saving/retrying, deferred-until-login (extraction only) or failure guidance,
-without raw codes and without changing Return eligibility. Extraction reports saved only after
+menu/Results status shows Spanish saving/retrying, deferred-until-login (all extraction failures,
+including terminal/conflict, since the pending record is kept) or defeat failure guidance,
+without raw codes and without changing Return eligibility. Text is cached per feedback state,
+not formatted each frame. Extraction preserves the local loot confirmation and progression
+correction before the backend status on the next line. Extraction reports saved only after
 its existing authoritative hydration succeeds.
 
 ### Progression transaction
