@@ -125,6 +125,8 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
     private RuntimeAttributeOverrideNetworkController _runtimeAttributeOverride;
     private int _localProgressionResultSequence;
     private float _nextProgressionCommitRetryAt;
+    private float _nextDefeatPublishRetryAt;
+    private RemoteInventoryService _defeatRemoteService;
     private bool _localDefeatCommitCompleted;
     public BackendCommitFeedback BackendDefeatFeedback { get; } = new BackendCommitFeedback(supportsLoginRecovery: true, retiresMissingDefeatResult: true);
     private int _authorityDefeatPublishedSequence;
@@ -409,13 +411,16 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
         if (!HasStateAuthority || _progressionResolver == null ||
             _authorityDefeatPublishedSequence == ResultSequence ||
             _authorityDefeatPublishInFlight ||
-            !_progressionResolver.TryGetResolution(out ExpeditionExperienceResolution resolution))
+            !_progressionResolver.TryGetResolution(out ExpeditionExperienceResolution resolution) ||
+            !TryBeginDefeatPublishAttempt(Time.unscaledTime))
         {
             return;
         }
 
-        ApplicationStashContext context = FindAnyObjectByType<ApplicationStashContext>();
-        var remoteService = context != null ? context.GetComponent<RemoteInventoryService>() : null;
+        ApplicationStashContext context = ResolveLocalStashContext();
+        if (_defeatRemoteService == null && context != null)
+            _defeatRemoteService = context.GetComponent<RemoteInventoryService>();
+        var remoteService = _defeatRemoteService;
         if (remoteService != null && ApplicationAuthContext.Instance != null && ApplicationAuthContext.Instance.IsAuthenticated)
         {
             _authorityDefeatPublishInFlight = true;
@@ -464,6 +469,7 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
         }
         finally
         {
+            _nextDefeatPublishRetryAt = Time.unscaledTime + ProgressionCommitRetryIntervalSeconds;
             _authorityDefeatPublishInFlight = false;
         }
     }
@@ -478,7 +484,9 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
         in ExpeditionExperienceResolution resolution,
         in ConsolidatedExperienceApplication application)
     {
-        ApplicationStashContext context = FindAnyObjectByType<ApplicationStashContext>();
+        // Consume the budget before every possible failure, including absent context/profile drift.
+        if (!TryBeginLocalDefeatCommitAttempt(Time.unscaledTime)) return;
+        ApplicationStashContext context = ResolveLocalStashContext();
         if (context?.Store == null)
         {
             return;
@@ -516,6 +524,27 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
                 BackendDefeatFeedback.DeferHydration();
             }
         }
+    }
+
+    private ApplicationStashContext ResolveLocalStashContext()
+    {
+        if (_localStashContext == null)
+            _localStashContext = FindAnyObjectByType<ApplicationStashContext>();
+        return _localStashContext;
+    }
+
+    internal bool TryBeginLocalDefeatCommitAttempt(float now)
+    {
+        if (_localDefeatCommitCompleted || now < _nextProgressionCommitRetryAt) return false;
+        _nextProgressionCommitRetryAt = now + ProgressionCommitRetryIntervalSeconds;
+        return true;
+    }
+
+    internal bool TryBeginDefeatPublishAttempt(float now)
+    {
+        if (_authorityDefeatPublishInFlight || now < _nextDefeatPublishRetryAt) return false;
+        _nextDefeatPublishRetryAt = now + ProgressionCommitRetryIntervalSeconds;
+        return true;
     }
 
     internal bool ShouldRetryLocalDefeatCommit => !_localDefeatCommitCompleted;
@@ -574,17 +603,7 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
             return false;
         }
 
-        State = RaidParticipantState.Defeated;
-        CurrentAvatarId = default;
-        ResultSequence++;
-        bool isDisconnectedDefeat =
-            TryGetBehaviour(out RaidParticipantConnectivity connectivity) &&
-            (connectivity.IsDisconnected || connectivity.IsAbsenceConfirmed);
-        FinalizationCause = isDisconnectedDefeat
-            ? ExpeditionProgressionFinalizationCause.DefeatWhileDisconnectedConfirmed
-            : ExpeditionProgressionFinalizationCause.DefeatConfirmed;
-        _progressionResolver?.TryFinalize(FinalizationCause);
-        return true;
+        return TryMarkDefeatedWithoutAvatar();
     }
 
     /// <summary>
@@ -592,20 +611,15 @@ public sealed class NetworkRaidParticipant : NetworkBehaviour, IInputAuthorityGa
     /// </summary>
     internal bool TryMarkDefeatedWithoutAvatar()
     {
-        if (!HasStateAuthority || State != RaidParticipantState.Raiding)
-        {
-            return false;
-        }
-
-        State = RaidParticipantState.Defeated;
-        CurrentAvatarId = default;
-        ResultSequence++;
-        bool isDisconnectedDefeat =
-            TryGetBehaviour(out RaidParticipantConnectivity connectivity) &&
+        if (!HasStateAuthority) return false;
+        bool disconnected = TryGetBehaviour(out RaidParticipantConnectivity connectivity) &&
             (connectivity.IsDisconnected || connectivity.IsAbsenceConfirmed);
-        FinalizationCause = isDisconnectedDefeat
-            ? ExpeditionProgressionFinalizationCause.DefeatWhileDisconnectedConfirmed
-            : ExpeditionProgressionFinalizationCause.DefeatConfirmed;
+        if (!AbsoluteClosureRules.TryResolveDefeat(HasStateAuthority, State, ResultSequence, disconnected,
+            out var state, out int sequence, out var cause)) return false;
+        State = state;
+        CurrentAvatarId = default;
+        ResultSequence = sequence;
+        FinalizationCause = cause;
         _progressionResolver?.TryFinalize(FinalizationCause);
         return true;
     }

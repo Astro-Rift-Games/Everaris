@@ -243,13 +243,54 @@ public sealed class PendingDefeatRecoveryTests
             {
                 clears++;
                 Assert.That(id, Is.EqualTo("played_reservation"));
-                if (clearSucceeds && id == backendReservation) backendReservation = null;
-                return Task.FromResult(clearSucceeds);
+                // The expected-ID backend guard rejects a different current reservation with 409.
+                var outcome = id != backendReservation
+                    ? (success: false, error: new BackendError { error = "RESERVATION_MISMATCH" })
+                    : (success: clearSucceeds, error: default(BackendError));
+                if (outcome.success) backendReservation = null;
+                return Task.FromResult(outcome.success);
             }), Is.False);
         Assert.That(clears, Is.EqualTo(1));
         Assert.That(_store.PendingDefeatCommit, Is.Null);
         Assert.That(_store.PendingReservation?.ReservationId, Is.EqualTo(backendReservation));
         Assert.That(_store.GetCurrentExperience(), Is.EqualTo(12));
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+    }
+
+    [Test]
+    public async Task LoginShapedRetirement_ClearsPlayedReservationBeforeHydration()
+    {
+        var s = _repository.Snapshot.Clone();
+        s.PendingReservation = new PendingLoadoutReservation("played_reservation", null);
+        Assert.That(_repository.TrySave(s, out _), Is.True);
+        string backend = "played_reservation";
+        UnityEngine.TestTools.LogAssert.Expect(UnityEngine.LogType.Warning,
+            "[ApplicationStashServiceBootstrapper] Pending defeat retired: the backend can no longer credit this result. Backend progression remains authoritative.");
+        Assert.That(await ApplicationStashServiceBootstrapper.RetryPendingDefeatAsync(_store,
+            _ => Task.FromResult((false, default(CommitDefeatUnifiedResult), new BackendError { error = "NO_AUTHORITATIVE_RESULT" })),
+            () => Task.FromResult(_store.ReconcileRemoteState(BackendInventory(backend),
+                new ProgressionData { level = 1, experience = 12, revision = 4 }, _catalog, null) == StashOperationResult.Success),
+            id => { Assert.That(_store.PendingReservation, Is.Null); if (id == backend) backend = null; return Task.FromResult(true); }), Is.False);
+        Assert.That(_store.PendingReservation, Is.Null);
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+    }
+
+    [Test]
+    public async Task RetirementWithoutPlayedId_NeverClears()
+    {
+        var repo = new FaultingRepository();
+        Assert.That(repo.Initialize(_profile, _catalog), Is.True);
+        var store = new LocalProfileStore(repo, _profile, _catalog);
+        var receipt = new ProgressionReceipt("raid_no_reservation", _profile, 1, 70, 1);
+        Assert.That(store.TryCommitDefeatProgression(receipt, 1, 70), Is.EqualTo(StashOperationResult.Success));
+        int clears = 0;
+        UnityEngine.TestTools.LogAssert.Expect(UnityEngine.LogType.Warning,
+            "[ApplicationStashServiceBootstrapper] Pending defeat retired: the backend can no longer credit this result. Backend progression remains authoritative.");
+        Assert.That(await ApplicationStashServiceBootstrapper.RetryPendingDefeatAsync(store,
+            _ => Task.FromResult((false, default(CommitDefeatUnifiedResult), new BackendError { error = "NO_AUTHORITATIVE_RESULT" })),
+            null, _ => { clears++; return Task.FromResult(true); }), Is.False);
+        Assert.That(clears, Is.Zero);
+        Assert.That(store.PendingDefeatCommit, Is.Null);
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
     }
 
@@ -329,6 +370,25 @@ public sealed class PendingDefeatRecoveryTests
         Assert.That(await ApplicationStashServiceBootstrapper.RetryPendingDefeatAsync(store, _ => Task.FromResult((true,
             new CommitDefeatUnifiedResult { level = 1, experience = 75, revision = 4 }, default(BackendError)))), Is.True);
         Assert.That(store.PendingReservation, Is.Null);
+    }
+
+    [Test]
+    public void DefeatAttempts_RetryAfterOneSecond_NotEveryFrame()
+    {
+        var go = new UnityEngine.GameObject("defeat retry test");
+        try
+        {
+            var participant = go.AddComponent<NetworkRaidParticipant>();
+            Assert.That(participant.TryBeginLocalDefeatCommitAttempt(10), Is.True);
+            Assert.That(participant.TryBeginLocalDefeatCommitAttempt(10), Is.False);
+            Assert.That(participant.TryBeginLocalDefeatCommitAttempt(10.99f), Is.False);
+            Assert.That(participant.TryBeginLocalDefeatCommitAttempt(11), Is.True);
+            Assert.That(participant.TryBeginDefeatPublishAttempt(10), Is.True);
+            Assert.That(participant.TryBeginDefeatPublishAttempt(10), Is.False);
+            Assert.That(participant.TryBeginDefeatPublishAttempt(10.99f), Is.False);
+            Assert.That(participant.TryBeginDefeatPublishAttempt(11), Is.True);
+        }
+        finally { UnityEngine.Object.DestroyImmediate(go); }
     }
 
     private Task<bool> Replay(Func<ProgressionReceipt, Task<(bool success, CommitDefeatUnifiedResult result, BackendError error)>> commit) =>

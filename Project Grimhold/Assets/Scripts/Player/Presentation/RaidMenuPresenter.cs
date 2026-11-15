@@ -814,6 +814,11 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         return true;
     }
 
+    internal static bool IsServerProgressionCorrection(Grimhold.Backend.BackendCommitStatus status,
+        int resultLevel, long resultExperience, int persistedLevel, long persistedExperience) =>
+        status == Grimhold.Backend.BackendCommitStatus.Saved &&
+        (resultLevel != persistedLevel || resultExperience != persistedExperience);
+
     private void ReconcileProgressionSnapshotWithPersistedStore()
     {
         if (!_hasProgressionResultSnapshot)
@@ -838,8 +843,10 @@ public sealed class RaidMenuPresenter : MonoBehaviour
         if (lootStatus == ExtractionLootSaveStatus.Committed ||
             (_participant != null && _participant.IsExtractionProgressionComplete))
         {
-            if (persistedLevel != _progressionResultSnapshot.ResultingLevel ||
-                persistedExperience != _progressionResultSnapshot.ResultingExperience)
+            if (IsServerProgressionCorrection(
+                _extractionLootSaver?.BackendSaveFeedback.Status ?? Grimhold.Backend.BackendCommitStatus.None,
+                _progressionResultSnapshot.ResultingLevel, _progressionResultSnapshot.ResultingExperience,
+                persistedLevel, persistedExperience))
             {
                 _progressionResultSnapshot = _progressionResultSnapshot.WithPersistedProgression(
                     persistedLevel,

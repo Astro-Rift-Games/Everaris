@@ -269,7 +269,8 @@ public static class LocalProfileSaveCodec
         AbilityDefinitionCatalog abilityCatalog,
         out LocalProfileSnapshot snapshot,
         out LocalProfilePersistenceStatus status,
-        out string error)
+        out string error,
+        bool strictShopReceipts = false)
     {
         snapshot = null;
         status = LocalProfilePersistenceStatus.Unavailable;
@@ -601,22 +602,30 @@ public static class LocalProfileSaveCodec
         if (data.appliedShopTransactionReceipts != null)
         {
             var seen = new HashSet<ShopTransactionReceipt>();
-            foreach (ShopReceiptData receiptData in data.appliedShopTransactionReceipts)
+            for (int index = 0; index < data.appliedShopTransactionReceipts.Length; index++)
             {
-                if (receiptData == null || !Guid.TryParse(receiptData.transactionId, out Guid parsedGuid))
+                ShopReceiptData receiptData = data.appliedShopTransactionReceipts[index];
+                string reason = null;
+                ShopTransactionReceipt receipt = default;
+                if (receiptData == null) reason = "missing receipt";
+                else if (!Guid.TryParse(receiptData.transactionId, out Guid parsedGuid)) reason = "malformed transaction ID";
+                else
                 {
-                    UnityEngine.Debug.LogWarning("[LocalProfileSaveCodec] Skipping invalid, duplicate or foreign-profile shop transaction receipt.");
+                    receipt = new ShopTransactionReceipt(new ShopTransactionId(receiptData.timestamp, parsedGuid), expectedProfileId);
+                    if (!receipt.IsValid) reason = "invalid transaction identity";
+                    else if (!string.Equals(receiptData.profileId, expectedProfileId.Value, StringComparison.Ordinal)) reason = "foreign profile";
+                    else if (!seen.Add(receipt)) reason = "duplicate receipt";
+                }
+                if (reason != null)
+                {
+                    if (strictShopReceipts)
+                    {
+                        error = $"Invalid shop transaction receipt at index {index}: {reason}.";
+                        return false;
+                    }
+                    UnityEngine.Debug.LogWarning($"[LocalProfileSaveCodec] Skipping shop transaction receipt at index {index}: {reason}.");
                     continue;
                 }
-                var txId = new ShopTransactionId(receiptData.timestamp, parsedGuid);
-                var receipt = new ShopTransactionReceipt(txId, expectedProfileId);
-                
-                if (!receipt.IsValid || !string.Equals(receiptData.profileId, expectedProfileId.Value, StringComparison.Ordinal) || !seen.Add(receipt))
-                {
-                    UnityEngine.Debug.LogWarning("[LocalProfileSaveCodec] Skipping invalid, duplicate or foreign-profile shop transaction receipt.");
-                    continue;
-                }
-
                 candidate.AppliedShopTransactionReceipts.Add(receipt);
             }
         }
@@ -1123,9 +1132,23 @@ public static class LocalProfileSaveCodec
                     if (item.amount != 1 || !item.instance.TryToInstance(definition, false, out instance, out error, catalog))
                         return false;
                 }
-                else if (!string.IsNullOrEmpty(item.instance.instanceId))
+                else
                 {
-                    instance = new EquipmentInstance(item.instance.instanceId, null);
+                    // Content drift: validate transport shape without inventing a template. Keep
+                    // ID-free pending extraction units and every modifier/socket for the next save.
+                    if (item.amount != 1 ||
+                        (!string.IsNullOrEmpty(item.instance.instanceId) && !EquipmentInstance.IsValidId(item.instance.instanceId)))
+                    {
+                        error = $"{label} contains an invalid equipment instance or amount.";
+                        return false;
+                    }
+                    WeaponInstanceModifiers? modifiers = null;
+                    if (item.instance.modifiers != null)
+                    {
+                        if (!item.instance.modifiers.TryToTransportModifiers(out var parsed, out error)) return false;
+                        modifiers = parsed;
+                    }
+                    instance = new EquipmentInstance(item.instance.instanceId, modifiers);
                 }
             }
             destination.Add(new StashItem(lootId, item.amount, aggregate ? -1 : slot, instance, item.expeditionId ?? string.Empty, item.origin ?? string.Empty));

@@ -67,8 +67,14 @@ and request-identity ownership belong to `CommerceArchitecture.md`.
 Cache decoding skips and logs individual invalid, duplicate or foreign-profile shop receipts,
 retaining valid receipts, the shop idempotency watermark and every other profile field, including
 `PendingExtractionCommit`. A rejected shop receipt alone does not trigger backup restoration or
-authenticated corrupt-cache replacement. Other profile validation and main-file IO safeguards remain
-unchanged.
+authenticated corrupt-cache replacement. Each warning identifies only the receipt index and validation
+reason, never raw receipt/profile data. A legacy v2 shop `alreadySecured` response uses ordinary
+reconciliation instead of replaying the advisory ticket locally, even if a damaged receipt was
+skipped. Repository pre-save validation remains strict: an invalid,
+duplicate or foreign-profile receipt rejects the candidate without writing or publishing it.
+Unknown-catalog equipment retains its instance identity and transport-valid modifiers (including
+ID-free pending extraction units); an instance still requires amount one. Template validation resumes
+when the definition is available. Other profile validation and main-file IO safeguards remain unchanged.
 
 The productive `LocalProfileRepository` validates candidate identity and codec compatibility,
 then calls the file store's atomic-write operation before publishing a cloned Snapshot as Ready.

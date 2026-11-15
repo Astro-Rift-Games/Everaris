@@ -151,12 +151,6 @@ public static class ApplicationStashServiceBootstrapper
             else
                 orphanRollback = !admitted;
         }
-        else if (inventoryData.HasValue && !string.IsNullOrEmpty(inventoryData.Value.pendingReservation.reservationId))
-        {
-            Debug.LogWarning($"[{nameof(ApplicationStashServiceBootstrapper)}] Remote inventory has an orphaned reservation '{inventoryData.Value.pendingReservation.reservationId}' but local store has none. Clearing backend reservation as a loss.");
-            orphanRollback = false;
-            orphanReservationId = inventoryData.Value.pendingReservation.reservationId;
-        }
 
         var stashService = contextObject.AddComponent<InMemoryPlayerStashService>();
         var loadoutService = contextObject.AddComponent<InMemoryPlayerLoadoutService>();

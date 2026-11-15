@@ -11,7 +11,16 @@ namespace Tests.EditMode.Stash
 {
     public sealed class LocalProfileShopReceiptRecoveryTests
     {
-        private const string SkipWarning = "[LocalProfileSaveCodec] Skipping invalid, duplicate or foreign-profile shop transaction receipt.";
+        private static string SkipWarning(string kind) =>
+            $"[LocalProfileSaveCodec] Skipping shop transaction receipt at index {(kind == "duplicate" ? 1 : 0)}: " +
+            (kind switch
+            {
+                "null" => "missing receipt",
+                "malformedId" => "malformed transaction ID",
+                "foreign" => "foreign profile",
+                "duplicate" => "duplicate receipt",
+                _ => "invalid transaction identity"
+            }) + ".";
         private readonly ProfileId _profile = new("60606060606060606060606060606060");
         private LootDefinitionCatalog _catalog;
 
@@ -29,7 +38,7 @@ namespace Tests.EditMode.Stash
         {
             LocalProfileSnapshot expected = CreateSnapshot();
             string json = WithBadReceipt(expected, kind);
-            LogAssert.Expect(LogType.Warning, SkipWarning);
+            LogAssert.Expect(LogType.Warning, SkipWarning(kind));
 
             Assert.That(LocalProfileSaveCodec.TryDecode(json, _profile, _catalog,
                 out var decoded, out var status, out string error), Is.True, error);
@@ -54,7 +63,7 @@ namespace Tests.EditMode.Stash
             files.Files[mainPath] = main;
             files.Files[mainPath + ".bak"] = backup;
             var repository = new LocalProfileRepository(files, ".");
-            LogAssert.Expect(LogType.Warning, SkipWarning);
+            LogAssert.Expect(LogType.Warning, SkipWarning(kind));
 
             Assert.That(repository.Initialize(_profile, _catalog), Is.True, repository.LastError);
 
@@ -77,6 +86,41 @@ namespace Tests.EditMode.Stash
                 out var decoded, out var status, out string error), Is.True, error);
             Assert.That(status, Is.EqualTo(LocalProfilePersistenceStatus.Ready));
             Assert.That(error, Is.Null);
+            AssertPreserved(expected, decoded);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [Test]
+        public void Repository_SaveRejectsBadReceiptWithoutWritesOrSnapshotChange()
+        {
+            var files = new LocalProfilePersistenceEditModeTests.MemoryFileStore();
+            var repository = new LocalProfileRepository(files, ".");
+            Assert.That(repository.Initialize(_profile, _catalog), Is.True);
+            Assert.That(repository.TrySave(CreateSnapshot(), out _), Is.True);
+            string before = LocalProfileSaveCodec.Encode(repository.Snapshot);
+            var bytes = new System.Collections.Generic.Dictionary<string, string>(files.Files);
+            int writes = files.WriteCount;
+            var candidate = repository.Snapshot.Clone();
+            candidate.AppliedShopTransactionReceipts.Add(default);
+            Assert.That(repository.TrySave(candidate, out var error), Is.False);
+            Assert.That(error, Is.Not.Empty);
+            Assert.That(LocalProfileSaveCodec.Encode(repository.Snapshot), Is.EqualTo(before));
+            Assert.That(files.Files, Is.EquivalentTo(bytes));
+            Assert.That(files.WriteCount, Is.EqualTo(writes));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [Test]
+        public void Codec_TwoBadReceipts_EmitsOneIndexedReasonPerReceipt()
+        {
+            var expected = CreateSnapshot();
+            var data = JObject.Parse(LocalProfileSaveCodec.Encode(expected));
+            ((JArray)data["appliedShopTransactionReceipts"]).Insert(0, JValue.CreateNull());
+            ((JArray)data["appliedShopTransactionReceipts"]).Insert(1, new JObject { ["transactionId"] = "bad" });
+            LogAssert.Expect(LogType.Warning, "[LocalProfileSaveCodec] Skipping shop transaction receipt at index 0: missing receipt.");
+            LogAssert.Expect(LogType.Warning, "[LocalProfileSaveCodec] Skipping shop transaction receipt at index 1: malformed transaction ID.");
+            Assert.That(LocalProfileSaveCodec.TryDecode(data.ToString(), _profile, _catalog,
+                out var decoded, out _, out var error), Is.True, error);
             AssertPreserved(expected, decoded);
             LogAssert.NoUnexpectedReceived();
         }

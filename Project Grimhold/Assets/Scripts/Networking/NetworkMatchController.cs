@@ -306,7 +306,15 @@ public sealed class NetworkMatchController : NetworkBehaviour
         ClosureState = RaidClosureState.AwaitingPersistence;
         Phase = MatchPhase.Closing;
         PersistenceDeadline = TickTimer.CreateFromSeconds(Runner, DefaultPersistenceTimeoutSeconds);
-        Debug.Log($"[NetworkMatchController] Raid closure started: {reason}. Awaiting persistence with {DefaultPersistenceTimeoutSeconds}s deadline.", this);
+        Debug.Log($"[NetworkMatchController] Raid closure started: {reason}. Awaiting persistence acknowledgements.", this);
+    }
+
+    internal static bool ShouldHoldPersistenceBarrier(bool hasPendingCommits, bool timerRunning,
+        bool timerExpired, out bool armTimer)
+    {
+        // The timer is diagnostic, not permission to discard a reachable peer's commit.
+        armTimer = hasPendingCommits && !timerRunning;
+        return hasPendingCommits;
     }
 
     private void AdvanceClosure()
@@ -321,18 +329,12 @@ public sealed class NetworkMatchController : NetworkBehaviour
 
         if (ClosureState == RaidClosureState.AwaitingPersistence)
         {
-            if (spawnManager.HasPendingExtractionCommits &&
-                PersistenceDeadline.IsRunning &&
-                !PersistenceDeadline.Expired(Runner))
+            if (ShouldHoldPersistenceBarrier(spawnManager.HasPendingExtractionCommits,
+                PersistenceDeadline.IsRunning, PersistenceDeadline.Expired(Runner), out bool armTimer))
             {
+                if (armTimer)
+                    PersistenceDeadline = TickTimer.CreateFromSeconds(Runner, DefaultPersistenceTimeoutSeconds);
                 return;
-            }
-
-            if (spawnManager.HasPendingExtractionCommits)
-            {
-                Debug.LogWarning(
-                    $"[NetworkMatchController] Persistence deadline expired ({DefaultPersistenceTimeoutSeconds}s) while pending extraction commits remain. Proceeding to Cleaning.",
-                    this);
             }
 
             ClosureState = RaidClosureState.Cleaning;
