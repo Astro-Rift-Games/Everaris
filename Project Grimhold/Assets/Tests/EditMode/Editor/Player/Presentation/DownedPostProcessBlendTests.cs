@@ -183,6 +183,29 @@ namespace Tests.EditMode.Player.Presentation
         }
 
         [Test]
+        public void Step_NewDownedCycleDuringFadeOut_StartsFromItsOwnReserveAndCleansReviveColor()
+        {
+            // First cycle: player is downed, reserve depletes, and revive succeeds
+            StepDowned(0f, _config.FadeInSeconds);
+            StepDowned(0f, _config.ReserveResponseSeconds);
+            StepReviving(1f, _config.ReviveResponseSeconds);
+
+            // Downed ends, and fades out only halfway (transition is still ~0.5f > 0f)
+            StepActive(_config.FadeOutSeconds * 0.5f);
+
+            // Second cycle: player is knocked down again with full reserve while still fading out
+            DownedPostProcessFrame next = StepDowned(1f, Frame);
+
+            // Reserve must start from its own 1.0f (clean vignette, no depleted boost)
+            Assert.That(next.VignetteIntensity, Is.EqualTo(_config.VignetteIntensity).Within(1e-4f),
+                "New downed cycle during fade-out must not inherit depleted vignette from previous cycle.");
+
+            // Revive color must reset to clean B/N (-100 saturation, no color recovery from prior revive)
+            Assert.That(next.Saturation, Is.EqualTo(-100f).Within(1e-4f),
+                "New downed cycle during fade-out must reset revive color recovery to full black and white.");
+        }
+
+        [Test]
         public void Reset_ClearsTheEffectImmediately()
         {
             StepDowned(0.2f, _config.FadeInSeconds);
