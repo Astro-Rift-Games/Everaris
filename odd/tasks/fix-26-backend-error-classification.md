@@ -24,6 +24,7 @@ Quoted verbatim from HacknPlan #697.
 | T2 | S3, S5, S6 | worker, TDD: exponential backoff for retryables honoring `Retry-After` / `retryAfter` (captured into `BackendError`), bounded attempts; bounded in-session retry of extraction/defeat commits before the existing retry-at-login (L4) | — |
 | T3 | S1, S3, S6 | worker, TDD: Spanish messages per class/code; commit failures shown in the raid menu/Results status text (L4); login `TOO_MANY_REQUESTS` text | — |
 | T5 | S2, S3, S5, S6 | worker, TDD: verify follow-up B1 opt-in revision-conflict retry for the five server-re-read operations, B2 bounded wait hint, B3 Results keeps local + backend text; A1, A2, A4, A5, A7, A8 (L13) — done (manual in T4) | `db75c46e` |
+| T6 | S3, S5 | worker, TDD: verify L18 probes P1 (transport -> REVISION_CONFLICT -> success with opt-in) and P2 (wait budget boundary), singular "1 minuto" wording | — |
 | T4 | S6 | human: manual Host + Client validation with logs | — |
 
 ## Log
@@ -93,3 +94,4 @@ Quoted verbatim from HacknPlan #697.
   - Aggregate using final counts: 356 total, 353 passed, 3 known baseline failures; zero skipped/inconclusive. No new scratch or tool-cache paths appear in `git status --short`.
 
 - **L17** (remaining boundaries): T5 automated implementation covers S2/S3/S5 and the automated portion of S6. T4 manual Host + Client evidence remains required and unperformed; S6 is not fully closed. A3 (receipt-keyed retransmission guard) and A6 (cancellation of new waits) remain follow-ups, unchanged in this pass. No runtime visual/multiplayer validation or backend rollout is claimed.
+- **L18** (independent verify of `db75c46e` with FIX-22 `af6f0679`): no blocking defects; B1, B2, B3, A1, A2, A4, A5, A7, A8 met; S2, S3, S5 met; S6 automated met, manual T4 pending. Unity CLI (7801): `BackendRetryScheduleTests` 21/21, `BackendHttpErrorTests` 13/13, `BackendErrorMessagesTests` 27/27, `BackendErrorClassifierTests` 32/32, `RaidMenuPresenterTests` 55/55, `RemoteCommitRetryTests` 28/28, `RemoteIdempotentRetryPolicyTests` 15/15. Advisories: no test runs transport -> conflict -> success (probe P1); 60-119 s reads "Espera 1 minutos"; terminal extraction failure is replayed at every login without resolving (pre-existing); A3/A6 still open. T6 opened for P1, P2 (wait budget boundary) and the singular wording.
