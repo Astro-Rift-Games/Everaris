@@ -480,9 +480,11 @@ public sealed class TownRaidPreparationView : MonoBehaviour
     public void ShowTransitionFailure(SessionTransitionResult result)
     {
         SetBusy(false);
-        string message = result == SessionTransitionResult.ConnectionFailed
-            ? "No se pudo conectar a la expedición: la raid ya no está disponible o ha finalizado."
-            : $"No se pudo conectar a la raid: {result}.";
+        if (!SessionTransitionFailureText.TryGetMessage(result, out string message))
+        {
+            return;
+        }
+
         ShowStatus(message);
     }
 

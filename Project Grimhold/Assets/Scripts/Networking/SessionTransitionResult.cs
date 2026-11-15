@@ -9,5 +9,6 @@ public enum SessionTransitionResult
     RecoveryFailed,
     LoadoutReservationFailed,
     LoadoutRollbackFailed,
-    LoadoutConfirmationFailed
+    LoadoutConfirmationFailed,
+    ServiceUnavailable
 }
