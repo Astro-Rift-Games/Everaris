@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { spawn, execFileSync } = require('child_process');
+const { spawn } = require('child_process');
 const readline = require('readline');
 
 /**
@@ -197,95 +197,120 @@ function scanDirectory(dir, rootDir = dir) {
   return allFindings;
 }
 
-// Pure parser shared by the CLI history scan and synthetic regression fixtures.
-function scanHistoryOutput(diffOutput) {
+// Shared parser: optional state lets the CLI consume history one line at a time,
+// without buffering the complete repository history in memory.
+function scanHistoryOutput(diffOutput, state = { commit: 'unknown', file: '<git-history>', line: 1 }) {
   const findings = [];
-  let currentCommit = 'unknown';
-  let currentFile = '<git-history>';
   for (const line of diffOutput.split('\n')) {
     if (line.startsWith('commit ')) {
-      currentCommit = line.slice(7, 15);
+      state.commit = line.slice(7, 15);
     } else if (line.startsWith('+++ b/')) {
-      currentFile = line.slice(6).trim();
+      state.file = line.slice(6).trim();
+      state.line = 1;
+    } else if (line.startsWith('@@ ')) {
+      const hunk = line.match(/^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
+      if (hunk) state.line = Number(hunk[1]);
     } else if (line.startsWith('+') && !line.startsWith('+++')) {
-      if (IGNORED_LOCAL_FILES.has(path.basename(currentFile)) || currentFile.split(/[/\\]/).some(p => IGNORED_DIRS.has(p))) continue;
-      findings.push(...scanContent(line.slice(1), `git:${currentCommit}:${currentFile}`));
+      const ignored = IGNORED_LOCAL_FILES.has(path.basename(state.file)) ||
+        IGNORED_EXTENSIONS.has(path.extname(state.file).toLowerCase()) ||
+        state.file.split(/[/\\]/).some(p => IGNORED_DIRS.has(p));
+      if (!ignored) {
+        for (const finding of scanContent(line.slice(1), `git:${state.commit}:${state.file}`)) {
+          findings.push({ ...finding, line: state.line });
+        }
+      }
+      state.line++;
+    } else if (line.startsWith(' ')) {
+      state.line++;
     }
   }
   return findings;
 }
 
-function scanGitHistory(rootDir) {
-  return new Promise((resolve) => {
+function scanGitHistory(rootDir, spawnGit = spawn) {
+  return new Promise((resolve, reject) => {
     const findings = [];
     let git;
     try {
-      git = spawn('git', ['log', '--all', '-p', '-U0'], { cwd: rootDir });
+      git = spawnGit('git', ['log', '--all', '-p', '-U0'], { cwd: rootDir });
     } catch (err) {
-      return resolve(findings);
+      reject(new Error('could not start git log'));
+      return;
     }
 
-    git.on('error', () => {
-      resolve(findings);
-    });
+    // Drain stderr without retaining or printing potentially sensitive Git output.
+    let hasStderr = false;
+    git.stderr.on('data', () => { hasStderr = true; });
+    git.on('error', () => reject(new Error('could not start git log')));
+    git.stdout.on('error', () => reject(new Error('could not read git log stdout')));
+    git.stderr.on('error', () => reject(new Error('could not read git log stderr')));
 
     const rl = readline.createInterface({ input: git.stdout });
-    let currentCommit = 'unknown';
-    let currentFile = '<git-history>';
-
-    rl.on('line', (line) => {
-      if (line.startsWith('commit ')) {
-        currentCommit = line.slice(7, 15);
-      } else if (line.startsWith('+++ b/')) {
-        currentFile = line.slice(6).trim();
-      } else if (line.startsWith('+') && !line.startsWith('+++')) {
-        if (IGNORED_LOCAL_FILES.has(path.basename(currentFile)) || currentFile.split(/[/\\]/).some(p => IGNORED_DIRS.has(p))) return;
-        const lineFindings = scanContent(line.slice(1), `git:${currentCommit}:${currentFile}`);
-        for (const f of lineFindings) {
-          findings.push(f);
-        }
-      }
+    const state = { commit: 'unknown', file: '<git-history>', line: 1 };
+    rl.on('error', () => reject(new Error('could not read git log stdout')));
+    rl.on('line', line => {
+      findings.push(...scanHistoryOutput(line, state));
     });
 
-    rl.on('close', () => {
-      resolve(findings);
+    // stdout/Readline can close before Git reports a failure. Only process close
+    // proves all streams have finished and supplies the authoritative exit code.
+    git.on('close', (code, signal) => {
+      if (signal) {
+        reject(new Error(`git log terminated by signal ${signal}`));
+      } else if (code !== 0) {
+        const diagnostic = hasStderr ? ' (stderr received; contents withheld)' : '';
+        reject(new Error(`git log exited with code ${code}${diagnostic}`));
+      } else {
+        resolve(findings);
+      }
     });
   });
 }
 
-async function runCli() {
-  const targetDir = process.argv[2] ? path.resolve(process.argv[2]) : path.resolve(__dirname, '../..');
-  console.log(`[SecretScanner] Scanning directory (up to 25 MB per file, including Unity YAML assets): ${targetDir}`);
+async function runCli(
+  targetDir = process.argv[2] ? path.resolve(process.argv[2]) : path.resolve(__dirname, '../..'),
+  { scanHistory = scanGitHistory, log = console.log, error = console.error } = {}
+) {
+  log(`[SecretScanner] Scanning directory (up to 25 MB per file, including Unity YAML assets): ${targetDir}`);
 
   const worktreeFindings = scanDirectory(targetDir);
-  console.log('[SecretScanner] Scanning complete repository Git history...');
-  const historyFindings = await scanGitHistory(targetDir);
+  log('[SecretScanner] Scanning complete repository Git history...');
+  let historyFindings;
+  try {
+    historyFindings = await scanHistory(targetDir);
+  } catch (err) {
+    error(`[SecretScanner] [ERROR] Git history scan failed: ${err.message}. Scan incomplete.`);
+    return 1;
+  }
   const allFindings = worktreeFindings.concat(historyFindings);
 
   const realSecrets = allFindings.filter(f => f.type !== 'KNOWN_DEV_SECRET');
   const devSecrets = allFindings.filter(f => f.type === 'KNOWN_DEV_SECRET');
 
   if (devSecrets.length > 0) {
-    console.log(`[SecretScanner] [INFO] Detected ${devSecrets.length} classified known development secret/marker(s) (redacted):`);
+    log(`[SecretScanner] [INFO] Detected ${devSecrets.length} classified known development secret/marker(s) (redacted):`);
     for (const finding of devSecrets) {
-      console.log(`  - ${finding.file}:${finding.line} | [${finding.type}] Value: ${finding.redactedValue}`);
+      log(`  - ${finding.file}:${finding.line} | [${finding.type}] Value: ${finding.redactedValue}`);
     }
   }
 
   if (realSecrets.length === 0) {
-    console.log('[SecretScanner] Scan complete: No exposed credentials, OAuth secrets, or private keys detected in working tree or Git history.');
-    process.exit(0);
+    log('[SecretScanner] Scan complete: No exposed credentials, OAuth secrets, or private keys detected in working tree or Git history.');
+    return 0;
   } else {
-    console.error(`[SecretScanner] [ALERT] Detected ${realSecrets.length} critical potential secret(s):`);
+    error(`[SecretScanner] [ALERT] Detected ${realSecrets.length} critical potential secret(s):`);
     for (const finding of realSecrets) {
-      console.error(`  - ${finding.file}:${finding.line} | [${finding.type}] Value: ${finding.redactedValue}`);
+      error(`  - ${finding.file}:${finding.line} | [${finding.type}] Value: ${finding.redactedValue}`);
     }
-    process.exit(1);
+    return 1;
   }
 }
 
 if (require.main === module) {
-  runCli();
+  runCli().then(code => { process.exitCode = code; }).catch(() => {
+    console.error('[SecretScanner] [ERROR] Scan failed. Scan incomplete.');
+    process.exitCode = 1;
+  });
 }
 
 module.exports = {
@@ -293,6 +318,7 @@ module.exports = {
   scanDirectory,
   scanGitHistory,
   scanHistoryOutput,
+  runCli,
   redact,
   SECRET_PATTERNS
 };
