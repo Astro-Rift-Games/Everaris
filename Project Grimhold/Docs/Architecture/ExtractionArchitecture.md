@@ -424,17 +424,24 @@ Any alteration of items, amounts, equipment slots, XP, recipient identity, or ra
 ### Defeat commit validation
 
 The published payload has no explicit outcome field. A result is defeat-compatible only when
-`items` is empty and every `preparedEquipment` slot is absent, null or empty; equipment-only
+`items` is empty and every `preparedEquipment` slot is absent, null, `''`, the legacy string
+`'null'` or an empty object `{}`; equipment-only
 results are extractions, not defeats. An entirely empty extraction is indistinguishable from
 defeat under this existing wire contract. Defeat commits reject incompatible ownership or a
 sequence mismatch with `422 NO_AUTHORITATIVE_RESULT`, without consuming the result.
 The backend stores the producer's positive safe-integer `resultSequence`; for older results it
-can recover that sequence from the generated `<raidId>:<recipientId>:<sequence>` result ID.
+can recover that sequence from Unity's generated `<raidId>:<characterId>:<sequence>` result ID
+(or a legacy account recipient). After the exact `<raidId>:` prefix, any single non-empty recipient
+segment is accepted, followed by a canonical positive safe-integer sequence; the result does not
+persist `characterId`, so recovery does not compare that segment to the account ID.
 A result with neither source fails closed; the commit caller never supplies the persisted sequence.
 Existing receipt replay and already-consumed/reservation-credit errors retain their precedence.
-Defeat writes are guarded by the character's read `revision` and increment it once. A lost race
-releases the result claim and returns the existing `409 CONCURRENT_MUTATION` for retry, preserving
-concurrent attribute or progression changes.
+Defeat writes are guarded by the character's read `revision` and increment it once. On a lost
+revision race the server holds the result claim, re-reads the character, revalidates reservation
+credit and recomputes progression and reservation clearing, for at most three write attempts.
+This preserves concurrent attribute or progression changes without requiring a client retry.
+Exhausted races release the result claim and return the existing `409 CONCURRENT_MUTATION`;
+failed non-revision guards are not retried. Duplicate requests cannot credit the held result twice.
 
 ### Immutability, Single Consumption, and Anti-Replay Invariants
 1. **Atomic Consumption Lock**: An `AuthoritativeExtractionResult` can only be consumed once. `ExtractionCommitService` acquires an atomic conditional lock (`findOneAndUpdate({ _id, consumed: { $ne: true } }, { $set: { consumed: true } })`).

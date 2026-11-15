@@ -110,28 +110,32 @@ test('DefeatCommitService.commit', async (t) => {
     };
   });
 
-  await t.test('concurrent attribute spend survives stale defeat commit and releases claim', async () => {
+  await t.test('three lost revision races preserve competing spends and release the claim', async () => {
     const stored = makeCharacter();
     const plain = char => structuredClone({ ...char, markModified: undefined, save: undefined });
-    const snapshot = plain(stored);
-    let reads = 0;
+    let writes = 0;
     let consumed = false;
-    Character.findOne = async () => ++reads === 1 ? snapshot : stored;
+    Character.findOne = async () => plain(stored);
     AuthoritativeExtractionResult.findOneAndUpdate = async (_query, update) => {
       consumed = update.$set.consumed;
-      if (consumed) {
-        stored.characterAttributes.availablePoints--;
-        stored.characterAttributes.strength++;
-        stored.revision++;
-      }
       return { consumed };
     };
+    Character.findOneAndUpdate = async query => {
+      assert.equal(consumed, true, 'claim stays held across retries');
+      assert.equal(query.revision, stored.revision);
+      writes++;
+      stored.characterAttributes.availablePoints--;
+      stored.characterAttributes.strength++;
+      stored.revision++;
+      return null;
+    };
     const before = plain(stored);
-    before.characterAttributes.availablePoints--;
-    before.characterAttributes.strength++;
-    before.revision++;
     await assert.rejects(DefeatCommitService.commit('acc123', { raidId: 'raid-1', resultSequence: 1 }),
       err => err.statusCode === 409 && err.errorCode === 'CONCURRENT_MUTATION');
+    assert.equal(writes, 3);
+    before.characterAttributes.availablePoints -= 3;
+    before.characterAttributes.strength += 3;
+    before.revision += 3;
     assert.deepEqual(plain(stored), before);
     assert.equal(consumed, false);
   });

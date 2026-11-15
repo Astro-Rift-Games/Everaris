@@ -512,8 +512,10 @@ started" marker, so a refund window from `admittedAt` would be self-attested; it
 follow-up (FIX-53 does not implement it) and needs backend and Game Design approval. A loss clear or a replacement while an unconsumed
 `AuthoritativeExtractionResult` with non-empty `items` or any non-empty `preparedEquipment` slot
 targets the character returns `409 EXTRACTION_RESULT_PENDING`, so extracted loot, including
-equipment-only results, is never discarded. Empty ownership is defeat-compatible under the
-current publish contract and does not block loss-clear or subsequent defeat XP credit. On login, an admitted reservation without a local pending
+equipment-only results, is never discarded. Empty slots are absent, null, `''`, the legacy string
+`'null'` or an empty object `{}` in both defeat validation and the loss-clear database filter.
+Empty ownership is defeat-compatible under the current publish contract and does not block
+loss-clear or subsequent defeat XP credit. On login, an admitted reservation without a local pending
 extraction commit is discarded locally without restoring items and cleared on the backend as a loss;
 a pending extraction commit keeps its retry path. Previously admission deleted the backend
 reservation, which made every player-hosted extraction publish fail with `NO_ACTIVE_RESERVATION`

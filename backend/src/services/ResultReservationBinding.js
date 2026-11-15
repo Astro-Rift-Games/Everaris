@@ -13,23 +13,25 @@ const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
 function isDefeatResult(result) {
   return !(result.items?.length) && !EQUIPMENT_SLOTS.some(slot => {
     const value = result.preparedEquipment?.[slot];
-    return value !== undefined && value !== null && value !== '';
+    return value !== undefined && value !== null && value !== '' && value !== 'null' &&
+      !(typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0);
   });
 }
 
 function publishedResultSequence(result) {
   if (Number.isSafeInteger(result.resultSequence) && result.resultSequence > 0) return result.resultSequence;
   // Pre-existing results encode the published sequence in the generated result ID.
-  const prefix = `${result.raidId}:${result.characterId || result.accountId}:`;
-  const suffix = result.resultId?.startsWith(prefix) ? result.resultId.slice(prefix.length) : '';
-  const sequence = /^[1-9]\d*$/.test(suffix) ? Number(suffix) : NaN;
+  const prefix = `${result.raidId}:`;
+  const remainder = result.resultId?.startsWith(prefix) ? result.resultId.slice(prefix.length) : '';
+  const match = /^[^:]+:([1-9]\d*)$/.exec(remainder);
+  const sequence = match ? Number(match[1]) : NaN;
   return Number.isSafeInteger(sequence) ? sequence : null;
 }
 
 function pendingLootResultFilter() {
   return { $or: [
     { 'items.0': { $exists: true } },
-    ...EQUIPMENT_SLOTS.map(slot => ({ [`preparedEquipment.${slot}`]: { $exists: true, $nin: [null, ''] } })),
+    ...EQUIPMENT_SLOTS.map(slot => ({ [`preparedEquipment.${slot}`]: { $exists: true, $nin: [null, '', 'null', {}] } })),
   ] };
 }
 

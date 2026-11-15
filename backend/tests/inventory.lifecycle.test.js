@@ -104,7 +104,7 @@ test('reservation admission and loss lifecycle', async t => {
       // Results bind to the character's accountId, not its character _id or reservationId.
       assert.deepEqual(query, { accountId: 'account', consumed: { $ne: true }, $or: [
         { 'items.0': { $exists: true } },
-        ...EQUIPMENT_SLOTS.map(slot => ({ [`preparedEquipment.${slot}`]: { $exists: true, $nin: [null, ''] } }))
+        ...EQUIPMENT_SLOTS.map(slot => ({ [`preparedEquipment.${slot}`]: { $exists: true, $nin: [null, '', 'null', {}] } }))
       ] });
       return results.find(result => result.accountId === query.accountId && result.consumed !== true &&
         (result.items?.length > 0 || EQUIPMENT_SLOTS.some(slot => result.preparedEquipment?.[slot]))) || null;

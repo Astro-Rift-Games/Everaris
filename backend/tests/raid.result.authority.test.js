@@ -18,7 +18,8 @@ const DefeatCommitService = require('../src/services/DefeatCommitService');
 const InventoryService = require('../src/services/InventoryService');
 const { buildCanonicalResultString } = require('../src/utils/raidResultCanonicalizer');
 const { createEquipment } = require('../src/services/ItemInstances');
-const { computeLevelAndExperience } = require('../src/config/progressionBalance');
+const { computeLevelAndExperience, computeAttributePointsGranted } = require('../src/config/progressionBalance');
+const { EQUIPMENT_SLOTS } = require('../src/config/equipmentSlots');
 
 const RAID_CODE = '482913';
 const RAID_ID = `raid-${RAID_CODE}`;
@@ -129,20 +130,99 @@ describe('FIX-18 authoritative result validation', () => {
         return result;
       };
       try {
-        const error = await rejection(DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 }));
-        assert.equal(error.statusCode, 409);
-        assert.equal(error.errorCode, 'CONCURRENT_MUTATION');
-        assert.deepEqual(await stored(raider.accountId), spent);
-        assert.equal((await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID })).consumed, false);
+        const result = await DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 });
+        assert.equal(result.alreadySecured, false);
+        assert.equal((await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID })).consumed, true);
       } finally {
         AuthoritativeExtractionResult.findOneAndUpdate = original;
       }
-      await DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 });
       const committed = await stored(raider.accountId);
       assert.equal(committed.characterAttributes.strength, spent.characterAttributes.strength);
+      assert.equal(committed.characterAttributes.availablePoints, spent.characterAttributes.availablePoints +
+        computeAttributePointsGranted(spent.level, committed.level));
       assert.equal(committed.revision, spent.revision + 1);
       assert.deepEqual(progressionOf(committed), progressed(spent, 80));
+      assert.equal(committed.appliedProgressionReceipts.length, 1);
     });
+
+    test('concurrent duplicate defeat commits credit once while retrying a revision race', async () => {
+      const raider = await createRaider('duplicates', { raidId: RAID_ID });
+      await RaidResultService.publishHostResult(raider.accountId, { raidId: RAID_ID, resultSequence: 1,
+        items: [], experienceGranted: 80 });
+      const before = await stored(raider.accountId);
+      const original = Character.findOneAndUpdate;
+      let raced = false;
+      Character.findOneAndUpdate = async function(query, update, options) {
+        if (query.accountId === raider.accountId && update.$set?.lastProgressionReceipt && !raced) {
+          raced = true;
+          await Character.updateOne({ accountId: raider.accountId }, { $inc: { revision: 1, 'characterAttributes.strength': 1 } });
+        }
+        return original.call(this, query, update, options);
+      };
+      let outcomes;
+      try {
+        outcomes = await Promise.allSettled([1, 2].map(() =>
+          DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 })));
+      } finally {
+        Character.findOneAndUpdate = original;
+      }
+      assert.equal(outcomes.filter(o => o.status === 'fulfilled' && !o.value.alreadySecured).length, 1);
+      for (const outcome of outcomes) {
+        if (outcome.status === 'rejected') {
+          assert.equal(outcome.reason.statusCode, 409);
+          assert.equal(outcome.reason.errorCode, 'RESULT_ALREADY_CONSUMED');
+        }
+      }
+      const committed = await stored(raider.accountId);
+      assert.deepEqual(progressionOf(committed), progressed(before, 80));
+      assert.equal(committed.revision, before.revision + 2);
+      assert.equal(committed.characterAttributes.strength, before.characterAttributes.strength + 1);
+      assert.equal(committed.appliedProgressionReceipts.length, 1);
+      assert.equal((await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID })).consumed, true);
+      assert.equal((await DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 })).alreadySecured, true);
+      assert.deepEqual(await stored(raider.accountId), committed);
+    });
+
+    // Insert legacy persisted results directly: the current producer normalizes equipment.
+    for (const empty of [{}, 'null']) {
+      test(`real Mongo empty slots ${JSON.stringify(empty)} allow loss clear and defeat credit`, async () => {
+        const raider = await createRaider('emptySlots', { raidId: RAID_ID });
+        await AuthoritativeExtractionResult.collection.insertOne({ raidId: RAID_ID, accountId: raider.accountId,
+          resultId: `${RAID_ID}:${raider.characterId}:1`, items: [], experienceGranted: 80, consumed: false,
+          preparedEquipment: Object.fromEntries(EQUIPMENT_SLOTS.map(slot => [slot, empty])) });
+        await InventoryService.clearPendingReservation(raider.accountId);
+        const cleared = await stored(raider.accountId);
+        assert.equal(cleared.inventory.pendingReservation, null);
+        assert.equal(cleared.revision, raider.character.revision + 1);
+        assert.equal((await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID })).consumed, false);
+        const committed = await DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 });
+        assert.equal(committed.alreadySecured, false);
+        const after = await stored(raider.accountId);
+        assert.deepEqual(progressionOf(after), progressed(cleared, 80));
+        assert.equal(after.revision, cleared.revision + 1);
+        assert.equal(after.appliedProgressionReceipts.length, 1);
+        assert.equal((await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID })).consumed, true);
+      });
+    }
+
+    for (const slot of EQUIPMENT_SLOTS) {
+      test(`real Mongo legacy string ownership in ${slot} blocks loss clear and defeat`, async () => {
+        const raider = await createRaider('legacySlot', { raidId: RAID_ID });
+        await AuthoritativeExtractionResult.collection.insertOne({ raidId: RAID_ID, accountId: raider.accountId,
+          resultId: `${RAID_ID}:${raider.characterId}:1`, resultSequence: 1, items: [], experienceGranted: 80,
+          consumed: false, preparedEquipment: { [slot]: 'arming_sword' } });
+        const before = await stored(raider.accountId);
+        const resultBefore = await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID }).lean();
+        const lossError = await rejection(InventoryService.clearPendingReservation(raider.accountId));
+        assert.equal(lossError.statusCode, 409);
+        assert.equal(lossError.errorCode, 'EXTRACTION_RESULT_PENDING');
+        const defeatError = await rejection(DefeatCommitService.commit(raider.accountId, { raidId: RAID_ID, resultSequence: 1 }));
+        assert.equal(defeatError.statusCode, 422);
+        assert.equal(defeatError.errorCode, 'NO_AUTHORITATIVE_RESULT');
+        assert.deepEqual(await stored(raider.accountId), before);
+        assert.deepEqual(await AuthoritativeExtractionResult.findOne({ raidId: RAID_ID }).lean(), resultBefore);
+      });
+    }
 
     test('published defeat sequence is stored and cannot be replaced by the commit caller', async () => {
       const raider = await createRaider('sequence', { raidId: RAID_ID });

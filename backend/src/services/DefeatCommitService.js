@@ -21,6 +21,7 @@ const {
 } = require('../config/progressionBalance');
 
 const MAX_PROGRESSION_RECEIPTS = 256;
+const MAX_COMMIT_ATTEMPTS = 3;
 
 function serializeAttributes(attrs) {
   if (!attrs) {
@@ -81,7 +82,7 @@ class DefeatCommitService {
     // ------------------------------------------------------------------
     // 2. Pre-fetch character and enforce single consumption
     // ------------------------------------------------------------------
-    const character = await Character.findOne({ accountId });
+    let character = await Character.findOne({ accountId });
     if (!character) {
       throw {
         statusCode: 404,
@@ -176,109 +177,92 @@ class DefeatCommitService {
       };
     }
 
-    // ------------------------------------------------------------------
-    // 4. Compute new progression states in memory
-    // ------------------------------------------------------------------
-    const experienceToGrant = Math.max(0, Number(authResult.experienceGranted || 0));
-    const computed = computeLevelAndExperience(
-      character.level,
-      character.experience,
-      experienceToGrant
-    );
-    const pointsGranted = computeAttributePointsGranted(character.level, computed.resultingLevel);
-    const newAvailablePoints = (character.characterAttributes?.availablePoints || 0) + pointsGranted;
-
-    const progressionReceipt = {
-      ...(authResult.reservationId ? { reservationId: authResult.reservationId } : {}),
-      raidId,
-      resultSequence: authoritativeSequence,
-      consolidatedExperience: experienceToGrant,
-      resultingLevel: computed.resultingLevel,
-    };
-
-    // ------------------------------------------------------------------
-    // 5. Atomic Database Update on Character
-    // ------------------------------------------------------------------
-    // A defeat consumes only the reservation it was played with; a later launch keeps its items.
-    // A bound result names it exactly (admission is fire-and-forget, so admittedAt may be missing).
-    // An unbound (signed/legacy) result only clears an admitted reservation of the same raid, or
-    // of no recorded raid.
-    const pendingReservation = character.inventory?.pendingReservation;
-    const clearsReservation = Boolean(pendingReservation) && (authResult.reservationId
-      ? pendingReservation.reservationId === authResult.reservationId
-      : Boolean(pendingReservation.admittedAt) && (!pendingReservation.raidId || pendingReservation.raidId === raidId));
-    const updateDoc = {
-      ...(clearsReservation ? { $unset: { 'inventory.pendingReservation': 1 } } : {}),
-      $set: {
-        level: computed.resultingLevel,
-        experience: computed.resultingExperience,
-        'characterAttributes.availablePoints': newAvailablePoints,
-        lastAppliedProgressionResultSequence: authoritativeSequence,
-        lastProgressionReceipt: progressionReceipt
-      },
-      $inc: { revision: 1 },
-      $push: {
-        appliedProgressionReceipts: {
-          $each: [progressionReceipt],
-          $slice: -MAX_PROGRESSION_RECEIPTS
-        }
-      }
-    };
-
-    const characterFilter = {
-      accountId,
-      revision: character.revision,
-      ...(clearsReservation ? { 'inventory.pendingReservation.reservationId': pendingReservation.reservationId } : {}),
-      ...uncreditedResultReservationFilter(authResult),
-      appliedProgressionReceipts: {
-        $not: {
-          $elemMatch: { raidId, resultSequence }
-        }
-      }
-    };
-
-    const updatedCharacter = await Character.findOneAndUpdate(
-      characterFilter,
-      updateDoc,
-      { new: true }
-    );
-
-    if (!updatedCharacter) {
-      const refreshedChar = await Character.findOne({ accountId });
-      const alreadyApplied = (refreshedChar?.appliedProgressionReceipts || []).some(
-        r => r.raidId === raidId && r.resultSequence === resultSequence
-      );
-
-      if (alreadyApplied) {
-        return {
-          alreadySecured: true,
-          level: refreshedChar.level,
-          experience: refreshedChar.experience,
-          characterAttributes: serializeAttributes(refreshedChar.characterAttributes),
-          revision: refreshedChar.revision || 0
+    // Keep this request's result claim held across bounded revision retries.
+    // Recompute every derived field and reservation decision from the latest character.
+    let secured = false;
+    try {
+      for (let attempt = 0; attempt < MAX_COMMIT_ATTEMPTS; attempt++) {
+        requireMigratedInventory(character);
+        requireUncreditedResultReservation(character, authResult);
+        const experienceToGrant = Math.max(0, Number(authResult.experienceGranted || 0));
+        const computed = computeLevelAndExperience(character.level, character.experience, experienceToGrant);
+        const pointsGranted = computeAttributePointsGranted(character.level, computed.resultingLevel);
+        const newAvailablePoints = (character.characterAttributes?.availablePoints || 0) + pointsGranted;
+        const progressionReceipt = {
+          ...(authResult.reservationId ? { reservationId: authResult.reservationId } : {}),
+          raidId,
+          resultSequence: authoritativeSequence,
+          consolidatedExperience: experienceToGrant,
+          resultingLevel: computed.resultingLevel,
         };
+
+        // Only this result's reservation may be cleared; preserve later launches.
+        // Unbound legacy results may clear only an admitted reservation of this raid (or no raid).
+        const pendingReservation = character.inventory?.pendingReservation;
+        const clearsReservation = Boolean(pendingReservation) && (authResult.reservationId
+          ? pendingReservation.reservationId === authResult.reservationId
+          : Boolean(pendingReservation.admittedAt) && (!pendingReservation.raidId || pendingReservation.raidId === raidId));
+        const updatedCharacter = await Character.findOneAndUpdate({
+          accountId,
+          revision: character.revision,
+          ...(clearsReservation ? { 'inventory.pendingReservation.reservationId': pendingReservation.reservationId } : {}),
+          ...uncreditedResultReservationFilter(authResult),
+          appliedProgressionReceipts: { $not: { $elemMatch: { raidId, resultSequence } } }
+        }, {
+          ...(clearsReservation ? { $unset: { 'inventory.pendingReservation': 1 } } : {}),
+          $set: {
+            level: computed.resultingLevel,
+            experience: computed.resultingExperience,
+            'characterAttributes.availablePoints': newAvailablePoints,
+            lastAppliedProgressionResultSequence: authoritativeSequence,
+            lastProgressionReceipt: progressionReceipt
+          },
+          $inc: { revision: 1 },
+          $push: { appliedProgressionReceipts: { $each: [progressionReceipt], $slice: -MAX_PROGRESSION_RECEIPTS } }
+        }, { new: true });
+
+        if (updatedCharacter) {
+          secured = true;
+          return {
+            alreadySecured: false,
+            level: updatedCharacter.level,
+            experience: updatedCharacter.experience,
+            characterAttributes: serializeAttributes(updatedCharacter.characterAttributes),
+            revision: updatedCharacter.revision
+          };
+        }
+
+        const refreshedChar = await Character.findOne({ accountId });
+        const alreadyApplied = (refreshedChar?.appliedProgressionReceipts || []).some(
+          r => r.raidId === raidId && r.resultSequence === resultSequence
+        );
+        if (alreadyApplied) {
+          secured = true;
+          return {
+            alreadySecured: true,
+            level: refreshedChar.level,
+            experience: refreshedChar.experience,
+            characterAttributes: serializeAttributes(refreshedChar.characterAttributes),
+            revision: refreshedChar.revision || 0
+          };
+        }
+        // Retry only a lost revision race, never an unrelated failed guard.
+        if (!refreshedChar || refreshedChar.revision === character.revision) break;
+        character = refreshedChar;
       }
-
-      // Roll back lock on unexpected conflict so client can retry cleanly
-      await AuthoritativeExtractionResult.findOneAndUpdate(
-        { ...authQuery, consumed: true },
-        { $set: { consumed: false, consumedAt: null } }
-      );
-
       throw {
         statusCode: 409,
         errorCode: 'CONCURRENT_MUTATION',
         message: 'Could not commit defeat progression due to a concurrent update. Please retry.',
       };
+    } finally {
+      if (!secured) {
+        await AuthoritativeExtractionResult.findOneAndUpdate(
+          { ...authQuery, consumed: true },
+          { $set: { consumed: false, consumedAt: null } }
+        );
+      }
     }
-
-    return {
-      alreadySecured: false,
-      level: updatedCharacter.level,
-      experience: updatedCharacter.experience,
-      characterAttributes: serializeAttributes(updatedCharacter.characterAttributes),
-      revision: updatedCharacter.revision
-    };
   }
 }
 
