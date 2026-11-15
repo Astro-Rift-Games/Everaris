@@ -108,6 +108,31 @@ public class RemoteIdempotentRetryPolicyTests
         Assert.That(delays, Is.EqualTo(new[] { 0 }));
     }
 
+    [TestCase(true, true, 3)]
+    [TestCase(false, false, 2)]
+    public async Task TransportThenRevisionConflict_OptInSucceedsOnThirdAttempt(bool optIn, bool expectSuccess, int expectedAttempts)
+    {
+        int attempts = 0, delays = 0;
+        RemoteIdempotentRetryPolicy.DelayAsync = _ => { delays++; return Task.CompletedTask; };
+        var codes = new[] { "TIMEOUT", "REVISION_CONFLICT" };
+        var outcome = await RemoteIdempotentRetryPolicy.ExecuteWithRetryAsync(() =>
+        {
+            int i = attempts++;
+            return Task.FromResult(i < codes.Length
+                ? (false, 0, new BackendError { error = codes[i] })
+                : (true, 1, default(BackendError)));
+        }, retryRevisionConflict: optIn);
+        Assert.That(outcome.success, Is.EqualTo(expectSuccess));
+        Assert.That(attempts, Is.EqualTo(expectedAttempts));
+        Assert.That(delays, Is.EqualTo(expectedAttempts - 1));
+        if (expectSuccess)
+        {
+            Assert.That(outcome.result, Is.EqualTo(1));
+            Assert.That(outcome.error.error, Is.Null.Or.Empty);
+        }
+        else Assert.That(outcome.error.error, Is.EqualTo("REVISION_CONFLICT"));
+    }
+
     [TestCase("TOO_MANY_REQUESTS")]
     [TestCase("CONCURRENT_MUTATION")]
     [TestCase("EXTRACTION_RESULT_PENDING")]

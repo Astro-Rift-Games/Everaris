@@ -12,7 +12,7 @@ namespace Grimhold.Backend
                 case "TOO_MANY_REQUESTS":
                     return error.retryAfter > 0 && !float.IsInfinity(error.retryAfter)
                         ? error.retryAfter >= 60
-                            ? $"Demasiadas solicitudes. Espera {System.Math.Ceiling(error.retryAfter / 60d):0} minutos antes de volver a intentarlo."
+                            ? $"Demasiadas solicitudes. Espera {System.Math.Ceiling(error.retryAfter / 60d):0} {(System.Math.Ceiling(error.retryAfter / 60d) == 1 ? "minuto" : "minutos")} antes de volver a intentarlo."
                             : $"Demasiadas solicitudes. Espera {System.Math.Ceiling(error.retryAfter):0} segundos antes de volver a intentarlo."
                         : "Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.";
                 case "EXTRACTION_RESULT_PENDING":

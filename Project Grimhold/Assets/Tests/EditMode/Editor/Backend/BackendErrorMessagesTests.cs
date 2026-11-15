@@ -59,13 +59,13 @@ public sealed class BackendErrorMessagesTests
         finally { UnityEngine.Object.DestroyImmediate(holder); }
     }
 
-    [TestCase(60f, "1")]
-    [TestCase(61f, "2")]
-    [TestCase(900f, "15")]
-    public void RateLimit_LongWaitUsesMinutes(float seconds, string minutes)
+    [TestCase(60f, "1 minuto")]
+    [TestCase(61f, "2 minutos")]
+    [TestCase(900f, "15 minutos")]
+    public void RateLimit_LongWaitUsesMinutes(float seconds, string wait)
     {
         Assert.That(BackendErrorMessages.ForError(new BackendError { error = "TOO_MANY_REQUESTS", retryAfter = seconds }),
-            Is.EqualTo($"Demasiadas solicitudes. Espera {minutes} minutos antes de volver a intentarlo."));
+            Is.EqualTo($"Demasiadas solicitudes. Espera {wait} antes de volver a intentarlo."));
     }
 
     [TestCase(true)]
