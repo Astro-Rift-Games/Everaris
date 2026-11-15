@@ -22,7 +22,7 @@ Quoted verbatim from HacknPlan #692.
 | T1 | S1, S2, S4, S6 | worker, TDD (node): unique indexes `resultId` and `(raidId, accountId)` on `AuthoritativeExtractionResult`; publish catches E11000, re-reads and reuses the existing equivalence (`alreadyPublished` / `RESULT_CONFLICT` / `RESULT_ALREADY_CONSUMED`); RED concurrency test — done | `69eca1de` |
 | T2 | S2, S6 | worker: dry-run-by-default dedupe script under `backend/scripts/` keeping the consumed or oldest result, plus a startup log when the unique index is missing (L3) — done | `69eca1de` |
 | T3 | S1, S3, S5 | worker, TDD (Unity EditMode): every Unity clear/rollback sends the local `reservationId` (`ClearPendingReservationAsync` callers `SessionConnectionCoordinator` and `ApplicationStashServiceBootstrapper`, id-less orphan rollback at login); backend id stays optional (L3); backend test pins AC2 | — |
-| T5 | S2, S4 | worker, TDD (node): verify A1 recipient mismatch on a reused `resultId` -> `RESULT_CONFLICT`; durable probes (consumed-before-re-read, ungated burst, legacy-index startup with autoIndex on) — done | T5 commit |
+| T5 | S2, S4 | worker, TDD (node): verify A1 recipient mismatch on a reused `resultId` -> `RESULT_CONFLICT`; durable probes (consumed-before-re-read, ungated burst, legacy-index startup with autoIndex on) — done | `7c16e950` |
 | T4 | S6 | human: deployed check only with explicit authorization; run the dedupe script on Render if needed | — |
 
 ## Log
