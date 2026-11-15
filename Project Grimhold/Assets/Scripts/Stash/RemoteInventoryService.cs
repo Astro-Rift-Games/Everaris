@@ -338,8 +338,9 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
 
     /// <summary>
     /// Consumes the active raid reservation as a loss, without rollback.
+    /// The expected id is captured across retries so a newer reservation cannot be cleared.
     /// </summary>
-    public Task<(bool success, BackendError error)> ClearPendingReservationAsync()
+    public Task<(bool success, BackendError error)> ClearPendingReservationAsync(string expectedReservationId = null)
     {
         if (string.IsNullOrEmpty(AuthToken))
         {
@@ -352,7 +353,7 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             await _mutationLock.WaitAsync();
             try
             {
-                var (success, result, error) = await InventoryClient.ClearPendingReservationAsync(_backendConfig, AuthToken);
+                var (success, result, error) = await InventoryClient.ClearPendingReservationAsync(_backendConfig, AuthToken, expectedReservationId);
                 if (!success && error.error == "EXTRACTION_RESULT_PENDING")
                 {
                     Debug.LogWarning($"[{nameof(RemoteInventoryService)}] Loss clear skipped: EXTRACTION_RESULT_PENDING - {error.message}");

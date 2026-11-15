@@ -589,7 +589,15 @@ Closing the application or crashing mid-Raid remains a loss without any notice: 
 capture it and the loss is only cleared on the next login (accepted exception, FIX-53 S6). Neither the
 notice nor the cleanup changes the rule above: admitted reservations are never rolled back.
 
-The backend retains guarded reservation rollback support for callers that supply a reservation ID. `DELETE /character/me/inventory/reservation?rollback=true`
+**Reservation identity binding (FIX-22).** Unity loss clear and orphan rollback send
+`expectedReservationId`, captured before local confirmation/rollback removes the reservation. The
+participation coordinator retains the launch/reconnect reservation proof after admission consumes
+the local pending snapshot; transport retries resend that same proof, never a newer Store value.
+Login also binds remote-only orphan cleanup to the ID in the authenticated inventory payload.
+Only a participation with no local reservation proof (for example a legacy reconnect ticket with
+no reservation ID) retains the legacy omitted-ID cleanup behavior.
+
+The backend retains guarded reservation clear and rollback support for callers that supply a reservation ID. `DELETE /character/me/inventory/reservation?rollback=true`
 accepts optional `expectedReservationId` (query, or request body when omitted from the query). It must
 be a 1–128 character identifier containing only letters, digits, `_` or `-`; invalid values return
 `400 VALIDATION_FAILED`. A different active ID returns `409 RESERVATION_MISMATCH` without writes.

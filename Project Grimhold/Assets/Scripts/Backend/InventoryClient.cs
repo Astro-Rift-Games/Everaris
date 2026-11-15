@@ -195,11 +195,14 @@ namespace Grimhold.Backend
 
         /// <summary>
         /// Consumes the pending reservation as a loss, without restoring reserved ownership.
+        /// When supplied, expectedReservationId protects a newer reservation from late cleanup.
         /// </summary>
         public static async Task<(bool success, ClearPendingReservationResult data, BackendError error)>
-            ClearPendingReservationAsync(BackendConfiguration config, string token)
+            ClearPendingReservationAsync(BackendConfiguration config, string token, string expectedReservationId = null)
         {
             var url = $"{config.BaseUrl}/character/me/inventory/reservation";
+            if (expectedReservationId != null)
+                url += "?expectedReservationId=" + System.Uri.EscapeDataString(expectedReservationId);
             using var request = InventoryProtocol.Delete(url);
             request.SetRequestHeader("Authorization", $"Bearer {token}");
             // DELETE needs a download handler to read the response body.
