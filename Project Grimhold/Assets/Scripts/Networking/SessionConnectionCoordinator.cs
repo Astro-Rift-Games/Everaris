@@ -134,6 +134,9 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
 #endif
     public bool IsTransitioning => _operationActive;
 
+    /// <summary>Read-only Host closure-return intent; observing it never starts or consumes the return.</summary>
+    public bool IsHostResultsReturnPending => _hostResultsReturnRequested;
+
     public event Action<SessionConnectionState> StateChanged;
     public event Action<RaidReconnectTicket?> ReconnectTicketChanged;
 

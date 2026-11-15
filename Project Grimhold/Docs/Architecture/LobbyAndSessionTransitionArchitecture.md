@@ -353,6 +353,13 @@ without it (`HostHandoffPolicy.ShouldRouteHostReturnThroughParticipant`):
   Therefore `Finished` alone can remain in Results indefinitely, and a pending Host return
   cannot shut down the runner while a remote Client still belongs to it.
 
+`IsHostResultsReturnPending` exposes the request latch read-only for presentation; reading it
+never starts or consumes a return. While that request waits on
+`NetworkSpawnManager.HasConnectedRemoteParticipants`, the raid menu explains the wait in Spanish.
+Its remaining count reads the runner's connected remote `ActivePlayers`, including terminal peers,
+not only Raiding participants. If retained routing still blocks shutdown but no active count is
+available, the notice keeps the reason without inventing a count. None of this changes the return gate.
+
 A Client remains on the participant route in both cases.
 
 The Host has no exit of its own. There is no Host-initiated cancellation of the Raid (FIX-49): while
@@ -534,6 +541,15 @@ recovery always ends in `Failed` with `RecoveryFailed` published through the con
 transition failure channel (`TryConsumeLastTransitionFailure`), never in `ReturningTown`. The
 coordinated launch task started from a launch release is fire-and-forget, so it publishes any
 non-successful result through the same channel for the Town UI and observes any fault itself.
+
+The Town preparation presenter consumes that channel both at binding and continuously while bound.
+The bound raid menu also observes `TryConsumeLastTransitionFailure`, including failures already
+published by the pending Host Results return. Consumption is once-only, not a second failure store
+or a new transition trigger. Participant return failures, rejected Host Results requests and return
+exceptions show Spanish text from `SessionTransitionFailureText` in the existing raid status label.
+The menu releases its local request/start latches after a failure, so eligible Return actions are
+available again; their authoritative eligibility rules remain unchanged. Corpse-generation abandon
+failure feedback remains on its existing participant failure-sequence path.
 
 ### Stale launch ticket and reservation recovery
 
