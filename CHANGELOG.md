@@ -38,6 +38,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - When the host dies and returns to town, the raid keeps going for everyone else and another player becomes the host.
 - Abandoning a raid now clearly warns that you lose all your equipment.
 - When the Host cannot start a raid because a player's group is still loading in Town, the Host now sees a message asking to wait a few seconds and try again.
+- Minor damage ticks no longer trigger an aggressive screen hit flash.
 
 ### Fixed
 
@@ -86,6 +87,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Retrying an old purchase or sale can no longer charge you or pay you twice.
 - Fixed an issue where dying in raid prevented changing equipment in Town due to a stuck pending reservation.
 - Fixed an issue where entering a raid with a shield in the first weapon set bounced the player back to Town.
+- The dungeon collapse phase no longer triggers prematurely before 8 minutes of raid time.
+- Re-entering the Downed state quickly after being revived no longer carries over visual darkening or color tint from the previous cycle.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08

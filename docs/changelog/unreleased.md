@@ -4,32 +4,229 @@
 
 Release: Unreleased
 
-209 original commits; 209 canonical entries.
+213 original commits; 213 canonical entries.
 
 ## Canonical classification
 
-73 features; 69 bug fixes; 1 refactoring; 1 architecture & infrastructure; 32 documentation; 17 tests; 10 maintenance; 6 other changes
+73 features; 72 bug fixes; 1 refactoring; 1 architecture & infrastructure; 33 documentation; 17 tests; 10 maintenance; 6 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 8 | 9 | 1 | 0 | 9 | 1 |
 | Art & Animation | 10 | 9 | 1 | 0 | 7 | 0 |
 | Audio | 4 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 47 | 44 | 1 | 1 | 20 | 6 |
-| Combat | 34 | 11 | 0 | 0 | 12 | 0 |
-| Documentation | 26 | 25 | 0 | 0 | 12 | 0 |
+| Build & Tooling | 47 | 47 | 1 | 1 | 20 | 6 |
+| Combat | 34 | 12 | 0 | 0 | 12 | 0 |
+| Documentation | 26 | 27 | 0 | 0 | 12 | 0 |
 | Extraction | 13 | 14 | 0 | 0 | 9 | 3 |
 | Input | 0 | 1 | 0 | 0 | 1 | 0 |
 | Inventory & Loot | 55 | 42 | 1 | 1 | 23 | 3 |
 | Movement | 3 | 2 | 0 | 0 | 0 | 0 |
-| Networking & Sessions | 23 | 26 | 0 | 0 | 17 | 2 |
+| Networking & Sessions | 23 | 27 | 0 | 0 | 17 | 2 |
 | Persistence & Backend | 27 | 32 | 0 | 1 | 12 | 3 |
-| Tests | 70 | 63 | 1 | 1 | 27 | 4 |
+| Tests | 70 | 66 | 1 | 1 | 27 | 4 |
 | UI | 28 | 13 | 1 | 0 | 12 | 1 |
-| Unassigned | 0 | 1 | 0 | 0 | 13 | 0 |
-| World & Visibility | 19 | 8 | 0 | 0 | 3 | 1 |
+| Unassigned | 0 | 1 | 0 | 0 | 14 | 0 |
+| World & Visibility | 19 | 9 | 0 | 0 | 3 | 1 |
 
 ## Original commit records
+
+### af9e3f516471504a43ad24f0f9f56a6d1728c213
+
+[af9e3f516471504a43ad24f0f9f56a6d1728c213](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/af9e3f516471504a43ad24f0f9f56a6d1728c213)
+
+Date: 2026-11-15T00:43:02-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): track FIX-US-12 collapse and downed presentation execution
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-us-12-collapse-and-downed-presentation.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### 3471098b9b564fdaba56752e4d54617f55f82dfe
+
+[3471098b9b564fdaba56752e4d54617f55f82dfe](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3471098b9b564fdaba56752e4d54617f55f82dfe)
+
+Date: 2026-11-15T00:42:46-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(player): gate screen hit flash by sudden loss and cache accessibility
+```
+
+#### Original body
+
+```text
+Require instantaneous damage of at least 5% maximum health to trigger
+the red hit flash, preventing minor chip damage from flashing the screen.
+Cache the screen damage accessibility intensity in memory to eliminate
+redundant per-frame PlayerPrefs reads in Update.
+
+Player-Improved: Minor damage ticks no longer trigger an aggressive screen hit flash.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/Presentation/ScreenDamageAccessibility.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/ScreenDamageConfig.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/ScreenDamageFeedbackState.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/ScreenDamageTests.cs
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Presentation/ScreenDamageAccessibility.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Presentation/ScreenDamageConfig.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Presentation/ScreenDamageFeedbackState.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/ScreenDamageTests.cs
+- message-term → Combat: damage
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/ScreenDamageTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/ScreenDamageTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 0721141101061286ced4a74c939d88f918f2f650
+
+[0721141101061286ced4a74c939d88f918f2f650](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0721141101061286ced4a74c939d88f918f2f650)
+
+Date: 2026-11-15T00:42:29-03:00 · Classification: Bug Fixes (explicit) · Systems: Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(player): reset downed presentation reserve and revive color on re-entry
+```
+
+#### Original body
+
+```text
+Detect new Downed state cycles even during an active fade-out transition,
+resetting reserve to the new target and clearing previous revive color
+interpolation. Document the read-only polling architectural decision in
+DownedAndReviveArchitecture.md.
+
+Player-Fixed: Re-entering the Downed state quickly after being revived no longer carries over visual darkening or color tint from the previous cycle.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/Presentation/DownedPostProcessBlend.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DownedPostProcessBlendTests.cs
+Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DownedPostProcessBlendTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DownedPostProcessBlendTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 0c3e6db5e1cde51f1743c0fe28e5554faa16e6a0
+
+[0c3e6db5e1cde51f1743c0fe28e5554faa16e6a0](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0c3e6db5e1cde51f1743c0fe28e5554faa16e6a0)
+
+Date: 2026-11-15T00:42:12-03:00 · Classification: Bug Fixes (explicit) · Systems: Networking & Sessions, World & Visibility, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(dungeon): hold collapse until 8m minimum and cover instability hooks
+```
+
+#### Original body
+
+```text
+Hold Phase E3 (Collapse) in CriticalPressure when time advances expire
+before 480 seconds elapsed, anchoring absolute dungeon closure at
+1020 seconds. Reject non-positive instability thresholds in
+DungeonPressureConfig. Add full EditMode test coverage for enemy defeat,
+treasure discovery, PvP kill exclusion, and threshold saturation,
+documenting the hybrid progression model in DungeonPressureArchitecture.md.
+
+Player-Fixed: The dungeon collapse phase no longer triggers prematurely before 8 minutes of raid time.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureClock.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureConfig.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureConfigTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureHybridProgressionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs.meta
+Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureConfigTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureHybridProgressionTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureClock.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureConfig.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureConfigTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureHybridProgressionTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md
+- scope → World &amp; Visibility: dungeon
+- message-term → World &amp; Visibility: dungeon
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureConfigTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureHybridProgressionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureConfigTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureHybridProgressionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs.meta
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### c9c5d70a131d7b68f7c598bb2d27bd7539a3da86
 

@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1086,
-  "canonicalEntries": 1083,
+  "rawCommits": 1090,
+  "canonicalEntries": 1087,
   "before": {
-    "Documentation": 106,
-    "Bug Fixes": 147,
+    "Documentation": 107,
+    "Bug Fixes": 150,
     "Other Changes": 360,
     "Architecture & Infrastructure": 23,
     "Tests": 41,
@@ -12,8 +12,8 @@
     "Refactoring": 14
   },
   "after": {
-    "Documentation": 122,
-    "Bug Fixes": 163,
+    "Documentation": 123,
+    "Bug Fixes": 166,
     "Other Changes": 168,
     "Maintenance": 21,
     "Tests": 46,
@@ -23,18 +23,18 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Unassigned": 33,
+    "Combat": 374,
+    "Build & Tooling": 563,
+    "Tests": 690,
+    "Documentation": 408,
+    "Networking & Sessions": 325,
+    "World & Visibility": 142,
     "Inventory & Loot": 441,
     "Persistence & Backend": 260,
-    "Documentation": 406,
-    "Tests": 687,
-    "Unassigned": 32,
     "Extraction": 158,
-    "Networking & Sessions": 324,
-    "Combat": 373,
-    "Build & Tooling": 560,
     "Abilities": 132,
     "UI": 324,
-    "World & Visibility": 141,
     "Audio": 36,
     "Art & Animation": 237,
     "Input": 30,
@@ -42,8 +42,8 @@
   },
   "canonical": {
     "sections": {
-      "Documentation": 122,
-      "Bug Fixes": 162,
+      "Documentation": 123,
+      "Bug Fixes": 165,
       "Other Changes": 167,
       "Maintenance": 21,
       "Tests": 46,
@@ -52,18 +52,18 @@
       "Refactoring": 27
     },
     "systems": {
+      "Unassigned": 33,
+      "Combat": 372,
+      "Build & Tooling": 561,
+      "Tests": 688,
+      "Documentation": 406,
+      "Networking & Sessions": 325,
+      "World & Visibility": 140,
       "Inventory & Loot": 441,
       "Persistence & Backend": 260,
-      "Documentation": 404,
-      "Tests": 685,
-      "Unassigned": 32,
       "Extraction": 158,
-      "Networking & Sessions": 324,
-      "Combat": 371,
-      "Build & Tooling": 558,
       "Abilities": 130,
       "UI": 323,
-      "World & Visibility": 139,
       "Audio": 36,
       "Art & Animation": 234,
       "Input": 30,
@@ -34547,8 +34547,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 209,
-      "canonicalEntries": 209
+      "originalCommits": 213,
+      "canonicalEntries": 213
     },
     {
       "key": "v0.5.0",
@@ -34592,6 +34592,313 @@
     }
   ],
   "commits": [
+    {
+      "sha": "af9e3f516471504a43ad24f0f9f56a6d1728c213",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/af9e3f516471504a43ad24f0f9f56a6d1728c213",
+      "subject": "docs(odd): track FIX-US-12 collapse and downed presentation execution",
+      "body": "",
+      "date": "2026-11-15T00:43:02-03:00",
+      "files": [
+        "odd/tasks/fix-us-12-collapse-and-downed-presentation.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "odd",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "unassigned-system",
+          "message": "No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system."
+        }
+      ],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "3471098b9b564fdaba56752e4d54617f55f82dfe",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3471098b9b564fdaba56752e4d54617f55f82dfe",
+      "subject": "fix(player): gate screen hit flash by sudden loss and cache accessibility",
+      "body": "Require instantaneous damage of at least 5% maximum health to trigger\nthe red hit flash, preventing minor chip damage from flashing the screen.\nCache the screen damage accessibility intensity in memory to eliminate\nredundant per-frame PlayerPrefs reads in Update.\n\nPlayer-Improved: Minor damage ticks no longer trigger an aggressive screen hit flash.\n",
+      "date": "2026-11-15T00:42:46-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Player/Presentation/ScreenDamageAccessibility.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/ScreenDamageConfig.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/ScreenDamageFeedbackState.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/ScreenDamageTests.cs"
+      ],
+      "originalType": "fix",
+      "originalScope": "player",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/ScreenDamageAccessibility.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/ScreenDamageConfig.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/ScreenDamageFeedbackState.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/ScreenDamageTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "damage",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/ScreenDamageTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/ScreenDamageTests.cs",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "0721141101061286ced4a74c939d88f918f2f650",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0721141101061286ced4a74c939d88f918f2f650",
+      "subject": "fix(player): reset downed presentation reserve and revive color on re-entry",
+      "body": "Detect new Downed state cycles even during an active fade-out transition,\nresetting reserve to the new target and clearing previous revive color\ninterpolation. Document the read-only polling architectural decision in\nDownedAndReviveArchitecture.md.\n\nPlayer-Fixed: Re-entering the Downed state quickly after being revived no longer carries over visual darkening or color tint from the previous cycle.\n",
+      "date": "2026-11-15T00:42:29-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Player/Presentation/DownedPostProcessBlend.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DownedPostProcessBlendTests.cs",
+        "Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "player",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DownedPostProcessBlendTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DownedPostProcessBlendTests.cs",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "0c3e6db5e1cde51f1743c0fe28e5554faa16e6a0",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0c3e6db5e1cde51f1743c0fe28e5554faa16e6a0",
+      "subject": "fix(dungeon): hold collapse until 8m minimum and cover instability hooks",
+      "body": "Hold Phase E3 (Collapse) in CriticalPressure when time advances expire\nbefore 480 seconds elapsed, anchoring absolute dungeon closure at\n1020 seconds. Reject non-positive instability thresholds in\nDungeonPressureConfig. Add full EditMode test coverage for enemy defeat,\ntreasure discovery, PvP kill exclusion, and threshold saturation,\ndocumenting the hybrid progression model in DungeonPressureArchitecture.md.\n\nPlayer-Fixed: The dungeon collapse phase no longer triggers prematurely before 8 minutes of raid time.\n",
+      "date": "2026-11-15T00:42:12-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureClock.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureConfig.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureConfigTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureHybridProgressionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs.meta",
+        "Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "dungeon",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Networking & Sessions",
+        "World & Visibility",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureConfigTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureHybridProgressionTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureClock.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureConfig.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureConfigTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureHybridProgressionTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "scope",
+          "value": "dungeon",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "dungeon",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureConfigTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureHybridProgressionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureConfigTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureHybridProgressionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPressureInstabilityHooksTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "c9c5d70a131d7b68f7c598bb2d27bd7539a3da86",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c9c5d70a131d7b68f7c598bb2d27bd7539a3da86",
