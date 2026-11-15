@@ -23,7 +23,7 @@ Quoted verbatim from HacknPlan #697.
 | T1 | S1, S2, S4, S5, S6 | worker, TDD (EditMode): pure `BackendErrorClassifier` with the L4 table and a test per code; `RemoteIdempotentRetryPolicy` decides through it; `REVISION_CONFLICT` retried only where the operation re-reads the revision | — |
 | T2 | S3, S5, S6 | worker, TDD: exponential backoff for retryables honoring `Retry-After` / `retryAfter` (captured into `BackendError`), bounded attempts; bounded in-session retry of extraction/defeat commits before the existing retry-at-login (L4) | — |
 | T3 | S1, S3, S6 | worker, TDD: Spanish messages per class/code; commit failures shown in the raid menu/Results status text (L4); login `TOO_MANY_REQUESTS` text | — |
-| T5 | S2, S3, S5, S6 | worker, TDD: verify follow-up B1 opt-in revision-conflict retry for the five server-re-read operations, B2 bounded wait hint, B3 Results keeps local + backend text; A1, A2, A4, A5, A7, A8 (L13) | — |
+| T5 | S2, S3, S5, S6 | worker, TDD: verify follow-up B1 opt-in revision-conflict retry for the five server-re-read operations, B2 bounded wait hint, B3 Results keeps local + backend text; A1, A2, A4, A5, A7, A8 (L13) — done (manual in T4) | `db75c46e` |
 | T4 | S6 | human: manual Host + Client validation with logs | — |
 
 ## Log
