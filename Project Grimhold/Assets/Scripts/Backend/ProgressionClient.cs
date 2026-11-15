@@ -91,7 +91,8 @@ namespace Grimhold.Backend
                 return (true, result, default);
             }
 
-            var err = ParseError(request);
+            var err = BackendRetrySchedule.WithRetryAfter(ParseError(request),
+                request.GetResponseHeader("Retry-After"), System.DateTimeOffset.UtcNow);
             return (false, default, err);
         }
 

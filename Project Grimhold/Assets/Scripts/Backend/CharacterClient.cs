@@ -189,6 +189,8 @@ namespace Grimhold.Backend
             {
                 backendError = new BackendError { error = BackendErrorUtility.ClassifyConnectionError(request.error), message = request.error };
             }
+            backendError = BackendRetrySchedule.WithRetryAfter(
+                backendError, request.GetResponseHeader("Retry-After"), DateTimeOffset.UtcNow);
             return (false, default, backendError);
         }
     }

@@ -453,7 +453,8 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
         System.Collections.Generic.IReadOnlyList<StashItem> items,
         PreparedEquipmentLoadout preparedEquipment,
         long consolidatedExperience,
-        int resultingLevel)
+        int resultingLevel,
+        System.Action<BackendError> onRetry = null)
     {
         if (string.IsNullOrEmpty(AuthToken))
         {
@@ -511,11 +512,12 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             {
                 _mutationLock.Release();
             }
-        });
+        }, onRetry);
     }
 
     public Task<(bool success, CommitDefeatUnifiedResult result, BackendError error)> CommitDefeatUnifiedAsync(
-        ProgressionReceipt receipt)
+        ProgressionReceipt receipt,
+        System.Action<BackendError> onRetry = null)
     {
         if (string.IsNullOrEmpty(AuthToken))
         {
@@ -563,7 +565,7 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             {
                 _mutationLock.Release();
             }
-        });
+        }, onRetry);
     }
 
     public Task<(bool success, BackendError error)> PublishDefeatResultAsync(

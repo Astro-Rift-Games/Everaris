@@ -305,6 +305,47 @@ Backup restore is safe only inside the window before the first post-migration wr
 is independent of migration/protocol activation; the TASK-282 "Dividir" UI calls it and reports the remote
 failure while the flag is off.
 
+### Backend error classification and retry (FIX-26)
+
+`BackendErrorClassifier` is pure C# and defines the client operational classes below.
+Unknown codes fail closed as terminal; transport classification remains exclusively in
+`BackendErrorUtility.IsTransportFailure` (including its existing cancellation behavior).
+
+| Class | Codes | Client action |
+| --- | --- | --- |
+| Retryable | `TOO_MANY_REQUESTS`, `CONCURRENT_MUTATION`, `EXTRACTION_RESULT_PENDING`, `NO_AUTHORITATIVE_RESULT` | Bounded backoff for idempotent operations |
+| Conflict | `REVISION_CONFLICT`, `RESULT_CONFLICT`, `RESULT_RESERVATION_MISMATCH`, `RESERVATION_MISMATCH`, `RESERVATION_RAID_MISMATCH` | Stop blind retry; re-read authoritative state before another operation |
+| Terminal | `RESULT_ALREADY_CONSUMED`, `LOADOUT_NOT_EMPTY`, `PREPARED_WEAPON_REQUIRED`, `RESERVATION_ADMITTED`, `RESERVATION_PENDING`, `NO_ACTIVE_RESERVATION`, `EXCEEDS_*`, `HOST_NOT_IN_RAID`, `INVALID_HOST_SIGNATURE`, `UNKNOWN_LOOT_ID`, `INSUFFICIENT_*`, `BUYBACK_ENTRY_NOT_FOUND`, `ITEM_NOT_FOUND`, `INVALID_QUANTITY`, `VALIDATION_FAILED`, `TRANSACTION_RETENTION_EXCEEDED` | No automatic retry; Spanish guidance from `BackendErrorMessages` |
+
+`RESULT_ALREADY_CONSUMED` is an idempotent success **only for a commit**, not for result
+publication. The HTTP commit clients read authoritative inventory/progression metadata before
+returning `alreadySecured`; no default revision or locally fabricated inventory is applied.
+Extraction still passes through `CompleteExtractionAsync` and its matching-receipt validation.
+For extraction, a failed metadata fetch or hydration retains the pending payload for the existing login recovery.
+This does not resolve superseded pending-receipt recovery described above.
+
+`RemoteIdempotentRetryPolicy.MaxRetries = 3` means **three total attempts**, not three additional
+retries. Retryable and transport failures wait 1 s, then 2 s between attempts; the exponential
+schedule caps at 30 s if the attempt budget is later increased. A positive server wait hint is a
+minimum and may exceed that client cap. Terminal/conflict outcomes return immediately. None of
+the eight currently wrapped operations in `RemoteInventoryService` (save/admit/clear/rollback
+reservation, unified extraction/defeat commit, extraction/defeat publication) re-reads authoritative
+revision state in its closure, so **none retries `REVISION_CONFLICT`**. Only a future closure that
+explicitly re-reads revision state may opt into such conflict recovery.
+
+The existing one-request, revision-guarded Town move/order/split, Equipment and commerce flows
+are not added to this policy: their reconcile-once/stop-without-retry boundaries above remain.
+In-session unified extraction and defeat commits use this single retry budget, never nested
+retry loops. Extraction exhaustion retains the existing retry-at-login recovery. Defeat has no
+durable login replay today: after exhaustion its Results status honestly reports that saving
+failed, without promising another attempt at login. Durable defeat replay is a separate pending
+item (review finding M4, `odd/tasks/review-findings-2026-11-15.md`), outside FIX-26.
+The local cache commit and Fusion ACK are not delayed by backend retries. Per-operation `BackendCommitFeedback` is a local
+presentation projection, not a second persistence store or replicated gameplay state. The raid
+menu/Results status shows Spanish saving/retrying, deferred-until-login (extraction only) or failure guidance,
+without raw codes and without changing Return eligibility. Extraction reports saved only after
+its existing authoritative hydration succeeds.
+
 ### Progression transaction
 
 `LastAppliedProgressionResultSequence` is the aggregate's at-most-once mechanism. A new

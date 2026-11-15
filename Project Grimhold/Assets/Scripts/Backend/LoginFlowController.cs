@@ -118,7 +118,7 @@ public sealed class LoginFlowController : MonoBehaviour
             }
             if (loginError.error == BackendErrorUtility.TooManyRequests)
             {
-                return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, !string.IsNullOrEmpty(loginError.message) ? loginError.message : "Too many requests. Please wait a moment and try again.");
+                return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, BackendErrorMessages.ForError(loginError));
             }
             return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, "Invalid username or password.");
         }
@@ -141,7 +141,7 @@ public sealed class LoginFlowController : MonoBehaviour
             string message = "Failed to register account.";
             if (registerError.error == BackendErrorUtility.TooManyRequests)
             {
-                message = !string.IsNullOrEmpty(registerError.message) ? registerError.message : "Too many requests. Please wait a moment and try again.";
+                message = BackendErrorMessages.ForError(registerError);
             }
             else if (registerError.error == "USERNAME_TAKEN")
             {
