@@ -46,6 +46,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Finishing blows show a larger golden damage number and a stronger camera shake.
 - Projectiles now burst with particles when they hit a character, not only walls.
 - Extraction sanctuaries have new art and visibly light up while their activation ritual runs.
+- Walking now looks careful and grounded, with steadier steps, calmer arms and hands that pass naturally in front of and behind the body.
 
 ### Fixed
 

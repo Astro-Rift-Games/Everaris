@@ -4,32 +4,1097 @@
 
 Release: Unreleased
 
-264 original commits; 264 canonical entries.
+265 original commits; 265 canonical entries.
 
 ## Canonical classification
 
-81 features; 89 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 14 other changes
+82 features; 89 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 14 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 10 | 10 | 1 | 0 | 9 | 1 |
-| Art & Animation | 13 | 9 | 1 | 0 | 9 | 5 |
+| Art & Animation | 14 | 9 | 1 | 0 | 9 | 5 |
 | Audio | 7 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 55 | 59 | 1 | 1 | 22 | 6 |
-| Combat | 37 | 14 | 0 | 0 | 12 | 1 |
-| Documentation | 31 | 40 | 0 | 0 | 13 | 0 |
+| Build & Tooling | 56 | 59 | 1 | 1 | 22 | 6 |
+| Combat | 38 | 14 | 0 | 0 | 12 | 1 |
+| Documentation | 32 | 40 | 0 | 0 | 13 | 0 |
 | Extraction | 17 | 21 | 0 | 0 | 9 | 3 |
 | Input | 1 | 1 | 0 | 0 | 1 | 0 |
 | Inventory & Loot | 58 | 51 | 1 | 1 | 24 | 3 |
 | Movement | 4 | 3 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 29 | 35 | 0 | 0 | 18 | 2 |
 | Persistence & Backend | 29 | 47 | 0 | 1 | 19 | 3 |
-| Tests | 78 | 83 | 1 | 1 | 29 | 4 |
+| Tests | 79 | 83 | 1 | 1 | 29 | 4 |
 | UI | 32 | 18 | 1 | 0 | 12 | 2 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
-| World & Visibility | 20 | 10 | 0 | 0 | 3 | 9 |
+| World & Visibility | 21 | 10 | 0 | 0 | 3 | 9 |
 
 ## Original commit records
+
+### 89a4bc46e0485e20fb251d1e2e8b7d5f9f4892f0
+
+[89a4bc46e0485e20fb251d1e2e8b7d5f9f4892f0](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/89a4bc46e0485e20fb251d1e2e8b7d5f9f4892f0)
+
+Date: 2026-11-16T17:23:34-03:00 · Classification: Features (explicit) · Systems: Combat, World & Visibility, Art & Animation, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(animation): rework the player walk into a cautious, grounded gait
+```
+
+#### Original body
+
+```text
+The walk read as a bouncy march: one stick leg at a time, a foot line
+that jumped between frames, a far leg that snapped across the body on
+the diagonals and a wide arm swing. It now suits a dungeon crawler:
+both feet visible and planted on one ground line, short steps, no
+upward bounce of torso and head, and half the hand swing.
+
+Art (210 sheets: legs, body, head and both hands, base body plus the
+six equipment sets; frame count, order and slicing unchanged):
+- S/N plant the Idle leg and foot and alternate four-frame stances.
+- SE/SW and NE/NW are retimed so each leg holds a four-frame stance
+  and the far leg hides while it crosses behind the near one.
+- SW/NW stay exact mirrors of SE/NE.
+
+Clips and controller:
+- Grip keys of the six Walk body clips follow the moved hand sprites
+  (WeaponPose and OffHandGrip with LeftHand, MainHandGrip with
+  RightHand).
+- Walk, LeftHand-Walk and RightHand-Walk blend trees play at 10 fps
+  (time scale 0.8333333); the clips keep their 12 fps keys.
+- Hand depth is keyed per drawn frame in every facing: in front of the
+  body (Off Hand 22, Main Hand 30) for the camera-side half of the
+  swing, -2 for the rest. The generator writes it on the pivot paths
+  and on the flat LeftHand/RightHand bindings SocialPlayer uses.
+  Weapons keep their facing depth; Idle keeps a constant depth.
+
+Tests: DirectionalAnimationGeneratorTests cover the swing-depth rule,
+the baked Walk clips of all six facings, the Main Hand writer and the
+pivotless bindings.
+
+Docs: PlayerCombatArchitecture.md records the Walk depth exception.
+
+ArtSource/WalkRework holds the editable .aseprite files, the stamp
+recipes, the Aseprite builder and the validation and apply scripts.
+
+Player-Improved: Walking now looks careful and grounded, with steadier steps, calmer arms and hands that pass naturally in front of and behind the body.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/ArtSource/WalkRework/.gitignore
+Project Grimhold/ArtSource/WalkRework/README.md
+Project Grimhold/ArtSource/WalkRework/aseprite/Walk_N.aseprite
+Project Grimhold/ArtSource/WalkRework/aseprite/Walk_NE.aseprite
+Project Grimhold/ArtSource/WalkRework/aseprite/Walk_NW.aseprite
+Project Grimhold/ArtSource/WalkRework/aseprite/Walk_S.aseprite
+Project Grimhold/ArtSource/WalkRework/aseprite/Walk_SE.aseprite
+Project Grimhold/ArtSource/WalkRework/aseprite/Walk_SW.aseprite
+Project Grimhold/ArtSource/WalkRework/hand_grip_offsets.csv
+Project Grimhold/ArtSource/WalkRework/source/Body/Walk/Player-Body-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Body/Walk/Player-Body-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Body/Walk/Player-Body-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Body/Walk/Player-Body-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Body/Walk/Player-Body-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Body/Walk/Player-Body-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Head/Walk/Player-Head-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Head/Walk/Player-Head-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Head/Walk/Player-Head-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Head/Walk/Player-Head-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Head/Walk/Player-Head-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Head/Walk/Player-Head-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Legs/Idle/Player-Legs-Idle-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Legs/Idle/Player-Legs-Idle-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Legs/Idle/Player-Legs-Idle-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Legs/Idle/Player-Legs-Idle-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Legs/Idle/Player-Legs-Idle-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Legs/Idle/Player-Legs-Idle-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Legs/Walk/Player-Legs-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Legs/Walk/Player-Legs-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Legs/Walk/Player-Legs-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Legs/Walk/Player-Legs-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Legs/Walk/Player-Legs-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Legs/Walk/Player-Legs-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/RightHand/Walk/Player-RightHand-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/RightHand/Walk/Player-RightHand-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/RightHand/Walk/Player-RightHand-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/RightHand/Walk/Player-RightHand-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/RightHand/Walk/Player-RightHand-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/RightHand/Walk/Player-RightHand-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-N-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-S-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SE-Sheet.png
+Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SW-Sheet.png
+Project Grimhold/ArtSource/WalkRework/tools/apply_to_unity.py
+Project Grimhold/ArtSource/WalkRework/tools/preview.py
+Project Grimhold/ArtSource/WalkRework/tools/validate.py
+Project Grimhold/ArtSource/WalkRework/tools/walk_recipes.lua
+Project Grimhold/ArtSource/WalkRework/tools/walk_rework.lua
+Project Grimhold/Assets/Animations/Player/Character.controller
+Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand_Walk_N.anim
+Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand_Walk_NE.anim
+Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand_Walk_NW.anim
+Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand_Walk_S.anim
+Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand_Walk_SE.anim
+Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand_Walk_SW.anim
+Project Grimhold/Assets/Animations/Player/Walk/Walk_N.anim
+Project Grimhold/Assets/Animations/Player/Walk/Walk_NE.anim
+Project Grimhold/Assets/Animations/Player/Walk/Walk_NW.anim
+Project Grimhold/Assets/Animations/Player/Walk/Walk_S.anim
+Project Grimhold/Assets/Animations/Player/Walk/Walk_SE.anim
+Project Grimhold/Assets/Animations/Player/Walk/Walk_SW.anim
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SW-Sheet.png
+Project Grimhold/Assets/Editor/Animation/DirectionalAnimationGenerator.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DirectionalAnimationGeneratorTests.cs
+Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md
+- message-term → Combat: Weapons
+- message-term → World &amp; Visibility: dungeon
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/.gitignore
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/README.md
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/aseprite/Walk\_N.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/aseprite/Walk\_NE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/aseprite/Walk\_NW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/aseprite/Walk\_S.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/aseprite/Walk\_SE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/aseprite/Walk\_SW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/hand\_grip\_offsets.csv
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Body/Walk/Player-Body-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Body/Walk/Player-Body-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Body/Walk/Player-Body-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Body/Walk/Player-Body-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Body/Walk/Player-Body-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Body/Walk/Player-Body-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Head/Walk/Player-Head-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Head/Walk/Player-Head-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Head/Walk/Player-Head-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Head/Walk/Player-Head-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Head/Walk/Player-Head-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Head/Walk/Player-Head-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Legs/Idle/Player-Legs-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Legs/Idle/Player-Legs-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Legs/Idle/Player-Legs-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Legs/Idle/Player-Legs-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Legs/Idle/Player-Legs-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Legs/Idle/Player-Legs-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Legs/Walk/Player-Legs-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Legs/Walk/Player-Legs-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Legs/Walk/Player-Legs-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Legs/Walk/Player-Legs-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Legs/Walk/Player-Legs-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Legs/Walk/Player-Legs-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/RightHand/Walk/Player-RightHand-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/RightHand/Walk/Player-RightHand-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/RightHand/Walk/Player-RightHand-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/RightHand/Walk/Player-RightHand-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/RightHand/Walk/Player-RightHand-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/RightHand/Walk/Player-RightHand-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/source/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/tools/apply\_to\_unity.py
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/tools/preview.py
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/tools/validate.py
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/tools/walk\_recipes.lua
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/tools/walk\_rework.lua
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Character.controller
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand\_Walk\_N.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand\_Walk\_NE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand\_Walk\_NW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand\_Walk\_S.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand\_Walk\_SE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand\_Walk\_SW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/Walk\_N.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/Walk\_NE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/Walk\_NW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/Walk\_S.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/Walk\_SE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/Walk\_SW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Editor/Animation/DirectionalAnimationGenerator.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DirectionalAnimationGeneratorTests.cs
+- scope → Art &amp; Animation: animation
+- message-term → Art &amp; Animation: animation
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/WalkRework/tools/apply\_to\_unity.py
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/WalkRework/tools/preview.py
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/WalkRework/tools/validate.py
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/WalkRework/tools/walk\_recipes.lua
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/WalkRework/tools/walk\_rework.lua
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/Animation/DirectionalAnimationGenerator.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DirectionalAnimationGeneratorTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DirectionalAnimationGeneratorTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### bccad7f7a9f81f1126472ff6a48b576a6fedf524
 
