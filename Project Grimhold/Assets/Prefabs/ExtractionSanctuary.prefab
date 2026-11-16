@@ -289,10 +289,10 @@ GameObject:
   - component: {fileID: 1413975178686161591}
   - component: {fileID: 3315208112669804750}
   - component: {fileID: 700000000000000001}
-  - component: {fileID: 700000000000000002}
   - component: {fileID: 700000000000000003}
   - component: {fileID: 700000000000000004}
   - component: {fileID: 6655921470210224870}
+  - component: {fileID: 8923013069424860781}
   m_Layer: 8
   m_Name: ExtractionSanctuary
   m_TagString: Untagged
@@ -355,7 +355,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ExtractionSanctuary
   _config: {fileID: 11400000, guid: 8f4d2742272b465690541c37b55a3120, type: 2}
   _extractionZone: {fileID: 700000000000000001}
-  _interactionCollider: {fileID: 700000000000000002}
+  _interactionCollider: {fileID: 8923013069424860781}
 --- !u!114 &700000000000000001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -368,57 +368,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1c78c100832a684f984309f5ae297d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExtractionZone
-  _zoneCollider: {fileID: 700000000000000002}
+  _zoneCollider: {fileID: 8923013069424860781}
   _startsAvailable: 0
   _participantMask:
     serializedVersion: 2
     m_Bits: 128
---- !u!61 &700000000000000002
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4614841395197269660}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 3, y: 2}
-    newSize: {x: 3, y: 2}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 2, y: 2}
-  m_EdgeRadius: 0
 --- !u!114 &700000000000000003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -494,8 +448,45 @@ MonoBehaviour:
   - {fileID: 8332539024170469299}
   _occlusionOnly: 1
   _visibilityOffset: {x: 0, y: 0}
-  _visibilityCollider: {fileID: 700000000000000002}
+  _visibilityCollider: {fileID: 0}
   _useColliderBounds: 1
+--- !u!70 &8923013069424860781
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4614841395197269660}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.0075225807, y: -0.030084297}
+  m_Size: {x: 3.2564688, y: 2.5645075}
+  m_Direction: 1
 --- !u!1 &4884738088597967232
 GameObject:
   m_ObjectHideFlags: 0
