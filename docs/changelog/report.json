@@ -1,71 +1,71 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1139,
-  "canonicalEntries": 1136,
+  "rawCommits": 1141,
+  "canonicalEntries": 1138,
   "before": {
+    "Bug Fixes": 167,
     "Features": 403,
     "Other Changes": 368,
     "Architecture & Infrastructure": 24,
     "Documentation": 122,
-    "Bug Fixes": 165,
     "Tests": 43,
     "Refactoring": 14
   },
   "after": {
+    "Bug Fixes": 183,
     "Features": 541,
     "Other Changes": 176,
     "Maintenance": 22,
     "Documentation": 138,
-    "Bug Fixes": 181,
     "Tests": 48,
     "Architecture & Infrastructure": 6,
     "Refactoring": 27
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Combat": 378,
+    "Combat": 380,
+    "Movement": 98,
+    "Networking & Sessions": 340,
+    "Build & Tooling": 585,
+    "Documentation": 427,
+    "Tests": 717,
+    "Abilities": 135,
+    "World & Visibility": 152,
+    "Persistence & Backend": 284,
     "Extraction": 169,
     "Inventory & Loot": 454,
-    "Networking & Sessions": 338,
     "UI": 334,
-    "World & Visibility": 151,
     "Audio": 39,
-    "Build & Tooling": 583,
-    "Documentation": 425,
-    "Tests": 715,
     "Art & Animation": 247,
-    "Abilities": 134,
-    "Movement": 97,
-    "Persistence & Backend": 283,
     "Input": 31,
     "Unassigned": 42
   },
   "canonical": {
     "sections": {
+      "Bug Fixes": 182,
       "Features": 540,
       "Other Changes": 175,
       "Maintenance": 22,
       "Documentation": 138,
-      "Bug Fixes": 180,
       "Tests": 48,
       "Architecture & Infrastructure": 6,
       "Refactoring": 27
     },
     "systems": {
-      "Combat": 376,
+      "Combat": 378,
+      "Movement": 98,
+      "Networking & Sessions": 340,
+      "Build & Tooling": 583,
+      "Documentation": 425,
+      "Tests": 715,
+      "Abilities": 133,
+      "World & Visibility": 150,
+      "Persistence & Backend": 284,
       "Extraction": 169,
       "Inventory & Loot": 454,
-      "Networking & Sessions": 338,
       "UI": 333,
-      "World & Visibility": 149,
       "Audio": 39,
-      "Build & Tooling": 581,
-      "Documentation": 423,
-      "Tests": 713,
       "Art & Animation": 244,
-      "Abilities": 132,
-      "Movement": 97,
-      "Persistence & Backend": 283,
       "Input": 31,
       "Unassigned": 42
     }
@@ -74524,8 +74524,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 262,
-      "canonicalEntries": 262
+      "originalCommits": 264,
+      "canonicalEntries": 264
     },
     {
       "key": "v0.5.0",
@@ -74569,6 +74569,393 @@
     }
   ],
   "commits": [
+    {
+      "sha": "bccad7f7a9f81f1126472ff6a48b576a6fedf524",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bccad7f7a9f81f1126472ff6a48b576a6fedf524",
+      "subject": "fix(combat): resolve environmental hazard causality and projectile attribution",
+      "body": "Break hazard causality definitively upon exiting a hazard (ExitedHazard) so re-entering during active knockback does not re-link or credit the pusher (Doc 19 §8.2, T06-09, FIX-88).\n\nEnable environmental projectile causal attribution for DartTrap and NetworkProjectile, replicating EnvironmentalHazardId and reporting presence along the firing line (TASK-247, FIX-89).\n\nDiscard causal links upon independent non-player displacements (IndependentIntervention) and exclude all overlapping hazards occupied before the push (Doc 19 §8.2, FIX-90).\n\nExpand PlayMode and EditMode test suites covering continuous hazard exposure, voluntary hazard movement, environmental neutrality, host migration, and real component paths (FIX-91).\n\nDocument mandatory hazard contract in EnvironmentalHazardsArchitecture.md.\n\nRefs: FIX-88, FIX-89, FIX-90, FIX-91, FIX-US-11\n",
+      "date": "2026-11-16T15:40:41-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Combat/HazardCausality/HazardExposureCausalityRules.cs",
+        "Project Grimhold/Assets/Scripts/Combat/HazardCausality/HazardExposureCausalityState.cs",
+        "Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs",
+        "Project Grimhold/Assets/Scripts/Core/ProjectileSpawnRequest.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Traps/DartTrap.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/HazardExposureCausalityRulesTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/PvpCombatCreditPlayModeTests.cs",
+        "Project Grimhold/Docs/Architecture/EnvironmentalHazardsArchitecture.md",
+        "odd/tasks/fix-us-11-combat-pvp-attribution.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "combat",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Movement",
+        "Networking & Sessions",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/HazardCausality/HazardExposureCausalityRules.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/HazardCausality/HazardExposureCausalityState.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Core/ProjectileSpawnRequest.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/HazardExposureCausalityRulesTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/PvpCombatCreditPlayModeTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/fix-us-11-combat-pvp-attribution.md",
+          "supports": "Combat"
+        },
+        {
+          "source": "scope",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "movement",
+          "supports": "Movement"
+        },
+        {
+          "source": "message-term",
+          "value": "host migration",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/HazardExposureCausalityRulesTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/EnvironmentalHazardsArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/HazardExposureCausalityRulesTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/PvpCombatCreditPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "5013e60e950f19730168b227f85e54ddf32c14f5",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/5013e60e950f19730168b227f85e54ddf32c14f5",
+      "subject": "fix(combat): resolve Sprint 15 combat rules and PvP credit attribution",
+      "body": "Enforce protective default on unresolved participant links during damage\nresolution so friendly fire blocks without killing teammates. Set default\nPvP assist limit to 0 (unlimited per GD 19 §6.2), forward lethal Empower\ncontributions to AssistMask, and update Q9 architecture documentation.\nBound Arcane Projectile to 25 units and 5 seconds in open space, and allow\nProtective Orbs to intercept hostile trap darts and enemy player shots.\nAdd Host-configurable Friendly Fire toggle in town raid preparation with\nlive read-only member replication, and upgrade F8 ability debugger with\ncross-scene persistence and in-dungeon test tools.\n\nPlayer-Fixed: Host can now configure Friendly Fire in expedition preparation.\nPlayer-Fixed: Arcane Projectiles now properly dissipate in open spaces.\nPlayer-Fixed: Protective Orbs now intercept enemy player shots and trap darts.\n",
+      "date": "2026-11-16T14:57:27-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/NetworkPlayer.prefab",
+        "Project Grimhold/Assets/Prefabs/TownRaidPreparationView.prefab",
+        "Project Grimhold/Assets/Scripts/Abilities/Behaviours/ArcaneProjectileAbilityBehaviour.cs",
+        "Project Grimhold/Assets/Scripts/Abilities/Debugging/AbilityPlayModeDebugger.cs",
+        "Project Grimhold/Assets/Scripts/Abilities/Effects/ProtectiveOrbsNetworkEffect.cs",
+        "Project Grimhold/Assets/Scripts/Abilities/Runtime/AbilityAllyAffiliation.cs",
+        "Project Grimhold/Assets/Scripts/Abilities/Runtime/PlayerAbilityRuntimeNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Combat/DamageResolver.cs",
+        "Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs",
+        "Project Grimhold/Assets/Scripts/Core/IDownedCycleObserver.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationRules.cs",
+        "Project Grimhold/Assets/Scripts/Player/PlayerCharacter.cs",
+        "Project Grimhold/Assets/Scripts/Player/PlayerDownedStateNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Player/PlayerPvpCombatCreditNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownAbilitiesPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationPresentation.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationView.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ArcaneProjectileAbilityTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/DamageResolverFriendlyFireTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationPresentationTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationRulesTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/PvpCombatCreditPlayModeTests.cs",
+        "Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md",
+        "odd/tasks/fix-us-11-combat-pvp-attribution.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "combat",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Abilities",
+        "Networking & Sessions",
+        "World & Visibility",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Behaviours/ArcaneProjectileAbilityBehaviour.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/DamageResolver.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/PlayerPvpCombatCreditNetworkController.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ArcaneProjectileAbilityTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/DamageResolverFriendlyFireTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/PvpCombatCreditPlayModeTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/fix-us-11-combat-pvp-attribution.md",
+          "supports": "Combat"
+        },
+        {
+          "source": "scope",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Behaviours/ArcaneProjectileAbilityBehaviour.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Debugging/AbilityPlayModeDebugger.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Effects/ProtectiveOrbsNetworkEffect.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Runtime/AbilityAllyAffiliation.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Runtime/PlayerAbilityRuntimeNetworkController.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownAbilitiesPresenter.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ArcaneProjectileAbilityTests.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "message-term",
+          "value": "ability",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationNetworkController.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationRules.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationPresentationTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationRulesTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "message-term",
+          "value": "dungeon",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "persistence",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ArcaneProjectileAbilityTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/DamageResolverFriendlyFireTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationPresentationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationRulesTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "message-term",
+          "value": "documentation",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ArcaneProjectileAbilityTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/DamageResolverFriendlyFireTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationPresentationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationRulesTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/PvpCombatCreditPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "2179227613c99c45bdb12140dd0f4ba15ee430b1",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2179227613c99c45bdb12140dd0f4ba15ee430b1",

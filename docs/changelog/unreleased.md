@@ -4,32 +4,213 @@
 
 Release: Unreleased
 
-262 original commits; 262 canonical entries.
+264 original commits; 264 canonical entries.
 
 ## Canonical classification
 
-81 features; 87 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 14 other changes
+81 features; 89 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 14 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Abilities | 10 | 9 | 1 | 0 | 9 | 1 |
+| Abilities | 10 | 10 | 1 | 0 | 9 | 1 |
 | Art & Animation | 13 | 9 | 1 | 0 | 9 | 5 |
 | Audio | 7 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 55 | 57 | 1 | 1 | 22 | 6 |
-| Combat | 37 | 12 | 0 | 0 | 12 | 1 |
-| Documentation | 31 | 38 | 0 | 0 | 13 | 0 |
+| Build & Tooling | 55 | 59 | 1 | 1 | 22 | 6 |
+| Combat | 37 | 14 | 0 | 0 | 12 | 1 |
+| Documentation | 31 | 40 | 0 | 0 | 13 | 0 |
 | Extraction | 17 | 21 | 0 | 0 | 9 | 3 |
 | Input | 1 | 1 | 0 | 0 | 1 | 0 |
 | Inventory & Loot | 58 | 51 | 1 | 1 | 24 | 3 |
-| Movement | 4 | 2 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 29 | 33 | 0 | 0 | 18 | 2 |
-| Persistence & Backend | 29 | 46 | 0 | 1 | 19 | 3 |
-| Tests | 78 | 81 | 1 | 1 | 29 | 4 |
+| Movement | 4 | 3 | 0 | 0 | 2 | 0 |
+| Networking & Sessions | 29 | 35 | 0 | 0 | 18 | 2 |
+| Persistence & Backend | 29 | 47 | 0 | 1 | 19 | 3 |
+| Tests | 78 | 83 | 1 | 1 | 29 | 4 |
 | UI | 32 | 18 | 1 | 0 | 12 | 2 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
-| World & Visibility | 20 | 9 | 0 | 0 | 3 | 9 |
+| World & Visibility | 20 | 10 | 0 | 0 | 3 | 9 |
 
 ## Original commit records
+
+### bccad7f7a9f81f1126472ff6a48b576a6fedf524
+
+[bccad7f7a9f81f1126472ff6a48b576a6fedf524](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bccad7f7a9f81f1126472ff6a48b576a6fedf524)
+
+Date: 2026-11-16T15:40:41-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Movement, Networking & Sessions, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(combat): resolve environmental hazard causality and projectile attribution
+```
+
+#### Original body
+
+```text
+Break hazard causality definitively upon exiting a hazard (ExitedHazard) so re-entering during active knockback does not re-link or credit the pusher (Doc 19 §8.2, T06-09, FIX-88).
+
+Enable environmental projectile causal attribution for DartTrap and NetworkProjectile, replicating EnvironmentalHazardId and reporting presence along the firing line (TASK-247, FIX-89).
+
+Discard causal links upon independent non-player displacements (IndependentIntervention) and exclude all overlapping hazards occupied before the push (Doc 19 §8.2, FIX-90).
+
+Expand PlayMode and EditMode test suites covering continuous hazard exposure, voluntary hazard movement, environmental neutrality, host migration, and real component paths (FIX-91).
+
+Document mandatory hazard contract in EnvironmentalHazardsArchitecture.md.
+
+Refs: FIX-88, FIX-89, FIX-90, FIX-91, FIX-US-11
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Combat/HazardCausality/HazardExposureCausalityRules.cs
+Project Grimhold/Assets/Scripts/Combat/HazardCausality/HazardExposureCausalityState.cs
+Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs
+Project Grimhold/Assets/Scripts/Core/ProjectileSpawnRequest.cs
+Project Grimhold/Assets/Scripts/Scenario/Traps/DartTrap.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/HazardExposureCausalityRulesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs
+Project Grimhold/Assets/Tests/PlayMode/PvpCombatCreditPlayModeTests.cs
+Project Grimhold/Docs/Architecture/EnvironmentalHazardsArchitecture.md
+odd/tasks/fix-us-11-combat-pvp-attribution.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/HazardCausality/HazardExposureCausalityRules.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/HazardCausality/HazardExposureCausalityState.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Core/ProjectileSpawnRequest.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/HazardExposureCausalityRulesTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/PlayMode/PvpCombatCreditPlayModeTests.cs
+- path → Combat: odd/tasks/fix-us-11-combat-pvp-attribution.md
+- scope → Combat: combat
+- message-term → Combat: combat
+- message-term → Movement: movement
+- message-term → Networking &amp; Sessions: host migration
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/HazardExposureCausalityRulesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/EnvironmentalHazardsArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/HazardExposureCausalityRulesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/PvpCombatCreditPlayModeTests.cs
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 5013e60e950f19730168b227f85e54ddf32c14f5
+
+[5013e60e950f19730168b227f85e54ddf32c14f5](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/5013e60e950f19730168b227f85e54ddf32c14f5)
+
+Date: 2026-11-16T14:57:27-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Abilities, Networking & Sessions, World & Visibility, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(combat): resolve Sprint 15 combat rules and PvP credit attribution
+```
+
+#### Original body
+
+```text
+Enforce protective default on unresolved participant links during damage
+resolution so friendly fire blocks without killing teammates. Set default
+PvP assist limit to 0 (unlimited per GD 19 §6.2), forward lethal Empower
+contributions to AssistMask, and update Q9 architecture documentation.
+Bound Arcane Projectile to 25 units and 5 seconds in open space, and allow
+Protective Orbs to intercept hostile trap darts and enemy player shots.
+Add Host-configurable Friendly Fire toggle in town raid preparation with
+live read-only member replication, and upgrade F8 ability debugger with
+cross-scene persistence and in-dungeon test tools.
+
+Player-Fixed: Host can now configure Friendly Fire in expedition preparation.
+Player-Fixed: Arcane Projectiles now properly dissipate in open spaces.
+Player-Fixed: Protective Orbs now intercept enemy player shots and trap darts.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/NetworkPlayer.prefab
+Project Grimhold/Assets/Prefabs/TownRaidPreparationView.prefab
+Project Grimhold/Assets/Scripts/Abilities/Behaviours/ArcaneProjectileAbilityBehaviour.cs
+Project Grimhold/Assets/Scripts/Abilities/Debugging/AbilityPlayModeDebugger.cs
+Project Grimhold/Assets/Scripts/Abilities/Effects/ProtectiveOrbsNetworkEffect.cs
+Project Grimhold/Assets/Scripts/Abilities/Runtime/AbilityAllyAffiliation.cs
+Project Grimhold/Assets/Scripts/Abilities/Runtime/PlayerAbilityRuntimeNetworkController.cs
+Project Grimhold/Assets/Scripts/Combat/DamageResolver.cs
+Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs
+Project Grimhold/Assets/Scripts/Core/IDownedCycleObserver.cs
+Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs
+Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationNetworkController.cs
+Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationRules.cs
+Project Grimhold/Assets/Scripts/Player/PlayerCharacter.cs
+Project Grimhold/Assets/Scripts/Player/PlayerDownedStateNetworkController.cs
+Project Grimhold/Assets/Scripts/Player/PlayerPvpCombatCreditNetworkController.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownAbilitiesPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationPresentation.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationView.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ArcaneProjectileAbilityTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/DamageResolverFriendlyFireTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationPresentationTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationRulesTests.cs
+Project Grimhold/Assets/Tests/PlayMode/PvpCombatCreditPlayModeTests.cs
+Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md
+odd/tasks/fix-us-11-combat-pvp-attribution.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Combat: Project Grimhold/Assets/Scripts/Abilities/Behaviours/ArcaneProjectileAbilityBehaviour.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/DamageResolver.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Player/PlayerPvpCombatCreditNetworkController.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ArcaneProjectileAbilityTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/DamageResolverFriendlyFireTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/PlayMode/PvpCombatCreditPlayModeTests.cs
+- path → Combat: odd/tasks/fix-us-11-combat-pvp-attribution.md
+- scope → Combat: combat
+- message-term → Combat: combat
+- path → Abilities: Project Grimhold/Assets/Scripts/Abilities/Behaviours/ArcaneProjectileAbilityBehaviour.cs
+- path → Abilities: Project Grimhold/Assets/Scripts/Abilities/Debugging/AbilityPlayModeDebugger.cs
+- path → Abilities: Project Grimhold/Assets/Scripts/Abilities/Effects/ProtectiveOrbsNetworkEffect.cs
+- path → Abilities: Project Grimhold/Assets/Scripts/Abilities/Runtime/AbilityAllyAffiliation.cs
+- path → Abilities: Project Grimhold/Assets/Scripts/Abilities/Runtime/PlayerAbilityRuntimeNetworkController.cs
+- path → Abilities: Project Grimhold/Assets/Scripts/Player/Presentation/TownAbilitiesPresenter.cs
+- path → Abilities: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ArcaneProjectileAbilityTests.cs
+- message-term → Abilities: ability
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationNetworkController.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationRules.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationPresentationTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationRulesTests.cs
+- message-term → World &amp; Visibility: dungeon
+- message-term → Persistence &amp; Backend: persistence
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ArcaneProjectileAbilityTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/DamageResolverFriendlyFireTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationPresentationTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationRulesTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md
+- message-term → Documentation: documentation
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ArcaneProjectileAbilityTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/DamageResolverFriendlyFireTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationPresentationTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRaidPreparationRulesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/PvpCombatCreditPlayModeTests.cs
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 2179227613c99c45bdb12140dd0f4ba15ee430b1
 

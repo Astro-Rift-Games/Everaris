@@ -97,6 +97,9 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - The dungeon collapse phase no longer triggers prematurely before 8 minutes of raid time.
 - Re-entering the Downed state quickly after being revived no longer carries over visual darkening or color tint from the previous cycle.
 - Sword hits on characters play their hit sound again.
+- Host can now configure Friendly Fire in expedition preparation.
+- Arcane Projectiles now properly dissipate in open spaces.
+- Protective Orbs now intercept enemy player shots and trap darts.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08
