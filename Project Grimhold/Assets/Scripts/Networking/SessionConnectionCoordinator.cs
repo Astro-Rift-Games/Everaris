@@ -31,7 +31,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
     private string _townSceneName = "Lobby-Town";
 
     [SerializeField]
-    private string _gameplaySceneName = "Gameplay";
+    private string _gameplaySceneName = "CatacombsMap";
 
     [Header("Coordinated Raid Transition")]
     [SerializeField, Min(0f)]

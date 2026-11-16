@@ -142,7 +142,7 @@ never derive teams from their local Party state. Freeze and launch-context creat
 for a Party grouping larger than a Duo or for missing, gapped or out-of-range ordinals, so every
 team satisfies the Solo (1) / Duo (2) roster rule. Team identity supports equality only and
 defines no order or priority. `ParticipantProfileIds` is a derived compatibility
-projection, not a second roster. Gameplay `WaitingForPlayers` is only the technical
+projection, not a second roster. Raid `WaitingForPlayers` is only the technical
 connecting phase; it has no Ready or player-facing Start UI. The existing bootstrap
 must wait for every frozen profile and then advance automatically to `InProgress`.
 
@@ -256,13 +256,13 @@ not recorded multi-process runtime evidence.
 ### Raid runner lifecycle
 
 For the Raid runner, the Host creates the runner with `SessionInfo.IsOpen=false`
-and `IsVisible=false`. After Gameplay has loaded and `NetworkMatchController` is
+and `IsVisible=false`. After CatacombsMap has loaded and `NetworkMatchController` is
 available, `NetworkSpawnManager` resolves the scene configuration and admits only
 the frozen cohort's profiles. The session then enters technical
-`WaitingForPlayers`; no player-facing preparation UI exists in Gameplay.
+`WaitingForPlayers`; no player-facing preparation UI exists in the Raid scene.
 No initial enemies, loot containers or breakables are generated in this phase.
 
-Because the Host runner is created closed and hidden while loading Gameplay and executing
+Because the Host runner is created closed and hidden while loading CatacombsMap and executing
 its local bootstrap, incoming Client peers from a frozen cohort encounter `ShutdownReason.GameNotFound`
 (prior to room creation) or `ShutdownReason.GameClosed` (during scene loading and host bootstrap).
 Clients in a coordinated launch treat both reasons as pending session availability subject to a bounded
@@ -274,7 +274,7 @@ After the complete frozen cohort is prepared, State Authority changes the phase 
 `Starting`, closes the session, invokes the existing spawn manager's one-time
 initial bootstrap and enters `InProgress` only after that bootstrap succeeds. A
 bootstrap failure starts normal closure with `BootstrapFailure`; it never reloads
-Gameplay or represents failure as `InProgress`. A `BootstrapFailure` closure (including the
+the Raid scene or represents failure as `InProgress`. A `BootstrapFailure` closure (including the
 expected-admission deadline) aborts every participant without a result, so there is no Results screen
 to Return from. The Host therefore returns to Town automatically
 (`RaidLossNoticePolicy.ShouldReturnHostAfterTechnicalClosure`, observed by
@@ -423,9 +423,16 @@ This prevents a late callback from an earlier connection from clearing a replace
 Normal launches always pass an explicit Fusion scene and scene manager:
 
 - Town: `Lobby-Town`, `GameMode.Shared`, `LoadSceneMode.Single`.
-- Raid: `Gameplay`, `GameMode.Host` or `GameMode.Client`, `LoadSceneMode.Single`.
+- Raid: `CatacombsMap`, `GameMode.Host` or `GameMode.Client`, `LoadSceneMode.Single`.
 
-Both scenes must be enabled in Build Settings. Scene and request configuration are validated
+The Raid scene source of truth is `SessionConnectionCoordinator._gameplaySceneName`, serialized
+as `CatacombsMap` in `Assets/Prefabs/Systems.prefab`; its C# default also names `CatacombsMap`.
+The launcher and build-index resolver consume the selected name rather than choosing a map.
+Enabled Build Settings (`ProjectSettings/EditorBuildSettings.asset`) retain `MainMenu` at index 0,
+`Gameplay` at 1 for existing tests/tools, and `Lobby-Town` at 2; `CatacombsMap` is appended at 3.
+Host Migration preserves the source runner's scene index rather than selecting a new Raid map.
+
+Town and the selected Raid scene must be enabled in Build Settings. Scene and request configuration are validated
 before the current runner is shut down. The direct MainMenu raid development route retains
 the existing no-initial-scene behavior so its lobby tooling can control the next step.
 

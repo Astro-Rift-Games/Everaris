@@ -19,7 +19,7 @@ sealing are specified in `Docs/Architecture/HostMigrationRecoveryArchitecture.md
 
 ```mermaid
 stateDiagram-v2
-    [*] --> WaitingForPlayers : Raid runner and Gameplay scene started
+    [*] --> WaitingForPlayers : Raid runner and CatacombsMap scene started
     WaitingForPlayers --> Starting : Frozen cohort admitted
     Starting --> InProgress : Deferred PvPvE bootstrap succeeds
     Starting --> Closing : Bootstrap failure
@@ -27,7 +27,7 @@ stateDiagram-v2
     Closing --> Finished : Persistence barrier and cleanup complete
 ```
 
-- **`WaitingForPlayers`** is a technical Raid admission phase. The Gameplay scene is already
+- **`WaitingForPlayers`** is a technical Raid admission phase. The selected Raid scene (`CatacombsMap`) is already
   loaded, only profiles frozen in the Town launch context may join, and there is no second
   player-facing Start action in this runner.
 - **`Starting`** closes and hides the session and executes the one-time initial PvPvE bootstrap.
@@ -142,8 +142,35 @@ Player positions are configured separately from generic initial world groups. Th
 configuration owns an ordered collection of player spawn areas, each containing an ordered
 collection of transforms. `SpawnGroupType.Players` is invalid inside the generic spawn groups;
 Enemies, Loot, Breakables and the remaining world categories retain `SpawnGroupDefinition`.
-These areas are spatial configuration only and have no dependency on extraction entities,
-sanctuaries or their identifiers.
+These areas are spatial configuration only: the spawning code consumes transforms, not extraction
+entities, sanctuaries or their identifiers. Scene authoring does couple their placement: in both
+`Gameplay` and `CatacombsMap`, each area references one `ExtractionSanctuary` prefab instance's
+`Spawnpoint 1–4` children. This is a shared-location authoring convention, not a code dependency.
+
+### Catacombs map status
+
+The selected Raid scene is `Assets/Scenes/CatacombsMap.unity`, controlled by
+`SessionConnectionCoordinator._gameplaySceneName` serialized in `Assets/Prefabs/Systems.prefab`
+(the serialized value overrides the C# default; both currently name `CatacombsMap`).
+`Gameplay` remains a reference scene for tests/tools, not the normal Raid destination.
+
+Catacombs has one Required `NetworkSpawnSceneConfiguration`: eight ordered player areas from
+`ExtractionSanctuary_1..8` at `MapMarkers/PlayerSanctuaryPoints/Point_1..8`, with four spawn children
+each (32 positions, exceeding the 16-participant cap). Area/team capacity is still validated by
+the fresh-spawn preflight; position count alone does not prove every possible team roster fits.
+The four world groups reference `MapMarkers` children `EnemySpawnMarkers` (4), `LootSpawnMarkers`
+(11), `BreakableSpawnMarkers` (9) and `ReinforcementSpawnMarkers` (4), retaining Gameplay's
+Amount 4 and ThreatBudget 0 per group.
+
+The scene also contains PathfindingGrid, VisionFog, VisibilityManager, the Gameplay Camera prefab,
+Global Light 2D, EventSystem, input objects and a declared minimap. Walls and Obstacles collide on
+`WorldCollision`. Doors, traps, patrol routes, torches/braziers, ambient particles, music and a
+mission zone are out of scope; Gameplay has no mission zone (`RaidZoneTrigger`) to copy.
+
+Manual acceptance remains pending: a real Host/Client Raid, spawn separation per GD
+“10 - Reglas de Sesión de Dungeon” §4 (Duo together, no direct spawn-to-spawn sightline,
+~15 s before first PvP contact), Sanctuary assignment/privacy, and minimap performance with the
+~22.6 MB generated Catacombs layout. Composition tests do not establish these runtime checks.
 
 ## 6. Initial world spawning
 
@@ -213,7 +240,7 @@ reduced cohort never starts. Clients stop waiting for admission as soon as the r
 `BootstrapFailure`, or after a 0.5 s grace when the phase moved on without a replicated local participant. Details and limits: [Lobby and Session Transition](LobbyAndSessionTransitionArchitecture.md),
 "Admission abort (FIX-03)".
 
-The phase transition does not load Gameplay: the Raid runner started with that scene already
+The phase transition does not load CatacombsMap: the Raid runner started with that scene already
 selected. Town Create/Join/Ready and the player-facing Host Start remain owned by
 `TownRaidQueueArchitecture.md`.
 

@@ -222,17 +222,25 @@ The world Sanctuary presentation is not local assignment state. Its presenter re
 `Runner.LocalPlayer` and the current `PlayerObject` on every update, derives the current
 `EntityId`, and discards private ownership immediately if that context disappears or changes.
 No Sanctuary uses `HasInputAuthority`, static identity, scene lookup or a parallel assignment
-cache. `ExtractionSanctuaryPresenter` is the exclusive visual owner of the Sanctuary renderer;
-the co-located `ExtractionZone` contributes only interaction geometry and contains no renderer
-or fallback logic. The presenter preserves the renderer's authored alpha and only changes RGB
-for state presentation.
+cache. `ExtractionSanctuaryPresenter` is the exclusive state-visual owner of the Sanctuary's
+Off and OnOverlay renderers; the co-located `ExtractionZone` contributes only interaction geometry
+and contains no renderer or fallback logic. Both sprites remain untinted white: Off is opaque,
+and `SanctuaryActivationVisual` controls OnOverlay alpha (0 outside ritual, progress × soft pulse
+during ritual, 1 when completed). See [Extraction Architecture](ExtractionArchitecture.md#ritual-presentation-boundary).
 
 The local minimap is a separate `RaidMinimapPresenter`/`RaidMinimapView` section
 bound by `LocalPlayerHudBinder` and composed as the first child of `RaidRightPanel`; `RaidHudPresenter` retains responsibility only for textual HUD
 content and the expedition progress bar. Each Raid scene declares its own map with exactly one
 `RaidSceneMinimap`, which references that scene's generated `MinimapLayout` asset and the root that
 holds its `Floor`, `Walls` and `Obstacles` Tilemaps (for example the `Dungeon_Graybox` instance in
-`Gameplay.unity`). `MinimapLayoutGenerator` finds every scene
+`Gameplay.unity`, or the plain `Dungeon_Graybox` root in `CatacombsMap.unity`).
+Catacombs declares `Assets/Data/Minimap/CatacombsMinimapLayout.asset`; Gameplay retains its separate
+`Assets/Data/Minimap/DungeonGrayboxMinimapLayout.asset`. Catacombs' generated snapshot covers
+291×205 cells, 18,762 floor cells, 212 art batches and four textures (~22.6 MB on disk);
+actual Host/Client minimap performance remains a manual acceptance check.
+Discovery is declaration-based and already supports multiple Raid scenes; the legacy Gameplay
+constants are compatibility/test entry points, not an exclusive scene selector.
+`MinimapLayoutGenerator` finds every scene
 that contains a `RaidSceneMinimap` and derives one immutable layout per scene from those saved Tilemaps,
 including their overrides, world placement,
 cell size, occupancy, original tile sprites/UVs/tints/transforms, ordered texture batches bound to

@@ -94,7 +94,8 @@ Enemy AI has no extraction dependency. `EnemyMovementAIController` owns one atom
 
 `PlayerExtractionPresenter` observes the replicated `ExtractionState` on every peer. When the state is `Extracted`, it hides only the serialized `Body` and `CombatVisuals` roots. The NetworkObject, colliders, camera, HUD, interaction and authoritative gameplay components remain active. Disabling the presenter restores its serialized visual state; re-enabling it reapplies the terminal visual from the current confirmed state.
 
-The extraction zone keeps its existing pozo visual and availability tint. This presentation boundary does not add world-space UI, audio, particles, a second extraction clock or another networked state source.
+`ExtractionZone` is simulation-only; the co-located Sanctuary owns the Off/On world presentation
+described under “Ritual presentation boundary”, with no availability or state color tints. This presentation boundary does not add world-space UI, audio, particles, a second extraction clock or another networked state source.
 
 ## Lifecycle and validation
 
@@ -232,6 +233,11 @@ Each `ExtractionSanctuary` keeps its networked team slots (`[Networked, Capacity
 
 Host simulation selects only among registered Sanctuaries that are not reserved (`IsReserved == false`), in ascending identity order, with the pure policy: pseudorandom mixing of seed, tick, team identity and free candidate count. When every Sanctuary is reserved, assignment fails closed with `NoFreeSanctuary`; the team keeps its pending request and `TeamExtractionProgress` retries it on later ticks. Game Design does not yet define the outcome when a raid has more teams than Sanctuaries; Level Design must provide at least one Sanctuary per team until it does.
 
+Scene composition currently provides four `ExtractionSanctuary` instances in `Gameplay.unity`
+and eight in `CatacombsMap.unity`. Both scenes share each instance's `Spawnpoint 1–4` children
+with player spawn-area configuration as an authoring convention, not an assignment-service dependency.
+These counts do not change quota, team limits or the fail-closed assignment policy.
+
 A pending request is retried every simulation tick, so the assignment service reports `NoSanctuariesConfigured`, `NoFreeSanctuary`, `ReservationConflict`, `SanctuaryRegistryInconsistent` and `DuplicateExistingAssignment` once per Raid generation (until `ResetForRaidClosure`) as a configuration failure, and retried attempts log nothing.
 
 ## Authoritative team ritual and shared extraction coordination (supersedes Authoritative individual ritual)
@@ -283,19 +289,31 @@ replaced runner/player context immediately falls back to the public visual state
 
 The Sanctuary presenter consumes `IExtractionSanctuary.TryGetRitualProgress` and rebuilds its
 visual from the confirmed snapshot. Rivals see only public ritual progress: an unreserved/base
-state, a global `InProgress` pulse, or a permanent `Completed` state. Reserved and cancelled
-tints and their one-shot cues are private to the currently resolved local owner. Ritual start
+state, a global `InProgress` fade/pulse, or a permanent `Completed` state. Reservation and
+cancellation one-shot cues are private to the currently resolved local owner; they do not tint
+the world sprites. Ritual start
 and completion cues are public world feedback. A first valid snapshot (including a late join or
 re-enable) establishes a baseline without replaying cues; only subsequently observed state or
 reservation transitions emit them. Missing or invalid snapshots reset that baseline. Progress
-intensifies the in-progress pulse as an aesthetic response, but timing remains derived only
+raises the On overlay's opacity as an aesthetic response, but timing remains derived only
 from the confirmed `TickTimer` snapshot. Audio uses the existing `AudioManager` with authored
 spatial `CustomClip` cues at the Sanctuary; one-shot completion particles use
 `ParticleEffectPlayer` with an authored cue reference. Missing optional cue references or
-presentation services never affect gameplay. All presenters preserve the alpha
-authored on each renderer; state changes modify RGB only and never alter zone transparency.
-Presentation components write no simulation state and add no replicated properties, RPCs or
-gameplay timers.
+presentation services never affect gameplay.
+
+The shared `Assets/Prefabs/ExtractionSanctuary.prefab` uses
+`Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive.png` on `Visuals/Off` and
+`Sanctuary-Large-Active.png` in the same folder on `Visuals/OnOverlay` (128×128, 16 PPU,
+FullRect). These Large sprites supersede the initial V1 selection. `Visuals` has local XY scale
+0.6666667 to compensate for the unchanged 1.5 gameplay-root scale; its sprite children have local
+scale 1, yielding world XY scale 1 without resizing the collider, zone or spawn children.
+
+`SanctuaryActivationVisual.ResolveAlpha` returns 0 for free, assigned/not-started or cancelled
+states; during `InProgress` it returns `Clamp01(progress) × Lerp(0.75, 1, Clamp01(pulse))`;
+`Completed` returns 1 permanently. The presenter keeps Off opaque and both renderers white,
+using an unscaled sine for the soft pulse (or pulse 1 when frequency is zero), with no color tints.
+Disable/destroy restores authored sprites and colors. Presentation components write no simulation
+state and add no replicated properties, RPCs or gameplay timers.
 
 The local minimap presentation is described below.
 
@@ -308,7 +326,10 @@ only the private Sanctuary marker and never disables the remaining HUD.
 
 `RaidMinimapView` is composed on the existing `LocalGameplayHud` Canvas, as the first child of the `RaidRightPanel` column. Its north-up
 `RaidMinimapGraphic` renders the immutable `MinimapLayout` generated from the serialized `Floor`,
-`Walls` and `Obstacles` Tilemaps of the unique `Dungeon_Graybox` instance in saved `Gameplay.unity`, including its authored overrides. The editor generator retains cell
+`Walls` and `Obstacles` Tilemaps under the loaded scene's `RaidSceneMinimap.SourceTilemapRoot`,
+including saved authored overrides. Gameplay declares `DungeonGrayboxMinimapLayout.asset` and
+CatacombsMap declares `CatacombsMinimapLayout.asset` (both under `Assets/Data/Minimap/`);
+Catacombs uses a plain `Dungeon_Graybox` root, not a required prefab instance. The editor generator retains cell
 bounds, size, world pivot and occupancy, and resolves the original sprites into geometry, UVs,
 Tilemap/cell tint and transformed positions in renderer layer/cell order. It does not use schematic
 colours: each source atlas is baked into an alpha-weighted 2x2 box-averaged copy stored as a Point-filtered
@@ -361,13 +382,15 @@ No marker is baked into the background, and no loot, enemy or remote-player mark
 
 ### Minimap regeneration contract
 
-`DungeonGrayboxMinimapLayout.asset` is a generated, version-controlled snapshot of the saved
-`Floor`, `Walls` and `Obstacles` Tilemaps of the `Dungeon_Graybox` instance in `Gameplay.unity`.
-It is never read from the live Tilemap at runtime.
+Each Raid scene opts in with exactly one `RaidSceneMinimap` referencing its own layout asset
+and source Tilemap root. Discovery is declaration-based, not restricted to Gameplay or a prefab.
+`DungeonGrayboxMinimapLayout.asset` (Gameplay) and `CatacombsMinimapLayout.asset` (CatacombsMap)
+are generated, version-controlled snapshots of their saved `Floor`, `Walls` and `Obstacles`
+Tilemaps. Neither is read from the live Tilemap at runtime.
 
 Triggers. `MinimapLayoutGenerator.EnsureCurrentLayout` runs on:
 
-- a coalesced Editor refresh after saving `Gameplay.unity` or `Dungeon_Graybox.prefab`, or after
+- a coalesced Editor refresh after saving a declared Raid scene or changing its source prefab, or after
   importing, moving or deleting any tile-art dependency (Tile assets, sprites, textures and their
   `.meta` import settings);
 - Editor load (`DungeonMinimapLayoutBootstrap`);
@@ -393,13 +416,13 @@ restricted to the generated asset rather than all dirty project assets. Bump the
 whenever the generated representation changes.
 
 Not generation sources: unsaved scene/prefab edits, runtime Tilemap changes, other Tilemaps,
-and objects outside the `Dungeon_Graybox` instance.
+and objects outside the declaration's source Tilemap root.
 
 Constraints and team workflow:
 
 - Every tile texture referenced by those Tilemaps must have even width and height (2x2 averaging);
   otherwise generation fails and the build stops.
-- Commit the regenerated `DungeonGrayboxMinimapLayout.asset` together with the scene, prefab or
+- Commit the affected scene's regenerated layout asset together with the scene, prefab or
   art change that caused it, so other clones and builds start from a fresh layout.
 - Verify after a dungeon change: the layout asset appears modified in Git, the minimap matches
   the Tilemap in play, and the `Minimap` EditMode tests pass.

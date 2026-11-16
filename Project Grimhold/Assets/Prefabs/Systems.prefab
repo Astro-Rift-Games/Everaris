@@ -124,7 +124,7 @@ MonoBehaviour:
   _hubLauncher: {fileID: 7366466056960329881}
   _raidLauncher: {fileID: 8121898311945185702}
   _townSceneName: Lobby-Town
-  _gameplaySceneName: Gameplay
+  _gameplaySceneName: CatacombsMap
   _clientJoinRetryDelaySeconds: 0.5
   _clientSessionAvailabilityTimeoutSeconds: 40
   _developmentRaidCode: 900001
