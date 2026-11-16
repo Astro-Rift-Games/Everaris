@@ -39,6 +39,42 @@ public sealed class TownRaidPreparationRulesTests
         Assert.That(TownRaidPreparationRules.TryCreateLaunchContext(removed, removed.HostProfileId, out _), Is.False);
     }
 
+    [Test]
+    public void FriendlyFire_HostCanToggleInWaiting_UpdatesRevisionAndFlag()
+    {
+        TownRaidPreparationSnapshot waiting = CreateWaiting("100001", 2, false);
+        Assert.That(waiting.FriendlyFireEnabled, Is.False);
+        Assert.That(TownRaidPreparationRules.CanSetFriendlyFire(waiting, waiting.HostProfileId), Is.True);
+
+        Assert.That(TownRaidPreparationRules.TrySetFriendlyFire(waiting, waiting.HostProfileId, true, out var toggledOn), Is.True);
+        Assert.That(toggledOn.FriendlyFireEnabled, Is.True);
+        Assert.That(toggledOn.SnapshotRevision, Is.EqualTo(waiting.SnapshotRevision + 1));
+
+        Assert.That(TownRaidPreparationRules.TrySetFriendlyFire(toggledOn, waiting.HostProfileId, false, out var toggledOff), Is.True);
+        Assert.That(toggledOff.FriendlyFireEnabled, Is.False);
+        Assert.That(toggledOff.SnapshotRevision, Is.EqualTo(toggledOn.SnapshotRevision + 1));
+    }
+
+    [Test]
+    public void FriendlyFire_NonHostCannotToggle()
+    {
+        TownRaidPreparationSnapshot waiting = CreateWaiting("100001", 2, false);
+        ProfileId client = waiting.Members[1].ProfileId;
+
+        Assert.That(TownRaidPreparationRules.CanSetFriendlyFire(waiting, client), Is.False);
+        Assert.That(TownRaidPreparationRules.TrySetFriendlyFire(waiting, client, true, out _), Is.False);
+    }
+
+    [Test]
+    public void FriendlyFire_CannotBeModified_WhenNotWaiting()
+    {
+        TownRaidPreparationSnapshot waiting = CreateWaiting("100001", 2, true);
+        Assert.That(TownRaidPreparationRules.TryFreeze(waiting, waiting.HostProfileId, 1, out var frozen), Is.True);
+
+        Assert.That(TownRaidPreparationRules.CanSetFriendlyFire(frozen, frozen.HostProfileId), Is.False);
+        Assert.That(TownRaidPreparationRules.TrySetFriendlyFire(frozen, frozen.HostProfileId, true, out _), Is.False);
+    }
+
     [TestCase(1)]
     [TestCase(2)]
     [TestCase(16)]

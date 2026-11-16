@@ -347,6 +347,23 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
         return true;
     }
 
+    public bool AuthorityTrySetFriendlyFire(ProfileId requester, bool friendlyFireEnabled)
+    {
+        if (!HasStateAuthority || !TownRaidPreparationRules.CanSetFriendlyFire(Snapshot, requester))
+        {
+            return false;
+        }
+
+        if ((bool)FriendlyFireEnabled == friendlyFireEnabled)
+        {
+            return true;
+        }
+
+        FriendlyFireEnabled = friendlyFireEnabled;
+        MarkSnapshotChanged();
+        return true;
+    }
+
     public TownRaidStartResult AuthorityTryStart(ProfileId requester)
     {
         if (!HasStateAuthority)

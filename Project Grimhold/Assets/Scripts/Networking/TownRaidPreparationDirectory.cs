@@ -32,6 +32,7 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
     public bool RequestJoin(string code) { if (!CanSendRequest || !RaidCode.TryParse(code, out _)) return false; RPC_RequestJoin(code); return true; }
     public bool RequestLeave() { if (!CanSendRequest) return false; RPC_RequestLeave(); return true; }
     public bool RequestSetReady(bool ready) { if (!CanSendRequest) return false; RPC_RequestSetReady(ready); return true; }
+    public bool RequestSetFriendlyFire(bool enabled) { if (!CanSendRequest) return false; RPC_RequestSetFriendlyFire(enabled); return true; }
     public bool RequestStart() { if (!CanSendRequest) return false; RPC_RequestStart(); return true; }
 
     public override void Spawned()
@@ -201,6 +202,16 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
         _profileByPlayer[info.Source] = profile;
         if (ready && IsAwaitingPartyCompletion(info.Source)) return default;
         preparation.AuthorityTrySetReady(profile, ready);
+        return default;
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    private RpcInvokeInfo RPC_RequestSetFriendlyFire(NetworkBool enabled, RpcInfo info = default)
+    {
+        if (!CanMutate || !TryResolveSender(info.Source, out ProfileId profile) ||
+            !_cache.TryResolve(profile, out TownRaidPreparationNetworkController preparation) || !preparation.HasStateAuthority) return default;
+        _profileByPlayer[info.Source] = profile;
+        preparation.AuthorityTrySetFriendlyFire(profile, enabled);
         return default;
     }
 

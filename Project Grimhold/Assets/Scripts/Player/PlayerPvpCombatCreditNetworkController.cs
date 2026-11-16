@@ -13,9 +13,9 @@ public sealed class PlayerPvpCombatCreditNetworkController : NetworkBehaviour, I
 
     [SerializeField, Min(0)] private long _pvpBaseExperience = 25;
 
-    // Requested limit 1 (GD 05 §19 table). GD 19 §6.2 grants every eligible teammate; 0 keeps that unlimited option.
+    // Doc 19 §6.2 grants every eligible teammate (0 = unlimited). Serialized limit supports optional capping.
     [SerializeField, Min(0), Tooltip("Maximum Assists per Downed cycle. 0 = unlimited (every eligible teammate).")]
-    private int _maxAssistsPerTarget = 1;
+    private int _maxAssistsPerTarget = 0;
 
     [Networked] public int CreditCycle { get; private set; }
     [Networked] public int LastHitParticipantValue { get; private set; }
@@ -91,7 +91,7 @@ public sealed class PlayerPvpCombatCreditNetworkController : NetworkBehaviour, I
         return tick > 0 && kind != CombatContributionKind.None;
     }
 
-    public void NotifyDownedEntered(int cycle, EntityId causerId, int simulationTick)
+    public void NotifyDownedEntered(int cycle, EntityId causerId, int simulationTick, RaidParticipantId empowerSourceId = default)
     {
         if (!HasStateAuthority || !_configurationValid) return;
         CreditCycle = cycle;
@@ -112,6 +112,13 @@ public sealed class PlayerPvpCombatCreditNetworkController : NetworkBehaviour, I
         {
             RaidParticipantId lastHitId = lastHitter.RaidParticipantId;
             LastHitParticipantValue = lastHitId.Value;
+
+            if (empowerSourceId.IsValid && empowerSourceId != lastHitId && empowerSourceId != target.RaidParticipantId)
+            {
+                AddCandidate(empowerSourceId, simulationTick);
+                _tracker?.TryRecordContribution(empowerSourceId, simulationTick, CombatContributionKind.Empower);
+            }
+
             _tracker.GetValidContributors(simulationTick, _contributors);
             foreach (RaidParticipantId contributor in _contributors)
             {

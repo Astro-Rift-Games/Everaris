@@ -27,6 +27,8 @@ public sealed class TownRaidPreparationView : MonoBehaviour
     private Button _reconnectButton;
     [SerializeField]
     private Button _discardReconnectButton;
+    [SerializeField]
+    private Button _friendlyFireButton;
     private Button _closeButton;
     [SerializeField] private TownRaidPreparationMemberCardView _memberCardPrefab;
     [SerializeField] private RectTransform _memberCardContainer;
@@ -54,10 +56,12 @@ public sealed class TownRaidPreparationView : MonoBehaviour
     public event Action CloseRequested;
     public event Action ReconnectRequested;
     public event Action DiscardReconnectRequested;
+    public event Action<bool> FriendlyFireToggleRequested;
 
     public bool IsPanelOpen => UiPanelVisibility.IsVisible(_panelRoot);
     public Button ReconnectButton => _reconnectButton;
     public Button DiscardReconnectButton => _discardReconnectButton;
+    public Button FriendlyFireButton => _friendlyFireButton;
 
 #if UNITY_EDITOR
     public static TownRaidPreparationView CreateEditorSource(Transform owner)
@@ -113,6 +117,10 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         {
             _discardReconnectButton = FindComponent<Button>("RaidCodePanel/Descartar reconexion");
         }
+        if (_friendlyFireButton == null)
+        {
+            _friendlyFireButton = FindComponent<Button>("RaidCodePanel/FriendlyFireToggle");
+        }
         _closeButton = FindComponent<Button>("RaidCodePanel/Cerrar");
 
         if (_panelRoot == null || _statusText == null || _codeInput == null)
@@ -138,6 +146,21 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         else
         {
             WireButton(_discardReconnectButton, () => DiscardReconnectRequested?.Invoke());
+        }
+
+        if (_friendlyFireButton == null)
+        {
+            _friendlyFireButton = CreateButton("Fuego amigo: Desactivado", _panelRoot.transform, RequestToggleFriendlyFire, out _);
+            _friendlyFireButton.name = "FriendlyFireToggle";
+            _friendlyFireButton.gameObject.SetActive(false);
+            if (_startButton != null)
+            {
+                _friendlyFireButton.transform.SetSiblingIndex(_startButton.transform.GetSiblingIndex() + 1);
+            }
+        }
+        else
+        {
+            WireButton(_friendlyFireButton, RequestToggleFriendlyFire);
         }
 
         WireButton(_createButton, () => CreateRequested?.Invoke(null));
@@ -229,6 +252,7 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         if (_copyButton != null) _copyButton.gameObject.SetActive(false);
         if (_readyButton != null) _readyButton.gameObject.SetActive(false);
         if (_startButton != null) _startButton.gameObject.SetActive(false);
+        if (_friendlyFireButton != null) _friendlyFireButton.gameObject.SetActive(false);
         if (_leaveButton != null)
         {
             _leaveButton.gameObject.SetActive(false);
@@ -277,6 +301,11 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         LeaveRequested?.Invoke();
     }
 
+    private void RequestToggleFriendlyFire()
+    {
+        FriendlyFireToggleRequested?.Invoke(!_lastPresentation.FriendlyFireEnabled);
+    }
+
     private void HideInspection()
     {
         if (_inspectionView != null) _inspectionView.Hide();
@@ -297,6 +326,7 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         if (_copyButton != null) _copyButton.interactable = !busy;
         if (_readyButton != null) _readyButton.interactable = !busy && CanToggleReady();
         if (_startButton != null) _startButton.interactable = !busy && !_awaitingPartyCompletion;
+        if (_friendlyFireButton != null) _friendlyFireButton.interactable = !busy && _lastPresentation.CanToggleFriendlyFire;
         if (_leaveButton != null) _leaveButton.interactable = !busy;
         if (_reconnectButton != null) _reconnectButton.interactable = !busy;
         if (_discardReconnectButton != null) _discardReconnectButton.interactable = !busy;
@@ -352,6 +382,7 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         }
 
         status.Append(presentation.IsHost ? "Preparación del Host." : "Esperando al Host...");
+        status.AppendLine().Append("Fuego amigo: ").Append(presentation.FriendlyFireEnabled ? "Activado" : "Desactivado");
         if (awaitingPartyCompletion)
         {
             status.AppendLine().Append(AwaitingPartyCompletionMessage);
@@ -371,6 +402,16 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         {
             _startButton.gameObject.SetActive(presentation.IsHost);
             _startButton.interactable = !_busy && presentation.CanStart && !awaitingPartyCompletion;
+        }
+        if (_friendlyFireButton != null)
+        {
+            _friendlyFireButton.gameObject.SetActive(true);
+            TMP_Text label = _friendlyFireButton.GetComponentInChildren<TMP_Text>();
+            if (label != null)
+            {
+                label.text = presentation.FriendlyFireEnabled ? "Fuego amigo: Activado" : "Fuego amigo: Desactivado";
+            }
+            _friendlyFireButton.interactable = !_busy && presentation.CanToggleFriendlyFire;
         }
         if (_leaveButton != null)
         {
@@ -463,6 +504,7 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         if (_copyButton != null) _copyButton.gameObject.SetActive(false);
         if (_readyButton != null) _readyButton.gameObject.SetActive(false);
         if (_startButton != null) _startButton.gameObject.SetActive(false);
+        if (_friendlyFireButton != null) _friendlyFireButton.gameObject.SetActive(false);
         if (_leaveButton != null) _leaveButton.gameObject.SetActive(false);
     }
 
@@ -566,6 +608,7 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         _copyButton = CreateButton("Copiar código", _panelRoot.transform, CopyCode, out _);
         _readyButton = CreateButton("Ready", _panelRoot.transform, RequestReady, out _);
         _startButton = CreateButton("Iniciar raid", _panelRoot.transform, () => StartRequested?.Invoke(), out _);
+        _friendlyFireButton = CreateButton("Fuego amigo: Desactivado", _panelRoot.transform, RequestToggleFriendlyFire, out _);
         _leaveButton = CreateButton("Abandonar preparacion", _panelRoot.transform, RequestLeave, out _);
         _reconnectButton = CreateButton("Volver a la raid", _panelRoot.transform, () => ReconnectRequested?.Invoke(), out _);
         _discardReconnectButton = CreateButton("Descartar reconexion", _panelRoot.transform, () => DiscardReconnectRequested?.Invoke(), out _);
@@ -575,6 +618,7 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         _promptRoot.SetActive(false);
         _readyButton.gameObject.SetActive(false);
         _startButton.gameObject.SetActive(false);
+        _friendlyFireButton.gameObject.SetActive(false);
         _leaveButton.gameObject.SetActive(false);
         _reconnectButton.gameObject.SetActive(false);
         _discardReconnectButton.gameObject.SetActive(false);

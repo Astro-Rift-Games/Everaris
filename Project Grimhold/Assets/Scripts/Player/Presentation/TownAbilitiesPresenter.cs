@@ -65,7 +65,13 @@ public sealed class TownAbilitiesPresenter : MonoBehaviour
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         // No production source unlocks abilities yet; the F8 overlay fills the repertoire for testing.
-        _debugger = gameObject.AddComponent<AbilityPlayModeDebugger>();
+        _debugger = AbilityPlayModeDebugger.Instance;
+        if (_debugger == null)
+        {
+            var go = new GameObject("AbilityPlayModeDebugger");
+            _debugger = go.AddComponent<AbilityPlayModeDebugger>();
+            DontDestroyOnLoad(go);
+        }
         _debugger.Initialize(context, _abilityCatalog);
 #endif
     }
@@ -83,11 +89,7 @@ public sealed class TownAbilitiesPresenter : MonoBehaviour
         _endpoint = null;
         _canMutate = null;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        if (_debugger != null)
-        {
-            Destroy(_debugger);
-            _debugger = null;
-        }
+        _debugger = null;
 #endif
         if (_view == null)
         {

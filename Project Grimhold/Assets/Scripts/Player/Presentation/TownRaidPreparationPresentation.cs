@@ -60,6 +60,8 @@ public readonly struct TownRaidPreparationPresentation
     public bool IsHost { get; }
     public bool LocalReady { get; }
     public bool CanStart { get; }
+    public bool CanToggleFriendlyFire => IsHost && Snapshot.State == TownRaidPreparationState.Waiting;
+    public bool FriendlyFireEnabled => Snapshot.FriendlyFireEnabled;
 
     private TownRaidPreparationPresentation(
         in TownRaidPreparationSnapshot snapshot,

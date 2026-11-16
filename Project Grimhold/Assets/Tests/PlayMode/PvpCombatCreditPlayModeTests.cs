@@ -219,9 +219,36 @@ namespace Tests.PlayMode.Combat
         }
 
         [UnityTest]
-        public IEnumerator DefaultLimit_OnlyMostRecentEligibleContributorReceivesAssist()
+        public IEnumerator DefaultLimit_AllEligibleTeammatesReceiveAssist()
         {
             yield return Begin();
+            yield return Hit(2, 1, 1f);
+            yield return WaitTicks(2);
+            yield return Hit(3, 1, 1f);
+            yield return Hit(0, 1, 10000f);
+            Assert.That(Credit(1).AssistMask, Is.EqualTo(Bit(2) | Bit(3)));
+            yield return Hit(0, 1, 10000f);
+            AssertAll(killer: 0, assistMask: Bit(2) | Bit(3));
+        }
+
+        [UnityTest]
+        public IEnumerator LethalEmpoweredHit_AddsSupporterToAssistMask()
+        {
+            yield return Begin();
+            yield return InSimulation(() =>
+            {
+                Resolve(0, 1, 10000f, Id(2));
+            });
+            Assert.That(Credit(1).AssistMask, Is.EqualTo(Bit(2)));
+            yield return Hit(0, 1, 10000f);
+            AssertAll(killer: 0, assistMask: Bit(2));
+        }
+
+        [UnityTest]
+        public IEnumerator ConfiguredLimit_OnlyMostRecentEligibleContributorReceivesAssist()
+        {
+            yield return Begin();
+            SetAssistLimit(1);
             yield return Hit(2, 1, 1f);
             yield return WaitTicks(2);
             yield return Hit(3, 1, 1f);
@@ -232,9 +259,10 @@ namespace Tests.PlayMode.Combat
         }
 
         [UnityTest]
-        public IEnumerator DefaultLimit_SameTickContributorsTieBreakToLowestParticipantId()
+        public IEnumerator ConfiguredLimit_SameTickContributorsTieBreakToLowestParticipantId()
         {
             yield return Begin();
+            SetAssistLimit(1);
             yield return InSimulation(() =>
             {
                 Assert.That(Resolve(3, 1, 1f).IsApplied, Is.True);

@@ -45,6 +45,22 @@ public sealed class TownRaidPreparationPresentationTests
     }
 
     [Test]
+    public void FriendlyFire_HostCanToggle_MemberCannot()
+    {
+        TownRaidPreparationSnapshot snapshot = CreateSnapshot("host", "client", false);
+
+        Assert.That(TownRaidPreparationPresentation.TryCreate(
+            snapshot, snapshot.HostProfileId, out TownRaidPreparationPresentation hostPresentation), Is.True);
+        Assert.That(hostPresentation.CanToggleFriendlyFire, Is.True);
+        Assert.That(hostPresentation.FriendlyFireEnabled, Is.False);
+
+        Assert.That(TownRaidPreparationPresentation.TryCreate(
+            snapshot, snapshot.Members[1].ProfileId, out TownRaidPreparationPresentation memberPresentation), Is.True);
+        Assert.That(memberPresentation.CanToggleFriendlyFire, Is.False);
+        Assert.That(memberPresentation.FriendlyFireEnabled, Is.False);
+    }
+
+    [Test]
     public void Members_PreserveAuthoritativeOrderAndRefreshResolvedNamesWithoutSnapshotChange()
     {
         TownRaidPreparationSnapshot snapshot = CreateSnapshot("host", "client", false);

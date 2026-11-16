@@ -79,6 +79,26 @@ public sealed class PlayerAbilityRuntimeNetworkController : NetworkBehaviour
         if (!isActiveAndEnabled || !HasStateAuthority || _ended || _invalid) return;
         if (IsInitialized && Runner.IsForward)
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (_pendingSandboxOverride)
+            {
+                _pendingSandboxOverride = false;
+                SandboxSetIgnoreSessionRules(true);
+                SandboxOverrideSlots(_pendingOverrideSlot1, _pendingOverrideSlot2, out string err);
+                if (err != null) Debug.LogWarning($"[AbilityDebug] Override slots failed: {err}", this);
+                else Debug.Log($"[AbilityDebug] Overrode slots to: {_pendingOverrideSlot1.Value}, {_pendingOverrideSlot2.Value}", this);
+            }
+            if (_pendingSandboxResetCooldowns)
+            {
+                _pendingSandboxResetCooldowns = false;
+                SandboxResetCooldowns();
+            }
+            if (_pendingDebugSpawnProjectile)
+            {
+                _pendingDebugSpawnProjectile = false;
+                SpawnDebugHostileProjectile();
+            }
+#endif
             RebindExecutions();
             ProgressExecution(UniversalAbilitySlot.Slot1);
             ProgressExecution(UniversalAbilitySlot.Slot2);
@@ -332,6 +352,106 @@ public sealed class PlayerAbilityRuntimeNetworkController : NetworkBehaviour
         state.Cooldown = TickTimer.None;
         state.AimDirection = default;
         WriteExecution(slot, state);
+    }
+
+    private bool _pendingSandboxOverride;
+    private AbilityId _pendingOverrideSlot1;
+    private AbilityId _pendingOverrideSlot2;
+    private bool _pendingSandboxResetCooldowns;
+    private bool _pendingDebugSpawnProjectile;
+
+    public void RequestDebugOverrideSlots(AbilityId slot1, AbilityId slot2)
+    {
+        if (HasStateAuthority)
+        {
+            _pendingOverrideSlot1 = slot1;
+            _pendingOverrideSlot2 = slot2;
+            _pendingSandboxOverride = true;
+        }
+        else
+        {
+            RPC_RequestDebugOverrideSlots(slot1.Value, slot2.Value);
+        }
+    }
+
+    public void RequestDebugOverrideSlot(UniversalAbilitySlot slot, AbilityId abilityId)
+    {
+        AbilityId currentSlot1 = _slots != null && _slots.TryGetSlot(UniversalAbilitySlot.Slot1, out var s1) ? s1.AbilityId : default;
+        AbilityId currentSlot2 = _slots != null && _slots.TryGetSlot(UniversalAbilitySlot.Slot2, out var s2) ? s2.AbilityId : default;
+
+        if (slot == UniversalAbilitySlot.Slot1)
+            RequestDebugOverrideSlots(abilityId, currentSlot2.IsValid && currentSlot2 != abilityId ? currentSlot2 : default);
+        else
+            RequestDebugOverrideSlots(currentSlot1.IsValid && currentSlot1 != abilityId ? currentSlot1 : default, abilityId);
+    }
+
+    public void RequestDebugResetCooldowns()
+    {
+        if (HasStateAuthority) _pendingSandboxResetCooldowns = true;
+        else RPC_RequestDebugResetCooldowns();
+    }
+
+    public void RequestDebugSpawnHostileProjectileTowardMe()
+    {
+        if (HasStateAuthority) _pendingDebugSpawnProjectile = true;
+        else RPC_RequestDebugSpawnHostileProjectile();
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    private void RPC_RequestDebugOverrideSlots(string slot1, string slot2)
+    {
+        _pendingOverrideSlot1 = new AbilityId(slot1);
+        _pendingOverrideSlot2 = new AbilityId(slot2);
+        _pendingSandboxOverride = true;
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    private void RPC_RequestDebugResetCooldowns()
+    {
+        _pendingSandboxResetCooldowns = true;
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    private void RPC_RequestDebugSpawnHostileProjectile()
+    {
+        _pendingDebugSpawnProjectile = true;
+    }
+
+    private void SpawnDebugHostileProjectile()
+    {
+        var arcane = GetComponent<ArcaneProjectileAbilityBehaviour>();
+        var spawner = GetComponent<FusionProjectileSpawner>() ?? FindAnyObjectByType<FusionProjectileSpawner>();
+        if (arcane == null || spawner == null)
+        {
+            Debug.LogWarning("[PlayerAbilityRuntimeNetworkController] Missing ArcaneProjectileAbilityBehaviour or FusionProjectileSpawner.", this);
+            return;
+        }
+
+        Vector2 playerPos = transform.position;
+        Vector2 facing = _movementController != null ? _movementController.FacingDirection : Vector2.right;
+        if (facing.sqrMagnitude < 0.001f) facing = Vector2.right;
+
+        Vector2 spawnOrigin = playerPos + facing * 4f;
+        Vector2 dir = -facing;
+
+        var request = new ProjectileSpawnRequest(
+            new EntityId(0),
+            spawnOrigin,
+            dir,
+            10f,
+            DamageType.Magical,
+            8f,
+            3f,
+            10f,
+            Runner.Tick.Raw,
+            projectilePrefab: arcane.ProjectilePrefab,
+            impactLayerMask: arcane.ImpactLayerMask.value,
+            isUnbounded: false,
+            enemyOnly: false
+        );
+
+        var result = spawner.Spawn(request);
+        Debug.Log($"[PlayerAbilityRuntimeNetworkController] Spawned hostile test projectile towards player: {result.WasSpawned}", this);
     }
 #endif
 

@@ -88,6 +88,39 @@ public static class TownRaidPreparationRules
                IsValidSnapshot(snapshot) && FindMember(snapshot.Members, profileId) >= 0;
     }
 
+    /// <summary>Returns whether the Host may configure Friendly Fire for the expedition before launch (Doc 19, FIX-82).</summary>
+    public static bool CanSetFriendlyFire(in TownRaidPreparationSnapshot snapshot, ProfileId requester)
+    {
+        return snapshot.State == TownRaidPreparationState.Waiting &&
+               IsValidSnapshot(snapshot) &&
+               requester.IsValid &&
+               snapshot.HostProfileId == requester;
+    }
+
+    public static bool TrySetFriendlyFire(
+        in TownRaidPreparationSnapshot snapshot,
+        ProfileId requester,
+        bool friendlyFireEnabled,
+        out TownRaidPreparationSnapshot next)
+    {
+        next = snapshot;
+        if (!CanSetFriendlyFire(snapshot, requester))
+        {
+            return false;
+        }
+
+        next = new TownRaidPreparationSnapshot(
+            snapshot.RaidCode,
+            snapshot.HostProfileId,
+            snapshot.State,
+            snapshot.Members,
+            snapshot.SnapshotRevision + 1,
+            snapshot.LaunchRevision,
+            snapshot.FrozenMemberCount,
+            friendlyFireEnabled);
+        return true;
+    }
+
     /// <summary>
     /// Returns whether a member may still change their Town build (attributes, abilities, Equipment and
     /// Stash selection). Ready locks the exact prepared configuration until the member returns to

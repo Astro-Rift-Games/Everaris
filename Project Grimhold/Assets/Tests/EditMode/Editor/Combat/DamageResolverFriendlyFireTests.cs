@@ -45,6 +45,126 @@ namespace Tests.EditMode.Combat
         }
 
         [Test]
+        public void UnresolvedAffiliation_FriendlyFireDisabled_BlocksAsProtectiveAlly()
+        {
+            var root = new GameObject("Resolver");
+            var attackerObject = new GameObject("Attacker");
+            var targetObject = new GameObject("Target");
+            try
+            {
+                var registry = root.AddComponent<EntityRegistry>();
+                var resolver = root.AddComponent<DamageResolver>();
+                SetRegistry(resolver, registry);
+                var attacker = attackerObject.AddComponent<PlayerCharacter>();
+                var target = targetObject.AddComponent<PlayerCharacter>();
+                var entities = (System.Collections.Generic.Dictionary<EntityId, IDamageable>)
+                    typeof(EntityRegistry).GetField("_entities", BindingFlags.Instance | BindingFlags.NonPublic)
+                        .GetValue(registry);
+                entities.Add(new EntityId(11), attacker);
+                entities.Add(new EntityId(22), target);
+
+                // Simulate unresolved participant link (TryAreInitialTeammates returns false)
+                resolver.TryAreInitialTeammates = (PlayerCharacter _, PlayerCharacter _, out bool areTeammates) =>
+                {
+                    areTeammates = false;
+                    return false;
+                };
+                resolver.FriendlyFireEnabled = () => false;
+
+                DamageResult result = resolver.Resolve(Request(11));
+                Assert.That(result.IsApplied, Is.False);
+                Assert.That(result.AppliedDamage, Is.Zero);
+                Assert.That(result.FailureReason, Is.EqualTo(DamageFailureReason.FriendlyFireBlocked));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(targetObject);
+                UnityEngine.Object.DestroyImmediate(attackerObject);
+                UnityEngine.Object.DestroyImmediate(root);
+            }
+        }
+
+        [Test]
+        public void UnresolvedAffiliation_FriendlyFireEnabled_AppliesAllyProtection()
+        {
+            var root = new GameObject("Resolver");
+            var attackerObject = new GameObject("Attacker");
+            try
+            {
+                var registry = root.AddComponent<EntityRegistry>();
+                var resolver = root.AddComponent<DamageResolver>();
+                SetRegistry(resolver, registry);
+                typeof(DamageResolver).GetField("_allyDamageMultiplier", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .SetValue(resolver, 0.25f);
+                var attacker = attackerObject.AddComponent<PlayerCharacter>();
+                var target = new Target();
+                resolver.AsPlayer = _ => attacker;
+                var entities = (System.Collections.Generic.Dictionary<EntityId, IDamageable>)
+                    typeof(EntityRegistry).GetField("_entities", BindingFlags.Instance | BindingFlags.NonPublic)
+                        .GetValue(registry);
+                entities.Add(new EntityId(11), attacker);
+                registry.TryRegisterEntity(target.Id, target, Array.Empty<Collider2D>());
+
+                // Simulate unresolved participant link
+                resolver.TryAreInitialTeammates = (PlayerCharacter _, PlayerCharacter _, out bool areTeammates) =>
+                {
+                    areTeammates = false;
+                    return false;
+                };
+                resolver.FriendlyFireEnabled = () => true;
+
+                DamageResult result = resolver.Resolve(Request(11));
+                Assert.That(result.IsApplied, Is.True);
+                Assert.That(target.LastRequest.IsAllyDirectDamage, Is.True);
+                Assert.That(target.LastRequest.Amount, Is.EqualTo(10f * 0.25f));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(attackerObject);
+                UnityEngine.Object.DestroyImmediate(root);
+            }
+        }
+
+        [Test]
+        public void ConfirmedEnemies_FriendlyFireDisabled_AllowsPvPDamage()
+        {
+            var root = new GameObject("Resolver");
+            var attackerObject = new GameObject("Attacker");
+            try
+            {
+                var registry = root.AddComponent<EntityRegistry>();
+                var resolver = root.AddComponent<DamageResolver>();
+                SetRegistry(resolver, registry);
+                var attacker = attackerObject.AddComponent<PlayerCharacter>();
+                var target = new Target();
+                resolver.AsPlayer = _ => attacker;
+                var entities = (System.Collections.Generic.Dictionary<EntityId, IDamageable>)
+                    typeof(EntityRegistry).GetField("_entities", BindingFlags.Instance | BindingFlags.NonPublic)
+                        .GetValue(registry);
+                entities.Add(new EntityId(11), attacker);
+                registry.TryRegisterEntity(target.Id, target, Array.Empty<Collider2D>());
+
+                // Confirmed enemies: TryAreInitialTeammates returns true with areTeammates = false
+                resolver.TryAreInitialTeammates = (PlayerCharacter _, PlayerCharacter _, out bool areTeammates) =>
+                {
+                    areTeammates = false;
+                    return true;
+                };
+                resolver.FriendlyFireEnabled = () => false;
+
+                DamageResult result = resolver.Resolve(Request(11));
+                Assert.That(result.IsApplied, Is.True);
+                Assert.That(target.LastRequest.IsAllyDirectDamage, Is.False);
+                Assert.That(target.LastRequest.Amount, Is.EqualTo(10f));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(attackerObject);
+                UnityEngine.Object.DestroyImmediate(root);
+            }
+        }
+
+        [Test]
         public void ZeroDamagePush_ResolverStillAppliesEligibleKnockback()
         {
             var root = new GameObject("Resolver");

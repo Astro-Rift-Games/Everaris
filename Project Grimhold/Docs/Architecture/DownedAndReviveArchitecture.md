@@ -438,10 +438,8 @@ Rules:
   controller. Full-health and self heals grant no support. At entry, candidates include recent
   damage/Empower contributors and recent healers of the Last Hitter or a damage contributor.
   Every candidate must be an initial teammate of Last Hit, excluding Last Hit and the victim.
-* **Assist limit:** serialized `_maxAssistsPerTarget`, default `1` per Downed cycle (GD 05 §19 table);
-  `0` keeps every eligible teammate (GD 19 §6.2 / T03-05, which still reads unlimited — open design
-  discrepancy). When the limit applies, the most recent in-window contribution or support before
-  Downed wins; a same-tick tie goes to the lowest `RaidParticipantId`.
+* **Assist limit:** serialized `_maxAssistsPerTarget`, default `0` (unlimited assists per GD 19 §6.2: every eligible teammate receives assist credit; FIX-80). When a positive limit applies, the most recent in-window contribution or support before
+  Downed wins; a same-tick tie goes to the lowest `RaidParticipantId`. An Empower applied during the fatal downing blow is forwarded to `AssistMask`.
 
 ### 11.1 Knockback into environmental hazards (Implemented, TASK-247)
 
@@ -633,7 +631,7 @@ Host Migration is an MVP requirement (decision of 2026-11-01, FIX-US-08: the Rai
 | Q6 | Does Dungeon absolute close force Defeat or Abort for Downed players? | Game Design (GD 10) | Resolved by GD 10 §5.1 and GD 13 §13: absolute close gives definitive Defeat to everyone still inside, ignoring reserve and recovery. **Implementation gap:** closure currently aborts `Raiding` participants, Active ones included (pre-existing). Owner: TASK 453 or a Dungeon Session task; section 14 describes `ForceDefinitiveDefeat` |
 | Q7 | Do "both immobile" and "interrupted by movement" mean any movement, including the Downed's limited movement and knockback? | Game Design | Resolved: voluntary movement (`IsMoving`) of either avatar interrupts; knockback interrupts only when it breaks the range (checked by `PlayerDownedRecoveryNetworkController`, not a knockback signal). Doc 18 §6.4 / Doc 13 §5 reject new/replacement knockback on an already Downed avatar; previously authorized travel completes unless definitive Defeat cancels it on the next movement tick |
 | Q8 | Reviver damage detection: any `Health` loss, or any hit including fully mitigated ones? | Combat Design | Resolved as a detectability decision: `Health` loss (polling); fully mitigated hits do not interrupt |
-| Q9 | PvP Last Hit attribution rules and amounts | GD 19 §§4–6, 14; balance decision | Resolved for TASK-246: section 11, base 25, floor-half Assist, Assist limit 1 (0 = unlimited) |
+| Q9 | PvP Last Hit attribution rules and amounts | GD 19 §§4–6, 14; balance decision | Resolved for TASK-246 / FIX-80: section 11, base 25, floor-half Assist (12), default Assist limit 0 (unlimited: every eligible teammate; GD 19 §6.2), lethal Empower assist forwarding |
 
 ## 18. Implementation status
 

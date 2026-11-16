@@ -7574,7 +7574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerPvpCombatCreditNetworkController
   _pvpBaseExperience: 25
-  _maxAssistsPerTarget: 1
+  _maxAssistsPerTarget: 0
   _CreditCycle: 0
   _LastHitParticipantValue: 0
   _AssistMask: 0

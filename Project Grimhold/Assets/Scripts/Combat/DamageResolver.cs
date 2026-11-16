@@ -15,8 +15,25 @@ public sealed class DamageResolver : NetworkBehaviour, IDamageResolver
     [SerializeField, Min(0f)] private float _allyDamageMultiplier = 1f;
 
     // Explicit test seams; production composition remains runner-scoped.
-    internal System.Func<PlayerCharacter, PlayerCharacter, bool> AreInitialTeammates { get; set; } =
-        AbilityAllyAffiliation.AreInitialTeammates;
+    internal System.Func<IDamageable, PlayerCharacter> AsPlayer { get; set; } = d => d as PlayerCharacter;
+    internal delegate bool TryAreInitialTeammatesDelegate(PlayerCharacter left, PlayerCharacter right, out bool areTeammates);
+    internal TryAreInitialTeammatesDelegate TryAreInitialTeammates { get; set; } =
+        AbilityAllyAffiliation.TryAreInitialTeammates;
+
+    internal System.Func<PlayerCharacter, PlayerCharacter, bool> AreInitialTeammates
+    {
+        get => (left, right) => TryAreInitialTeammates != null && TryAreInitialTeammates(left, right, out bool allies) && allies;
+        set => TryAreInitialTeammates = (PlayerCharacter left, PlayerCharacter right, out bool allies) =>
+        {
+            if (value == null)
+            {
+                allies = false;
+                return false;
+            }
+            allies = value(left, right);
+            return true;
+        };
+    }
     internal System.Func<bool> FriendlyFireEnabled { get; set; }
 
     private bool ResolveFriendlyFireEnabled() => FriendlyFireEnabled != null
@@ -83,9 +100,27 @@ public sealed class DamageResolver : NetworkBehaviour, IDamageResolver
             ));
         }
 
-        bool isAlly = request.AttackerId.Value != 0 && target is PlayerCharacter targetPlayer &&
-            _registry.TryGetDamageable(request.AttackerId, out IDamageable source) &&
-            source is PlayerCharacter attackerPlayer && AreInitialTeammates(attackerPlayer, targetPlayer);
+        PlayerCharacter targetPlayer = AsPlayer != null ? AsPlayer(target) : target as PlayerCharacter;
+        PlayerCharacter attackerPlayer = null;
+        if (request.AttackerId.Value != 0 && targetPlayer != null &&
+            _registry.TryGetDamageable(request.AttackerId, out IDamageable source))
+        {
+            attackerPlayer = AsPlayer != null ? AsPlayer(source) : source as PlayerCharacter;
+        }
+
+        bool isAlly = false;
+        if (targetPlayer != null && attackerPlayer != null)
+        {
+            if (TryAreInitialTeammates != null && TryAreInitialTeammates(attackerPlayer, targetPlayer, out bool areTeammates))
+            {
+                isAlly = areTeammates;
+            }
+            else
+            {
+                // FIX-79 / Doc 19: Unresolved affiliation fails protective (assumes ally)
+                isAlly = true;
+            }
+        }
         if (FriendlyFireRules.IsBlocked(isAlly, ResolveFriendlyFireEnabled()))
         {
             return CompleteResolution(request, new DamageResult(request.TargetId, false, 0f, 0f,

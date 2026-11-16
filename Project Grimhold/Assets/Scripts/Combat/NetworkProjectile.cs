@@ -234,8 +234,11 @@ public sealed class NetworkProjectile : NetworkBehaviour
         // Orb children are local interception geometry, never registry entities or ordinary world blockers.
         // PvE player projectiles (EnemyOnly), own/friendly and consumed orbs must pass through them.
         if (collider.TryGetComponent(out ProtectiveOrbCollider orb))
-            return !enemyOnly && Object != null && Object.IsValid &&
+        {
+            if (orb.OwnerId == ownerId) return false;
+            return Object != null && Object.IsValid &&
                 orb.CanInterceptEnemyProjectileImpact(ownerId, SourceWasPvEEnemy);
+        }
 
         // Static world geometry has no entity id but still consumes the projectile.
         if (_registry == null || !_registry.TryGetEntityId(collider, out targetId))
@@ -471,7 +474,7 @@ public sealed class NetworkProjectile : NetworkBehaviour
         // Commit only the resolved orb. An inactive slot is passed through, including when a previous
         // projectile consumed it in this same tick, so it can never hide the contacts behind it.
         Collider2D collider = _contactColliders[contact.SourceIndex];
-        return !EnemyOnly && collider != null && collider.TryGetComponent(out ProtectiveOrbCollider orb) &&
+        return collider != null && collider.TryGetComponent(out ProtectiveOrbCollider orb) &&
             orb.TryConsumeEnemyProjectileImpact(new EntityId(OwnerEntityIdValue), SourceWasPvEEnemy);
     }
 

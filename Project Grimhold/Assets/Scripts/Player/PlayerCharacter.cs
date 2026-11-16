@@ -430,7 +430,7 @@ public sealed class PlayerCharacter : CharacterBase, IManaReceiver
     protected override bool TryInterceptFatalDamage(in DamageRequest request)
     {
         return _downedStateController != null &&
-            _downedStateController.TryEnterDowned(request.AttackerId, ResolveDownedCreditCauser(request));
+            _downedStateController.TryEnterDowned(request.AttackerId, ResolveDownedCreditCauser(request), request.EmpowerSourceId);
     }
 
     /// <summary>Direct attackers keep credit; environmental damage credits only a still-valid causal pusher.</summary>

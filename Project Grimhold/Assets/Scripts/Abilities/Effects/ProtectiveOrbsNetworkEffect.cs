@@ -134,9 +134,22 @@ public sealed class ProtectiveOrbsNetworkEffect : NetworkBehaviour
         _registry.TryGetDamageable(attackerId, out IDamageable attacker) &&
         AbilityTargetPredicate.IsValidEnemy(OwnerId, attacker);
 
-    /// <summary>Independent flight uses its committed PvE affiliation, never a live shooter lookup.</summary>
-    public bool CanConsumeEnemyProjectileImpact(int slotIndex, EntityId attackerId, bool sourceWasPvEEnemy) =>
-        sourceWasPvEEnemy && attackerId.Value != 0 && attackerId != OwnerId && CanAcceptImpact(slotIndex);
+    /// <summary>Independent flight uses committed affiliation, traps and enemy players. Own/friendly projectiles pass through.</summary>
+    public bool CanConsumeEnemyProjectileImpact(int slotIndex, EntityId attackerId, bool sourceWasPvEEnemy)
+    {
+        if (!CanAcceptImpact(slotIndex)) return false;
+        if (attackerId.Value != 0 && attackerId == OwnerId) return false;
+        if (sourceWasPvEEnemy || attackerId.Value == 0) return true;
+        if (_registry != null && _registry.TryGetDamageable(attackerId, out IDamageable attacker) &&
+            attacker is PlayerCharacter attackerPlayer && _playerCharacter != null)
+        {
+            if (AbilityAllyAffiliation.TryAreInitialTeammates(attackerPlayer, _playerCharacter, out bool areTeammates) && areTeammates)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /// <summary>Blocks one live enemy impact. No damage, Resolve, feedback or Assist contribution.</summary>
     public bool TryConsumeEnemyImpact(int slotIndex, EntityId attackerId) =>

@@ -187,6 +187,18 @@ namespace Tests.EditMode.Abilities
             return definition;
         }
 
+        [TestCase(0f)]
+        [TestCase(-5f)]
+        public void Plan_InvalidRangeOrLifetime_YieldsInvalidPlan(float invalidValue)
+        {
+            CreateBehaviour();
+            SetField(_behaviour, "_maxRange", invalidValue);
+            LogAssert.Expect(LogType.Error, new Regex("^ArcaneProjectileAbilityBehaviour.*"));
+
+            Assert.That(_behaviour.TryPlanStart(Context(), out var plan), Is.True);
+            Assert.That(plan.IsValidStart, Is.False);
+        }
+
         private static void SetField(object target, string name, object value, Type declaringType = null)
         {
             FieldInfo field = (declaringType ?? target.GetType()).GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);

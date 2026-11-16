@@ -111,6 +111,7 @@ public sealed class TownRaidPreparationPresenter : NetworkBehaviour
         _view.JoinRequested += JoinRaid;
         _view.LeaveRequested += LeaveRaid;
         _view.ReadyRequested += SetReady;
+        _view.FriendlyFireToggleRequested += SetFriendlyFire;
         _view.StartRequested += StartRaid;
         _view.CloseRequested += ClosePanel;
         _view.ReconnectRequested += OnReconnectRequested;
@@ -368,6 +369,7 @@ public sealed class TownRaidPreparationPresenter : NetworkBehaviour
         _directory?.RequestLeave();
     }
     private void SetReady(bool ready) => _directory?.RequestSetReady(ready);
+    private void SetFriendlyFire(bool enabled) => _directory?.RequestSetFriendlyFire(enabled);
     private void StartRaid() => _directory?.RequestStart();
 
     private ProfileId GetLocalProfile()
@@ -485,6 +487,7 @@ public sealed class TownRaidPreparationPresenter : NetworkBehaviour
             _view.JoinRequested -= JoinRaid;
             _view.LeaveRequested -= LeaveRaid;
             _view.ReadyRequested -= SetReady;
+            _view.FriendlyFireToggleRequested -= SetFriendlyFire;
             _view.StartRequested -= StartRaid;
             _view.CloseRequested -= ClosePanel;
             _view.ReconnectRequested -= OnReconnectRequested;

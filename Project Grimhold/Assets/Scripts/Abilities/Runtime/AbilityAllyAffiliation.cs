@@ -7,8 +7,12 @@ using Fusion;
 /// </summary>
 internal static class AbilityAllyAffiliation
 {
-    public static bool AreInitialTeammates(PlayerCharacter left, PlayerCharacter right)
+    public static bool AreInitialTeammates(PlayerCharacter left, PlayerCharacter right) =>
+        TryAreInitialTeammates(left, right, out bool areTeammates) && areTeammates;
+
+    public static bool TryAreInitialTeammates(PlayerCharacter left, PlayerCharacter right, out bool areTeammates)
     {
+        areTeammates = false;
         if (left == null || right == null) return false;
         NetworkRunner runner = left.Runner;
         if (runner == null || runner != right.Runner) return false;
@@ -17,8 +21,7 @@ internal static class AbilityAllyAffiliation
                spawnManager.TryGetRaidInitialAffiliations(out RaidInitialAffiliationSnapshot affiliations) &&
                TryGetParticipantId(left, out RaidParticipantId leftId) &&
                TryGetParticipantId(right, out RaidParticipantId rightId) &&
-               affiliations.TryAreInitialTeammates(leftId, rightId, out bool areTeammates) &&
-               areTeammates;
+               affiliations.TryAreInitialTeammates(leftId, rightId, out areTeammates);
     }
 
     private static bool TryGetParticipantId(PlayerCharacter character, out RaidParticipantId participantId)

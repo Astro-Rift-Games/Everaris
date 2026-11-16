@@ -17,12 +17,19 @@ public sealed class ArcaneProjectileAbilityBehaviour : AbilityExecutionBehaviour
     [Tooltip("Explicit ability prefab; must compose NetworkProjectile and a projectile-local DamageResolver.")]
     [SerializeField] private NetworkPrefabRef _projectilePrefab;
     [SerializeField] private LayerMask _impactLayerMask;
+
+    public NetworkPrefabRef ProjectilePrefab => _projectilePrefab;
+    public LayerMask ImpactLayerMask => _impactLayerMask;
     [SerializeField] private MonoBehaviour _projectileSpawnerSource;
     [Tooltip("Provisional balance value, not a finalized Game Design number.")]
     [SerializeField, Min(0.01f)] private float _projectileSpeed = 6f;
     [Tooltip("Provisional balance value, not a finalized Game Design number.")]
     [SerializeField, Min(0.01f)] private float _damage = 5f;
     [SerializeField] private DamageType _damageType = DamageType.Magical;
+    [Tooltip("Maximum flight distance before the projectile dissipates (Doc 11, FIX-81).")]
+    [SerializeField, Min(0.1f)] private float _maxRange = 25f;
+    [Tooltip("Maximum lifetime in seconds before the projectile dissipates (Doc 11, FIX-81).")]
+    [SerializeField, Min(0.1f)] private float _maxLifetimeSeconds = 5f;
 
     private uint _lastResolvedSequence;
 
@@ -61,9 +68,9 @@ public sealed class ArcaneProjectileAbilityBehaviour : AbilityExecutionBehaviour
         _lastResolvedSequence = snapshot.Sequence;
         if (!TryValidateConfiguration()) return idle;
         var request = new ProjectileSpawnRequest(context.Character.Id, context.Character.transform.position,
-            snapshot.AimDirection, _damage, _damageType, _projectileSpeed, 0f, 0f, context.Runner.Tick.Raw,
+            snapshot.AimDirection, _damage, _damageType, _projectileSpeed, _maxLifetimeSeconds, _maxRange, context.Runner.Tick.Raw,
             projectilePrefab: _projectilePrefab, impactLayerMask: _impactLayerMask.value,
-            isUnbounded: true, enemyOnly: true);
+            isUnbounded: false, enemyOnly: true);
         if (!request.TryValidate() || !((IProjectileSpawner)_projectileSpawnerSource).Spawn(request).WasSpawned)
             Debug.LogError($"{nameof(ArcaneProjectileAbilityBehaviour)} could not spawn its projectile; cost and cooldown remain spent.", this);
         return idle;
@@ -95,8 +102,10 @@ public sealed class ArcaneProjectileAbilityBehaviour : AbilityExecutionBehaviour
             AttackTiming.IsFinite(_preparationMovementSpeedMultiplier) && _preparationMovementSpeedMultiplier > 0f &&
             _preparationMovementSpeedMultiplier <= 1f && AttackTiming.IsFinite(_damage) && _damage > 0f &&
             AttackTiming.IsFinite(_projectileSpeed) && _projectileSpeed > 0f &&
+            AttackTiming.IsFinite(_maxRange) && _maxRange > 0f &&
+            AttackTiming.IsFinite(_maxLifetimeSeconds) && _maxLifetimeSeconds > 0f &&
             System.Enum.IsDefined(typeof(DamageType), _damageType)) return true;
-        Debug.LogError($"{nameof(ArcaneProjectileAbilityBehaviour)} configuration is invalid: assign an explicit prefab, impact mask and avatar-local spawner, with finite positive preparation, speed, damage and a movement multiplier in (0, 1].", this);
+        Debug.LogError($"{nameof(ArcaneProjectileAbilityBehaviour)} configuration is invalid: assign an explicit prefab, impact mask and avatar-local spawner, with finite positive preparation, speed, damage, range, lifetime and a movement multiplier in (0, 1].", this);
         return false;
     }
 }
