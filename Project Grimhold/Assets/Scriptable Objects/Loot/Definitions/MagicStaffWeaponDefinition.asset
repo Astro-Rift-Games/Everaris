@@ -15,13 +15,16 @@ MonoBehaviour:
   _baseDamage: 45
   _attackIntervalSeconds: 1.4
   _executionWindowSeconds: 0.2
-  _rangedReleaseSeconds: 0.9
+  _attackReleaseSeconds: 0.9
+  _usesReload: 0
+  _reloadSeconds: 0
   _range: 7
   _aimStanceDrawSeconds: 0.9
   _aimedReleaseSeconds: 0.1
   _aimStanceDrawnClipSeconds: 0.8
   _aimStanceTorsoPivot: {x: 0, y: 0.1}
   _aimStanceOutwardOffset: 0
+  _aimStanceNockPoint: {x: 0, y: 0}
   _overrideProjectileSpawnDistance: 1
   _projectileSpawnDistance: 1.427
   _staminaCost: 22
@@ -34,17 +37,30 @@ MonoBehaviour:
     _attribute: 4
     _coefficient: 0
   _presentation:
+    _hitstopSeconds: 0
+    _dealShake:
+      _enabled: 0
+      _intensity: 0
+      _duration: 0
+    _hitReaction: {fileID: 0}
+    _impactParticles: {fileID: 0}
+    _windupChargeVfx: {fileID: 0}
+    _releaseBurstParticles: {fileID: 0}
     _stanceOffset: {x: 0, y: 0}
     _gripPoint: {x: 0, y: -0.5}
     _angleCorrection: -90
     _attackAnimationSet: {fileID: 11400000, guid: afb7df1830a0ef14396eebd1c85b2b88, type: 2}
+    _offHandAttackAnimationSet: {fileID: 0}
     _attackVfx: {fileID: 11400000, guid: 34e63bf1e9215d446bb60bd9401129e7, type: 2}
     _bladeTip: {x: -0.0625, y: 0.53125}
     _secondaryGripPoint: {x: 0, y: 0}
     _secondHand: 1
+    _rig: 0
     _aimMode: 2
+    _attackSpriteAnimation: {fileID: 0}
   _attributeRequirements:
     _minimumStrength: 0
     _minimumDexterity: 0
     _minimumIntelligence: 15
   _audioConfig: {fileID: 11400000, guid: 2b993c9d3b0ffe04bb76ce96c315935a, type: 2}
+  _projectileVisual: {fileID: 11400000, guid: fc42adf58f730b347a0e4284662a1336, type: 2}

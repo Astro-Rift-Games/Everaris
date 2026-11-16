@@ -15,7 +15,9 @@ MonoBehaviour:
   _baseDamage: 56
   _attackIntervalSeconds: 1.8
   _executionWindowSeconds: 0.2
-  _rangedReleaseSeconds: 0.4
+  _attackReleaseSeconds: 0.4
+  _usesReload: 0
+  _reloadSeconds: 0
   _range: 12
   _aimStanceDrawSeconds: 0.4
   _aimedReleaseSeconds: 0.1
@@ -35,10 +37,20 @@ MonoBehaviour:
     _attribute: 3
     _coefficient: 0
   _presentation:
+    _hitstopSeconds: 0
+    _dealShake:
+      _enabled: 0
+      _intensity: 0
+      _duration: 0
+    _hitReaction: {fileID: 0}
+    _impactParticles: {fileID: 0}
+    _windupChargeVfx: {fileID: 0}
+    _releaseBurstParticles: {fileID: 0}
     _stanceOffset: {x: 0, y: 0}
     _gripPoint: {x: 0, y: 0.09375}
     _angleCorrection: -90
     _attackAnimationSet: {fileID: 11400000, guid: 194b75979a62fa14587bbe0ab6f7806a, type: 2}
+    _offHandAttackAnimationSet: {fileID: 0}
     _attackVfx: {fileID: 11400000, guid: 4618d67f9bba7854f973ad83da3e14c2, type: 2}
     _bladeTip: {x: 0, y: 0}
     _secondaryGripPoint: {x: 0, y: 0}
@@ -51,3 +63,4 @@ MonoBehaviour:
     _minimumDexterity: 10
     _minimumIntelligence: 0
   _audioConfig: {fileID: 11400000, guid: 2b993c9d3b0ffe04bb76ce96c315935a, type: 2}
+  _projectileVisual: {fileID: 11400000, guid: eb76a4204d808a64e8a77f839036e848, type: 2}
