@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1142,
-  "canonicalEntries": 1139,
+  "rawCommits": 1146,
+  "canonicalEntries": 1143,
   "before": {
+    "Other Changes": 372,
     "Features": 404,
     "Bug Fixes": 167,
-    "Other Changes": 368,
     "Architecture & Infrastructure": 24,
     "Documentation": 122,
     "Tests": 43,
     "Refactoring": 14
   },
   "after": {
+    "Other Changes": 180,
     "Features": 542,
     "Bug Fixes": 183,
-    "Other Changes": 176,
     "Maintenance": 22,
     "Documentation": 138,
     "Tests": 48,
@@ -23,9 +23,12 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "UI": 335,
+    "World & Visibility": 156,
+    "Extraction": 171,
+    "Art & Animation": 249,
+    "Inventory & Loot": 455,
     "Combat": 381,
-    "World & Visibility": 153,
-    "Art & Animation": 248,
     "Build & Tooling": 586,
     "Documentation": 428,
     "Tests": 718,
@@ -33,18 +36,15 @@
     "Networking & Sessions": 340,
     "Abilities": 135,
     "Persistence & Backend": 284,
-    "Extraction": 169,
-    "Inventory & Loot": 454,
-    "UI": 334,
     "Audio": 39,
     "Input": 31,
     "Unassigned": 42
   },
   "canonical": {
     "sections": {
+      "Other Changes": 179,
       "Features": 541,
       "Bug Fixes": 182,
-      "Other Changes": 175,
       "Maintenance": 22,
       "Documentation": 138,
       "Tests": 48,
@@ -52,9 +52,12 @@
       "Refactoring": 27
     },
     "systems": {
+      "UI": 334,
+      "World & Visibility": 154,
+      "Extraction": 171,
+      "Art & Animation": 246,
+      "Inventory & Loot": 455,
       "Combat": 379,
-      "World & Visibility": 151,
-      "Art & Animation": 245,
       "Build & Tooling": 584,
       "Documentation": 426,
       "Tests": 716,
@@ -62,15 +65,244 @@
       "Networking & Sessions": 340,
       "Abilities": 133,
       "Persistence & Backend": 284,
-      "Extraction": 169,
-      "Inventory & Loot": 454,
-      "UI": 333,
       "Audio": 39,
       "Input": 31,
       "Unassigned": 42
     }
   },
   "unknownEntries": [
+    {
+      "sha": "63f508d3ef6d8ea472fb7fd97c4f3e5921d4a6a5",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/63f508d3ef6d8ea472fb7fd97c4f3e5921d4a6a5",
+      "subject": "Update CatacombsMinimapLayout.asset",
+      "body": "",
+      "date": "2026-11-16T18:58:51-03:00",
+      "files": [
+        "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [
+        "UI",
+        "World & Visibility"
+      ],
+      "evidence": [
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset",
+          "supports": "World & Visibility"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        }
+      ],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "303e90794446ba91d61f2c132afa6d2ae9c89e3b",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/303e90794446ba91d61f2c132afa6d2ae9c89e3b",
+      "subject": "Enable extraction sanctuaries in catacombs",
+      "body": "Activates all extraction sanctuary instances and updates affected tilemap entries to use the replacement tile asset.\n",
+      "date": "2026-11-16T18:58:38-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scenes/CatacombsMap.unity"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [
+        "Extraction",
+        "World & Visibility"
+      ],
+      "evidence": [
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "catacombs",
+          "supports": "World & Visibility"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        }
+      ],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "826b40fc6bfc349f3c5ddbc8d2cd18fe8f4c9c17",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/826b40fc6bfc349f3c5ddbc8d2cd18fe8f4c9c17",
+      "subject": "Normalize trap sprite import settings",
+      "body": "Set trap sprites to 16 pixels per unit and add explicit tessellation and geometry subdivision settings for consistent Unity rendering.\n",
+      "date": "2026-11-16T18:58:17-03:00",
+      "files": [
+        "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-01.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-02.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Active.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Inactive.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/WallTrap-01.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/WallTrap-02.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Active.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Inactive.png.meta"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [
+        "Art & Animation"
+      ],
+      "evidence": [
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-01.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-02.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Active.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Inactive.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/WallTrap-01.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/WallTrap-02.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Active.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Inactive.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "sprite",
+          "supports": "Art & Animation"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        }
+      ],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "043f89da49f570712f65eb7b80cf2df4ca5eb1b0",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/043f89da49f570712f65eb7b80cf2df4ca5eb1b0",
+      "subject": "Tune lighting, fog, and sanctuary prefabs",
+      "body": "Adjusts lighting prop sorting and visuals, replaces the sanctuary interaction collider, updates breakable object rendering, and tunes vision fog settings.\n",
+      "date": "2026-11-16T18:57:12-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/BreakableObject.prefab",
+        "Project Grimhold/Assets/Prefabs/ExtractionSanctuary.prefab",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/Brazier.prefab",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/Candle.prefab",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/DungeonLightProp.prefab",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/Multiple Candles.prefab",
+        "Project Grimhold/Assets/Scriptable Objects/VisionFogSettings.asset"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [
+        "Extraction",
+        "Inventory & Loot",
+        "World & Visibility"
+      ],
+      "evidence": [
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/ExtractionSanctuary.prefab",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "interaction",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Lighting Props/DungeonLightProp.prefab",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/VisionFogSettings.asset",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "fog",
+          "supports": "World & Visibility"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        }
+      ],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "cf305f3703fd55d6eb40f7548129d41e6bb94ffb",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/cf305f3703fd55d6eb40f7548129d41e6bb94ffb",
@@ -74524,8 +74756,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 265,
-      "canonicalEntries": 265
+      "originalCommits": 269,
+      "canonicalEntries": 269
     },
     {
       "key": "v0.5.0",
@@ -74569,6 +74801,238 @@
     }
   ],
   "commits": [
+    {
+      "sha": "63f508d3ef6d8ea472fb7fd97c4f3e5921d4a6a5",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/63f508d3ef6d8ea472fb7fd97c4f3e5921d4a6a5",
+      "subject": "Update CatacombsMinimapLayout.asset",
+      "body": "",
+      "date": "2026-11-16T18:58:51-03:00",
+      "files": [
+        "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [
+        "UI",
+        "World & Visibility"
+      ],
+      "evidence": [
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset",
+          "supports": "World & Visibility"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        }
+      ],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "303e90794446ba91d61f2c132afa6d2ae9c89e3b",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/303e90794446ba91d61f2c132afa6d2ae9c89e3b",
+      "subject": "Enable extraction sanctuaries in catacombs",
+      "body": "Activates all extraction sanctuary instances and updates affected tilemap entries to use the replacement tile asset.\n",
+      "date": "2026-11-16T18:58:38-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scenes/CatacombsMap.unity"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [
+        "Extraction",
+        "World & Visibility"
+      ],
+      "evidence": [
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "catacombs",
+          "supports": "World & Visibility"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        }
+      ],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "826b40fc6bfc349f3c5ddbc8d2cd18fe8f4c9c17",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/826b40fc6bfc349f3c5ddbc8d2cd18fe8f4c9c17",
+      "subject": "Normalize trap sprite import settings",
+      "body": "Set trap sprites to 16 pixels per unit and add explicit tessellation and geometry subdivision settings for consistent Unity rendering.\n",
+      "date": "2026-11-16T18:58:17-03:00",
+      "files": [
+        "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-01.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-02.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Active.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Inactive.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/WallTrap-01.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/WallTrap-02.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Active.png.meta",
+        "Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Inactive.png.meta"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [
+        "Art & Animation"
+      ],
+      "evidence": [
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-01.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-02.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Active.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Inactive.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/WallTrap-01.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/WallTrap-02.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Active.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Inactive.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "sprite",
+          "supports": "Art & Animation"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        }
+      ],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "043f89da49f570712f65eb7b80cf2df4ca5eb1b0",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/043f89da49f570712f65eb7b80cf2df4ca5eb1b0",
+      "subject": "Tune lighting, fog, and sanctuary prefabs",
+      "body": "Adjusts lighting prop sorting and visuals, replaces the sanctuary interaction collider, updates breakable object rendering, and tunes vision fog settings.\n",
+      "date": "2026-11-16T18:57:12-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/BreakableObject.prefab",
+        "Project Grimhold/Assets/Prefabs/ExtractionSanctuary.prefab",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/Brazier.prefab",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/Candle.prefab",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/DungeonLightProp.prefab",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/Multiple Candles.prefab",
+        "Project Grimhold/Assets/Scriptable Objects/VisionFogSettings.asset"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [
+        "Extraction",
+        "Inventory & Loot",
+        "World & Visibility"
+      ],
+      "evidence": [
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/ExtractionSanctuary.prefab",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "interaction",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Lighting Props/DungeonLightProp.prefab",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/VisionFogSettings.asset",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "fog",
+          "supports": "World & Visibility"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        }
+      ],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "89a4bc46e0485e20fb251d1e2e8b7d5f9f4892f0",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/89a4bc46e0485e20fb251d1e2e8b7d5f9f4892f0",

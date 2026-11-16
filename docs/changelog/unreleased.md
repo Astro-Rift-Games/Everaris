@@ -4,32 +4,196 @@
 
 Release: Unreleased
 
-265 original commits; 265 canonical entries.
+269 original commits; 269 canonical entries.
 
 ## Canonical classification
 
-82 features; 89 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 14 other changes
+82 features; 89 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 18 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 10 | 10 | 1 | 0 | 9 | 1 |
-| Art & Animation | 14 | 9 | 1 | 0 | 9 | 5 |
+| Art & Animation | 14 | 9 | 1 | 0 | 9 | 6 |
 | Audio | 7 | 2 | 0 | 0 | 0 | 0 |
 | Build & Tooling | 56 | 59 | 1 | 1 | 22 | 6 |
 | Combat | 38 | 14 | 0 | 0 | 12 | 1 |
 | Documentation | 32 | 40 | 0 | 0 | 13 | 0 |
-| Extraction | 17 | 21 | 0 | 0 | 9 | 3 |
+| Extraction | 17 | 21 | 0 | 0 | 9 | 5 |
 | Input | 1 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 58 | 51 | 1 | 1 | 24 | 3 |
+| Inventory & Loot | 58 | 51 | 1 | 1 | 24 | 4 |
 | Movement | 4 | 3 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 29 | 35 | 0 | 0 | 18 | 2 |
 | Persistence & Backend | 29 | 47 | 0 | 1 | 19 | 3 |
 | Tests | 79 | 83 | 1 | 1 | 29 | 4 |
-| UI | 32 | 18 | 1 | 0 | 12 | 2 |
+| UI | 32 | 18 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
-| World & Visibility | 21 | 10 | 0 | 0 | 3 | 9 |
+| World & Visibility | 21 | 10 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 63f508d3ef6d8ea472fb7fd97c4f3e5921d4a6a5
+
+[63f508d3ef6d8ea472fb7fd97c4f3e5921d4a6a5](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/63f508d3ef6d8ea472fb7fd97c4f3e5921d4a6a5)
+
+Date: 2026-11-16T18:58:51-03:00 · Classification: Other Changes (unknown) · Systems: UI, World & Visibility
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+Update CatacombsMinimapLayout.asset
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset
+```
+
+#### Classification evidence
+
+- path → UI: Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset
+- path → World &amp; Visibility: Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset
+
+#### Diagnostics
+
+- **ambiguous-kind:** No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages.
+
+### 303e90794446ba91d61f2c132afa6d2ae9c89e3b
+
+[303e90794446ba91d61f2c132afa6d2ae9c89e3b](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/303e90794446ba91d61f2c132afa6d2ae9c89e3b)
+
+Date: 2026-11-16T18:58:38-03:00 · Classification: Other Changes (unknown) · Systems: Extraction, World & Visibility
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+Enable extraction sanctuaries in catacombs
+```
+
+#### Original body
+
+```text
+Activates all extraction sanctuary instances and updates affected tilemap entries to use the replacement tile asset.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scenes/CatacombsMap.unity
+```
+
+#### Classification evidence
+
+- message-term → Extraction: extraction
+- path → World &amp; Visibility: Project Grimhold/Assets/Scenes/CatacombsMap.unity
+- message-term → World &amp; Visibility: catacombs
+
+#### Diagnostics
+
+- **ambiguous-kind:** No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages.
+
+### 826b40fc6bfc349f3c5ddbc8d2cd18fe8f4c9c17
+
+[826b40fc6bfc349f3c5ddbc8d2cd18fe8f4c9c17](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/826b40fc6bfc349f3c5ddbc8d2cd18fe8f4c9c17)
+
+Date: 2026-11-16T18:58:17-03:00 · Classification: Other Changes (unknown) · Systems: Art & Animation
+
+Flags: secondary
+
+#### Original subject
+
+```text
+Normalize trap sprite import settings
+```
+
+#### Original body
+
+```text
+Set trap sprites to 16 pixels per unit and add explicit tessellation and geometry subdivision settings for consistent Unity rendering.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-01.png.meta
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-02.png.meta
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Active.png.meta
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Inactive.png.meta
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-01.png.meta
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-02.png.meta
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Active.png.meta
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Inactive.png.meta
+```
+
+#### Classification evidence
+
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-01.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-02.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Active.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Inactive.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-01.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-02.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Active.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Inactive.png.meta
+- message-term → Art &amp; Animation: sprite
+
+#### Diagnostics
+
+- **ambiguous-kind:** No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages.
+
+### 043f89da49f570712f65eb7b80cf2df4ca5eb1b0
+
+[043f89da49f570712f65eb7b80cf2df4ca5eb1b0](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/043f89da49f570712f65eb7b80cf2df4ca5eb1b0)
+
+Date: 2026-11-16T18:57:12-03:00 · Classification: Other Changes (unknown) · Systems: Extraction, Inventory & Loot, World & Visibility
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+Tune lighting, fog, and sanctuary prefabs
+```
+
+#### Original body
+
+```text
+Adjusts lighting prop sorting and visuals, replaces the sanctuary interaction collider, updates breakable object rendering, and tunes vision fog settings.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/BreakableObject.prefab
+Project Grimhold/Assets/Prefabs/ExtractionSanctuary.prefab
+Project Grimhold/Assets/Prefabs/Lighting Props/Brazier.prefab
+Project Grimhold/Assets/Prefabs/Lighting Props/Candle.prefab
+Project Grimhold/Assets/Prefabs/Lighting Props/DungeonLightProp.prefab
+Project Grimhold/Assets/Prefabs/Lighting Props/Multiple Candles.prefab
+Project Grimhold/Assets/Scriptable Objects/VisionFogSettings.asset
+```
+
+#### Classification evidence
+
+- path → Extraction: Project Grimhold/Assets/Prefabs/ExtractionSanctuary.prefab
+- message-term → Inventory &amp; Loot: interaction
+- path → World &amp; Visibility: Project Grimhold/Assets/Prefabs/Lighting Props/DungeonLightProp.prefab
+- path → World &amp; Visibility: Project Grimhold/Assets/Scriptable Objects/VisionFogSettings.asset
+- message-term → World &amp; Visibility: fog
+
+#### Diagnostics
+
+- **ambiguous-kind:** No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages.
 
 ### 89a4bc46e0485e20fb251d1e2e8b7d5f9f4892f0
 
