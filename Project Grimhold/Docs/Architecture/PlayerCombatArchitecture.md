@@ -1126,6 +1126,14 @@ authored hand pose, not the selected shield art.
 The holding hand and its weapon stay on the same side of Body (order 2). In back facings N/NE/NW,
 both hands rest at -2 and weapons draw at -10. RightHand Idle/Walk clips key that rest depth; generated
 body locomotion clips key LeftHand depth so Write Defaults cannot restore the prefab's order 4.
+Walk is the one exception to the hand's side, in every facing: the half of the swing nearer the camera
+passes between the camera and the torso and the other half passes behind it. Each hand therefore draws in
+front of the body (Off Hand 22, Main Hand 30) for the camera-side half of its drawn swing and at -2 for the
+rest, keyed per sprite frame by `DirectionalAnimationGenerator.ResolveWalkSwingSortingOrders` (LeftHand on
+the body clip, RightHand on its own Walk clip). The body clip keys the same depth on the flat `LeftHand` and
+`RightHand` bindings, which only a rig without hand pivots (SocialPlayer) has, so the Town avatar follows the
+same rule; its Idle keeps the prefab orders. Weapons keep their facing depth (20 front, -10 back), so in
+a front facing a weapon stays over the body while its hand passes behind it. Idle keeps a constant depth.
 In front facings S/SE/SW, Off Hand stays at 22, Main Hand at 30, and weapons at 20; gloves follow one
 slot above their hand. Shared Defend clips use the same LeftHand depths (-2 back, 22 front), including
 when Main Hand holds the shield and Off Hand holds a weapon. Shields alone draw at
