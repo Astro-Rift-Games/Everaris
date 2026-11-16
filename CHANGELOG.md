@@ -47,6 +47,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Projectiles now burst with particles when they hit a character, not only walls.
 - Extraction sanctuaries have new art and visibly light up while their activation ritual runs.
 - Walking now looks careful and grounded, with steadier steps, calmer arms and hands that pass naturally in front of and behind the body.
+- Treasures now display distinct world sprites and inventory icons.
 
 ### Fixed
 

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1147,
-  "canonicalEntries": 1144,
+  "rawCommits": 1148,
+  "canonicalEntries": 1145,
   "before": {
-    "Features": 405,
+    "Features": 406,
     "Other Changes": 372,
     "Bug Fixes": 167,
     "Architecture & Infrastructure": 24,
@@ -12,7 +12,7 @@
     "Refactoring": 14
   },
   "after": {
-    "Features": 543,
+    "Features": 544,
     "Other Changes": 180,
     "Bug Fixes": 183,
     "Maintenance": 22,
@@ -23,15 +23,15 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Inventory & Loot": 456,
+    "UI": 336,
+    "Art & Animation": 251,
+    "Build & Tooling": 587,
+    "Tests": 719,
     "World & Visibility": 157,
-    "Art & Animation": 250,
-    "UI": 335,
     "Extraction": 171,
-    "Inventory & Loot": 455,
     "Combat": 381,
-    "Build & Tooling": 586,
     "Documentation": 428,
-    "Tests": 718,
     "Movement": 98,
     "Networking & Sessions": 340,
     "Abilities": 135,
@@ -42,7 +42,7 @@
   },
   "canonical": {
     "sections": {
-      "Features": 542,
+      "Features": 543,
       "Other Changes": 179,
       "Bug Fixes": 182,
       "Maintenance": 22,
@@ -52,15 +52,15 @@
       "Refactoring": 27
     },
     "systems": {
+      "Inventory & Loot": 456,
+      "UI": 335,
+      "Art & Animation": 248,
+      "Build & Tooling": 585,
+      "Tests": 717,
       "World & Visibility": 155,
-      "Art & Animation": 247,
-      "UI": 334,
       "Extraction": 171,
-      "Inventory & Loot": 455,
       "Combat": 379,
-      "Build & Tooling": 584,
       "Documentation": 426,
-      "Tests": 716,
       "Movement": 98,
       "Networking & Sessions": 340,
       "Abilities": 133,
@@ -74756,8 +74756,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 270,
-      "canonicalEntries": 270
+      "originalCommits": 271,
+      "canonicalEntries": 271
     },
     {
       "key": "v0.5.0",
@@ -74801,6 +74801,479 @@
     }
   ],
   "commits": [
+    {
+      "sha": "d0ded1018c414772694f7581bd31cbb1f35864bd",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/d0ded1018c414772694f7581bd31cbb1f35864bd",
+      "subject": "feat(art): integrate treasure sprites and world pickups",
+      "body": "Import all twenty-four treasure variants with 16 PPU, Point filtering,\nand no compression. Bind the eight existing treasure definitions to\ntheir world sprites and UI icons, and update placeholder sprites on the\nsix LootPickup treasure prefabs.\n\nAdd TreasureSpriteAssetsTests asserting exact sprite import settings,\ndefinition bindings, pickup prefab renderers, and catalog validation.\nInteractable variants are imported for parity, not behavior-wired.\n\nPlayer-Improved: Treasures now display distinct world sprites and inventory icons.\n",
+      "date": "2026-11-16T20:34:59-03:00",
+      "files": [
+        "Project Grimhold/Assets/Art/Treasures.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Base.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Base.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Icon.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Interactable.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Base.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Base.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Icon.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Interactable.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Base.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Base.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Icon.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Interactable.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Base.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Base.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Icon.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Interactable.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Base.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Base.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Icon.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Interactable.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Base.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Base.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Icon.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Interactable.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Base.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Base.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Icon.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Interactable.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Base.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Base.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Icon.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Interactable.png",
+        "Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Interactable.png.meta",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ChaosCoin.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_FamineIdol.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_PilgrimLight.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_SanctuaryHeart.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_VoidBell.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_WandererEye.prefab",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CHALICE.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CHAOS_COIN.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CROWN.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_FAMINE_IDOL.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_PILGRIM_LIGHT.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_SANCTUARY_HEART.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_VOID_BELL.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_WANDERER_EYE.asset",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "art",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "UI",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ChaosCoin.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_FamineIdol.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_PilgrimLight.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_SanctuaryHeart.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_VoidBell.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_WandererEye.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CHALICE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CHAOS_COIN.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CROWN.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_FAMINE_IDOL.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_PILGRIM_LIGHT.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_SANCTUARY_HEART.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_VOID_BELL.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_WANDERER_EYE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "pickups",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "UI",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "scope",
+          "value": "art",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "sprites",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs.meta",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "85c9d6aad75095990e14e5769e59168d8b8292e1",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/85c9d6aad75095990e14e5769e59168d8b8292e1",
