@@ -26,6 +26,12 @@ public readonly struct ProjectileSpawnRequest
     public bool EnemyOnly { get; }
 
     /// <summary>
+    /// Environmental hazard originating this projectile (Doc 19 §8.1, TASK-247, FIX-89); default for weapon/creature shots.
+    /// Forwarded to <see cref="DamageRequest.EnvironmentalHazardId"/> on impact for causal attribution.
+    /// </summary>
+    public EntityId EnvironmentalHazardId { get; }
+
+    /// <summary>
     /// Knockback power (PE original, Doc 18), converted to displacement by KnockbackCurveConfig after RE mitigation.
     /// Stored in the projectile's networked state and forwarded to the
     /// <see cref="DamageRequest"/> when the projectile hits a damageable entity.
@@ -47,7 +53,8 @@ public readonly struct ProjectileSpawnRequest
         int impactLayerMask = 0,
         bool isUnbounded = false,
         bool enemyOnly = false,
-        WeaponAttackTag weaponTag = default)
+        WeaponAttackTag weaponTag = default,
+        EntityId environmentalHazardId = default)
     {
         WeaponTag = weaponTag;
         OwnerId        = ownerId;
@@ -64,6 +71,7 @@ public readonly struct ProjectileSpawnRequest
         ImpactLayerMask = impactLayerMask;
         IsUnbounded = isUnbounded;
         EnemyOnly = enemyOnly;
+        EnvironmentalHazardId = environmentalHazardId;
     }
 
     public bool TryValidate() =>

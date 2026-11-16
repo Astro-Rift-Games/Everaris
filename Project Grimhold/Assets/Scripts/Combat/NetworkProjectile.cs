@@ -86,6 +86,9 @@ public sealed class NetworkProjectile : NetworkBehaviour
     [Networked]
     private int EmpowerSourceParticipantValue { get; set; }
 
+    [Networked]
+    private int EnvironmentalHazardIdValue { get; set; }
+
     // Presentation-only flight metadata. Snapshot copying preserves it; missing metadata stays generic.
     [Networked] private int WeaponSourceSlotValue { get; set; }
     [Networked] private int WeaponAttackSequence { get; set; }
@@ -278,6 +281,7 @@ public sealed class NetworkProjectile : NetworkBehaviour
         WeaponAttackTypeValue = (int)request.WeaponTag.AttackType;
         OwnerEntityIdValue = request.OwnerId.Value;
         EmpowerSourceParticipantValue = empowerSourceId.IsValid ? empowerSourceId.Value : 0;
+        EnvironmentalHazardIdValue = request.EnvironmentalHazardId.Value;
         Damage = request.Damage;
         DamageType = request.DamageType;
         Direction = request.Direction;
@@ -493,6 +497,7 @@ public sealed class NetworkProjectile : NetworkBehaviour
             Runner.Tick,
             KnockbackForce,
             empowerSourceId: empowerSourceId,
+            environmentalHazardId: new EntityId(EnvironmentalHazardIdValue),
             weaponTag: WeaponTag
         );
 

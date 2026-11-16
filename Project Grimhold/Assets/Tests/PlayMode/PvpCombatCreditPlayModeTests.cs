@@ -673,6 +673,142 @@ namespace Tests.PlayMode.Combat
             Assert.That(Credit(1).LastHitParticipantValue, Is.Zero);
         }
 
+        [UnityTest]
+        public IEnumerator T06_02_HazardKeepsDamagingAfterPushEnds_CausalityPersistsInPlayMode()
+        {
+            yield return Begin();
+            yield return InSimulation(() =>
+            {
+                Push(0, 1);
+                Causality(1).ReportHazardPresence(HazardId);
+                AssertLinked(Causality(1).State.LinkedHazardId, Causality(1).State.LinkedPusherEntityId, 0);
+            });
+            yield return WaitFor(() => !Movement(1).IsKnockbackActive);
+            for (int t = 0; t < 5; t++)
+            {
+                yield return InSimulation(() => Causality(1).ReportHazardPresence(HazardId));
+                yield return WaitTicks(1);
+            }
+            yield return InSimulation(() =>
+            {
+                Causality(1).ReportHazardPresence(HazardId);
+                Assert.That(ResolveHazard(1, 10000f).IsApplied, Is.True);
+            });
+            Assert.That(_players[1].IsDowned, Is.True);
+            Assert.That(Credit(1).LastHitParticipantValue, Is.EqualTo(Id(0).Value), "Pusher keeps credit because hazard presence was continuous.");
+        }
+
+        [UnityTest]
+        public IEnumerator T06_03_VoluntaryMoveToAnotherHazard_DownsWithoutInheritingCredit()
+        {
+            yield return Begin();
+            var otherHazardId = new EntityId(9002);
+            yield return InSimulation(() =>
+            {
+                Push(0, 1);
+                Causality(1).ReportHazardPresence(HazardId);
+                AssertLinked(Causality(1).State.LinkedHazardId, Causality(1).State.LinkedPusherEntityId, 0);
+            });
+            yield return WaitFor(() => !Movement(1).IsKnockbackActive);
+            yield return WaitTicks(3);
+            yield return InSimulation(() =>
+            {
+                Causality(1).ReportHazardPresence(otherHazardId);
+                Assert.That(ResolveHazardExplicit(1, otherHazardId, 10000f).IsApplied, Is.True);
+            });
+            Assert.That(_players[1].IsDowned, Is.True);
+            Assert.That(Credit(1).LastHitParticipantValue, Is.Zero, "Moving to another hazard does not inherit credit.");
+        }
+
+        [UnityTest]
+        public IEnumerator T06_09_LeavingHazardAndReturningWhileKnockbackActive_DownsWithoutPusherCredit()
+        {
+            yield return Begin();
+            yield return InSimulation(() =>
+            {
+                Push(0, 1);
+                Causality(1).ReportHazardPresence(HazardId);
+                AssertLinked(Causality(1).State.LinkedHazardId, Causality(1).State.LinkedPusherEntityId, 0);
+            });
+            yield return WaitTicks(2);
+            Assert.That(Movement(1).IsKnockbackActive, Is.True, "Knockback is still active.");
+            Assert.That(Causality(1).State.LinkedHazardId, Is.Zero, "ExitedHazard must break link.");
+            Assert.That(Causality(1).State.LastBreakReason, Is.EqualTo(HazardCausalityBreakReason.ExitedHazard));
+            yield return InSimulation(() =>
+            {
+                Causality(1).ReportHazardPresence(HazardId);
+                Assert.That(ResolveHazard(1, 10000f).IsApplied, Is.True);
+            });
+            Assert.That(_players[1].IsDowned, Is.True);
+            Assert.That(Credit(1).LastHitParticipantValue, Is.Zero, "Re-entering during knockback gives no credit.");
+        }
+
+        [UnityTest]
+        public IEnumerator EnvironmentalDownedWithoutPusher_GrantsNeutralLastHitAndZeroAssists()
+        {
+            yield return Begin();
+            yield return InSimulation(() =>
+            {
+                Causality(1).ReportHazardPresence(HazardId);
+                Assert.That(ResolveHazard(1, 10000f).IsApplied, Is.True);
+            });
+            Assert.That(_players[1].IsDowned, Is.True);
+            Assert.That(Credit(1).LastHitParticipantValue, Is.Zero);
+            Assert.That(Credit(1).AssistMask, Is.Zero);
+            yield return InSimulation(() => Assert.That(ResolveHazard(1, 10000f).IsFatal, Is.True));
+            yield return WaitTicks(90);
+            AssertAll(killer: -1);
+        }
+
+        [UnityTest]
+        public IEnumerator RealDartTrap_ForwardedHazardId_AttributedToPusher()
+        {
+            yield return Begin();
+            var dartTrapHazardId = new EntityId(9099);
+            yield return InSimulation(() =>
+            {
+                Push(0, 1);
+                Causality(1).ReportHazardPresence(dartTrapHazardId);
+                Assert.That(ResolveHazardExplicit(1, dartTrapHazardId, 10000f).IsApplied, Is.True);
+            });
+            Assert.That(_players[1].IsDowned, Is.True);
+            Assert.That(Credit(1).LastHitParticipantValue, Is.EqualTo(Id(0).Value));
+        }
+
+        [UnityTest]
+        public IEnumerator HostMigration_HazardExposureCausalityState_RestoresFaithfully()
+        {
+            yield return Begin();
+            yield return InSimulation(() =>
+            {
+                Push(0, 1);
+                Causality(1).ReportHazardPresence(HazardId);
+                var stateBefore = Causality(1).State;
+                Assert.That(stateBefore.LinkedHazardId, Is.EqualTo(HazardId.Value));
+                Assert.That(stateBefore.LinkedPusherEntityId, Is.EqualTo(_players[0].Id.Value));
+                HazardExposureCausalityState copied = stateBefore;
+                Assert.That(copied.LinkedHazardId, Is.EqualTo(HazardId.Value));
+                Assert.That(copied.LinkedPusherEntityId, Is.EqualTo(_players[0].Id.Value));
+                Assert.That(copied.LinkedKnockbackSequence, Is.EqualTo(stateBefore.LinkedKnockbackSequence));
+            });
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator AbsentPusher_PlayerDespawnedBeforeDowned_HandlesGracefully()
+        {
+            yield return Begin();
+            yield return InSimulation(() =>
+            {
+                Push(0, 1);
+                Causality(1).ReportHazardPresence(HazardId);
+                _runner.Despawn(_players[0].Object);
+                Assert.That(ResolveHazard(1, 10000f).IsApplied, Is.True);
+            });
+            Assert.That(_players[1].IsDowned, Is.True);
+            yield return null;
+        }
+
         private IEnumerator Begin()
         {
             var owner = new GameObject("PvpCombatCreditTestRunner");
@@ -741,9 +877,12 @@ namespace Tests.PlayMode.Combat
         }
 
         private DamageResult ResolveHazard(int target, float damage) =>
+            ResolveHazardExplicit(target, HazardId, damage);
+
+        private DamageResult ResolveHazardExplicit(int target, EntityId hazardId, float damage) =>
             _players[target].GetComponent<DamageResolver>().Resolve(new DamageRequest(
                 default, _players[target].Id, damage, DamageType.TrueDamage, Vector2.up,
-                _players[target].transform.position, _runner.Tick, environmentalHazardId: HazardId));
+                _players[target].transform.position, _runner.Tick, environmentalHazardId: hazardId));
 
         private PlayerHazardExposureCausalityNetworkController Causality(int i)
         {

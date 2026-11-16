@@ -11,13 +11,19 @@ public static class HazardExposureCausalityRules
 
     /// <summary>
     /// Records a Started or Replaced knockback. A non-player push (0) discards the pending cause because
-    /// it replaced the previous displacement. A hazard the target already occupies is not a push toward it.
+    /// it replaced the previous displacement, and breaks an existing link if present (Doc 19 §8.2).
+    /// Hazards the target already occupies are not pushes toward them.
     /// </summary>
     public static void RecordAcceptedKnockback(ref HazardExposureCausalityState state,
         int pusherEntityId, int knockbackSequence, int tick)
     {
         if (pusherEntityId == 0)
         {
+            if (state.LinkedHazardId != 0)
+            {
+                BreakLink(ref state, HazardCausalityBreakReason.IndependentIntervention, tick);
+            }
+
             ClearPending(ref state);
             return;
         }
@@ -26,6 +32,9 @@ public static class HazardExposureCausalityRules
         state.PendingKnockbackSequence = knockbackSequence;
         state.PendingActiveTick = tick;
         state.PendingExcludedHazardId = IsRecent(state.LastPresenceTick, tick) ? state.LastPresenceHazardId : 0;
+        state.PendingExcludedHazardId2 = IsRecent(state.LastPresenceTick2, tick) ? state.LastPresenceHazardId2 : 0;
+        state.PendingExcludedHazardId3 = IsRecent(state.LastPresenceTick3, tick) ? state.LastPresenceHazardId3 : 0;
+        state.PendingExcludedHazardId4 = IsRecent(state.LastPresenceTick4, tick) ? state.LastPresenceHazardId4 : 0;
     }
 
     /// <summary>Expires a finished push and breaks a link whose hazard stopped reporting presence.</summary>
@@ -46,6 +55,7 @@ public static class HazardExposureCausalityRules
         if (state.LinkedHazardId != 0 && !IsRecent(state.LinkedPresenceTick, tick))
         {
             BreakLink(ref state, HazardCausalityBreakReason.ExitedHazard, tick);
+            ClearPending(ref state);
         }
     }
 
@@ -57,8 +67,7 @@ public static class HazardExposureCausalityRules
             return;
         }
 
-        state.LastPresenceHazardId = hazardId;
-        state.LastPresenceTick = tick;
+        RecordPresence(ref state, hazardId, tick);
         if (state.LinkedHazardId == hazardId)
         {
             state.LinkedPresenceTick = tick;
@@ -67,7 +76,7 @@ public static class HazardExposureCausalityRules
 
         // Voluntary entry, or a hazard occupied before the push: no causal link.
         if (state.PendingPusherEntityId == 0 || !IsRecent(state.PendingActiveTick, tick) ||
-            state.PendingExcludedHazardId == hazardId)
+            IsExcludedHazard(in state, hazardId))
         {
             return;
         }
@@ -110,11 +119,19 @@ public static class HazardExposureCausalityRules
         ClearPending(ref state);
         state.LastPresenceHazardId = 0;
         state.LastPresenceTick = 0;
+        state.LastPresenceHazardId2 = 0;
+        state.LastPresenceTick2 = 0;
+        state.LastPresenceHazardId3 = 0;
+        state.LastPresenceTick3 = 0;
+        state.LastPresenceHazardId4 = 0;
+        state.LastPresenceTick4 = 0;
     }
 
     /// <summary>True when any cause or presence is recorded; lets callers skip redundant resets.</summary>
     public static bool HasCausalState(in HazardExposureCausalityState state) =>
-        state.PendingPusherEntityId != 0 || state.LinkedHazardId != 0 || state.LastPresenceHazardId != 0;
+        state.PendingPusherEntityId != 0 || state.LinkedHazardId != 0 ||
+        state.LastPresenceHazardId != 0 || state.LastPresenceHazardId2 != 0 ||
+        state.LastPresenceHazardId3 != 0 || state.LastPresenceHazardId4 != 0;
 
     private static void BreakLink(ref HazardExposureCausalityState state, HazardCausalityBreakReason reason, int tick)
     {
@@ -135,7 +152,45 @@ public static class HazardExposureCausalityRules
         state.PendingKnockbackSequence = 0;
         state.PendingActiveTick = 0;
         state.PendingExcludedHazardId = 0;
+        state.PendingExcludedHazardId2 = 0;
+        state.PendingExcludedHazardId3 = 0;
+        state.PendingExcludedHazardId4 = 0;
     }
+
+    private static void RecordPresence(ref HazardExposureCausalityState state, int hazardId, int tick)
+    {
+        if (state.LastPresenceHazardId == hazardId) { state.LastPresenceTick = tick; return; }
+        if (state.LastPresenceHazardId2 == hazardId) { state.LastPresenceTick2 = tick; return; }
+        if (state.LastPresenceHazardId3 == hazardId) { state.LastPresenceTick3 = tick; return; }
+        if (state.LastPresenceHazardId4 == hazardId) { state.LastPresenceTick4 = tick; return; }
+
+        if (state.LastPresenceHazardId == 0 || !IsRecent(state.LastPresenceTick, tick))
+        {
+            state.LastPresenceHazardId = hazardId;
+            state.LastPresenceTick = tick;
+        }
+        else if (state.LastPresenceHazardId2 == 0 || !IsRecent(state.LastPresenceTick2, tick))
+        {
+            state.LastPresenceHazardId2 = hazardId;
+            state.LastPresenceTick2 = tick;
+        }
+        else if (state.LastPresenceHazardId3 == 0 || !IsRecent(state.LastPresenceTick3, tick))
+        {
+            state.LastPresenceHazardId3 = hazardId;
+            state.LastPresenceTick3 = tick;
+        }
+        else
+        {
+            state.LastPresenceHazardId4 = hazardId;
+            state.LastPresenceTick4 = tick;
+        }
+    }
+
+    private static bool IsExcludedHazard(in HazardExposureCausalityState state, int hazardId) =>
+        state.PendingExcludedHazardId == hazardId ||
+        state.PendingExcludedHazardId2 == hazardId ||
+        state.PendingExcludedHazardId3 == hazardId ||
+        state.PendingExcludedHazardId4 == hazardId;
 
     private static bool IsRecent(int observedTick, int tick)
     {

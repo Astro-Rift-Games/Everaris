@@ -23,12 +23,39 @@ public sealed class DartTrap : BaseTrap
     [SerializeField] private FusionProjectileSpawner _projectileSpawner;
     [SerializeField, Min(0.1f)] private float _maximumRange = 5f;
 
+    [Header("Área de Trayectoria y Detección Causal")]
+    [SerializeField] private Collider2D _trajectoryCollider;
+    [SerializeField] private LayerMask _targetLayerMask;
+    [SerializeField] private int _maxTargetsBuffer = 32;
+
     [Networked] private int DartsShot { get; set; }
     [Networked] private TickTimer DartIntervalTimer { get; set; }
+
+    private Collider2D[] _colliderBuffer;
+    private ContactFilter2D _contactFilter;
+    private EntityRegistry _registry;
+    private readonly System.Collections.Generic.List<EntityId> _processedTargets = new();
+
+    /// <summary>Identidad estable del peligro para la atribución causal ambiental (Doc 19 §8.2).</summary>
+    public EntityId HazardId => Object != null && Object.IsValid ? new EntityId(unchecked((int)Object.Id.Raw)) : default;
 
     public override void Spawned()
     {
         base.Spawned();
+
+        _colliderBuffer = new Collider2D[_maxTargetsBuffer];
+        _contactFilter = new ContactFilter2D
+        {
+            useLayerMask = true,
+            useTriggers = true
+        };
+        LayerMask mask = _targetLayerMask.value != 0 ? _targetLayerMask : LayerMask.GetMask("Character");
+        _contactFilter.SetLayerMask(mask);
+
+        if (Runner != null)
+        {
+            _registry = Runner.GetComponent<EntityRegistry>();
+        }
 
         // Buscar automáticamente el spawner en la jerarquía si no se asignó en el Inspector
         if (_projectileSpawner == null)
@@ -37,9 +64,60 @@ public sealed class DartTrap : BaseTrap
         }
     }
 
+    /// <summary>
+    /// Reporta cada tick la exposición de los jugadores en la trayectoria del dardo para que
+    /// un empuje hacia la línea de fuego conserve su causalidad (Doc 19 §8.1-§8.3, TASK-247, FIX-89).
+    /// </summary>
+    protected override void OnAuthorityTick()
+    {
+        if (_registry == null)
+        {
+            if (Runner != null) _registry = Runner.GetComponent<EntityRegistry>();
+            if (_registry == null) return;
+        }
+
+        Collider2D areaCollider = _trajectoryCollider != null ? _trajectoryCollider : _detectionCol;
+        if (areaCollider == null) return;
+
+        _processedTargets.Clear();
+        int hitCount = areaCollider.Overlap(_contactFilter, _colliderBuffer);
+        EntityId hazardId = HazardId;
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider2D col = _colliderBuffer[i];
+            if (TryResolveTarget(col, out _, out IDamageable damageable) &&
+                damageable is PlayerCharacter player && player.HazardExposureCausality != null)
+            {
+                player.HazardExposureCausality.ReportHazardPresence(hazardId);
+            }
+        }
+
+        System.Array.Clear(_colliderBuffer, 0, hitCount);
+    }
+
+    private bool TryResolveTarget(Collider2D col, out EntityId targetId, out IDamageable damageable)
+    {
+        damageable = null;
+        targetId = default;
+        if (col == null || !_registry.TryGetEntityId(col, out targetId) || targetId.Value == 0 ||
+            !_registry.IsDamageCollider(targetId, col) || _processedTargets.Contains(targetId))
+        {
+            return false;
+        }
+
+        _processedTargets.Add(targetId);
+        return _registry.TryGetDamageable(targetId, out damageable) &&
+            (damageable is not ICharacter character || character.IsAlive);
+    }
+
     protected override void OnEnterActive()
     {
         base.OnEnterActive();
+        // Mantiene habilitado el collider de trayectoria para que los jugadores sigan reportando exposición durante los disparos.
+        if (_detectionCol != null)
+        {
+            _detectionCol.enabled = true;
+        }
         DartsShot = 0;
         DartIntervalTimer = default;
     }
@@ -81,7 +159,7 @@ public sealed class DartTrap : BaseTrap
 
         Vector2 spawnOrigin = (Vector2)originTransform.position + dir * _attackConfig.ProjectileSpawnOffset;
 
-        // EntityId(0) identifica a la trampa/escenario como el origen de daño ambiental
+        // EntityId(0) identifica a la trampa/escenario como el origen de daño ambiental, con causalidad en HazardId
         ProjectileSpawnRequest request = new ProjectileSpawnRequest(
             new EntityId(0),
             spawnOrigin,
@@ -91,7 +169,8 @@ public sealed class DartTrap : BaseTrap
             _attackConfig.ProjectileSpeed,
             _attackConfig.LifetimeSeconds,
             _maximumRange,
-            Runner.Tick
+            Runner.Tick,
+            environmentalHazardId: HazardId
         );
 
         _projectileSpawner.Spawn(in request);

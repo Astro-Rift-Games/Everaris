@@ -11,12 +11,21 @@ public struct HazardExposureCausalityState : INetworkStruct
     public int PendingKnockbackSequence;
     /// <summary>Latest tick the pending knockback was observed active.</summary>
     public int PendingActiveTick;
-    /// <summary>Hazard the target already occupied when the pending push was accepted.</summary>
+    /// <summary>Hazards the target already occupied when the pending push was accepted (up to 4 overlapping hazards).</summary>
     public int PendingExcludedHazardId;
+    public int PendingExcludedHazardId2;
+    public int PendingExcludedHazardId3;
+    public int PendingExcludedHazardId4;
 
-    /// <summary>Latest hazard presence report, linked or not; detects pushes inside a hazard.</summary>
+    /// <summary>Recent hazard presence reports, linked or not; detects pushes inside overlapping hazards.</summary>
     public int LastPresenceHazardId;
     public int LastPresenceTick;
+    public int LastPresenceHazardId2;
+    public int LastPresenceTick2;
+    public int LastPresenceHazardId3;
+    public int LastPresenceTick3;
+    public int LastPresenceHazardId4;
+    public int LastPresenceTick4;
 
     /// <summary>Concrete hazard, pusher and knockback action sustaining the causal chain.</summary>
     public int LinkedHazardId;

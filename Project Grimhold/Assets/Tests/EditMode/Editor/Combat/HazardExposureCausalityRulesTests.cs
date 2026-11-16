@@ -74,6 +74,75 @@ public sealed class HazardExposureCausalityRulesTests
     }
 
     [Test]
+    public void T06_09_LeavingAndReturningWhileKnockbackStillActive_BreaksCausalityAndDoesNotRelink()
+    {
+        LinkPusherTo(Trap, tick: 11);
+        // Target exits trap while knockback is still active
+        Tick(12, knockbackActive: true);
+        Tick(13, knockbackActive: true);
+
+        Assert.That(_state.LinkedHazardId, Is.Zero);
+        Assert.That(_state.LastBreakReason, Is.EqualTo(HazardCausalityBreakReason.ExitedHazard));
+
+        // Re-entering trap at tick 14 while knockback is STILL active must NOT re-link or attribute credit
+        Tick(14, knockbackActive: true);
+        HazardExposureCausalityRules.ReportPresence(ref _state, Trap, 14);
+
+        Assert.That(HazardExposureCausalityRules.TryResolveCauser(in _state, Trap, 14, out _), Is.False,
+            "Re-entering hazard while knockback is still active must not re-link or credit pusher.");
+        Assert.That(_state.LinkedHazardId, Is.Zero);
+    }
+
+    [Test]
+    public void NonPlayerKnockback_BreaksExistingLinkedHazardWithIndependentIntervention()
+    {
+        LinkPusherTo(Trap, tick: 11);
+        Assert.That(HazardExposureCausalityRules.TryResolveCauser(in _state, Trap, 11, out _), Is.True);
+
+        // Non-player displacement (creature or environmental explosion, pusher = 0) occurs at tick 12
+        HazardExposureCausalityRules.RecordAcceptedKnockback(ref _state, 0, 8, 12);
+
+        Assert.That(_state.LinkedHazardId, Is.Zero);
+        Assert.That(_state.LastBreakReason, Is.EqualTo(HazardCausalityBreakReason.IndependentIntervention));
+        Assert.That(_state.LastBrokenHazardId, Is.EqualTo(Trap));
+        Assert.That(_state.LastBrokenPusherEntityId, Is.EqualTo(Pusher));
+        Assert.That(_state.PendingPusherEntityId, Is.Zero);
+
+        // Subsequent presence report at tick 12 cannot resolve pusher
+        HazardExposureCausalityRules.ReportPresence(ref _state, Trap, 12);
+        Assert.That(HazardExposureCausalityRules.TryResolveCauser(in _state, Trap, 12, out _), Is.False);
+    }
+
+    [Test]
+    public void PushStartingInsideTwoOverlappingHazards_ExcludesBothAndLinksNeither()
+    {
+        // Target is standing in both Trap and OtherTrap on tick 10
+        HazardExposureCausalityRules.ReportPresence(ref _state, Trap, 10);
+        HazardExposureCausalityRules.ReportPresence(ref _state, OtherTrap, 10);
+
+        // Knockback accepted on tick 10
+        HazardExposureCausalityRules.RecordAcceptedKnockback(ref _state, Pusher, 7, 10);
+        Tick(11, knockbackActive: true);
+
+        // Both traps report presence while target is being pushed inside the overlapping area
+        HazardExposureCausalityRules.ReportPresence(ref _state, Trap, 11);
+        HazardExposureCausalityRules.ReportPresence(ref _state, OtherTrap, 11);
+
+        // Neither trap may be linked!
+        Assert.That(HazardExposureCausalityRules.TryResolveCauser(in _state, Trap, 11, out _), Is.False,
+            "Trap occupied before push must not be linked.");
+        Assert.That(HazardExposureCausalityRules.TryResolveCauser(in _state, OtherTrap, 11, out _), Is.False,
+            "OtherTrap occupied before push must not be linked.");
+        Assert.That(_state.LinkedHazardId, Is.Zero);
+
+        // But if the push carries the target into a third hazard (ThirdTrap), that third hazard DOES link!
+        const int ThirdTrap = 503;
+        HazardExposureCausalityRules.ReportPresence(ref _state, ThirdTrap, 11);
+        Assert.That(HazardExposureCausalityRules.TryResolveCauser(in _state, ThirdTrap, 11, out int causer), Is.True);
+        Assert.That(causer, Is.EqualTo(Pusher));
+    }
+
+    [Test]
     public void PresenceWithinOneTickOfOrderingGrace_KeepsCausality()
     {
         LinkPusherTo(Trap, tick: 11);

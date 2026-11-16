@@ -82,6 +82,21 @@ namespace Tests.EditMode.Combat
             Assert.That(request.TryValidate(), Is.True);
         }
 
+        [Test]
+        public void EnvironmentalHazardId_DefaultsToZeroAndPreservesExplicitIdentity()
+        {
+            var defaultRequest = LegacyRequest(5f, 10f);
+            Assert.That(defaultRequest.EnvironmentalHazardId, Is.EqualTo(default(EntityId)));
+
+            var hazardId = new EntityId(777);
+            var hazardRequest = new ProjectileSpawnRequest(
+                new EntityId(0), Vector2.zero, Vector2.right, 5f, DamageType.Physical, 10f, 5f, 10f, 100,
+                environmentalHazardId: hazardId);
+
+            Assert.That(hazardRequest.EnvironmentalHazardId, Is.EqualTo(hazardId));
+            Assert.That(hazardRequest.TryValidate(), Is.True);
+        }
+
         private static ProjectileSpawnRequest LegacyRequest(float lifetime, float range) =>
             new ProjectileSpawnRequest(new EntityId(1), Vector2.zero, Vector2.right, 5f,
                 DamageType.Magical, 10f, lifetime, range, 100);
