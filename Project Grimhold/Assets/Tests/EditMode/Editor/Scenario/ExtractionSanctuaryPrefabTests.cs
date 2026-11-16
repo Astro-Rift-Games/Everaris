@@ -35,7 +35,7 @@ namespace Tests.EditMode.Scenario
             Assert.That(prefab.GetComponent<ExtractionZone>(), Is.Not.Null);
             Assert.That(prefab.GetComponent<ExtractionSanctuaryPresenter>(), Is.Not.Null);
             Assert.That(prefab.GetComponent<BoxCollider2D>(), Is.Not.Null);
-            SpriteRenderer zoneRenderer = prefab.GetComponent<SpriteRenderer>();
+            SpriteRenderer zoneRenderer = prefab.transform.Find("Visuals/Off").GetComponent<SpriteRenderer>();
             Assert.That(zoneRenderer, Is.Not.Null);
             Assert.That(zoneRenderer.enabled, Is.True);
             Assert.That(zoneRenderer.sortingLayerName, Is.EqualTo("Characters"));
@@ -166,6 +166,142 @@ namespace Tests.EditMode.Scenario
                 ExtractionRitualState.Cancelled, true, true, false);
             AssertCue("Completed", true, ExtractionRitualState.InProgress,
                 ExtractionRitualState.Completed, true, true, false);
+        }
+
+        [TestCase(ExtractionRitualState.NotStarted, 0f)]
+        [TestCase(ExtractionRitualState.Cancelled, 0f)]
+        [TestCase(ExtractionRitualState.Completed, 1f)]
+        public void ActivationAlpha_NonRunningStates(ExtractionRitualState state, float expected)
+        {
+            Assert.That(ResolveAlpha(state, 0.5f, 0.5f), Is.EqualTo(expected));
+        }
+
+        [TestCase(0f, 0f, 0f)]
+        [TestCase(0.5f, 0f, 0.375f)]
+        [TestCase(0.5f, 1f, 0.5f)]
+        [TestCase(1f, 0f, 0.75f)]
+        [TestCase(-1f, -1f, 0f)]
+        [TestCase(2f, 2f, 1f)]
+        public void ActivationAlpha_ProgressTimesBoundedSoftPulse(float progress, float pulse, float expected)
+        {
+            Assert.That(ResolveAlpha(ExtractionRitualState.InProgress, progress, pulse),
+                Is.EqualTo(expected).Within(0.00001f));
+        }
+
+        private static float ResolveAlpha(ExtractionRitualState state, float progress, float pulse)
+        {
+            System.Type rules = typeof(ExtractionSanctuaryPresenter).Assembly.GetType("SanctuaryActivationVisual");
+            Assert.That(rules, Is.Not.Null, "Sanctuary activation alpha helper is required.");
+            return (float)rules.GetMethod("ResolveAlpha").Invoke(null, new object[] { state, progress, pulse });
+        }
+
+        [Test]
+        public void Prefab_V1VisualsPreserveGameplayGeometryAndVisibility()
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            Assert.That(prefab.transform.localScale, Is.EqualTo(new Vector3(1.5f, 1.5f, 1f)));
+            Transform visuals = prefab.transform.Find("Visuals");
+            Assert.That(visuals, Is.Not.Null, "Compensated Visuals child is required.");
+            Assert.That(visuals.localScale.x, Is.EqualTo(0.6666667f).Within(0.000001f));
+            SpriteRenderer off = visuals.Find("Off").GetComponent<SpriteRenderer>();
+            SpriteRenderer on = visuals.Find("OnOverlay").GetComponent<SpriteRenderer>();
+            Assert.That(prefab.GetComponent<SpriteRenderer>(), Is.Null);
+            Assert.That(off.transform.localScale, Is.EqualTo(Vector3.one));
+            Assert.That(on.transform.localScale, Is.EqualTo(Vector3.one));
+            Assert.That(off.color, Is.EqualTo(Color.white));
+            Assert.That(on.color, Is.EqualTo(new Color(1f, 1f, 1f, 0f)));
+            Assert.That(on.sortingLayerID, Is.EqualTo(off.sortingLayerID));
+            Assert.That(on.sortingOrder, Is.EqualTo(off.sortingOrder + 1));
+            foreach (SpriteRenderer renderer in new[] { off, on })
+            {
+                string path = "Assets/Art/Props/Sanctuary/New/Sanctuary-Large-" + (renderer == off ? "Inactive" : "Active") + ".png";
+                Assert.That(AssetDatabase.GetAssetPath(renderer.sprite), Is.EqualTo(path));
+                TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(path);
+                Assert.That(importer.spritePixelsPerUnit, Is.EqualTo(16f));
+                Assert.That(importer.filterMode, Is.EqualTo(FilterMode.Point));
+                Assert.That(importer.textureCompression, Is.EqualTo(TextureImporterCompression.Uncompressed));
+                TextureImporterSettings settings = new TextureImporterSettings();
+                importer.ReadTextureSettings(settings);
+                Assert.That(settings.spriteMeshType, Is.EqualTo(SpriteMeshType.FullRect));
+            }
+            SerializedObject presenter = new SerializedObject(prefab.GetComponent<ExtractionSanctuaryPresenter>());
+            Assert.That(presenter.FindProperty("_spriteRenderer").objectReferenceValue, Is.SameAs(off));
+            Assert.That(presenter.FindProperty("_onOverlayRenderer").objectReferenceValue, Is.SameAs(on));
+            SerializedProperty renderers = new SerializedObject(prefab.GetComponent<EntityVisibilityPresenter>()).FindProperty("_renderers");
+            Assert.That(renderers.arraySize, Is.EqualTo(2));
+            Assert.That(renderers.GetArrayElementAtIndex(0).objectReferenceValue, Is.SameAs(off));
+            Assert.That(renderers.GetArrayElementAtIndex(1).objectReferenceValue, Is.SameAs(on));
+            BoxCollider2D collider = prefab.GetComponent<BoxCollider2D>();
+            Assert.That(prefab.GetComponentsInChildren<Collider2D>(true), Has.Length.EqualTo(1));
+            Assert.That(collider.size, Is.EqualTo(new Vector2(2f, 2f)));
+            Assert.That(collider.offset, Is.EqualTo(Vector2.zero));
+            Assert.That(collider.isTrigger, Is.True);
+            Assert.That(new SerializedObject(prefab.GetComponent<ExtractionZone>()).FindProperty("_zoneCollider").objectReferenceValue, Is.SameAs(collider));
+            Assert.That(new SerializedObject(prefab.GetComponent<ExtractionSanctuary>()).FindProperty("_interactionCollider").objectReferenceValue, Is.SameAs(collider));
+            Vector3[] positions = { new Vector3(-0.5f, 0.5f, 0f), new Vector3(0.5f, 0.5f, 0f), new Vector3(-0.5f, -0.5f, 0f), new Vector3(0.5f, -0.5f, 0f) };
+            for (int i = 0; i < positions.Length; i++)
+            {
+                Transform spawn = prefab.transform.Find("Spawnpoint " + (i + 1));
+                Assert.That(spawn.localPosition, Is.EqualTo(positions[i]));
+                Assert.That(spawn.localScale, Is.EqualTo(new Vector3(0.6666667f, 0.6666667f, 1f)));
+                Assert.That(prefab.transform.TransformVector(spawn.localPosition).magnitude, Is.LessThan(2.5f));
+            }
+        }
+
+        [TestCase(ExtractionRitualState.NotStarted, false, false)]
+        [TestCase(ExtractionRitualState.NotStarted, true, true)]
+        [TestCase(ExtractionRitualState.InProgress, true, false)]
+        [TestCase(ExtractionRitualState.Completed, true, true)]
+        [TestCase(ExtractionRitualState.Cancelled, true, true)]
+        public void Presenter_UsesUntintedSpritesAndRestoresOnDisable(ExtractionRitualState state, bool reserved, bool owner)
+        {
+            GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
+            try
+            {
+                ExtractionSanctuaryPresenter presenter = root.GetComponent<ExtractionSanctuaryPresenter>();
+                SerializedObject serialized = new SerializedObject(presenter);
+                SpriteRenderer off = (SpriteRenderer)serialized.FindProperty("_spriteRenderer").objectReferenceValue;
+                SerializedProperty overlay = serialized.FindProperty("_onOverlayRenderer");
+                Assert.That(overlay, Is.Not.Null, "On overlay dependency is required.");
+                SpriteRenderer on = (SpriteRenderer)overlay.objectReferenceValue;
+                Color originalOff = off.color;
+                Color originalOn = on.color;
+                InvokePresenter(presenter, "CaptureOriginalState");
+                InvokePresenter(presenter, "PresentSnapshot", new ExtractionRitualSnapshot(state, 10f, 5f, 0.5f), reserved, owner);
+                Assert.That(off.color, Is.EqualTo(Color.white));
+                Assert.That(new Vector3(on.color.r, on.color.g, on.color.b), Is.EqualTo(Vector3.one));
+                if (state == ExtractionRitualState.InProgress)
+                    Assert.That(on.color.a, Is.InRange(0.375f, 0.5f));
+                else
+                    Assert.That(on.color.a, Is.EqualTo(state == ExtractionRitualState.Completed ? 1f : 0f));
+                InvokePresenter(presenter, "OnDisable");
+                Assert.That(off.color, Is.EqualTo(originalOff));
+                Assert.That(on.color, Is.EqualTo(originalOn));
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
+        }
+
+        [Test]
+        public void Presenter_MissingOverlayFailsClearlyOnEnable()
+        {
+            GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
+            try
+            {
+                ExtractionSanctuaryPresenter presenter = root.GetComponent<ExtractionSanctuaryPresenter>();
+                SerializedObject serialized = new SerializedObject(presenter);
+                serialized.FindProperty("_onOverlayRenderer").objectReferenceValue = null;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+                UnityEngine.TestTools.LogAssert.Expect(UnityEngine.LogType.Error,
+                    "ExtractionSanctuaryPresenter requires a sanctuary and distinct Off and On overlay renderers.");
+                InvokePresenter(presenter, "OnEnable");
+                Assert.That(presenter.enabled, Is.False);
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
+        }
+
+        private static void InvokePresenter(ExtractionSanctuaryPresenter presenter, string method, params object[] args)
+        {
+            typeof(ExtractionSanctuaryPresenter).GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic).Invoke(presenter, args);
         }
 
         private static void AssertCue(

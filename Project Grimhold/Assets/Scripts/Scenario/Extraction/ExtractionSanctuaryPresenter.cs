@@ -28,6 +28,9 @@ public sealed class ExtractionSanctuaryPresenter : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
 
     [SerializeField]
+    private SpriteRenderer _onOverlayRenderer;
+
+    [SerializeField]
     [Min(0f)]
     private float _pulseFrequency = DefaultPulseFrequency;
 
@@ -40,6 +43,8 @@ public sealed class ExtractionSanctuaryPresenter : MonoBehaviour
 
     private Sprite _originalSprite;
     private Color _originalColor;
+    private Sprite _originalOverlaySprite;
+    private Color _originalOverlayColor;
     private bool _originalStateCaptured;
     private bool _hasObservedSnapshot;
     private ExtractionRitualState _previousState;
@@ -53,6 +58,15 @@ public sealed class ExtractionSanctuaryPresenter : MonoBehaviour
 
     private void OnEnable()
     {
+        CacheDependencies();
+        if (_sanctuary == null || _spriteRenderer == null || _onOverlayRenderer == null ||
+            _spriteRenderer == _onOverlayRenderer)
+        {
+            Debug.LogError("ExtractionSanctuaryPresenter requires a sanctuary and distinct Off and On overlay renderers.", this);
+            enabled = false;
+            return;
+        }
+
         if (!_originalStateCaptured)
         {
             CacheDependencies();
@@ -94,19 +108,21 @@ public sealed class ExtractionSanctuaryPresenter : MonoBehaviour
 
     private void CaptureOriginalState()
     {
-        if (_originalStateCaptured || _spriteRenderer == null)
+        if (_originalStateCaptured || _spriteRenderer == null || _onOverlayRenderer == null)
         {
             return;
         }
 
         _originalSprite = _spriteRenderer.sprite;
         _originalColor = _spriteRenderer.color;
+        _originalOverlaySprite = _onOverlayRenderer.sprite;
+        _originalOverlayColor = _onOverlayRenderer.color;
         _originalStateCaptured = true;
     }
 
     private void PresentCurrentState()
     {
-        if (_spriteRenderer == null || _sanctuary == null)
+        if (_spriteRenderer == null || _onOverlayRenderer == null || _sanctuary == null)
         {
             _hasObservedSnapshot = false;
             return;
@@ -116,7 +132,7 @@ public sealed class ExtractionSanctuaryPresenter : MonoBehaviour
         if (networkObject == null || !networkObject.IsValid || !networkObject.IsInSimulation)
         {
             _hasObservedSnapshot = false;
-            _spriteRenderer.color = CreateColor(0.9f, 0.2f, 0.2f);
+            PresentSnapshot(default, false, false);
             return;
         }
 
@@ -228,37 +244,14 @@ public sealed class ExtractionSanctuaryPresenter : MonoBehaviour
 
     private void PresentSnapshot(ExtractionRitualSnapshot snapshot, bool isReserved, bool isLocalOwner)
     {
-        switch (snapshot.State)
-        {
-            case ExtractionRitualState.Completed:
-                _spriteRenderer.color = CreateColor(0.2f, 0.9f, 0.4f);
-                return;
-            case ExtractionRitualState.InProgress:
-                float progress = Mathf.Clamp01(snapshot.Progress);
-                float frequency = Mathf.Max(0f, _pulseFrequency) * Mathf.Lerp(0.7f, 1.6f, progress);
-                float phase = frequency > 0f
-                    ? (Mathf.Sin(Time.unscaledTime * frequency * Mathf.PI * 2f) + 1f) * 0.5f
-                    : 0f;
-                Color pulse = Color.Lerp(
-                    CreateColor(0.2f, 0.65f, 1f),
-                    CreateColor(0.2f, 0.9f, 1f),
-                    phase);
-                Color intensity = Color.Lerp(
-                    CreateColor(0.2f, 0.65f, 1f),
-                    CreateColor(0.5f, 1f, 1f),
-                    progress * 0.45f);
-                _spriteRenderer.color = Color.Lerp(pulse, intensity, progress * 0.45f);
-                return;
-            case ExtractionRitualState.Cancelled when isLocalOwner:
-                _spriteRenderer.color = CreateColor(0.65f, 0.25f, 0.25f);
-                return;
-            case ExtractionRitualState.NotStarted when isReserved && isLocalOwner:
-                _spriteRenderer.color = CreateColor(0.2f, 0.65f, 1f);
-                return;
-            default:
-                _spriteRenderer.color = CreateColor(0.9f, 0.2f, 0.2f);
-                return;
-        }
+        // Reservation affects private cues, never the public world sprite.
+        float frequency = Mathf.Max(0f, _pulseFrequency);
+        float pulse = frequency > 0f
+            ? (Mathf.Sin(Time.unscaledTime * frequency * Mathf.PI * 2f) + 1f) * 0.5f
+            : 1f;
+        _spriteRenderer.color = Color.white;
+        _onOverlayRenderer.color = new Color(1f, 1f, 1f,
+            SanctuaryActivationVisual.ResolveAlpha(snapshot.State, snapshot.Progress, pulse));
     }
 
     private bool TryResolveLocalTeam(out RaidTeamId teamId)
@@ -363,12 +356,11 @@ public sealed class ExtractionSanctuaryPresenter : MonoBehaviour
 
         _spriteRenderer.sprite = _originalSprite;
         _spriteRenderer.color = _originalColor;
-    }
-
-    private Color CreateColor(float red, float green, float blue)
-    {
-        float alpha = _originalStateCaptured ? _originalColor.a : _spriteRenderer.color.a;
-        return new Color(red, green, blue, alpha);
+        if (_onOverlayRenderer != null)
+        {
+            _onOverlayRenderer.sprite = _originalOverlaySprite;
+            _onOverlayRenderer.color = _originalOverlayColor;
+        }
     }
 
 #if UNITY_EDITOR
