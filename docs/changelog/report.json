@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1146,
-  "canonicalEntries": 1143,
+  "rawCommits": 1147,
+  "canonicalEntries": 1144,
   "before": {
+    "Features": 405,
     "Other Changes": 372,
-    "Features": 404,
     "Bug Fixes": 167,
     "Architecture & Infrastructure": 24,
     "Documentation": 122,
@@ -12,8 +12,8 @@
     "Refactoring": 14
   },
   "after": {
+    "Features": 543,
     "Other Changes": 180,
-    "Features": 542,
     "Bug Fixes": 183,
     "Maintenance": 22,
     "Documentation": 138,
@@ -23,10 +23,10 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "World & Visibility": 157,
+    "Art & Animation": 250,
     "UI": 335,
-    "World & Visibility": 156,
     "Extraction": 171,
-    "Art & Animation": 249,
     "Inventory & Loot": 455,
     "Combat": 381,
     "Build & Tooling": 586,
@@ -42,8 +42,8 @@
   },
   "canonical": {
     "sections": {
+      "Features": 542,
       "Other Changes": 179,
-      "Features": 541,
       "Bug Fixes": 182,
       "Maintenance": 22,
       "Documentation": 138,
@@ -52,10 +52,10 @@
       "Refactoring": 27
     },
     "systems": {
+      "World & Visibility": 155,
+      "Art & Animation": 247,
       "UI": 334,
-      "World & Visibility": 154,
       "Extraction": 171,
-      "Art & Animation": 246,
       "Inventory & Loot": 455,
       "Combat": 379,
       "Build & Tooling": 584,
@@ -74756,8 +74756,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 269,
-      "canonicalEntries": 269
+      "originalCommits": 270,
+      "canonicalEntries": 270
     },
     {
       "key": "v0.5.0",
@@ -74801,6 +74801,284 @@
     }
   ],
   "commits": [
+    {
+      "sha": "85c9d6aad75095990e14e5769e59168d8b8292e1",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/85c9d6aad75095990e14e5769e59168d8b8292e1",
+      "subject": "feat(art): add catacombs collapse rift spritesheets",
+      "body": "Import and configure floor and wall Collapse rift spritesheets under\nAssets/Art/Props/Collapse/ covering progressive spawn (Stage0-Spawn)\nthrough cooldown (Stage4) at 16 PPU, Point filter, uncompressed,\nand 48x48 frame slicing.\n",
+      "date": "2026-11-16T20:10:08-03:00",
+      "files": [
+        "Project Grimhold/Assets/Art/Props/Collapse.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Floor.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage0-Spawn.png",
+        "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage0-Spawn.png.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png",
+        "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage2.png",
+        "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage2.png.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage3.png",
+        "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage3.png.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage4.png",
+        "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage4.png.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Wall.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage0-Spawn.png",
+        "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage0-Spawn.png.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png",
+        "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage2.png",
+        "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage2.png.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage3.png",
+        "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage3.png.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage4.png",
+        "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage4.png.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "art",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "World & Visibility",
+        "Art & Animation"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage0-Spawn.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage0-Spawn.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage2.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage2.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage3.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage3.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage4.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage4.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage0-Spawn.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage0-Spawn.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage2.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage2.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage3.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage3.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage4.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage4.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "catacombs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage0-Spawn.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage0-Spawn.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage2.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage2.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage3.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage3.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage4.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage4.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage0-Spawn.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage0-Spawn.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage2.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage2.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage3.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage3.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage4.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage4.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "scope",
+          "value": "art",
+          "supports": "Art & Animation"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "63f508d3ef6d8ea472fb7fd97c4f3e5921d4a6a5",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/63f508d3ef6d8ea472fb7fd97c4f3e5921d4a6a5",

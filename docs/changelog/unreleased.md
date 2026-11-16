@@ -4,16 +4,16 @@
 
 Release: Unreleased
 
-269 original commits; 269 canonical entries.
+270 original commits; 270 canonical entries.
 
 ## Canonical classification
 
-82 features; 89 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 18 other changes
+83 features; 89 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 18 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 10 | 10 | 1 | 0 | 9 | 1 |
-| Art & Animation | 14 | 9 | 1 | 0 | 9 | 6 |
+| Art & Animation | 15 | 9 | 1 | 0 | 9 | 6 |
 | Audio | 7 | 2 | 0 | 0 | 0 | 0 |
 | Build & Tooling | 56 | 59 | 1 | 1 | 22 | 6 |
 | Combat | 38 | 14 | 0 | 0 | 12 | 1 |
@@ -27,9 +27,113 @@ Release: Unreleased
 | Tests | 79 | 83 | 1 | 1 | 29 | 4 |
 | UI | 32 | 18 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
-| World & Visibility | 21 | 10 | 0 | 0 | 3 | 12 |
+| World & Visibility | 22 | 10 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 85c9d6aad75095990e14e5769e59168d8b8292e1
+
+[85c9d6aad75095990e14e5769e59168d8b8292e1](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/85c9d6aad75095990e14e5769e59168d8b8292e1)
+
+Date: 2026-11-16T20:10:08-03:00 · Classification: Features (explicit) · Systems: World & Visibility, Art & Animation
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(art): add catacombs collapse rift spritesheets
+```
+
+#### Original body
+
+```text
+Import and configure floor and wall Collapse rift spritesheets under
+Assets/Art/Props/Collapse/ covering progressive spawn (Stage0-Spawn)
+through cooldown (Stage4) at 16 PPU, Point filter, uncompressed,
+and 48x48 frame slicing.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Art/Props/Collapse.meta
+Project Grimhold/Assets/Art/Props/Collapse/Floor.meta
+Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage0-Spawn.png
+Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage0-Spawn.png.meta
+Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png
+Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png.meta
+Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage2.png
+Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage2.png.meta
+Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage3.png
+Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage3.png.meta
+Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage4.png
+Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage4.png.meta
+Project Grimhold/Assets/Art/Props/Collapse/Wall.meta
+Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage0-Spawn.png
+Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage0-Spawn.png.meta
+Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png
+Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png.meta
+Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage2.png
+Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage2.png.meta
+Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage3.png
+Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage3.png.meta
+Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage4.png
+Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage4.png.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage0-Spawn.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage0-Spawn.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage2.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage2.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage3.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage3.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage4.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage4.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage0-Spawn.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage0-Spawn.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage2.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage2.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage3.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage3.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage4.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage4.png.meta
+- message-term → World &amp; Visibility: catacombs
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Floor.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage0-Spawn.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage0-Spawn.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage2.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage2.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage3.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage3.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage4.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage4.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Wall.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage0-Spawn.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage0-Spawn.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage2.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage2.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage3.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage3.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage4.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage4.png.meta
+- scope → Art &amp; Animation: art
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 63f508d3ef6d8ea472fb7fd97c4f3e5921d4a6a5
 
