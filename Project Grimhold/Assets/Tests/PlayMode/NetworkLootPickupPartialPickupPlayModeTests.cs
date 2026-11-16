@@ -220,6 +220,74 @@ namespace Tests.PlayMode.Loot
         }
 
         [UnityTest]
+        public IEnumerator NonRaidReceiver_RejectsWithoutException_AndLeavesPickupIntact()
+        {
+            PlayerLootReceiver receiver = SpawnReceiver();
+            SetField(receiver, "_raidOriginState", null);
+            Assert.That(receiver.IsRaidLootOriginAware, Is.False);
+
+            NetworkLootPickup pickup = SpawnPickup(RaidLootOriginTransfer.Dungeon(10));
+            yield return null;
+
+            InteractionResult result = default;
+            Exception capturedException = null;
+            yield return Execute(() =>
+            {
+                try
+                {
+                    result = Interact(pickup, receiver);
+                }
+                catch (Exception ex)
+                {
+                    capturedException = ex;
+                }
+            });
+            yield return null;
+
+            Assert.That(capturedException, Is.Null, "Non-raid receiver interaction must not throw an exception.");
+            Assert.That(result.Success, Is.False, "Non-raid receiver interaction must be rejected.");
+            Assert.That(result.IsConsumed, Is.False);
+            Assert.That(pickup.IsAvailable, Is.True);
+            Assert.That(pickup.Amount, Is.EqualTo(10));
+        }
+
+        [UnityTest]
+        public IEnumerator MixedOrigin_WhenDungeonPrefixCannotFit_RejectsWithoutModifyingPickup()
+        {
+            PlayerLootReceiver receiver = SpawnReceiver();
+            SetField(receiver, "_slotCapacity", 1);
+            yield return Execute(() =>
+            {
+                var request = new LootTransferRequest(new EntityId(int.MaxValue), receiver.Id, Bone, 7, _runner.Tick);
+                RaidLootOriginTransfer playerOrigin = new(new[] { new RaidLootOriginBucket(PlayerOrigin(3), 7) });
+                Assert.That(receiver.ValidateRaidLootOriginReceive(request, playerOrigin), Is.EqualTo(LootTransferFailureReason.None));
+                receiver.CommitRaidLootReceive(request, playerOrigin);
+            });
+
+            var origins = new RaidLootOriginTransfer(new[]
+            {
+                new RaidLootOriginBucket(RaidLootOrigin.Dungeon, 2),
+                new RaidLootOriginBucket(PlayerOrigin(3), 4)
+            });
+            NetworkLootPickup pickup = SpawnPickup(origins, eligibleAmount: 0);
+            yield return null;
+
+            InteractionResult result = default;
+            yield return Execute(() => result = Interact(pickup, receiver));
+            yield return null;
+
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.FailureReason, Is.EqualTo(InteractionFailureReason.LootRejected));
+            Assert.That(result.LootFailureReason, Is.EqualTo(LootTransferFailureReason.InventoryFull));
+            Assert.That(receiver.GetLootAmount(Bone), Is.EqualTo(7));
+            Assert.That(pickup.Amount, Is.EqualTo(6));
+            Assert.That(pickup.IsAvailable, Is.True);
+            AssertOrigins(pickup,
+                new RaidLootOriginBucket(RaidLootOrigin.Dungeon, 2),
+                new RaidLootOriginBucket(PlayerOrigin(3), 4));
+        }
+
+        [UnityTest]
         public IEnumerator SequentialCompetitors_SecondTakesRemainderWithoutDuplication()
         {
             PlayerLootReceiver first = SpawnReceiver();

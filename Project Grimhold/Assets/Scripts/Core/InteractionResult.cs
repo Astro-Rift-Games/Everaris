@@ -44,6 +44,16 @@ public readonly struct InteractionResult
             LootTransferFailureReason.None);
     }
 
+    public static InteractionResult InProgress(
+        InteractionFailureReason reason = InteractionFailureReason.LockpickingStarted)
+    {
+        return new InteractionResult(
+            true,
+            false,
+            reason,
+            LootTransferFailureReason.None);
+    }
+
     public static InteractionResult Rejected(
         InteractionFailureReason reason,
         LootTransferFailureReason lootFailureReason = LootTransferFailureReason.None)

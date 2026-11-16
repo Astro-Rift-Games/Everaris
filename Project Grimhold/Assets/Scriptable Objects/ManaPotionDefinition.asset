@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ManaPotionDefinition
   m_EditorClassIdentifier: Assembly-CSharp::ConsumableDefinition
   _effect: {fileID: 11400000, guid: 792d3dda079e48af82c7abb96e92380c, type: 2}
-  _consumeSound: {fileID: 0}
+  _consumeSound: {fileID: 8300000, guid: cc6699269b4c1d44ea1e860518b9bb73, type: 3}
   _consumeParticles: {fileID: 3102856796109358856, guid: f8bfdd594ba798d46a62ed5d087d00b1, type: 3}
   _consumptionDurationSeconds: 2.5
   _movementSpeedMultiplier: 0.5

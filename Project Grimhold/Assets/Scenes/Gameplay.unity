@@ -724,7 +724,7 @@ MonoBehaviour:
   _spawnAllHotkey: 289
   _manaPotion: {fileID: 11400000, guid: 7839d1743fa835c83321b5450915e343, type: 2}
   _manaFragment: {fileID: 11400000, guid: 20440c15ceb9efecff6f2230c1edde47, type: 2}
-  _healthPotion: {fileID: 11400000, guid: 24a3850db41a2b33d4435b816dd4e4a5, type: 2}
+  _healthPotion: {fileID: 11400000, guid: b61e8bc9f2bfa7b4a83ed98b979edb77, type: 2}
   _explosiveBomb: {fileID: 0}
   _smokeBomb: {fileID: 0}
   _throwingDagger: {fileID: 0}

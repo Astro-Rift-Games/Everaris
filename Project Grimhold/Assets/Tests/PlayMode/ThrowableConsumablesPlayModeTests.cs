@@ -206,6 +206,88 @@ namespace Tests.PlayMode.Consumables
                 "Smoke zone must despawn after 8.0s.");
         }
 
+        [UnityTest]
+        public IEnumerator ThrowingDagger_WhenImpactingWall_IsConsumedAndDespawned()
+        {
+            yield return Begin();
+            var player = SpawnAvatar(1, Vector3.zero);
+            var consume = player.GetComponent<PlayerConsumableNetworkController>();
+            var loot = player.GetComponent<PlayerLootReceiver>();
+
+            consume.ConfigureThrowables(
+                new NetworkPrefabRef(DaggerGuid),
+                new NetworkPrefabRef(BombGuid),
+                new NetworkPrefabRef(SmokeGuid));
+
+            var wall = new GameObject("ObstacleWall");
+            wall.transform.position = new Vector3(2.5f, 0f, 0f);
+            var col = wall.AddComponent<BoxCollider2D>();
+            col.size = new Vector2(1f, 4f);
+            wall.layer = 11; // Obstacles layer
+
+            yield return InSimulation(() => AddLoot(loot, DaggerId, 1));
+            Assert.That(loot.GetLootAmount(DaggerId), Is.EqualTo(1));
+
+            Assert.That(consume.TryRequestConsume(DaggerId, new Vector2(3f, 0f)), Is.True);
+            yield return WaitTicks(2);
+
+            Assert.That(loot.GetLootAmount(DaggerId), Is.EqualTo(0));
+
+            NetworkProjectile projectile = null;
+            yield return WaitFor(() =>
+            {
+                projectile = Object.FindFirstObjectByType<NetworkProjectile>();
+                return projectile != null;
+            });
+            Assert.That(projectile, Is.Not.Null);
+
+            yield return WaitFor(() => projectile == null || projectile.Object == null || !projectile.Object.IsValid);
+
+            Assert.That(projectile == null || projectile.Object == null || !projectile.Object.IsValid, Is.True,
+                "Throwing dagger projectile must be consumed and despawned upon impacting a wall.");
+
+            Object.Destroy(wall);
+        }
+
+        [UnityTest]
+        public IEnumerator TwoRunners_DoNotShareSmokeZones()
+        {
+            yield return Begin();
+            var runnerA = _runner;
+
+            var ownerB = new GameObject("RunnerB");
+            var runnerB = ownerB.AddComponent<NetworkRunner>();
+
+            try
+            {
+                var zoneA = new DummySmokeZone(new Vector2(0f, 0f), 3f);
+                SmokeZoneRegistry.Register(zoneA, runnerA);
+
+                Assert.That(SmokeZoneRegistry.GetActiveZones(runnerA).Count, Is.EqualTo(1));
+                Assert.That(SmokeZoneRegistry.GetActiveZones(runnerB).Count, Is.EqualTo(0));
+
+                Assert.That(SmokeZoneRegistry.IsLineOccluded(new Vector2(-5f, 0f), new Vector2(5f, 0f), runner: runnerA), Is.True);
+                Assert.That(SmokeZoneRegistry.IsLineOccluded(new Vector2(-5f, 0f), new Vector2(5f, 0f), runner: runnerB), Is.False);
+            }
+            finally
+            {
+                SmokeZoneRegistry.Clear(runnerA);
+                SmokeZoneRegistry.Clear(runnerB);
+                Object.Destroy(ownerB);
+            }
+        }
+
+        private sealed class DummySmokeZone : ISmokeZone
+        {
+            public Vector2 Position { get; }
+            public float Radius { get; }
+            public bool IsActive => true;
+            public DummySmokeZone(Vector2 pos, float radius) { Position = pos; Radius = radius; }
+            public bool ContainsPoint(Vector2 point) => (point - Position).sqrMagnitude <= Radius * Radius;
+            public bool BlocksLine(Vector2 start, Vector2 end, float closeVisionDistance = 1.2f) =>
+                SmokeZoneRegistry.CircleBlocksLine(Position, Radius, start, end, closeVisionDistance);
+        }
+
         private void AddLoot(PlayerLootReceiver loot, LootId lootId, int amount)
         {
             var request = new LootTransferRequest(new EntityId(999), loot.Id, lootId, amount, _runner.Tick);

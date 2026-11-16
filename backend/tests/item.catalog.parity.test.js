@@ -36,4 +36,5 @@ test('the backend item registry rejects identifiers that name no item', () => {
     assert.equal(isKnownLootId(lootId), false, String(lootId));
   }
   assert.equal(isKnownLootId('longsword'), true, 'legacy aliases resolve to their canonical item');
+  assert.equal(isKnownLootId('CON_HEALTH_POTION'), true, 'CON_HEALTH_POTION normalizes to canonical healthpotion');
 });

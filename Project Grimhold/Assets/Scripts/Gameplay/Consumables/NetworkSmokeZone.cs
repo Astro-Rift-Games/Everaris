@@ -260,7 +260,7 @@ public sealed class NetworkSmokeZone : NetworkBehaviour, ISmokeZone
         col.color = new ParticleSystem.MinMaxGradient(grad);
 
         ParticleSystemRenderer renderer = puffGo.GetComponent<ParticleSystemRenderer>();
-        renderer.sortingLayerName = "Default";
+        renderer.sortingLayerName = "VFX";
         renderer.sortingOrder = 5;
         Material mat = Resources.Load<Material>("Materials/Default-Particle");
         if (mat == null)
@@ -433,7 +433,7 @@ public sealed class NetworkSmokeZone : NetworkBehaviour, ISmokeZone
         rotOverLifetime.z = new ParticleSystem.MinMaxCurve(-30f * Mathf.Deg2Rad, 30f * Mathf.Deg2Rad);
 
         ParticleSystemRenderer renderer = go.GetComponent<ParticleSystemRenderer>();
-        renderer.sortingLayerName = "Default";
+        renderer.sortingLayerName = "VFX";
         renderer.sortingOrder = 4;
         Material mat = Resources.Load<Material>("Materials/Default-Particle");
         if (mat == null)

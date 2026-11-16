@@ -19,8 +19,13 @@ public sealed class RaidLootTestSpawnerEditor : Editor
             return;
         }
 
+        GUI.backgroundColor = new Color(0.3f, 0.7f, 1f);
+        if (GUILayout.Button("★ Spawn ALL Consumables (F6) ★", GUILayout.Height(36)))
+        {
+            spawner.SpawnAllConsumables();
+        }
         GUI.backgroundColor = new Color(0.4f, 0.9f, 0.4f);
-        if (GUILayout.Button("★ Spawn ALL 9 Test Items at Player (F8) ★", GUILayout.Height(36)))
+        if (GUILayout.Button("Spawn ALL Test Items (F8)", GUILayout.Height(30)))
         {
             spawner.SpawnAllTestLoot();
         }

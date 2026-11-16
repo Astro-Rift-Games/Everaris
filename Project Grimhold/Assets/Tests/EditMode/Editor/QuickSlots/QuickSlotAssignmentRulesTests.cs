@@ -102,42 +102,6 @@ public sealed class QuickSlotAssignmentRulesTests
     }
 
     [Test]
-    public void ReleaseDepleted_PositiveToZero_RetainsSlotBinding()
-    {
-        QuickSlotAssignmentRules.TryAssign(QuickSlotBindings.Empty, 0, Potion, true, 1, out var first);
-        QuickSlotAssignmentRules.TryAssign(first, 1, Elixir, true, 1, out var both);
-
-        bool changed = QuickSlotAssignmentRules.TryReleaseDepleted(
-            both, new[] { 1, 2, 0, 0 }, new[] { 0, 2, 0, 0 }, out var next);
-
-        Assert.That(changed, Is.False);
-        Assert.That(next.Get(0), Is.EqualTo(Potion));
-        Assert.That(next.Get(1), Is.EqualTo(Elixir));
-    }
-
-    [Test]
-    public void ReleaseDepleted_AlreadyZeroOrUnobserved_KeepsBinding()
-    {
-        QuickSlotAssignmentRules.TryAssign(QuickSlotBindings.Empty, 0, Potion, true, 1, out var first);
-
-        bool changed = QuickSlotAssignmentRules.TryReleaseDepleted(
-            first, new[] { 0, 0, 0, 0 }, new[] { 0, 0, 0, 0 }, out var next);
-
-        Assert.That(changed, Is.False);
-        Assert.That(next, Is.EqualTo(first));
-    }
-
-    [Test]
-    public void ReleaseDepleted_MalformedAmountArrays_KeepBindings()
-    {
-        QuickSlotAssignmentRules.TryAssign(QuickSlotBindings.Empty, 0, Potion, true, 1, out var first);
-
-        Assert.That(QuickSlotAssignmentRules.TryReleaseDepleted(first, null, new[] { 0, 0, 0, 0 }, out var next), Is.False);
-        Assert.That(QuickSlotAssignmentRules.TryReleaseDepleted(first, new[] { 1 }, new[] { 0 }, out next), Is.False);
-        Assert.That(next, Is.EqualTo(first));
-    }
-
-    [Test]
     public void TryCreate_RejectsDuplicatesAndWrongLength()
     {
         Assert.That(QuickSlotBindings.TryCreate(new[] { "a", "a", null, null }, out _, out string duplicateError), Is.False);

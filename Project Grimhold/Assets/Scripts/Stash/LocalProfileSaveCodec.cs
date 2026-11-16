@@ -1112,6 +1112,10 @@ public static class LocalProfileSaveCodec
                 error = $"{label} contains an invalid loot item.";
                 return false;
             }
+            if (string.Equals(item.lootId, "CON_HEALTH_POTION", System.StringComparison.Ordinal))
+            {
+                item.lootId = "healthpotion";
+            }
             var lootId = new LootId(item.lootId);
             if (item.amount <= 0)
             {

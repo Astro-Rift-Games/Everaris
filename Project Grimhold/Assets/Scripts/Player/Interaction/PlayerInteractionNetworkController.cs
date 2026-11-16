@@ -232,7 +232,7 @@ public sealed class PlayerInteractionNetworkController : NetworkBehaviour, IAfte
         LockpickStartPosition = transform.position;
         LockpickTargetIdValue = request.TargetId.Value;
         LockpickTimer = TickTimer.CreateFromSeconds(Runner, _lockpickDurationSeconds);
-        return InteractionResult.Rejected(InteractionFailureReason.LockpickingStarted);
+        return InteractionResult.InProgress(InteractionFailureReason.LockpickingStarted);
     }
 
     /// <summary>Direct committed-damage hook. Never called by presentation events.</summary>

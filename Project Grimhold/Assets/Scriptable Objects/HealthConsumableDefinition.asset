@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: HealthConsumableDefinition
   m_EditorClassIdentifier: Assembly-CSharp::ConsumableDefinition
   _effect: {fileID: 11400000, guid: 2d914d117cd26f140bf24c9803dd50cd, type: 2}
-  _consumeSound: {fileID: 0}
+  _consumeSound: {fileID: 8300000, guid: 4144ed0d6abcc42479fe873c54bbe0fa, type: 3}
   _consumeParticles: {fileID: 3102856796109358856, guid: f8bfdd594ba798d46a62ed5d087d00b1, type: 3}
   _consumptionDurationSeconds: 2.5
   _movementSpeedMultiplier: 0.5

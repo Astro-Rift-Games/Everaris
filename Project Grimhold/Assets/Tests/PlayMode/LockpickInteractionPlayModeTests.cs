@@ -180,7 +180,7 @@ public sealed class LockpickInteractionPlayModeTests
                 Is.EqualTo(LootTransferFailureReason.None));
             _inventory.CommitRaidLootReceive(request, origins);
             var result = Interact();
-            Assert.That(result.Success, Is.False);
+            Assert.That(result.Success, Is.True, "Lockpicking start must be reported as success/in-progress, not rejected.");
             Assert.That(result.FailureReason, Is.EqualTo(InteractionFailureReason.LockpickingStarted));
             Assert.That(_interaction.IsLockpicking, Is.True);
             afterStart?.Invoke();

@@ -123,7 +123,12 @@ public readonly struct QuickSlotBindings : IEquatable<QuickSlotBindings>
                 continue;
             }
 
-            var lootId = new LootId(ids[i]);
+            string slotString = ids[i];
+            if (string.Equals(slotString, "CON_HEALTH_POTION", System.StringComparison.Ordinal))
+            {
+                slotString = "healthpotion";
+            }
+            var lootId = new LootId(slotString);
             for (int j = 0; j < i; j++)
             {
                 if (slots[j].Equals(lootId))

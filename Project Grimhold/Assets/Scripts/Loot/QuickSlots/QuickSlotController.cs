@@ -11,7 +11,6 @@ public sealed class QuickSlotController : IDisposable
 {
     private readonly LocalProfileStore _store;
     private readonly IInventoryReadSource _inventory;
-    private readonly Func<bool> _canReleaseDepleted;
     private readonly int[] _previousAmounts = new int[QuickSlotBindings.SlotCount];
     private readonly int[] _currentAmounts = new int[QuickSlotBindings.SlotCount];
     private QuickSlotBindings _seenBindings;
@@ -20,17 +19,12 @@ public sealed class QuickSlotController : IDisposable
     /// <summary>Raised when the bindings or the amounts they resolve to may have changed.</summary>
     public event Action Changed;
 
-    /// <param name="canReleaseDepleted">
-    /// Legacy gate predicate kept for compatibility. Releasing on depletion is deprecated under TASK-230.
-    /// </param>
     public QuickSlotController(
         LocalProfileStore store,
-        IInventoryReadSource inventory,
-        Func<bool> canReleaseDepleted = null)
+        IInventoryReadSource inventory)
     {
         _store = store ?? throw new ArgumentNullException(nameof(store));
         _inventory = inventory ?? throw new ArgumentNullException(nameof(inventory));
-        _canReleaseDepleted = canReleaseDepleted;
         _seenBindings = Bindings;
         ReadSlotAmounts(_previousAmounts);
         _store.ProfileCommitted += OnProfileCommitted;

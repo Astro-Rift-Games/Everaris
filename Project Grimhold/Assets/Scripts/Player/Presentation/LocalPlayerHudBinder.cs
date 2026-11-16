@@ -473,41 +473,7 @@ public sealed class LocalPlayerHudBinder : NetworkBehaviour
             return null;
         }
 
-        return new QuickSlotController(profileContext.Store, _lootReceiver, CanReleaseDepletedQuickSlot);
-    }
-
-    /// <summary>
-    /// A Quick Slot may unassign itself only while the participant is actively raiding, so the
-    /// inventory emptying through extraction, defeat or voluntary abandon never erases bindings.
-    /// </summary>
-    private bool CanReleaseDepletedQuickSlot()
-    {
-        if (_playerCharacter == null || _extractionController == null || _boundRunner == null)
-        {
-            return false;
-        }
-
-        RaidParticipantState participantState = RaidParticipantState.Raiding;
-        ExpeditionProgressionFinalizationCause finalizationCause = ExpeditionProgressionFinalizationCause.None;
-        if (_participantLink != null)
-        {
-            if (!_participantLink.TryResolveParticipant(out NetworkRaidParticipant participant))
-            {
-                return false;
-            }
-
-            participantState = participant.State;
-            finalizationCause = participant.FinalizationCause;
-        }
-
-        NetworkMatchController match = _boundRunner.GetComponent<NetworkMatchController>();
-        return QuickSlotReleaseGate.CanRelease(
-            _playerCharacter.IsAlive,
-            _playerCharacter.IsDowned,
-            _extractionController.State == ExtractionState.None,
-            match != null && match.Phase == NetworkMatchController.MatchPhase.InProgress,
-            participantState,
-            finalizationCause);
+        return new QuickSlotController(profileContext.Store, _lootReceiver);
     }
 
     private void DisposeQuickSlots()

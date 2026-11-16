@@ -157,6 +157,14 @@ public sealed class AbilityPlayModeDebugger : MonoBehaviour
                 runtime.RequestDebugSpawnHostileProjectileTowardMe();
             }
 
+            if (GUILayout.Button("★ Spawn All Consumables (F6) ★", GUILayout.Height(30f)))
+            {
+                if (RaidLootTestSpawner.Instance != null)
+                {
+                    RaidLootTestSpawner.Instance.SpawnAllConsumables();
+                }
+            }
+
             GUILayout.Space(8);
         }
 
