@@ -94,29 +94,10 @@ namespace Tests.EditMode.Combat
             return (bool)property.GetValue(request);
         }
 
-        // Reflect the additive constructor so this test file compiles before the opt-in API exists.
         private static ProjectileSpawnRequest OptInRequest(float lifetime, float range, bool unbounded, bool enemyOnly,
             float damage = 5f, float speed = 10f, Vector2? direction = null,
-            NetworkPrefabRef prefab = default, int mask = 0)
-        {
-            ConstructorInfo constructor = null;
-            foreach (ConstructorInfo candidate in typeof(ProjectileSpawnRequest).GetConstructors())
-            {
-                ParameterInfo[] parameters = candidate.GetParameters();
-                if (parameters.Length == 14 && parameters[12].ParameterType == typeof(bool) &&
-                    parameters[13].ParameterType == typeof(bool)) constructor = candidate;
-            }
-            Assert.That(constructor, Is.Not.Null,
-                "Append optional bool isUnbounded = false and bool enemyOnly = false to the existing request constructor.");
-            ParameterInfo[] args = constructor.GetParameters();
-            Assert.That(args[12].IsOptional && args[13].IsOptional, Is.True, "Existing bounded attack callers must compile unchanged.");
-            Assert.That(args[12].DefaultValue, Is.EqualTo(false));
-            Assert.That(args[13].DefaultValue, Is.EqualTo(false));
-            return (ProjectileSpawnRequest)constructor.Invoke(new object[]
-            {
-                new EntityId(1), Vector2.zero, direction ?? Vector2.right, damage, DamageType.Magical,
-                speed, lifetime, range, 100, 0f, prefab, mask, unbounded, enemyOnly
-            });
-        }
+            NetworkPrefabRef prefab = default, int mask = 0) =>
+            new ProjectileSpawnRequest(new EntityId(1), Vector2.zero, direction ?? Vector2.right,
+                damage, DamageType.Magical, speed, lifetime, range, 100, 0f, prefab, mask, unbounded, enemyOnly);
     }
 }

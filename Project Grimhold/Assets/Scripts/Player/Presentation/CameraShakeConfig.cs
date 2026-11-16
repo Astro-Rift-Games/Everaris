@@ -27,6 +27,15 @@ public sealed class CameraShakeConfig : ScriptableObject
     [SerializeField, Min(0f)]
     private float _dealDamageDuration = 0.12f;
 
+    [Tooltip("Intensity and directional kick multiplier on fatal confirmed hits; duration is unchanged.")]
+    [SerializeField, Min(0f)] private float _killMultiplier = 1.5f;
+
+    [Tooltip("Directional deal-shake offset in world units along HitDirection. Zero disables the kick.")]
+    [SerializeField, Min(0f)] private float _directionalKickStrength = 0f;
+
+    public float KillMultiplier => _killMultiplier;
+    public float DirectionalKickStrength => _directionalKickStrength;
+
     [Header("Decay")]
     [Tooltip("Exponent applied to the trauma decay curve. Higher values decay faster.")]
     [SerializeField, Min(1f)]
@@ -51,6 +60,8 @@ public sealed class CameraShakeConfig : ScriptableObject
         _receiveDamageDuration  = Mathf.Max(0f, _receiveDamageDuration);
         _dealDamageIntensity    = Mathf.Max(0f, _dealDamageIntensity);
         _dealDamageDuration     = Mathf.Max(0f, _dealDamageDuration);
+        _killMultiplier         = Mathf.Max(0f, _killMultiplier);
+        _directionalKickStrength = Mathf.Max(0f, _directionalKickStrength);
         _decayExponent          = Mathf.Max(1f, _decayExponent);
         _maxOffset              = Mathf.Max(0f, _maxOffset);
     }

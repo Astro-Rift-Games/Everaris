@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace Tests.EditMode.Player.Presentation
 {
-    public sealed class PlayerPresentationStateSeamTests
+    public sealed partial class PlayerPresentationStateSeamTests
     {
         private const string MainHand = "RightHandPivot/RightHand";
         private const string OffHand = "LeftHandPivot/LeftHand";
@@ -217,6 +217,133 @@ namespace Tests.EditMode.Player.Presentation
             AnimationClip clip = state.AttackWeapon.WeaponDefinition.Presentation.GetAttackClip(3);
             Assert.That(animator.GetCurrentAnimatorStateInfo(layer).normalizedTime * clip.length,
                 Is.EqualTo(state.AttackSeconds).Within(0.001f));
+        }
+
+        [TestCase("LongBow", EquipmentSlot.None, false)]
+        [TestCase("LongBow", EquipmentSlot.WeaponSetAMainHand, true)]
+        [TestCase("MagicWand", EquipmentSlot.None, true)]
+        [TestCase("MagicWand", EquipmentSlot.WeaponSetAMainHand, false)]
+        [TestCase("MagicWand", EquipmentSlot.WeaponSetAOffHand, false)]
+        [TestCase("MagicWand", EquipmentSlot.WeaponSetAOffHand, true)]
+        public void RangedWindup_PoseAndReleaseVfxKeepAcceptedAim(string weaponName, EquipmentSlot slot, bool resume)
+        {
+            GameObject avatar = CreateAvatar();
+            // WeaponDriven rigs reparent their runtime pivot. Unpack only this disposable preview instance,
+            // never the source prefab, so EditMode permits the same hierarchy operation as PlayMode.
+            PrefabUtility.UnpackPrefabInstance(avatar, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            EquipmentSlot equippedSlot = slot == EquipmentSlot.None ? EquipmentSlot.WeaponSetAMainHand : slot;
+            var state = WeaponState(equippedSlot, weaponName);
+            state.AttackSeconds = 0.1f;
+            BindAndInitialize(avatar, state);
+            var view = avatar.GetComponentInChildren<PlayerAnimatorView>(true);
+            var weapon = avatar.GetComponentInChildren<PlayerWeaponPresenter>(true);
+            var serialized = new SerializedObject(weapon);
+            Transform pivot = (Transform)serialized.FindProperty(slot == EquipmentSlot.WeaponSetAOffHand
+                ? "_offHandVisual" : "_mainHandWeaponPivot").objectReferenceValue;
+            var attack = new AttackPerformedEvent(default, AttackType.Ranged, Vector2.zero, Vector2.down,
+                10, 1, 7, 40, 0.5f, sourceSlot: slot);
+            if (resume) state.ResumeAttack(attack); else state.RaiseAttack(attack);
+            PresentFrame(avatar);
+            Quaternion acceptedPose = pivot.rotation;
+            Vector3 acceptedAxis = view.transform.InverseTransformDirection(pivot.right);
+            state.AimDirection = Vector2.up;
+            PresentFrame(avatar);
+            Assert.That(Quaternion.Angle(pivot.rotation, acceptedPose), Is.LessThan(0.01f),
+                "Windup weapon pose must not follow rotated live aim");
+
+            state.AttackSeconds = 0.5f;
+            PresentFrame(avatar);
+            SpriteRenderer effect = slot == EquipmentSlot.WeaponSetAOffHand
+                ? view.transform.Find("OffHandAttackVfx").GetComponent<SpriteRenderer>()
+                : view.transform.Find("AttackVfx").GetComponent<SpriteRenderer>();
+            Assert.That(effect.enabled, Is.True, "Release VFX must actually fire");
+            // The committed direction turns within the authored holding basis, not world XY.
+            // AimStance turns the whole block; FreeAim turns locally inside the holding grip.
+            Vector3 expectedAxis = state.AttackWeapon.WeaponDefinition.Presentation.AimMode == WeaponAimMode.AimStance
+                ? acceptedAxis
+                : view.transform.InverseTransformDirection(pivot.parent.TransformDirection(Vector3.down));
+            if (slot == EquipmentSlot.WeaponSetAOffHand)
+            {
+                Transform grip = (Transform)serialized.FindProperty("_offHandGrip").objectReferenceValue;
+                expectedAxis = view.transform.InverseTransformVector(grip.TransformVector(Vector3.down));
+            }
+            Transform anchor = slot == EquipmentSlot.WeaponSetAOffHand
+                ? (Transform)serialized.FindProperty("_offHandGrip").objectReferenceValue : pivot;
+            var visual = state.AttackWeapon.WeaponDefinition.Presentation.AttackVfx.Visual;
+            Vector3 actualAxis = ReleaseAxis(view.transform, effect, anchor, visual);
+            Assert.That(Vector3.Angle(actualAxis, expectedAxis), Is.LessThan(0.01f),
+                "Release VFX must use the accepted direction, not just a stable arbitrary axis");
+            // Cast Flash is unrotated art placed on the cast point; its direction is the offset from the grip,
+            // not its transform's rotation. Bow Shot instead rotates its art around the grip.
+            state.AimDirection = Vector2.left;
+            PresentFrame(avatar);
+            Assert.That(Vector3.Angle(ReleaseAxis(view.transform, effect, anchor, visual), actualAxis),
+                Is.LessThan(0.01f), "The release impulse must not be redirected by live aim");
+            Assert.That(Quaternion.Angle(pivot.rotation, acceptedPose), Is.GreaterThan(30f),
+                "After release the weapon must return to live aim");
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void RangedWindup_CancellationReturnsWeaponToLiveAim(bool offHand)
+        {
+            GameObject avatar = CreateAvatar();
+            var slot = offHand ? EquipmentSlot.WeaponSetAOffHand : EquipmentSlot.WeaponSetAMainHand;
+            var state = WeaponState(slot, "MagicWand");
+            state.AttackSeconds = 0.1f;
+            BindAndInitialize(avatar, state);
+            var weapon = avatar.GetComponentInChildren<PlayerWeaponPresenter>(true);
+            Transform pivot = (Transform)new SerializedObject(weapon).FindProperty(offHand
+                ? "_offHandVisual" : "_mainHandWeaponPivot").objectReferenceValue;
+            state.RaiseAttack(new AttackPerformedEvent(default, AttackType.Ranged, Vector2.zero,
+                Vector2.down, 10, 1, 7, 40, 0.5f, sourceSlot: slot));
+            PresentFrame(avatar);
+            Quaternion accepted = pivot.rotation;
+            state.AimDirection = Vector2.up;
+            PresentFrame(avatar);
+            Assert.That(Quaternion.Angle(pivot.rotation, accepted), Is.LessThan(0.01f));
+            state.HasAttackClock = false;
+            PresentFrame(avatar);
+            Assert.That(Quaternion.Angle(pivot.rotation, accepted), Is.GreaterThan(30f));
+            Assert.That(avatar.GetComponentInChildren<PlayerAnimatorView>(true).transform.Find("AttackVfx")
+                .GetComponent<SpriteRenderer>().enabled, Is.False);
+        }
+
+        [Test]
+        public void CommittedAim_BypassesProxySmoothingAndMeleeKeepsLiveAim()
+        {
+            GameObject avatar = CreateAvatar();
+            var state = WeaponState(EquipmentSlot.WeaponSetAMainHand, "MagicWand");
+            state.HasInputAuthority = false;
+            state.AimDirection = Vector2.up;
+            state.AttackSeconds = 0.1f;
+            BindAndInitialize(avatar, state);
+            PresentFrame(avatar);
+            var view = avatar.GetComponentInChildren<PlayerAnimatorView>(true);
+            Assert.That(view.PresentedAimDirection, Is.EqualTo(Vector2.up));
+            state.ResumeAttack(new AttackPerformedEvent(default, AttackType.Ranged, Vector2.zero,
+                Vector2.down, 10, 1, 7, 40, 0.5f));
+            PresentFrame(avatar);
+            Assert.That(view.PresentedAimDirection, Is.EqualTo(Vector2.down),
+                "A resumed committed aim must not turn gradually from the proxy's previous live aim");
+            state.AttackSeconds = 0.5f;
+            Assert.That(Vector2.Distance(view.PresentedAimDirection, Vector2.up), Is.LessThan(0.0001f), "Release restores the continuously sampled live aim");
+            state.AttackSeconds = 0.1f;
+            state.HasAttackClock = false;
+            Assert.That(Vector2.Distance(view.PresentedAimDirection, Vector2.up), Is.LessThan(0.0001f), "Cancellation restores live aim");
+            state.HasAttackClock = true;
+            state.RaiseAttack(new AttackPerformedEvent(default, AttackType.Melee, Vector2.zero,
+                Vector2.down, 10, 1, 8, 40, 0.5f));
+            PresentFrame(avatar);
+            Assert.That(Vector2.Distance(view.PresentedAimDirection, Vector2.up), Is.LessThan(0.0001f), "Melee does not commit the presented continuous aim");
+        }
+
+        private static Vector3 ReleaseAxis(Transform root, SpriteRenderer effect, Transform anchor,
+            AttackVfxVisualDefinition visual)
+        {
+            if (visual is CastFlashVfxVisualDefinition flash)
+                return effect.transform.localPosition + (Vector3)flash.Center - root.InverseTransformPoint(anchor.position);
+            return effect.transform.localRotation * Vector3.right;
         }
 
         private GameObject CreateAvatar()

@@ -86,6 +86,14 @@ public sealed class NetworkProjectile : NetworkBehaviour
     [Networked]
     private int EmpowerSourceParticipantValue { get; set; }
 
+    // Presentation-only flight metadata. Snapshot copying preserves it; missing metadata stays generic.
+    [Networked] private int WeaponSourceSlotValue { get; set; }
+    [Networked] private int WeaponAttackSequence { get; set; }
+    [Networked] private int WeaponCatalogIndexPlusOne { get; set; }
+    [Networked] private int WeaponAttackTypeValue { get; set; }
+    public WeaponAttackTag WeaponTag => new((EquipmentSlot)WeaponSourceSlotValue,
+        WeaponAttackSequence, WeaponCatalogIndexPlusOne, (AttackType)WeaponAttackTypeValue);
+
     // Re-impact progress is flight state: Fusion copies it with the projectile snapshot.
     [Networked]
     private int AppliedImpactCount { get; set; }
@@ -103,6 +111,16 @@ public sealed class NetworkProjectile : NetworkBehaviour
     public bool IsImpactGeometryOnly => ImpactWasGeometryOnly;
 
     public event System.Action<Vector2, bool> ImpactResolved;
+
+    /// <summary>Local presentation only: final position and flight direction on a real expiry.</summary>
+    public event System.Action<Vector2, Vector2> Expired;
+
+    // A proxy cannot infer a range expiry from its interpolated position, nor distinguish it
+    // from an external despawn. Replicate only the authoritative terminal cause, like ImpactConsumed.
+    [Networked] private NetworkBool ExpiryConsumed { get; set; }
+    private bool _despawnPresented;
+    private ProjectileVisualProfilePresenter _visualProfile;
+    private ProjectileImpactParticlePresenter _impactPresenter;
 
     private const int HitBufferCapacity = 16;
 
@@ -124,6 +142,7 @@ public sealed class NetworkProjectile : NetworkBehaviour
 
     public override void Spawned()
     {
+        _despawnPresented = false;
         CacheComponents();
         ConfigureContactFilter();
 
@@ -165,6 +184,12 @@ public sealed class NetworkProjectile : NetworkBehaviour
             _rigidbody.position = transform.position;
         }
         Physics2D.SyncTransforms();
+
+        // Read the replicated identity/type on every peer; never infer current equipped weapon.
+        _visualProfile = GetComponent<ProjectileVisualProfilePresenter>();
+        _impactPresenter = GetComponent<ProjectileImpactParticlePresenter>();
+        if (_visualProfile != null && _visualProfile.isActiveAndEnabled) _visualProfile.BeginFlight(WeaponTag, DamageType);
+        if (_impactPresenter != null) _impactPresenter.BeginFlight(DamageType);
     }
 
     private void CacheComponents()
@@ -244,6 +269,10 @@ public sealed class NetworkProjectile : NetworkBehaviour
         SourceWasPvEEnemy = sourceRegistry != null &&
             sourceRegistry.TryGetDamageable(request.OwnerId, out IDamageable source) &&
             source is IAbilityEnemyTarget;
+        WeaponSourceSlotValue = (int)request.WeaponTag.SourceSlot;
+        WeaponAttackSequence = request.WeaponTag.AttackSequence;
+        WeaponCatalogIndexPlusOne = request.WeaponTag.WeaponCatalogIndexPlusOne;
+        WeaponAttackTypeValue = (int)request.WeaponTag.AttackType;
         OwnerEntityIdValue = request.OwnerId.Value;
         EmpowerSourceParticipantValue = empowerSourceId.IsValid ? empowerSourceId.Value : 0;
         Damage = request.Damage;
@@ -257,6 +286,7 @@ public sealed class NetworkProjectile : NetworkBehaviour
         LifetimeTimer = request.IsUnbounded ? TickTimer.None : TickTimer.CreateFromSeconds(Runner, request.LifetimeSeconds);
         ImpactLayerMaskValue = impactLayerMaskValue;
         ImpactConsumed = false;
+        ExpiryConsumed = false;
         ImpactWasGeometryOnly = false;
         SpawnSimulationTick = request.SimulationTick;
         KnockbackForce = request.KnockbackForce;
@@ -268,7 +298,6 @@ public sealed class NetworkProjectile : NetworkBehaviour
             LedgerContactTicks.Set(i, 0);
         }
 
-        Debug.Log($"[CombatTrace] Projectile initialized. OwnerId: {OwnerEntityIdValue}, Damage: {Damage}, Lifetime: {request.LifetimeSeconds}, Tick: {SpawnSimulationTick}", this);
     }
 
     /// <summary>
@@ -305,7 +334,7 @@ public sealed class NetworkProjectile : NetworkBehaviour
         // 1. Validate expiration by lifetime
         if (!IsUnbounded && LifetimeTimer.ExpiredOrNotRunning(Runner))
         {
-            Debug.Log($"[CombatTrace] Projectile despawned: Lifetime expired.", this);
+            ExpiryConsumed = true;
             Runner.Despawn(Object);
             return;
         }
@@ -319,7 +348,7 @@ public sealed class NetworkProjectile : NetworkBehaviour
             remainingRange = MaximumRange - traveledDistance;
             if (remainingRange <= 0f)
             {
-                Debug.Log($"[CombatTrace] Projectile despawned: Range limit exceeded (travelled: {traveledDistance}, max: {MaximumRange}).", this);
+                ExpiryConsumed = true;
                 Runner.Despawn(Object);
                 return;
             }
@@ -363,7 +392,6 @@ public sealed class NetworkProjectile : NetworkBehaviour
             _rigidbody.position = impactPosition;
             transform.position = impactPosition;
 
-            Debug.Log($"[CombatTrace] Projectile despawned: {terminal.Kind} contact terminated it. Distance: {terminal.Distance}, Impacts: {AppliedImpactCount}", this);
             Runner.Despawn(Object);
             return;
         }
@@ -375,7 +403,7 @@ public sealed class NetworkProjectile : NetworkBehaviour
         // Despawn if maximum range is reached in this tick
         if (reachesMaximumRange)
         {
-            Debug.Log($"[CombatTrace] Projectile despawned: Reached exact maximum range.", this);
+            ExpiryConsumed = true;
             Runner.Despawn(Object);
         }
     }
@@ -461,7 +489,8 @@ public sealed class NetworkProjectile : NetworkBehaviour
             contact.Point,
             Runner.Tick,
             KnockbackForce,
-            empowerSourceId: empowerSourceId
+            empowerSourceId: empowerSourceId,
+            weaponTag: WeaponTag
         );
 
         _damageResolver.Resolve(in damageRequest);
@@ -486,10 +515,22 @@ public sealed class NetworkProjectile : NetworkBehaviour
 
     public override void Despawned(NetworkRunner runner, bool hasState)
     {
-        if (hasState && ImpactConsumed)
+        // Fusion calls this before despawn; hasState alone does not mean normal flight ended.
+        // Shutdown (including HostMigration) disposes the simulation, not a projectile expiry.
+        if (_despawnPresented || !hasState || runner == null || !runner.IsRunning ||
+            runner.IsShutdown)
         {
-            ImpactResolved?.Invoke(transform.position, ImpactWasGeometryOnly);
+            if (_visualProfile != null) _visualProfile.RestoreDefaults();
+            return;
         }
+
+        _despawnPresented = true;
+        if (ImpactConsumed)
+            ImpactResolved?.Invoke(transform.position, ImpactWasGeometryOnly);
+        else if (ExpiryConsumed)
+            Expired?.Invoke(transform.position, Direction);
+        // Terminal subscribers consume the profile before any pooled instance resets its visuals.
+        if (_visualProfile != null) _visualProfile.RestoreDefaults();
     }
 
 #if UNITY_EDITOR

@@ -8,14 +8,14 @@ namespace Tests.EditMode.Combat
     public sealed class MeleeHitReactionProfileTests
     {
         [Test]
-        public void Catalog_OnlyMeleeWeaponsReferenceReactionProfiles()
+        public void Catalog_MeleeProfilesRequired_RangedProfilesOptional()
         {
             int melee = 0, ranged = 0;
             foreach (string guid in AssetDatabase.FindAssets("t:WeaponDefinition"))
             {
                 var weapon = AssetDatabase.LoadAssetAtPath<WeaponDefinition>(AssetDatabase.GUIDToAssetPath(guid));
                 var property = new SerializedObject(weapon).FindProperty("_presentation._hitReaction");
-                Assert.That(property, Is.Not.Null, "Weapon presentation must expose an optional melee reaction.");
+                Assert.That(property, Is.Not.Null, "Weapon presentation must expose an optional weapon reaction.");
                 if (weapon.PrimaryAttack is MeleeAttackConfig)
                 {
                     melee++;
@@ -24,7 +24,8 @@ namespace Tests.EditMode.Combat
                 else if (weapon.PrimaryAttack is RangedAttackConfig)
                 {
                     ranged++;
-                    Assert.That(property.objectReferenceValue, Is.Null, weapon.name);
+                    if (weapon.Presentation.HitReaction != null)
+                        Assert.That(weapon.Presentation.HitReaction.TryValidate(out string error), Is.True, error);
                 }
             }
             Assert.That(melee, Is.GreaterThanOrEqualTo(9));

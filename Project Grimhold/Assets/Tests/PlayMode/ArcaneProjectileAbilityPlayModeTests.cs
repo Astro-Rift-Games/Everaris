@@ -65,6 +65,7 @@ namespace Tests.PlayMode.Abilities
             Assert.That(_spawner.LastRequest.ProjectilePrefab, Is.EqualTo(new NetworkPrefabRef(ProjectileGuid)));
             Assert.That(ReadRequestFlag("IsUnbounded"), Is.True);
             Assert.That(ReadRequestFlag("EnemyOnly"), Is.True);
+            Assert.That(_spawner.LastRequest.WeaponTag.HasWeaponTag, Is.False, "Abilities must not borrow a weapon tag.");
             yield return WaitTicks();
             yield return InSimulation(() =>
             {
@@ -126,6 +127,8 @@ namespace Tests.PlayMode.Abilities
             float playerHealth = otherPlayer.Health;
             float firstHealth = first.Health;
             float secondHealth = second.Health;
+            CombatPresentationEvent feedback = default;
+            _runtime.GetComponent<PlayerCombatNetworkController>().CombatFeedbackResolved += result => feedback = result;
             yield return Press();
             yield return WaitUntil(() => first.Health < firstHealth);
             float afterImpact = first.Health;
@@ -134,6 +137,10 @@ namespace Tests.PlayMode.Abilities
             Assert.That(first.Health, Is.EqualTo(afterImpact), "A consumed impact cannot apply damage twice.");
             Assert.That(second.Health, Is.EqualTo(secondHealth), "The projectile never pierces the first valid enemy.");
             Assert.That(_spawner.CallCount, Is.EqualTo(1));
+            Assert.That(feedback.Sequence, Is.GreaterThan(0), "Untagged ability damage still delivers generic confirmation.");
+            Assert.That(feedback.Kind, Is.EqualTo(CombatFeedbackKind.ConfirmedImpact));
+            Assert.That(feedback.IsWeaponImpact, Is.False);
+            Assert.That(feedback.IsMeleeImpact, Is.False);
         }
 
         [UnityTest]

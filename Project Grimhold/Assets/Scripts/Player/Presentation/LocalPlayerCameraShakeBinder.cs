@@ -24,6 +24,7 @@ public sealed class LocalPlayerCameraShakeBinder : NetworkBehaviour
     [SerializeField]
     private PlayerCombatNetworkController _combatController;
 
+    private PlayerWeaponEquipmentNetworkController _equipmentSource;
     private CameraShakeController _shakeController;
     private CameraShakeConfig _config;
     private EntityRegistry _entityRegistry;
@@ -49,6 +50,7 @@ public sealed class LocalPlayerCameraShakeBinder : NetworkBehaviour
             return;
         }
 
+        _equipmentSource = GetComponentInParent<PlayerWeaponEquipmentNetworkController>();
         _config                      = config;
         _entityRegistry              = entityRegistry;
         _lastObservedHealth          = _playerCharacter.Health;
@@ -76,6 +78,7 @@ public sealed class LocalPlayerCameraShakeBinder : NetworkBehaviour
             _combatController.CombatFeedbackResolved -= OnCombatFeedbackResolved;
         }
 
+        _equipmentSource = null;
         _config          = null;
         _entityRegistry  = null;
         _shakeController = null;
@@ -132,12 +135,18 @@ public sealed class LocalPlayerCameraShakeBinder : NetworkBehaviour
             return;
         }
 
-        if (!IsCharacterEntity(feedbackEvent.TargetId))
-        {
-            return;
-        }
+        bool isCharacter = IsCharacterEntity(feedbackEvent.TargetId);
+        if (!isCharacter) return;
 
-        _shakeController.RequestShake(_config.DealDamageIntensity, _config.DealDamageDuration);
+        WeaponDefinition weapon = null;
+        if (feedbackEvent.HasWeaponTag && _equipmentSource != null &&
+            _equipmentSource.TryGetWeaponByCatalogIndexPlusOne(feedbackEvent.WeaponCatalogIndexPlusOne,
+                out LootDefinition loot))
+            weapon = loot.WeaponDefinition;
+
+        CombatShakeWeights weights = CombatShakeWeights.Resolve(feedbackEvent, weapon, _config, isCharacter);
+        _shakeController.RequestShake(weights.Intensity, weights.Duration);
+        _shakeController.RequestDirectionalImpulse(weights.Kick, weights.Duration);
     }
 
     /// <summary>

@@ -191,8 +191,12 @@ public sealed class DamageFeedbackPresenter : MonoBehaviour
         }
     }
 
-    /// <summary>Plays only on the peer that receives the attacker's confirmed melee result.</summary>
-    public bool TryPlayMeleeReaction(MeleeHitReactionProfile profile, Vector2 direction, float delaySeconds, float holdSeconds)
+    // Compatibility entry point for existing melee callers.
+    public bool TryPlayMeleeReaction(MeleeHitReactionProfile profile, Vector2 direction, float delaySeconds, float holdSeconds) =>
+        TryPlayWeaponReaction(profile, direction, delaySeconds, holdSeconds);
+
+    /// <summary>Plays only on the peer that receives the attacker's tagged weapon result.</summary>
+    public bool TryPlayWeaponReaction(MeleeHitReactionProfile profile, Vector2 direction, float delaySeconds, float holdSeconds)
     {
         if (!isActiveAndEnabled || !_isInitialized || _characterBase == null || !_characterBase.IsAlive ||
             IsDowned || _meleePlayback == null ||

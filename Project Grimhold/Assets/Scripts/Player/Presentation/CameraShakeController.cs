@@ -19,6 +19,8 @@ public sealed class CameraShakeController : MonoBehaviour
     /// </summary>
     public static CameraShakeController Instance { get; private set; }
 
+    private Vector2 _directionalImpulse;
+    private float _directionalDecayPerSecond;
     private float _trauma;
     private float _sustainedTrauma;
     private float _traumaDecayPerSecond;
@@ -69,6 +71,8 @@ public sealed class CameraShakeController : MonoBehaviour
     /// </summary>
     public void ResetTransientTrauma()
     {
+        _directionalImpulse = Vector2.zero;
+        _directionalDecayPerSecond = 0f;
         _trauma = 0f;
         _traumaDecayPerSecond = 0f;
         if (_sustainedTrauma <= 0f)
@@ -189,9 +193,23 @@ public sealed class CameraShakeController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Adds a world-space kick through the same aim-compensated ShakeOffset as trauma.
+    /// Additive impulses are bounded by MaxOffset and decay independently of sustained shake.
+    /// </summary>
+    public void RequestDirectionalImpulse(Vector2 offset, float duration)
+    {
+        if (offset == Vector2.zero || float.IsNaN(offset.x) || float.IsNaN(offset.y) ||
+            float.IsInfinity(offset.x) || float.IsInfinity(offset.y) ||
+            float.IsNaN(duration) || float.IsInfinity(duration)) return;
+        _directionalImpulse = Vector2.ClampMagnitude(_directionalImpulse + offset, _maxOffset);
+        float rate = duration > 0f ? _directionalImpulse.magnitude / duration : float.MaxValue;
+        _directionalDecayPerSecond = Mathf.Max(_directionalDecayPerSecond, rate);
+    }
+
     public void UpdateShake(float deltaTime)
     {
-        if (_trauma <= 0f && _sustainedTrauma <= 0f)
+        if (_trauma <= 0f && _sustainedTrauma <= 0f && _directionalImpulse == Vector2.zero)
         {
             ShakeOffset = Vector3.zero;
             return;
@@ -206,7 +224,16 @@ public sealed class CameraShakeController : MonoBehaviour
         float offsetX = (Mathf.PerlinNoise(_noiseOffsetX + _noiseTime, 0f) * 2f - 1f) * _maxOffset * shake;
         float offsetY = (Mathf.PerlinNoise(_noiseOffsetY, _noiseTime) * 2f - 1f) * _maxOffset * shake;
 
-        ShakeOffset = new Vector3(offsetX, offsetY, 0f) * AccessibilityScale;
+        Vector2 combined = new Vector2(offsetX, offsetY) + _directionalImpulse;
+        // Preserve legacy noise-only amplitudes; bound the complete offset when a kick is active.
+        if (_directionalImpulse != Vector2.zero)
+            combined = Vector2.ClampMagnitude(combined, _maxOffset);
+        ShakeOffset = (Vector3)combined * AccessibilityScale;
+
+        _directionalImpulse = Vector2.MoveTowards(_directionalImpulse, Vector2.zero,
+            _directionalDecayPerSecond == float.MaxValue ? _directionalImpulse.magnitude :
+            _directionalDecayPerSecond * deltaTime);
+        if (_directionalImpulse == Vector2.zero) _directionalDecayPerSecond = 0f;
 
         // Decay trauma after computing the offset.
         float decay = _traumaDecayPerSecond == float.MaxValue
@@ -221,7 +248,7 @@ public sealed class CameraShakeController : MonoBehaviour
             _traumaDecayPerSecond = 0f;
         }
 
-        if (_trauma <= 0f && _sustainedTrauma <= 0f)
+        if (_trauma <= 0f && _sustainedTrauma <= 0f && _directionalImpulse == Vector2.zero)
         {
             ResetState();
         }
@@ -234,6 +261,8 @@ public sealed class CameraShakeController : MonoBehaviour
 
     private void ResetState()
     {
+        _directionalImpulse = Vector2.zero;
+        _directionalDecayPerSecond = 0f;
         _trauma               = 0f;
         _traumaDecayPerSecond = 0f;
         _noiseTime            = 0f;

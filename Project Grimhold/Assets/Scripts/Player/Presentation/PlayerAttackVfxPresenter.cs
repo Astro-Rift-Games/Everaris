@@ -34,11 +34,14 @@ public sealed class PlayerAttackVfxPresenter : MonoBehaviour
     private bool _hasFreeAimPivot;
     private Vector2 _freeAimAnchor;
     private float _freeAimAngle;
+    private PlayerWeaponPresenter _freeAimSource;
     private bool _freeAimMirrored;
     private bool _freeAimFront;
     private bool _followsFreeAim;
     private int _attackIndex;
     private float _bladeReach;
+    private readonly WindupChargePresentation _mainParticles = new WindupChargePresentation();
+    private readonly WindupChargePresentation _offParticles = new WindupChargePresentation();
 
     private void OnEnable() => InitializePresentation();
 
@@ -75,7 +78,7 @@ public sealed class PlayerAttackVfxPresenter : MonoBehaviour
         UnsubscribeFromCombat();
         _subscribedCombat = _presentationState;
         _subscribedCombat.AttackPerformed += OnAttackPerformed;
-        _subscribedCombat.AttackPresentationResumed += OnAttackPerformed;
+        _subscribedCombat.AttackPresentationResumed += OnAttackResumed;
         Clear();
     }
 
@@ -91,7 +94,7 @@ public sealed class PlayerAttackVfxPresenter : MonoBehaviour
             _networkPresentationState = null;
             _presentationState = null;
         }
-        Clear();
+        CancelAndRestore();
         _hasFreeAimPivot = false;
     }
 
@@ -111,7 +114,7 @@ public sealed class PlayerAttackVfxPresenter : MonoBehaviour
         if (_subscribedCombat != null)
         {
             _subscribedCombat.AttackPerformed -= OnAttackPerformed;
-            _subscribedCombat.AttackPresentationResumed -= OnAttackPerformed;
+            _subscribedCombat.AttackPresentationResumed -= OnAttackResumed;
             _subscribedCombat = null;
         }
     }
@@ -120,11 +123,13 @@ public sealed class PlayerAttackVfxPresenter : MonoBehaviour
     /// Receives the free-aim weapon pivot, in the Animator root space, every frame it is posed. A playing free-aim
     /// VFX is re-anchored to it because the weapon keeps moving during wind-up.
     /// </summary>
-    internal void SetFreeAimPivot(Vector2 anchor, float angleDegrees, bool mirrored, bool frontFacing)
+    internal void SetFreeAimPivot(Vector2 anchor, float angleDegrees, bool mirrored, bool frontFacing,
+        PlayerWeaponPresenter source = null)
     {
         _hasFreeAimPivot = true;
         _freeAimAnchor = anchor;
         _freeAimAngle = angleDegrees;
+        _freeAimSource = source;
         _freeAimMirrored = mirrored;
         _freeAimFront = frontFacing;
         if (_pending && _followsFreeAim &&
@@ -153,10 +158,14 @@ public sealed class PlayerAttackVfxPresenter : MonoBehaviour
         {
             return vfx.TryResolvePose(index, bladeReach, out pose);
         }
-        // The anchor and axis come from the live pivot; the authored lead and the front/back depth are kept.
+        // The hand still supplies the moving anchor. A confirmed ranged impulse keeps its accepted axis,
+        // including on the release frame when the held weapon has already returned to live aim.
+        float angle = _attack.AttackType == AttackType.Ranged && _attack.HasReleaseTimeline && _freeAimSource != null
+            ? _freeAimSource.ResolveAttackVfxPivotAngle(_attack.Direction)
+            : _freeAimAngle;
         AttackVfxDefinition.DirectionalPose freePose = FreeAimAttackVfxPose.Resolve(
             _freeAimAnchor,
-            _freeAimAngle,
+            angle,
             _freeAimMirrored,
             vfx.GetPose(index),
             vfx.GetPose(_freeAimFront ? 3 : 0).SortingOrder);
@@ -177,12 +186,24 @@ public sealed class PlayerAttackVfxPresenter : MonoBehaviour
         return _tintPalette != null && _tintPalette.TryGetTint(type, out tint);
     }
 
-    private void OnAttackPerformed(AttackPerformedEvent attack)
+    private void OnAttackResumed(AttackPerformedEvent attack) => PresentAttack(attack, true);
+    private void OnAttackPerformed(AttackPerformedEvent attack) => PresentAttack(attack, false);
+
+    private void PresentAttack(AttackPerformedEvent attack, bool resumed)
     {
+        CacheDependencies();
+        WindupChargePresentation particles = attack.IsOffHand ? _offParticles : _mainParticles;
+        if (_presentationState.IsAlive && !_presentationState.IsDowned &&
+            _presentationState.TryGetWeaponByCatalogIndexPlusOne(attack.WeaponCatalogIndexPlusOne, out LootDefinition particleLoot) &&
+            particleLoot.WeaponDefinition != null && particleLoot.WeaponDefinition.Presentation.AttackVfx != null &&
+            TryGetWeaponTint(particleLoot.WeaponDefinition.DamageType, out Color particleTint))
+            particles.Begin(attack, particleLoot.WeaponDefinition, particleTint, resumed);
+        else particles.Cancel();
         if (attack.IsOffHand) return; // The other hand has an independent sampled renderer and timeline.
         // Also supports existing editor consumers that deliver a confirmed event before OnEnable.
         CacheDependencies();
         Clear();
+        _attack = attack;
         if (!_presentationState.IsAlive || _presentationState.IsDowned || !_presentationState.TryGetWeaponByCatalogIndexPlusOne(
             attack.WeaponCatalogIndexPlusOne, out LootDefinition loot))
         {
@@ -235,6 +256,8 @@ public sealed class PlayerAttackVfxPresenter : MonoBehaviour
     /// <summary>Samples attack effects on an explicit preview frame using the shared attack clock.</summary>
     internal void PresentFrame()
     {
+        _mainParticles.CheckClock(_presentationState, out _);
+        _offParticles.CheckClock(_presentationState, out _);
         if (!_presentationState.IsAlive || _presentationState.IsDowned)
         {
             Clear();
@@ -298,7 +321,45 @@ public sealed class PlayerAttackVfxPresenter : MonoBehaviour
     }
 
     /// <summary>Cancels any pending or playing attack VFX, e.g. when the player becomes Downed.</summary>
-    public void CancelAndRestore() => Clear();
+    public void CancelAndRestore()
+    {
+        Clear();
+        _mainParticles.Cancel();
+        _offParticles.Cancel();
+    }
+
+    private void OnDestroy()
+    {
+        _mainParticles.Dispose();
+        _offParticles.Dispose();
+    }
+
+    // Called after the held-weapon pose has been evaluated, so particles never use last frame's pivot.
+    internal void PresentOptionalMainFrame()
+    {
+        if (!_mainParticles.CheckClock(_presentationState, out float seconds)) return;
+        var presentation = _mainParticles.Weapon.Presentation;
+        int index = PlayerAnimatorView.DirectionIndex(_mainParticles.Attack.Direction);
+        if (TryResolveAttackPose(presentation.AttackVfx, index, presentation.BladeReach,
+            presentation.AimMode != WeaponAimMode.BakedFacing && _hasFreeAimPivot, out var pose))
+            PresentOptionalParticles(_mainParticles, pose, seconds);
+    }
+
+    internal void PresentOptionalOffHandFrame(in AttackPerformedEvent attack, AttackVfxDefinition.ResolvedPose pose)
+    {
+        if (_offParticles.Active && _offParticles.Attack.Sequence == attack.Sequence &&
+            _offParticles.Attack.SimulationTick == attack.SimulationTick &&
+            _offParticles.CheckClock(_presentationState, out float seconds))
+            PresentOptionalParticles(_offParticles, pose, seconds);
+    }
+
+    private void PresentOptionalParticles(WindupChargePresentation particles, AttackVfxDefinition.ResolvedPose pose, float seconds)
+    {
+        bool fullyDrawn = particles.Weapon.Presentation.AimMode == WeaponAimMode.AimStance &&
+            (particles.Attack.IsAimed || (_presentationState.IsAimStance &&
+                _presentationState.TryGetAimStanceElapsedSeconds(out float drawSeconds) && drawSeconds >= particles.Weapon.AimStanceDrawSeconds));
+        particles.Present(_animator.transform, pose, seconds, fullyDrawn, _vfxRenderer.sortingLayerID);
+    }
 
     private void Clear()
     {

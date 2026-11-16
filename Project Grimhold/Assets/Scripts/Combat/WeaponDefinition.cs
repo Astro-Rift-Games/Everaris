@@ -100,6 +100,10 @@ public sealed class WeaponDefinition : ScriptableObject
     public WeaponAttributeRequirements AttributeRequirements => _attributeRequirements;
     public WeaponAudioConfig AudioConfig => _audioConfig;
 
+    [SerializeField, Tooltip("Optional world-visible projectile sprite/animator, tint, trail and terminal particles. Null keeps prefab visuals. Does not alter the shared ranged attack.")]
+    private ProjectileVisualProfile _projectileVisual;
+    public ProjectileVisualProfile ProjectileVisual => _projectileVisual;
+
     /// <summary>Uses the shared Equipment eligibility rule for this weapon definition.</summary>
     public bool AreAttributeRequirementsSatisfiedBy(in CharacterAttributeState attributes) =>
         _attributeRequirements.IsSatisfiedBy(attributes);
@@ -338,13 +342,25 @@ public sealed class WeaponDefinition : ScriptableObject
         private float _hitstopSeconds;
         public float HitstopSeconds => _hitstopSeconds;
 
-        [SerializeField, Tooltip("Optional attacker-local target reaction on confirmed melee damage. Null disables it without changing hitstop.")]
+        [SerializeField, Tooltip("Optional confirmed deal-shake override; disabled uses CameraShakeConfig.")]
+        private WeaponDealShake _dealShake;
+        public WeaponDealShake DealShake => _dealShake;
+
+        [SerializeField, Tooltip("Optional attacker-local target reaction on confirmed weapon damage. Null disables it without changing hitstop.")]
         private MeleeHitReactionProfile _hitReaction;
         public MeleeHitReactionProfile HitReaction => _hitReaction;
 
-        [SerializeField, Tooltip("Optional attacker-local particles at confirmed melee contact. Null preserves generic damage particles.")]
+        [SerializeField, Tooltip("Optional attacker-local particles at confirmed weapon contact. Null preserves generic damage particles.")]
         private MeleeImpactParticleProfile _impactParticles;
         public MeleeImpactParticleProfile ImpactParticles => _impactParticles;
+
+        [SerializeField, Tooltip("Optional tip charge from confirmed acceptance until release. Requires Cast Flash attack VFX; null keeps current visuals.")]
+        private WindupChargeVfx _windupChargeVfx;
+        public WindupChargeVfx WindupChargeVfx => _windupChargeVfx;
+
+        [SerializeField, Tooltip("Optional one-shot particles at the resolved attack VFX pose and visual release. Per weapon, never shared with the AttackVfx asset. Not replayed on resume.")]
+        private ParticleSystem _releaseBurstParticles;
+        public ParticleSystem ReleaseBurstParticles => _releaseBurstParticles;
 
         [SerializeField]
         private Vector2 _stanceOffset;
@@ -413,6 +429,18 @@ public sealed class WeaponDefinition : ScriptableObject
                 return false;
             if (_impactParticles != null && !_impactParticles.TryValidate(out error))
                 return false;
+            if (_windupChargeVfx != null && (!_windupChargeVfx.TryValidate(out error)))
+                return false;
+            if (_windupChargeVfx != null && (_attackVfx == null || _attackVfx.Visual is not CastFlashVfxVisualDefinition))
+            {
+                error = "windup charge requires a Cast Flash attack VFX for its casting tip anchor.";
+                return false;
+            }
+            if (_releaseBurstParticles != null && _attackVfx == null)
+            {
+                error = "release burst particles require attack VFX for their release pose.";
+                return false;
+            }
             if (_offHandAttackAnimationSet != null && !_offHandAttackAnimationSet.TryValidate(out error))
                 return false;
             if (!IsFinite(_stanceOffset.x) || !IsFinite(_stanceOffset.y) ||

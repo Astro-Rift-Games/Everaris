@@ -58,6 +58,8 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
     private AttackPerformedEvent _timedAttack;
     private AnimationClip _timedAttackClip;
     private float _authoredReleaseSeconds;
+    private AttackPerformedEvent _aimAttack;
+    private bool _hasAimAttack;
     private AttackPerformedEvent _offHandAttack;
     private bool _hasOffHandAttack;
 
@@ -94,9 +96,20 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
     private readonly List<AnimatorClipInfo> _attackClipBuffer = new List<AnimatorClipInfo>(2);
 
     /// <summary>
-    /// The smoothed aim shared by the body facing and the weapon presenter while a free-aim weapon is equipped.
+    /// The accepted ranged aim during windup, otherwise the live smoothed aim. Live smoothing continues underneath
+    /// the committed window, so release and cancellation return to the same live aim as idle presentation.
     /// </summary>
-    public Vector2 PresentedAimDirection => _presentedAim;
+    public Vector2 PresentedAimDirection => ResolvePresentedAim(_aimAttack, _hasAimAttack);
+
+    internal Vector2 PresentedOffHandAimDirection => ResolvePresentedAim(_offHandAttack, _hasOffHandAttack);
+
+    private Vector2 ResolvePresentedAim(in AttackPerformedEvent attack, bool hasAttack)
+    {
+        float seconds = 0f;
+        bool readable = hasAttack && _presentationState != null &&
+            _presentationState.TryGetAttackPresentationSeconds(attack, out seconds);
+        return CommittedAimDirection.Resolve(_presentedAim, attack, readable, seconds);
+    }
 
     public bool HasPresentedAim => _hasPresentedAim;
 
@@ -123,7 +136,7 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
 
     internal override void BeginFrame()
     {
-        // Sampled every frame, including during an attack, so the weapon keeps following the aim.
+        // Keep sampling live aim even during a committed windup; only its presented result is overridden.
         RefreshPresentedAim();
         base.BeginFrame();
     }
@@ -133,7 +146,7 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
         return FreeAimFacingSelection.TrySelect(
             _activeWeapon,
             _hasPresentedAim,
-            _presentedAim,
+            PresentedAimDirection,
             movementFacing,
             _freeAimArcHalfWidthDegrees,
             FacingArcHysteresisDegrees,
@@ -293,6 +306,7 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
         _hasTimedAttack = false;
         _timedAttackClip = null;
         _hasPresentedAim = false;
+        _hasAimAttack = false;
         _hasKnockbackBaseline = false;
         _hasOffHandAttack = false;
         _showingAimBucket = false;
@@ -401,6 +415,8 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
             _hasOffHandAttack = true;
             return;
         }
+        _aimAttack = attackEvent;
+        _hasAimAttack = true;
         if (AnimatorInstance == null)
         {
             return;

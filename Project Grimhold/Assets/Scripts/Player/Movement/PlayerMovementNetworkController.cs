@@ -32,6 +32,10 @@ public sealed class PlayerMovementNetworkController : NetworkBehaviour, IMovemen
     [SerializeField]
     private PlayerShieldDefenseNetworkController _shieldDefenseController;
 
+    /// <summary>Local presentation only, raised in Render once per recent replicated draw on every peer.</summary>
+    public event System.Action AimStanceDrawCompleted;
+
+    private AimStanceDrawCue _drawCue = new AimStanceDrawCue();
     private bool _dependenciesValid;
     private PlayerImmobilizationNetworkEffect _immobilizationEffect;
     private PlayerStunNetworkEffect _stunEffect;
@@ -138,6 +142,7 @@ public sealed class PlayerMovementNetworkController : NetworkBehaviour, IMovemen
     public override void Spawned()
     {
         CacheDependencies();
+        _drawCue = new AimStanceDrawCue();
         _dependenciesValid = ValidateDependencies();
         _matchController = Runner.GetComponent<NetworkMatchController>();
         _lastObservedPhase = _matchController != null
@@ -318,6 +323,27 @@ public sealed class PlayerMovementNetworkController : NetworkBehaviour, IMovemen
                 (Vector2)transform.position,
                 AimDirection);
         }
+    }
+
+    public override void Render()
+    {
+        bool active = TryGetAimStanceElapsedSeconds(out float elapsed);
+        if (!active)
+        {
+            _drawCue.Observe(false, AimStanceDraw.NoStart, 0f, 0f);
+            return;
+        }
+        if (_equipmentController == null ||
+            !_equipmentController.TryGetEquippedDefinition(out LootDefinition loot) ||
+            !PlayerAimStanceRules.WeaponAllows(loot.WeaponDefinition) ||
+            !AttackTiming.TryGetReleaseTick(AimStanceStartTick, loot.WeaponDefinition.AimStanceDrawSeconds,
+                Runner.DeltaTime, out int drawnTick))
+            return;
+
+        // Match the fully-drawn tick boundary, but observe it on the existing shared render clock.
+        float drawSeconds = (drawnTick - AimStanceStartTick) * Runner.DeltaTime;
+        if (_drawCue.Observe(true, AimStanceStartTick, elapsed, drawSeconds))
+            AimStanceDrawCompleted?.Invoke();
     }
 
     /// <summary>Whether the held aim stance has been drawn for the weapon's draw time as of the given tick.</summary>

@@ -57,6 +57,220 @@ namespace Tests.PlayMode.Combat
         }
 
         [UnityTest]
+        public IEnumerator AimStanceDraw_RenderCueCompletesOnceAndRearmsWithoutChangingTiming()
+        {
+            yield return StartGameplayRunner();
+            CharacterAttributeState initial = ProgressionBalanceDefaults.InitialCharacterAttributeState;
+            Assert.That(CharacterAttributeState.TryCreate(initial.Vitality, initial.Resistance, initial.Strength,
+                15, initial.Intelligence, initial.Luck, initial.AvailablePoints, out CharacterAttributeState attributes), Is.True);
+            NetworkObject player = SpawnPlayerWithParticipant(attributes: attributes);
+            var movement = player.GetComponent<PlayerMovementNetworkController>();
+            var equipment = player.GetComponent<PlayerWeaponEquipmentNetworkController>();
+            var bow = AssetDatabase.LoadAssetAtPath<LootDefinition>("Assets/Scriptable Objects/Loot/Definitions/LongBow.asset");
+            var driver = _runner.gameObject.AddComponent<PlayerEquipmentSimulationDriver>();
+            _runner.AddGlobal(driver);
+            int setup = driver.CompletionSequence;
+            driver.RequestInitializeLoadout(player.GetComponent<PlayerLootReceiver>(), new[] { new LootEntry(bow.LootId, 1) });
+            yield return WaitUntil(() => driver.CompletionSequence != setup, "Draw inventory setup did not run.");
+            Assert.That(driver.LastResult, Is.True, driver.LastError);
+            yield return Equip(equipment, bow, EquipmentSlot.WeaponSetAMainHand);
+            int cues = 0;
+            movement.AimStanceDrawCompleted += () =>
+            {
+                cues++;
+                Assert.That(movement.TryGetAimStanceElapsedSeconds(out float elapsed), Is.True);
+                Assert.That(elapsed, Is.GreaterThanOrEqualTo(bow.WeaponDefinition.AimStanceDrawSeconds));
+            };
+            int attackSequence = ReadAttackSequence(player.GetComponent<PlayerCombatNetworkController>());
+            _inputDriver.SecondaryHeld = true;
+            yield return WaitUntil(() => cues == 1, "Render did not emit the draw completion.");
+            int firstStart = movement.AimStanceStartTick;
+            for (int i = 0; i < 5; i++) yield return null;
+            Assert.That(cues, Is.EqualTo(1));
+            Assert.That(movement.AimStanceStartTick, Is.EqualTo(firstStart));
+            Assert.That(ReadAttackSequence(player.GetComponent<PlayerCombatNetworkController>()), Is.EqualTo(attackSequence));
+            _inputDriver.SecondaryHeld = false;
+            yield return WaitUntil(() => !(bool)movement.IsAimStance, "Stance did not end.");
+            _inputDriver.SecondaryHeld = true;
+            yield return WaitUntil(() => cues == 2, "New stance did not re-arm the render cue.");
+            Assert.That(movement.AimStanceStartTick, Is.GreaterThan(firstStart));
+            _inputDriver.SecondaryHeld = false;
+        }
+
+        [UnityTest]
+        public IEnumerator WeaponAudio_MissingRegistryDoesNotBorrowOtherRunner_ExplicitRegistryUsesCharacterClip()
+        {
+            yield return StartGameplayRunner();
+            var victim = SpawnPlayerWithParticipant().GetComponent<PlayerCharacter>();
+            var registry = _runner.GetComponent<EntityRegistry>();
+            Assert.That(registry.TryGetDamageable(victim.Id, out _), Is.True);
+            var owner = new GameObject("Unbound audio observer");
+            var presenter = owner.AddComponent<WeaponAudioPresenter>();
+            var managerObject = new GameObject("Registry audio test");
+            var manager = managerObject.AddComponent<AudioManager>();
+            var audio = ScriptableObject.CreateInstance<WeaponAudioConfig>();
+            var attack = AudioClip.Create("character impact", 44100, 1, 44100, false);
+            var block = AudioClip.Create("generic impact", 44100, 1, 44100, false);
+            var hit = AudioClip.Create("Hit alias", 44100, 1, 44100, false);
+            int feedbackLogs = 0;
+            Application.LogCallback onFeedbackLog = (_, _, _) => feedbackLogs++;
+            CustomClip Clip(AudioClip clip)
+            {
+                object value = new CustomClip();
+                typeof(CustomClip).GetField("_clips", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(value, new[] { clip });
+                return (CustomClip)value;
+            }
+            bool Heard(AudioClip clip)
+            {
+                foreach (var source in manager.GetComponentsInChildren<AudioSource>()) if (source.clip == clip) return true;
+                return false;
+            }
+            try
+            {
+                typeof(EntityAudioConfig).GetField("_entries", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(audio,
+                    new System.Collections.Generic.List<AudioEntry> {
+                        new() { Key = "Attack", Clip = Clip(attack) }, new() { Key = "Hit", Clip = Clip(hit) },
+                        new() { Key = "Block", Clip = Clip(block) } });
+                typeof(EntityAudioConfig).GetField("_clipDictionary", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(audio, null);
+                typeof(WeaponAudioPresenter).GetField("_fallbackAudioConfig", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(presenter, audio);
+                var feedback = new CombatPresentationEvent(1, CombatFeedbackKind.ConfirmedImpact, victim.Id,
+                    Vector2.zero, 1f, (int)_runner.Tick, AttackFailureReason.None);
+                Application.logMessageReceived += onFeedbackLog;
+                presenter.SendMessage("OnCombatFeedbackResolved", feedback);
+                Assert.That(Heard(block), Is.True, "Missing registry must degrade to non-character audio.");
+                Assert.That(Heard(attack), Is.False, "Never borrow a global registry containing the character.");
+                typeof(WeaponAudioPresenter).GetField("_entityRegistry", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(presenter, registry);
+                presenter.SendMessage("OnCombatFeedbackResolved", feedback);
+                Assert.That(Heard(attack), Is.True, "Explicit runner registry preserves character audio.");
+                Assert.That(Heard(hit), Is.False, "Attack takes precedence over Hit when both exist.");
+                foreach (var source in manager.GetComponentsInChildren<AudioSource>())
+                {
+                    source.Stop();
+                    source.clip = null;
+                }
+                typeof(EntityAudioConfig).GetField("_entries", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(audio,
+                    new System.Collections.Generic.List<AudioEntry> {
+                        new() { Key = "hIt", Clip = Clip(hit) }, new() { Key = "Block", Clip = Clip(block) } });
+                typeof(EntityAudioConfig).GetField("_clipDictionary", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(audio, null);
+                presenter.SendMessage("OnCombatFeedbackResolved", feedback);
+                Assert.That(Heard(hit), Is.True, "Character impacts fall back to Hit when Attack is absent.");
+                Assert.That(Heard(block), Is.False, "Character impacts must not become scenery audio.");
+                Assert.That(feedbackLogs, Is.Zero, "Feedback lookup must degrade without per-event logs.");
+            }
+            finally
+            {
+                Application.logMessageReceived -= onFeedbackLog;
+                Object.DestroyImmediate(owner); Object.DestroyImmediate(managerObject);
+                Object.DestroyImmediate(audio); Object.DestroyImmediate(attack); Object.DestroyImmediate(block); Object.DestroyImmediate(hit);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator WeaponAudio_EquippedCrossbowReleasesOnClockAndReloadsFromReplicatedState()
+        {
+            yield return StartGameplayRunner();
+            CharacterAttributeState initial = ProgressionBalanceDefaults.InitialCharacterAttributeState;
+            Assert.That(CharacterAttributeState.TryCreate(initial.Vitality, initial.Resistance, initial.Strength,
+                15, initial.Intelligence, initial.Luck, initial.AvailablePoints, out CharacterAttributeState attributes), Is.True);
+            NetworkObject player = SpawnPlayerWithParticipant(attributes: attributes);
+            var combat = player.GetComponent<PlayerCombatNetworkController>();
+            var equipment = player.GetComponent<PlayerWeaponEquipmentNetworkController>();
+            var original = AssetDatabase.LoadAssetAtPath<LootDefinition>("Assets/Scriptable Objects/Loot/Definitions/LightCrossbow.asset");
+            Assert.That(original, Is.Not.Null);
+            var loot = Object.Instantiate(original);
+            var weapon = Object.Instantiate(original.WeaponDefinition);
+            var catalog = ScriptableObject.CreateInstance<LootDefinitionCatalog>();
+            var audio = ScriptableObject.CreateInstance<WeaponAudioConfig>();
+            var genericAudio = ScriptableObject.CreateInstance<WeaponAudioConfig>();
+            AudioClip shot = AudioClip.Create("shot cue", 44100 * 10, 1, 44100, false);
+            AudioClip reload = AudioClip.Create("reload cue", 44100 * 10, 1, 44100, false);
+            var managerObject = new GameObject("Weapon audio integration");
+            var manager = managerObject.AddComponent<AudioManager>();
+            void Set(object target, string field, object value) => target.GetType()
+                .GetField(field, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(target, value);
+            CustomClip Clip(AudioClip clip)
+            {
+                object value = new CustomClip();
+                typeof(CustomClip).GetField("_clips", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(value, new[] { clip });
+                return (CustomClip)value;
+            }
+            int Count(AudioClip clip)
+            {
+                int count = 0;
+                foreach (var source in manager.GetComponentsInChildren<AudioSource>()) if (source.clip == clip) count++;
+                return count;
+            }
+            try
+            {
+                typeof(EntityAudioConfig).GetField("_entries", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(audio,
+                    new System.Collections.Generic.List<AudioEntry> {
+                        new() { Key = "Shoot", Clip = Clip(shot) }, new() { Key = "Reload", Clip = Clip(reload) },
+                        new() { Key = "Block", Clip = Clip(shot) } });
+                typeof(EntityAudioConfig).GetField("_clipDictionary", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(audio, null);
+                Set(weapon, "_audioConfig", audio);
+                Set(loot, "_weaponDefinition", weapon);
+                Set(catalog, "_definitions", new System.Collections.Generic.List<LootDefinition> { loot });
+                Set(equipment, "_lootCatalog", catalog);
+                var driver = _runner.gameObject.AddComponent<PlayerEquipmentSimulationDriver>();
+                _runner.AddGlobal(driver);
+                int setup = driver.CompletionSequence;
+                driver.RequestInitializeLoadout(player.GetComponent<PlayerLootReceiver>(), new[] { new LootEntry(loot.LootId, 1) });
+                yield return WaitUntil(() => driver.CompletionSequence != setup, "Audio inventory setup did not run.");
+                Assert.That(driver.LastResult, Is.True, driver.LastError);
+                yield return Equip(equipment, loot, EquipmentSlot.WeaponSetAMainHand);
+                var presenter = player.GetComponentInChildren<WeaponAudioPresenter>(true);
+                if (presenter == null) presenter = player.gameObject.AddComponent<WeaponAudioPresenter>();
+                Set(presenter, "_equipmentSource", equipment);
+                AttackPerformedEvent accepted = default;
+                combat.AttackPerformed += attack =>
+                {
+                    accepted = attack;
+                    Assert.That(Count(shot), Is.Zero, "Acceptance must not play Shoot.");
+                    Assert.That(Count(reload), Is.Zero, "Acceptance must not fabricate Reload.");
+                };
+                _inputDriver.AimWorldPosition = Vector2.right * 10f;
+                _inputDriver.AttackHeld = true;
+                yield return WaitUntil(() => accepted.Sequence > 0, "Crossbow was not accepted.");
+                _inputDriver.AttackHeld = false;
+                Assert.That(accepted.HasReleaseTimeline, Is.True);
+                Assert.That(combat.TryGetAttackReloadPresentation(accepted, out WeaponReloadState before), Is.True);
+                Assert.That((bool)before.Reloading, Is.False);
+                yield return WaitUntil(() => Count(shot) > 0, "Release clock never played Shoot.");
+                Assert.That(combat.TryGetAttackPresentationSeconds(accepted, out float elapsed), Is.True);
+                Assert.That(elapsed, Is.GreaterThanOrEqualTo(accepted.ScheduledWindupSeconds));
+                yield return WaitUntil(() => Count(reload) > 0, "Real reload did not play Reload.");
+                Assert.That(combat.TryGetAttackReloadPresentation(accepted, out WeaponReloadState active), Is.True);
+                Assert.That((bool)active.Reloading, Is.True);
+                Assert.That(active.ReloadEndTick, Is.GreaterThan((int)_runner.Tick));
+                Assert.That(Count(shot), Is.EqualTo(1));
+                Assert.That(Count(reload), Is.EqualTo(1));
+                presenter.enabled = false;
+                presenter.enabled = true;
+                // Same resume notification as spawn/migration, delivered through Unity's component interface.
+                presenter.SendMessage("OnAttackPresentationResumed", accepted);
+                for (int frame = 0; frame < 5; frame++) yield return null;
+                Assert.That(Count(shot), Is.EqualTo(1), "Rebinding/resume must not replay Shoot.");
+                Assert.That(Count(reload), Is.EqualTo(1));
+                typeof(EntityAudioConfig).GetField("_entries", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(genericAudio,
+                    new System.Collections.Generic.List<AudioEntry> { new() { Key = "Block", Clip = Clip(reload) } });
+                typeof(EntityAudioConfig).GetField("_clipDictionary", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(genericAudio, null);
+                Set(presenter, "_fallbackAudioConfig", genericAudio);
+                presenter.SendMessage("OnCombatFeedbackResolved", new CombatPresentationEvent(1, CombatFeedbackKind.ConfirmedImpact,
+                    default, Vector2.zero, 1f, (int)_runner.Tick, AttackFailureReason.None));
+                Assert.That(Count(shot), Is.EqualTo(1), "Untagged feedback must never use the equipped crossbow's Block clip.");
+                Assert.That(Count(reload), Is.EqualTo(2), "Untagged feedback uses the generic config.");
+            }
+            finally
+            {
+                _inputDriver.AttackHeld = false;
+                Object.DestroyImmediate(managerObject);
+                Object.DestroyImmediate(shot); Object.DestroyImmediate(reload);
+                Object.DestroyImmediate(audio); Object.DestroyImmediate(genericAudio); Object.DestroyImmediate(catalog);
+                Object.DestroyImmediate(loot); Object.DestroyImmediate(weapon);
+            }
+        }
+
+        [UnityTest]
         public IEnumerator CoalescedHandSnapshots_PresentChronologicallyAndKeepNewestMainAndOff()
         {
             yield return StartGameplayRunner();
@@ -410,8 +624,11 @@ namespace Tests.PlayMode.Combat
             yield return WaitUntil(() => confirmed.Sequence > 0, "Ranged confirmation was not delivered.");
             Assert.That(confirmed.Kind, Is.EqualTo(CombatFeedbackKind.ConfirmedImpact));
             Assert.That(confirmed.IsMeleeImpact, Is.False);
-            Assert.That(confirmed.MeleeAttackSequence, Is.Zero);
-            Assert.That(confirmed.MeleeWeaponCatalogIndexPlusOne, Is.Zero);
+            Assert.That(confirmed.IsWeaponImpact, Is.True);
+            Assert.That(confirmed.AttackSequence, Is.EqualTo(sequence));
+            Assert.That(confirmed.WeaponTag, Is.EqualTo(spawner.LastRequest.WeaponTag));
+            Assert.That(confirmed.AttackType, Is.EqualTo(AttackType.Ranged));
+            Assert.That(confirmed.IsFatal, Is.True);
             Assert.That(((MeleeImpactParticleEmitter)GetField("_impactParticles").GetValue(combat)).InstanceCount, Is.Zero,
                 "Ranged confirmations must not instantiate a melee emitter.");
         }
@@ -672,7 +889,7 @@ namespace Tests.PlayMode.Combat
             yield return StartGameplayRunner();
             NetworkObject player = SpawnPlayerWithParticipant();
             var combat = player.GetComponent<PlayerCombatNetworkController>();
-            MeleeAttack melee = ConfigureMeleeAttack(player, 0.6f, 1.5f, out RecordingMeleeTargets meleeRecorder);
+            MeleeAttack melee = ConfigureMeleeAttack(player, 0.6f, 1.5f, out RecordingMeleeTargets meleeRecorder, DamageType.Magical);
             CombatPresentationEvent confirmed = default;
             combat.CombatFeedbackResolved += feedback => confirmed = feedback;
             AttackPerformedEvent observed = default;
@@ -708,6 +925,8 @@ namespace Tests.PlayMode.Combat
             Assert.That(meleeRecorder.ResolveCount, Is.EqualTo(1), "A consumed swing must not replay.");
             yield return WaitUntil(() => confirmed.IsMeleeImpact, "Melee confirmation lost its release identity.");
             Assert.That(confirmed.HitDirection, Is.EqualTo(accepted.Direction.normalized));
+            Assert.That(confirmed.DamageType, Is.EqualTo(meleeRecorder.LastRequest.DamageType));
+            Assert.That(confirmed.DamageType, Is.EqualTo(DamageType.Magical));
             Assert.That(confirmed.MeleeAttackSequence, Is.EqualTo(acceptedSequence));
             Assert.That(confirmed.MeleeSourceSlot, Is.EqualTo(EquipmentSlot.None));
             Assert.That(confirmed.MeleeWeaponCatalogIndexPlusOne, Is.Zero);
@@ -952,6 +1171,239 @@ namespace Tests.PlayMode.Combat
             Assert.That(particles == null, Is.True, "Despawn must not leave a world emitter orphaned.");
         }
 
+        [UnityTest]
+        public IEnumerator TaggedRangedImpact_PlaysOptionalReactionAndParticlesWithoutHitstop()
+        {
+            yield return StartGameplayRunner();
+            NetworkObject attacker = SpawnPlayerWithParticipant();
+            var victim = SpawnPlayerWithParticipant(Vector3.right * 4f, 2).GetComponent<PlayerCharacter>();
+            var combat = attacker.GetComponent<PlayerCombatNetworkController>();
+            var equipment = attacker.GetComponent<PlayerWeaponEquipmentNetworkController>();
+            var wand = Object.Instantiate(AssetDatabase.LoadAssetAtPath<LootDefinition>("Assets/Scriptable Objects/Loot/Definitions/MagicWand.asset"));
+            var weapon = Object.Instantiate(wand.WeaponDefinition);
+            var catalog = ScriptableObject.CreateInstance<LootDefinitionCatalog>();
+            try
+            {
+                var sword = AssetDatabase.LoadAssetAtPath<LootDefinition>("Assets/Scriptable Objects/Loot/Definitions/ArmingSword.asset");
+                var config = new SerializedObject(weapon);
+                config.FindProperty("_presentation._hitReaction").objectReferenceValue = sword.WeaponDefinition.Presentation.HitReaction;
+                config.FindProperty("_presentation._impactParticles").objectReferenceValue = sword.WeaponDefinition.Presentation.ImpactParticles;
+                config.ApplyModifiedPropertiesWithoutUndo();
+                config = new SerializedObject(wand);
+                config.FindProperty("_weaponDefinition").objectReferenceValue = weapon;
+                config.ApplyModifiedPropertiesWithoutUndo();
+                config = new SerializedObject(catalog);
+                config.FindProperty("_definitions").arraySize = 1;
+                config.FindProperty("_definitions").GetArrayElementAtIndex(0).objectReferenceValue = wand;
+                config.ApplyModifiedPropertiesWithoutUndo();
+                typeof(PlayerWeaponEquipmentNetworkController).GetField("_lootCatalog", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(equipment, catalog);
+                yield return null; // Allow the target's ordinary presenter initialization.
+                var presenter = victim.GetComponentInChildren<DamageFeedbackPresenter>(true);
+                var playback = (HitReactionPlayback)typeof(DamageFeedbackPresenter).GetField("_meleePlayback", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(presenter);
+                var queue = (System.Collections.Generic.Queue<CombatPresentationEvent>)GetField("_pendingFeedbackEvents").GetValue(combat);
+                int sequence = (int)GetField("_lastHitstopFeedbackSequence").GetValue(combat);
+                var palette = AssetDatabase.LoadAssetAtPath<AttackVfxTintPalette>("Assets/Scriptable Objects/AttackVfxTintPalette.asset");
+                GetField("_impactTintPalette").SetValue(combat, palette);
+                var tag = new WeaponAttackTag(EquipmentSlot.WeaponSetAOffHand, 42, 1, AttackType.Ranged);
+                queue.Enqueue(new CombatPresentationEvent(sequence + 1, CombatFeedbackKind.ConfirmedImpact, victim.Id,
+                    Vector2.right * 4f, 5f, _runner.Tick, AttackFailureReason.None, tag, Vector2.right,
+                    damageType: DamageType.Magical));
+                combat.Render();
+                Assert.That(playback.IsActive, Is.True, "A tagged ranged hit must play the confirmed weapon's optional reaction.");
+                var particles = FindLocalImpactParticles();
+                Assert.That(particles?.particleCount, Is.GreaterThan(0));
+                var samples = new ParticleSystem.Particle[particles.main.maxParticles];
+                int count = particles.GetParticles(samples);
+                Assert.That(palette.TryGetTint(DamageType.Magical, out Color tint), Is.True);
+                for (int i = 0; i < count; i++)
+                    Assert.That(samples[i].startColor, Is.EqualTo((Color32)tint));
+                var clocks = (AttackHitstop[])GetField("_hitstop").GetValue(combat);
+                foreach (var clock in clocks) Assert.That(clock.HoldSeconds, Is.Zero);
+                Assert.That(((HitstopTargetFreeze)GetField("_targetFreeze").GetValue(combat)).IsActive, Is.False);
+                presenter.CancelAndRestore();
+                queue.Enqueue(new CombatPresentationEvent(sequence + 2, CombatFeedbackKind.ConfirmedImpact, victim.Id,
+                    Vector2.right * 4f, 5f, _runner.Tick, AttackFailureReason.None));
+                int feedbackLogs = 0;
+                void CountFeedbackLogs(string message, string stack, UnityEngine.LogType type) => feedbackLogs++;
+                Application.logMessageReceived += CountFeedbackLogs;
+                try { combat.Render(); }
+                finally { Application.logMessageReceived -= CountFeedbackLogs; }
+                Assert.That(playback.IsActive, Is.False, "Untagged impacts retain generic feedback.");
+                Assert.That(feedbackLogs, Is.Zero, "Generic feedback must not log missing tags.");
+            }
+            finally
+            {
+                Object.Destroy(catalog);
+                Object.Destroy(wand);
+                Object.Destroy(weapon);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator WeaponProjectile_RoundTripsTagThroughNetworkStateAndRealDamageResolution()
+        {
+            yield return StartGameplayRunner();
+            NetworkObject attacker = SpawnPlayerWithParticipant();
+            var victim = SpawnPlayerWithParticipant(Vector3.right * 3f, 2).GetComponent<PlayerCharacter>();
+            var combat = attacker.GetComponent<PlayerCombatNetworkController>();
+            RangedAttack ranged = ConfigureScheduledAttack(attacker, .1f, 1f, out RecordingProjectileSpawner spawner, DamageType.Magical);
+            spawner.SpawnNetworkProjectile = true;
+            CombatPresentationEvent feedback = default;
+            combat.CombatFeedbackResolved += result => feedback = result;
+            yield return SetStrategy(combat, ranged, true);
+            _inputDriver.AimWorldPosition = Vector2.right * 10f;
+            yield return PressAttackUntil(combat, () => spawner.Count == 1, "The accepted shot did not spawn.");
+            Assert.That(spawner.NetworkTag, Is.EqualTo(spawner.LastRequest.WeaponTag));
+            Assert.That(spawner.NetworkTag.HasWeaponTag, Is.True);
+            yield return WaitUntil(() => feedback.Kind == CombatFeedbackKind.ConfirmedImpact && feedback.Sequence > 0,
+                "The real projectile never delivered confirmed damage.");
+            Assert.That(spawner.LastDamage.WeaponTag, Is.EqualTo(spawner.NetworkTag));
+            Assert.That(feedback.WeaponTag, Is.EqualTo(spawner.NetworkTag));
+            Assert.That(feedback.DamageType, Is.EqualTo(spawner.LastDamage.DamageType));
+            Assert.That(feedback.DamageType, Is.EqualTo(DamageType.Magical));
+            Assert.That(feedback.TargetId, Is.EqualTo(victim.Id));
+            Assert.That(feedback.IsWeaponImpact, Is.True);
+            Assert.That(feedback.IsMeleeImpact, Is.False);
+            Assert.That(feedback.IsFatal, Is.False);
+            Assert.That(victim.Health, Is.LessThan(victim.MaxHealth));
+        }
+
+        [UnityTest]
+        public IEnumerator ResolvedMagicalDamage_MeleeRpcCarriesRequestType() => CheckDamageTypeRpc(AttackType.Melee, true);
+
+        [UnityTest]
+        public IEnumerator ResolvedMagicalDamage_RangedRpcCarriesRequestType() => CheckDamageTypeRpc(AttackType.Ranged, true);
+
+        [UnityTest]
+        public IEnumerator ResolvedMagicalDamage_UntaggedAbilityRpcCarriesRequestType() => CheckDamageTypeRpc(AttackType.Ranged, false);
+
+        [UnityTest]
+        public IEnumerator DamageNumbers_ConfirmedRpcUsesVioletThenKillStyleThenResetsPhysicalPoolEntry()
+        {
+            yield return StartGameplayRunner();
+            var player = SpawnPlayerWithParticipant();
+            var combat = player.GetComponent<PlayerCombatNetworkController>();
+            var character = player.GetComponent<PlayerCharacter>();
+            var root = new GameObject("Numbers", typeof(RectTransform));
+            var template = new GameObject("Template", typeof(RectTransform), typeof(TMPro.TextMeshProUGUI));
+            var host = new GameObject("Number presenter");
+            host.SetActive(false);
+            try
+            {
+                var presenter = host.AddComponent<CombatFeedbackPresenter>();
+                var text = template.GetComponent<TMPro.TMP_Text>();
+                text.color = Color.cyan;
+                var palette = AssetDatabase.LoadAssetAtPath<AttackVfxTintPalette>("Assets/Scriptable Objects/AttackVfxTintPalette.asset");
+                var config = new SerializedObject(presenter);
+                config.FindProperty("_impactRoot").objectReferenceValue = root.GetComponent<RectTransform>();
+                config.FindProperty("_impactTemplate").objectReferenceValue = text;
+                config.FindProperty("_impactPoolSize").intValue = 1;
+                config.FindProperty("_tintPalette").objectReferenceValue = palette;
+                config.ApplyModifiedPropertiesWithoutUndo();
+                presenter.Bind(combat, character);
+                Assert.That(palette.TryGetTint(DamageType.Magical, out Color violet), Is.True);
+                int received = 0;
+                combat.CombatFeedbackResolved += _ => received++;
+                for (int i = 0; i < 3; i++)
+                {
+                    bool fatal = i == 1;
+                    var request = new DamageRequest(character.Id, new EntityId(9999), 7f,
+                        i < 2 ? DamageType.Magical : DamageType.Physical, Vector2.right, Vector2.zero, _runner.Tick);
+                    combat.RecordResolvedDamage(new DamageResolvedEvent(request,
+                        new DamageResult(request.TargetId, true, 7f, fatal ? 0f : 1f, fatal, default)));
+                    int expected = i + 1;
+                    yield return WaitUntil(() => received == expected, "Confirmed number did not arrive.");
+                    var numbers = root.GetComponentsInChildren<TMPro.TMP_Text>();
+                    Assert.That(numbers, Has.Length.EqualTo(1));
+                    Assert.That(numbers[0].text, Is.EqualTo("7"));
+                    Assert.That(numbers[0].color, Is.EqualTo(fatal ? new Color(1f, .75f, .2f, 1f) : i == 0 ? violet : Color.cyan));
+                    Assert.That(numbers[0].rectTransform.localScale.x, Is.EqualTo(fatal ? 1.35f : 1f).Within(.001f));
+                }
+            }
+            finally
+            {
+                Object.DestroyImmediate(host);
+                Object.DestroyImmediate(template);
+                Object.DestroyImmediate(root);
+            }
+        }
+
+        private IEnumerator CheckDamageTypeRpc(AttackType attackType, bool tagged)
+        {
+            yield return StartGameplayRunner();
+            var player = SpawnPlayerWithParticipant();
+            var combat = player.GetComponent<PlayerCombatNetworkController>();
+            CombatPresentationEvent observed = default;
+            combat.CombatFeedbackResolved += feedback => observed = feedback;
+            var tag = tagged ? new WeaponAttackTag(EquipmentSlot.None, 1, 0, attackType) : default;
+            var request = new DamageRequest(player.GetComponent<PlayerCharacter>().Id, new EntityId(9999),
+                7f, DamageType.Magical, Vector2.right, Vector2.one, _runner.Tick, weaponTag: tag);
+            combat.RecordResolvedDamage(new DamageResolvedEvent(request,
+                new DamageResult(request.TargetId, true, 7f, 1f, false, default)));
+            yield return WaitUntil(() => observed.Sequence > 0, "RPC feedback did not reach Render.");
+            var property = typeof(CombatPresentationEvent).GetProperty("DamageType");
+            Assert.That(property, Is.Not.Null, "Feedback must carry DamageRequest.DamageType through the RPC.");
+            Assert.That(property.GetValue(observed), Is.EqualTo(DamageType.Magical));
+            Assert.That(observed.WeaponTag, Is.EqualTo(tag));
+            Assert.That(observed.AppliedDamage, Is.EqualTo(7f));
+            Assert.That(observed.IsFatal, Is.False);
+            var legacy = new CombatPresentationEvent(1, CombatFeedbackKind.AttackRejected, default,
+                default, 0f, 1, AttackFailureReason.CooldownActive);
+            Assert.That(property.GetValue(legacy), Is.EqualTo(DamageType.Physical));
+        }
+
+        [UnityTest]
+        public IEnumerator MagicalWeaponParticles_PaletteTintAndTargetPrecedence() => CheckParticleTint(true, false, DamageType.Magical);
+        [UnityTest]
+        public IEnumerator MagicalWeaponParticles_TargetColorWins() => CheckParticleTint(true, true, DamageType.Magical);
+        [UnityTest]
+        public IEnumerator MagicalWeaponParticles_NullPaletteKeepsAuthoredColor() => CheckParticleTint(false, false, DamageType.Magical);
+        [UnityTest]
+        public IEnumerator PhysicalWeaponParticles_WhitePaletteKeepsAuthoredColor() => CheckParticleTint(true, false, DamageType.Physical);
+
+        private IEnumerator CheckParticleTint(bool usePalette, bool targetOverride, DamageType damageType)
+        {
+            yield return StartGameplayRunner();
+            var attacker = SpawnPlayerWithParticipant();
+            var victim = SpawnPlayerWithParticipant(Vector3.right * 4f, 2).GetComponent<PlayerCharacter>();
+            var combat = attacker.GetComponent<PlayerCombatNetworkController>();
+            var equipment = attacker.GetComponent<PlayerWeaponEquipmentNetworkController>();
+            var catalog = (LootDefinitionCatalog)typeof(PlayerWeaponEquipmentNetworkController)
+                .GetField("_lootCatalog", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(equipment);
+            var sword = AssetDatabase.LoadAssetAtPath<LootDefinition>("Assets/Scriptable Objects/Loot/Definitions/ArmingSword.asset");
+            Assert.That(catalog.TryGetIndex(sword.LootId, out int index), Is.True);
+            var palette = AssetDatabase.LoadAssetAtPath<AttackVfxTintPalette>("Assets/Scriptable Objects/AttackVfxTintPalette.asset");
+            var paletteField = typeof(PlayerCombatNetworkController).GetField("_impactTintPalette", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(paletteField, Is.Not.Null, "Optional weapon-impact palette must exist.");
+            paletteField.SetValue(combat, usePalette ? palette : null);
+            var targetPresenter = victim.GetComponentInChildren<CharacterDamageParticlePresenter>(true);
+            var targetConfig = new SerializedObject(targetPresenter);
+            targetConfig.FindProperty("_overrideMeleeImpactColor").boolValue = targetOverride;
+            targetConfig.FindProperty("_meleeImpactColor").colorValue = Color.green;
+            targetConfig.ApplyModifiedPropertiesWithoutUndo();
+            var profile = sword.WeaponDefinition.Presentation.ImpactParticles;
+            Color original = profile.Color;
+            float health = victim.Health;
+            CombatPresentationEvent observed = default;
+            combat.CombatFeedbackResolved += feedback => observed = feedback;
+            var request = new DamageRequest(attacker.GetComponent<PlayerCharacter>().Id, victim.Id,
+                7f, damageType, Vector2.right, Vector2.one, _runner.Tick,
+                weaponTag: new WeaponAttackTag(EquipmentSlot.None, 1, index + 1, AttackType.Melee));
+            combat.RecordResolvedDamage(new DamageResolvedEvent(request,
+                new DamageResult(victim.Id, true, 7f, 1f, false, default)));
+            yield return WaitUntil(() => observed.Sequence > 0, "Confirmed impact did not reach Render.");
+            var particles = FindLocalImpactParticles();
+            Assert.That(particles, Is.Not.Null);
+            var samples = new ParticleSystem.Particle[particles.main.maxParticles];
+            int count = particles.GetParticles(samples);
+            Assert.That(count, Is.InRange(profile.CountMin, profile.CountMax));
+            Assert.That(palette.TryGetTint(damageType, out Color tint), Is.True);
+            Color expected = targetOverride ? Color.green : usePalette && tint != Color.white ? tint : original;
+            for (int i = 0; i < count; i++) Assert.That(samples[i].startColor, Is.EqualTo((Color32)expected));
+            Assert.That(profile.Color, Is.EqualTo(original), "Never tint shared configuration.");
+            Assert.That(victim.Health, Is.EqualTo(health), "Presentation must not apply damage.");
+        }
+
         private static ParticleSystem FindLocalImpactParticles()
         {
             foreach (var particles in Object.FindObjectsByType<ParticleSystem>(FindObjectsSortMode.None))
@@ -977,7 +1429,7 @@ namespace Tests.PlayMode.Combat
         }
 
         private static MeleeAttack ConfigureMeleeAttack(NetworkObject player, float delay, float cooldown,
-            out RecordingMeleeTargets recorder)
+            out RecordingMeleeTargets recorder, DamageType damageType = DamageType.Physical)
         {
             var combat = player.GetComponent<PlayerCombatNetworkController>();
             recorder = new RecordingMeleeTargets
@@ -988,7 +1440,7 @@ namespace Tests.PlayMode.Combat
             var config = AssetDatabase.LoadAssetAtPath<MeleeAttackConfig>("Assets/Scriptable Objects/PlayerMeleeAttackConfig.asset");
             Assert.That(config, Is.Not.Null);
             MeleeAttack melee = player.GetComponent<MeleeAttack>();
-            melee.Initialize(config, new AttackExecutionParameters(20f, DamageType.Physical, cooldown, 2f, 1f, delay),
+            melee.Initialize(config, new AttackExecutionParameters(20f, damageType, cooldown, 2f, 1f, delay),
                 recorder, recorder);
             return melee;
         }
@@ -1027,7 +1479,7 @@ namespace Tests.PlayMode.Combat
                 (RangedAttackRelease)PendingReleaseProperty.GetValue(combat);
 
         private static RangedAttack ConfigureScheduledAttack(NetworkObject player, float delay, float cooldown,
-            out RecordingProjectileSpawner spawner)
+            out RecordingProjectileSpawner spawner, DamageType damageType = DamageType.Physical)
         {
             var combat = player.GetComponent<PlayerCombatNetworkController>();
             spawner = player.gameObject.AddComponent<RecordingProjectileSpawner>();
@@ -1038,16 +1490,19 @@ namespace Tests.PlayMode.Combat
             typeof(RangedAttack).GetField("_projectileSpawnerSource", BindingFlags.Instance | BindingFlags.NonPublic)
                 .SetValue(ranged, spawner);
             var config = AssetDatabase.LoadAssetAtPath<RangedAttackConfig>("Assets/Scriptable Objects/RangePlayerAttackConfig.asset");
-            Assert.That(ranged.TryConfigure(config, new AttackExecutionParameters(28f, DamageType.Physical, cooldown, 6f, 3f, delay)), Is.True);
+            Assert.That(ranged.TryConfigure(config, new AttackExecutionParameters(28f, damageType, cooldown, 6f, 3f, delay)), Is.True);
             return ranged;
         }
 
-        private sealed class RecordingProjectileSpawner : MonoBehaviour, IProjectileSpawner
+        private sealed class RecordingProjectileSpawner : MonoBehaviour, IProjectileSpawner, IDamageResolver
         {
             public PlayerCombatNetworkController Combat;
             public Transform AttackOrigin;
             public bool Succeeds = true;
             public bool ReportConfirmedImpact;
+            public bool SpawnNetworkProjectile;
+            public WeaponAttackTag NetworkTag;
+            public DamageRequest LastDamage;
             public int Count;
             public bool WasAuthoritativeForward;
             public Vector2 OriginAtSpawn;
@@ -1059,14 +1514,34 @@ namespace Tests.PlayMode.Combat
                 WasAuthoritativeForward = Combat.HasStateAuthority && Combat.Runner.IsForward;
                 LastRequest = request;
                 Assert.That((bool)ReadPending(Combat).Pending, Is.False, "Consume must commit before spawn.");
+                if (SpawnNetworkProjectile)
+                {
+                    ProjectileSpawnRequest committed = request;
+                    NetworkSpawnStatus status = Combat.Runner.TrySpawn(request.ProjectilePrefab, out NetworkObject projectile,
+                        request.Origin, Quaternion.identity, null, onBeforeSpawned: (_, instance) =>
+                        {
+                            var flight = instance.GetComponent<NetworkProjectile>();
+                            flight.InitializeNetworkState(committed, committed.ImpactLayerMask);
+                            flight.SetRuntimeDependencies(this);
+                        });
+                    if (projectile != null) NetworkTag = projectile.GetComponent<NetworkProjectile>().WeaponTag;
+                    return new ProjectileSpawnResult(status == NetworkSpawnStatus.Spawned);
+                }
                 if (ReportConfirmedImpact)
                 {
                     var damage = new DamageRequest(request.OwnerId, new EntityId(9999), request.Damage,
-                        request.DamageType, request.Direction, request.Origin, request.SimulationTick);
-                    var result = new DamageResult(damage.TargetId, true, damage.Amount, 1f, false, default);
+                        request.DamageType, request.Direction, request.Origin, request.SimulationTick,
+                        weaponTag: request.WeaponTag);
+                    var result = new DamageResult(damage.TargetId, true, damage.Amount, 0f, true, default);
                     Combat.RecordResolvedDamage(new DamageResolvedEvent(damage, result));
                 }
                 return new ProjectileSpawnResult(Succeeds);
+            }
+
+            public DamageResult Resolve(in DamageRequest request)
+            {
+                LastDamage = request;
+                return Combat.GetComponent<DamageResolver>().Resolve(request);
             }
         }
 
@@ -1081,7 +1556,8 @@ namespace Tests.PlayMode.Combat
             disableEntry.SetValue(downed, true);
         }
 
-        private NetworkObject SpawnPlayerWithParticipant(Vector3 position = default, int participantNumber = 1)
+        private NetworkObject SpawnPlayerWithParticipant(Vector3 position = default, int participantNumber = 1,
+            CharacterAttributeState? attributes = null)
         {
             Assert.That(RaidParticipantId.TryCreate(participantNumber, out RaidParticipantId participantId), Is.True);
             NetworkPrefabId participantPrefabId = _runner.Config.PrefabTable.GetId(NetworkObjectGuid.Parse(ParticipantPrefabGuid));
@@ -1089,7 +1565,7 @@ namespace Tests.PlayMode.Combat
             Assert.That(participantPrefab, Is.Not.Null);
             NetworkObject participant = _runner.Spawn(participantPrefab, Vector3.zero, Quaternion.identity, null,
                 onBeforeSpawned: (_, instance) => instance.GetComponent<NetworkRaidParticipant>().Initialize(
-                    $"combat-test-profile-{participantNumber}", participantId, ProgressionBalanceDefaults.InitialCharacterAttributeState,
+                    $"combat-test-profile-{participantNumber}", participantId, attributes ?? ProgressionBalanceDefaults.InitialCharacterAttributeState,
                     ExperienceCurve.InitialLevel, 0, "combat-test-generation"));
             NetworkPrefabId playerPrefabId = _runner.Config.PrefabTable.GetId(NetworkObjectGuid.Parse(BasePrefabGuid));
             NetworkObject playerPrefab = _runner.Config.PrefabTable.Load(playerPrefabId, true);

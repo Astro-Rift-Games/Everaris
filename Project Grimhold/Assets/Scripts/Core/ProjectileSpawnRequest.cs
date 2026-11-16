@@ -7,6 +7,8 @@ using UnityEngine;
 /// </summary>
 public readonly struct ProjectileSpawnRequest
 {
+    /// <summary>Optional player weapon presentation identity; unrelated to flight rules.</summary>
+    public WeaponAttackTag WeaponTag { get; }
     public EntityId OwnerId { get; }
     public Vector2 Origin { get; }
     public Vector2 Direction { get; }
@@ -44,8 +46,10 @@ public readonly struct ProjectileSpawnRequest
         NetworkPrefabRef projectilePrefab = default,
         int impactLayerMask = 0,
         bool isUnbounded = false,
-        bool enemyOnly = false)
+        bool enemyOnly = false,
+        WeaponAttackTag weaponTag = default)
     {
+        WeaponTag = weaponTag;
         OwnerId        = ownerId;
         Origin         = origin;
         Direction      = direction.sqrMagnitude > 0f ? direction.normalized : Vector2.zero;

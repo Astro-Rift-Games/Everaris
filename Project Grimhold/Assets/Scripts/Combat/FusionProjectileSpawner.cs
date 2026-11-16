@@ -20,6 +20,14 @@ public sealed class FusionProjectileSpawner : NetworkBehaviour, IProjectileSpawn
     private MonoBehaviour _damageResolverSource;
 
     private IDamageResolver _damageResolver;
+    private bool _configurationErrorReported;
+
+    private void ReportConfigurationError(string message)
+    {
+        if (_configurationErrorReported) return;
+        _configurationErrorReported = true;
+        Debug.LogError($"{nameof(FusionProjectileSpawner)}: {message}", this);
+    }
 
     private void Awake()
     {
@@ -88,7 +96,6 @@ public sealed class FusionProjectileSpawner : NetworkBehaviour, IProjectileSpawn
         // 1. Validate network authority
         if (!HasStateAuthority || Runner == null || !Runner.IsForward)
         {
-            Debug.LogWarning($"[CombatTrace] Projectile spawn rejected: Lack of State Authority on {gameObject.name}.", this);
             return new ProjectileSpawnResult(false);
         }
 
@@ -99,27 +106,25 @@ public sealed class FusionProjectileSpawner : NetworkBehaviour, IProjectileSpawn
             ? request.ImpactLayerMask : _config != null ? _config.ImpactLayerMask.value : 0;
         if (!prefab.IsValid || impactMask == 0)
         {
-            Debug.LogError($"[CombatTrace] Projectile spawn rejected: Missing or invalid RangedAttackConfig/ProjectilePrefab.", this);
+            ReportConfigurationError("Missing or invalid RangedAttackConfig/ProjectilePrefab.");
             return new ProjectileSpawnResult(false);
         }
 
         if (request.IsUnbounded ? !CanSpawnIndependentProjectile(prefab, impactMask) : _damageResolver == null)
         {
-            Debug.LogError($"[CombatTrace] Projectile spawn rejected: Missing IDamageResolver dependency or independent projectile composition.", this);
+            ReportConfigurationError("Missing IDamageResolver dependency or independent projectile composition.");
             return new ProjectileSpawnResult(false);
         }
 
         // 3. Validate request parameters
         if (!request.TryValidate())
         {
-            Debug.LogWarning($"[CombatTrace] Projectile spawn rejected: Invalid direction.", this);
             return new ProjectileSpawnResult(false);
         }
 
         bool projectileInitialized = false;
         ProjectileSpawnRequest localRequest = request;
 
-        Debug.Log($"[CombatTrace] Projectile spawn requested. OwnerId: {request.OwnerId}, Origin: {request.Origin}, Direction: {request.Direction}", this);
 
         Quaternion spawnRotation = Quaternion.identity;
         if (request.Direction.sqrMagnitude > 0.0001f)
@@ -143,7 +148,6 @@ public sealed class FusionProjectileSpawner : NetworkBehaviour, IProjectileSpawn
                     projectile.SetRuntimeDependencies(localRequest.IsUnbounded
                         ? networkObject.GetComponent<DamageResolver>() : _damageResolver);
                     projectileInitialized = true;
-                    Debug.Log($"[CombatTrace] Projectile inlined onBeforeSpawned initialized.", networkObject);
                 }
                 else
                 {
@@ -152,7 +156,6 @@ public sealed class FusionProjectileSpawner : NetworkBehaviour, IProjectileSpawn
             }
         );
 
-        Debug.Log($"[CombatTrace] TrySpawn status: {spawnStatus}, spawnedObject: {(spawnedObject != null ? spawnedObject.name : "null")}, initialized: {projectileInitialized}", this);
 
         // 5. Handle initialization or spawn failures
         if (!projectileInitialized)

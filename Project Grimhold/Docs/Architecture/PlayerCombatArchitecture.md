@@ -456,7 +456,8 @@ Zweihander 0.50 seconds); for thrusts, the blade reaches full extension (Rapier 
 Rondel Dagger 0.30 seconds); Great Hammer's head reaches the facing at 0.55 seconds; Spellbook arrives at
 its strike hold at 0.65 seconds. The VFX keeps its authored clip start because
 `ReleaseLeadSeconds = AttackReleaseSeconds - StartSeconds`.
-Weapon-specific projectile manifestation remains outside this contract.
+Weapon-specific projectile manifestation is optional presentation via `WeaponDefinition.ProjectileVisual`,
+not a change to the shared ranged simulation configuration (see Projectile expiry and detached trails).
 
 `WeaponInstanceModifiers` is the active runtime source for player weapons, including persistence
 and Equipment, under [Item Instances §§2, 6.2](ItemInstanceArchitecture.md#62-damage). It has optional
@@ -533,18 +534,26 @@ incoming amount exactly, and True Damage bypasses mitigation. No calculation mut
 
 ## Confirmed local combat feedback
 
-`DamageResolver` reports its final `DamageResolvedEvent` to an optional direct `IResolvedDamageFeedbackSink` on the attacker object. `PlayerCombatNetworkController` accepts only applied results belonging to that attacker, advances one networked feedback sequence under State Authority, and sends a reliable result only to Input Authority. The result carries target, confirmed hit point, actual applied damage, simulation tick and sequence.
+`DamageResolver` reports its final `DamageResolvedEvent` to an optional direct `IResolvedDamageFeedbackSink` on the attacker object. `PlayerCombatNetworkController.RecordResolvedDamage` accepts only applied results belonging to that attacker, advances one networked feedback sequence under State Authority, and sends a reliable result only to Input Authority. The result carries target, confirmed hit point/direction, actual applied damage, simulation tick, sequence, `DamageResult.IsFatal` and `Request.DamageType`, forwarded through `RPC_ReceiveCombatFeedback`
+to `CombatPresentationEvent.IsFatal` and `.DamageType`. The compatibility constructor defaults to Physical;
+presentation does not infer damage type from current Equipment.
 
-`CombatFeedbackPresenter` consumes this result during presentation and displays only the damage number from a fixed local TMP pool. Executed attacks without a target, wall impacts and rejected damage never produce a number. The target's Health-driven flash/scale pulse remains the generic reaction on every peer; confirmed melee adds the attacker-local reaction described below. Sequence baselining and monotonic consumption prevent duplicates during proxy observation, resimulation and session rebinding.
+`Core/WeaponAttackTag.cs` supplies presentation identity: source `EquipmentSlot`, accepted attack sequence, weapon catalog index plus one and `AttackType`. `HasWeaponTag` means a positive attack sequence; catalog resolution is a separate requirement for weapon-specific profiles. Synchronous melee execution supplies a controller-local scope, cleared in `finally`. Ranged release instead carries the committed tag through `ProjectileSpawnRequest` → four `[Networked]` projectile ints (`WeaponSourceSlotValue`, `WeaponAttackSequence`, `WeaponCatalogIndexPlusOne`, `WeaponAttackTypeValue`) → `DamageRequest.WeaponTag` → `RecordResolvedDamage`. The request tag takes precedence over the synchronous scope. `IsWeaponImpact` means `ConfirmedImpact` with a tag; `IsMeleeImpact` additionally requires `AttackType.Melee`. Existing melee constructor/member aliases remain compatibility shims.
+
+Abilities, traps, enemies and legacy projectiles without metadata silently retain generic feedback; no current-equipment identity is invented and no missing-tag log is emitted. Host Migration's existing `NetworkObject.CopyStateFrom` preserves the projectile's networked tag; restored projectiles with absent legacy metadata remain generic, rather than requiring a new restorer path.
+
+`CombatFeedbackPresenter` consumes this result during presentation and displays only the damage number from a fixed local TMP pool. Executed attacks without a target, wall impacts and rejected damage never produce a number. The target's Health-driven flash/scale pulse remains the generic reaction on every peer; tagged melee and ranged weapon impacts add the attacker-local reaction described below. Optional `CombatFeedbackPresenter._tintPalette` selects non-fatal number colors by the confirmed
+`DamageType`; a missing palette/entry or white tint preserves the authored TMP color. Magical uses the
+palette's arcane violet. Fatal style takes precedence over damage-type color. Fatal numbers use serialized `_killColor` (default gold `(1, .75, .2, 1)`) and `_killScaleMultiplier` (default 1.35); each pooled entry resets its presentation color/scale when reused. Sequence baselining and monotonic consumption prevent duplicates during proxy observation, resimulation and session rebinding.
 
 A fresh attack press rejected specifically by `CooldownActive` uses the same sequenced local channel to pulse the bottom cooldown icon. For `Hold` configurations the rejection is still emitted only on the physical press edge. Feedback never calls an attack, applies damage or changes the cooldown.
 
 ### Melee hitstop
 
-Confirmed melee damage carries its source hand, accepted attack sequence and weapon catalog identity
-through the existing State Authority → Input Authority feedback RPC. Only synchronous melee release
-execution supplies this tag; ranged projectiles, abilities, rejected/zero damage and other feedback
-remain untagged. Hitstop is visible **only on the attacker's client**, not on target clients or proxies.
+Confirmed weapon damage carries the tag above through the existing State Authority → Input Authority
+feedback RPC, but `TryScheduleHitstop` accepts only `IsMeleeImpact`. Tagged ranged hits never schedule
+attacker-clock hitstop or target Animator freeze; ranged definitions retain zero hitstop.
+Hitstop is visible **only on the attacker's client**, not on target clients or proxies.
 It adds no `[Networked]` state and is discarded on spawn/migration instead of restored or replayed.
 
 `AttackHitstop` maps only the presentation seconds returned by `TryGetAttackPresentationSeconds`.
@@ -572,10 +581,10 @@ death/Downed, consumption, combat/phase interruption, equipment change, disable 
 transient visual state, including inactive Animators. Equipment identity is catalog-level, matching
 the existing presentation contract (same-template unit replacement is not distinguishable).
 
-### Melee hit reaction
+### Weapon hit reaction
 
-`DamageFeedbackPresenter.TryPlayMeleeReaction` presents confirmed melee damage on the **attacker's
-client only**, for player and enemy victims. The victim and other peers retain the existing generic
+`DamageFeedbackPresenter.TryPlayWeaponReaction` presents tagged melee or ranged damage on the **attacker's
+client only**, for player and enemy victims. `TryPlayMeleeReaction` remains a compatibility wrapper. The victim and other peers retain the existing generic
 Health-driven flash/pulse. `DamageRequest.Direction` travels through `RecordResolvedDamage`, the
 existing State Authority → Input Authority RPC and `CombatPresentationEvent.HitDirection` (optional,
 zero for legacy callers). Receipt normalizes finite directions; invalid/near-zero directions become
@@ -595,7 +604,8 @@ All use 16 PPU, white `FlashColor` and the optional `FlashMaterial` reference to
 `Assets/Art/Shaders/HitFlash.mat`. Its `Grimhold/Combat/HitFlashSprite` URP unlit shader replaces art RGB
 with HDR white `(4, 4, 4, 1)`, preserving texture/vertex/renderer alpha, sprite flipping and the art's
 sampling filter. It is not dimmed by 2D lights. Bloom remains globally unchanged (currently intensity
-zero): this is a bright white silhouette, not a promise of a glowing halo. Ranged weapons reference none.
+zero): this is a bright white silhouette, not a promise of a glowing halo. Ranged weapons may optionally
+reference the same profiles; the existing melee tuning table does not imply ranged asset assignments.
 These are presentation values, not damage, knockback, stun or gameplay timing. Profiles validate normalized
 fallback color/strength, compression 0–.25, stretch 0–1, whole-pixel nudge 0–4, and positive finite PPU/recovery.
 A null material preserves the previous color-lerp flash for compatibility; the generic Health flash is unchanged.
@@ -609,8 +619,9 @@ Medium lasts longer and Heavy stays white until recovery completes. Outside that
 material returns immediately, even while deformation continues. There is no simultaneous color tint,
 no access to `renderer.material`, and no per-hit material allocation. A confirmed hit still reacts with zero delay/hold when hitstop
 scheduling is too late or disabled; scheduling and target Animator freezing retain their existing
-semantics. Later targets of a multi-target swing can share its remaining contact clock without
-starting another freeze. The playback never writes `Animator.speed` or global time scale and uses
+semantics. Tagged ranged reactions use zero delay/hold and the confirmed event weapon's optional
+profile, without requiring its old attack timeline still to be active. Later targets of a multi-target
+melee swing can share its remaining contact clock without starting another freeze. The playback never writes `Animator.speed` or global time scale and uses
 `Time.deltaTime`. Hitstop durations and gameplay are unchanged.
 
 Deformation applies only to the assigned visual hierarchy (`VisualRoot` on players, `Body` on enemies),
@@ -621,10 +632,10 @@ factors to 1/16 steps clamped to .75–1.25. Each frame writes captured base plu
 never accumulated offsets. This bounds pixel-art distortion; it does not guarantee pixel-perfect
 rasterization for arbitrarily rotated/scaled parents or non-integer camera scaling.
 
-A recent generic pulse (default .15 s merge window) is restored then replaced by melee; a Health drop
-within .15 s of accepted melee playback is absorbed, even if a light recovery has already ended. An
+A recent generic pulse (default .15 s merge window) is restored then replaced by weapon reaction; a Health drop
+within .15 s of accepted weapon playback is absorbed, even if a light recovery has already ended. An
 older active generic pulse is preserved rather than replaced by an unrelated late confirmation.
-Consecutive melee confirmations within .05 s keep the current reaction without resetting direction
+Consecutive weapon confirmations within .05 s keep the current reaction without resetting direction
 or extending its timeline; after that guard, a new hit restarts from captured base at contact. These
 windows are serialized on the presenter; they are timing-based coalescing, not a damage-event identity
 ledger, so unrelated damage inside the window may also be coalesced on the attacker's peer.
@@ -635,9 +646,13 @@ completion and delayed retriggers restore exactly. This reaction adds one shared
 sprites, animations, particles or sounds; confirmed contact particles are a separate path below. Host/Client visual approval and real
 multi-process checks remain manual; deterministic EditMode coverage does not prove those visuals.
 
-### Melee impact particles
+### Weapon impact particles
 
-`WeaponDefinition.Presentation.ImpactParticles` optionally selects a Light/Medium/Heavy contact profile.
+Tagged melee and ranged hits use the confirmed weapon's optional
+`WeaponDefinition.Presentation.ImpactParticles` (`MeleeImpactParticleProfile`, retaining its historical name).
+The Render drain independently calls hitstop, weapon reaction and weapon particles: only the first is melee-only.
+The emitter accepts positive applied `IsWeaponImpact` against a registered character other than the attacker;
+breakables, world geometry, untagged and rejected/zero damage do not enter this path.
 The controller's Render feedback drain emits once per confirmed damage sequence, only on Input Authority,
 at the pixel-snapped `HitPoint`, oriented by `HitDirection`. This call is separate from hitstop/reaction
 scheduling: it also works when their hold is disabled/late and on killing blows while the character is
@@ -646,12 +661,20 @@ on normal time during hitstop, and is disposed on despawn/destruction. No simula
 
 Contact sizes are Light 2 px, Medium 2–3 px and Heavy 3–4 px. Before emitting, the controller reads
 the target's optional `CharacterDamageParticlePresenter.TryGetMeleeImpactColor` override: skeletons
-(including the ranged variant) use light gray, each slime uses its body color, and players retain the
-profile's warm spark. Overrides affect only this local emission, never shared profiles or generic particles.
+(including the ranged variant) use light gray and each slime uses its body color. That target override
+wins over optional `PlayerCombatNetworkController._impactTintPalette`, which otherwise selects an exact
+replacement color by `CombatPresentationEvent.DamageType` (not a multiplication of the warm spark).
+Missing/null palette or white tint preserves the profile's authored color; players without a target
+override can therefore receive arcane Magic Sword/Cinquedea particles when the palette is assigned.
+Overrides affect only this local emission, never shared profiles or generic particles.
+
+Projectile character-impact particles are a separate **world-visible** layer for all projectiles, even
+untagged ones. For one ranged burst, leave `WeaponDefinition.Presentation.ImpactParticles` unassigned;
+assigning it intentionally stacks attacker-only weapon particles with the projectile layer.
 
 The target's generic damage particles coalesce locally only when the confirmed `AppliedDamage` explains
 the observed Health drop inside a short window; a larger drop includes another source and keeps its generic
-burst. Other peers retain Health-driven particles. See [Game Feel Particles — Impactos melee confirmados](GameFeelParticlesArchitecture.md#impactos-melee-confirmados)
+burst. Other peers retain Health-driven particles. See [Game Feel Particles — Impactos de arma confirmados](GameFeelParticlesArchitecture.md#impactos-de-arma-confirmados)
 for profile tuning, lifecycle, pixel-art constraints, coalescing limitations and test coverage.
 
 ## Fatal defeat contribution
@@ -672,7 +695,7 @@ the player combat boundary. No Animator, animation event, VFX, local input or RP
 2. **Acceptance**: ready State Authority captures the ranged config and resolved statistics by value: direction, prefab GUID, impact mask, spawn offset, speed, lifetime, damage/type, range and knockback (original PE, forwarded unchanged through `ProjectileSpawnRequest` and `DamageRequest` until receiver RE mitigation). The spawn offset is the weapon's own spawn distance when it sets one, otherwise the shared config offset. The existing presentation fields capture the original Main Hand catalog identity, acceptance origin/tick and sequence.
 3. **Deadline and cooldown**: `ReleaseTick = AcceptedTick + ceil(ReleaseDelay / Runner.DeltaTime)`. `ReleaseDelay` is `AttackReleaseSeconds`, unless the shooter holds the aim stance of a two-handed `AimStance` weapon and it is fully drawn (`PlayerMovementNetworkController.IsAimStanceFullyDrawn`, from `AimStanceStartTick` and the weapon's `AimStanceDrawSeconds`); that aimed shot uses the weapon's shorter `AimedReleaseSeconds` instead. The choice is made once at acceptance and is part of the committed `ReleaseTick` (`RangedAttack.TryAcceptRelease` takes it as an optional override), so the release snapshot, resimulation and Host Migration need no extra state. `LastAttackAimed` and `AttackPerformedEvent.IsAimed` tell presentation which timing applies. Attack Interval begins now, not at release and is unchanged by the aimed delay. An outstanding shot blocks another acceptance even if that interval expires first; acceptance validates finite origin/direction/config/timing before committing anything.
 4. **Continuation/cancellation**: the match phase comes from the runner-scoped `NetworkSpawnManager.MatchController` (the match is a spawned object, not necessarily a component on the runner). Before input processing, State Authority advances the pending value on forward ticks. Missing input, a cleared/reconfigured strategy or an Equipment switch cannot stall or alter it. Movement continues. Death, Downed, phase exit and explicit combat disable cancel it without refunding cooldown. Defense prevents same-tick acceptance but does not cancel an accepted wind-up.
-5. **Consume and spawn**: at or after the exact deadline, sample current authoritative AttackOrigin plus committed offset along committed aim, and use the containing avatar's current EntityId. Commit `Pending = false` before calling the spawner. Invalid release origin, absent spawner or spawn failure consumes the attempt and marks presentation cancelled; no perpetual pending state or retry loop remains.
+5. **Consume and spawn**: at or after the exact deadline, sample current authoritative AttackOrigin plus committed offset along committed aim, and use the containing avatar's current EntityId. `RangedAttackRelease.TryConsume` attaches the source hand's accepted sequence, catalog identity and ranged type as `WeaponAttackTag`; it is presentation metadata, not a flight or damage rule. Commit `Pending = false` before calling the spawner. Invalid release origin, absent spawner or spawn failure consumes the attempt and marks presentation cancelled; no perpetual pending state or retry loop remains.
 6. **Spawner validation**: `FusionProjectileSpawner` requires State Authority and a forward tick. A committed request supplies prefab/mask directly rather than the newly equipped config; legacy requests without a prefab retain the configured fallback. Validate finite projectile parameters before `Runner.TrySpawn`.
 7. **Pre-initialization**: `onBeforeSpawned` initializes `NetworkProjectile` with the committed request and mask before replication, retaining its existing collision and trajectory rules.
 8. **Kinematic Simulation**: `NetworkProjectile` updates in `FixedUpdateNetwork`:
@@ -974,7 +997,8 @@ spanning the path to its extended blade tip across all six facings. Rondel Dagge
 Thrust visual through its own alignment from 0.14s: its stroke runs 50 ms earlier than Rapier's and its
 hand tilts the blade about 14 degrees off the facing, so each axis is the facing plus 14 degrees and each
 anchor is its own stroke-start grip. Magic Cinquedea plays the same Dagger clips, so it shares that
-`DaggerThrustAttackVfx` alignment and differs only by its own blade reach.
+`DaggerThrustAttackVfx` alignment; its own blade reach, damage-type tint and optional release-burst
+particles can distinguish it without duplicating the shared thrust art.
 Magic Wand is the first Cast Flash consumer. Its clips wind up until 0.2s, flick forward until the
 tip stops at 0.35s and recover until 0.6s in every facing. `MagicWandCastFlashAttackVfx` anchors
 each facing at the grip of that stop with the grip to tip axis as rotation and no reach offset, so
@@ -1050,6 +1074,24 @@ presenter hardcodes no damage type, weapon or archetype and the tint adds no net
 are provisional art values until Art approves them: Physical is white, so every physical effect keeps its authored
 colors; Magical is a soft arcane `(0.75, 0.6, 1, 1)`; TrueDamage is white until it has an elemental look.
 
+Optional `WeaponDefinition.Presentation.WindupChargeVfx` references a `WindupChargeVfx` particle profile.
+`WindupChargeWindow` resolves `[0, ScheduledWindupSeconds)` on the same confirmed presentation clock;
+`WindupChargePresentation` owns independent Main/Off Hand instances through `PlayerAttackVfxPresenter`.
+Charge requires a Cast Flash visual and follows its resolved cast origin (`pose.Position + Center`),
+after `PlayerWeaponPresenter` evaluates the current grip. It uses the confirmed weapon's palette tint,
+pose sorting and authored particle scale times a linear .25→1 ramp (configurable profile defaults).
+A fully drawn AimStance attack/stance multiplies scale by 1.5 by default (including Staff).
+Release clears charge immediately; cancellation, unavailable clock, death/Downed, consumption, disable
+or replacement stops and clears it. Resume restores only the remaining phase, never a release burst;
+once ended, charge cannot restart on a clock rewind.
+
+Optional `Presentation.ReleaseBurstParticles` accompanies slash, thrust or cast at the resolved VFX
+position/rotation/sorting with the same tint. It fires once when the release-relative VFX window opens
+(`ReleaseLeadSeconds`, not a new gameplay deadline); thus a cast's .025 s art lead also applies here.
+Late notification outside that visual window is consumed silently. `AttackReleaseBurstLifetime` makes
+the clone one-shot and waits for child particles before cleanup. Neither optional effect changes release,
+damage, mana, projectile speed/lifetime or the shared `RangePlayerAttackConfig` values.
+
 Visual authoring keeps those responsibilities explicit. The presentation grip point is
 serialized in `WeaponDefinition` in the weapon sprite's local units. It identifies the
 point inside the visible handle that must coincide with `MainHandGrip`, so grip tuning
@@ -1113,17 +1155,100 @@ the same presentation-stop contract.
 
 `Spawned` baselines completed sequences without replay. Only a pending ranged wind-up or melee swing reconstructs
 presentation from its saved phase through `AttackPresentationResumed`; that event is separate from
-`AttackPerformed`, so migration/late spawn never replays attack-start audio. Normal attack-start audio
-continues at acceptance with the original weapon identity. Dedicated projectile-release audio is
-not implemented here. Sequence replication retains the existing latest-attack semantics, not an event
-history: intermediate attacks missed entirely between snapshots are not reconstructed.
+`AttackPerformed`, so migration/late spawn never replays release audio. `WeaponAudioPresenter` uses
+one `WeaponAudioCue` per hand plus legacy timeline: Swing (melee) and Cast > Shoot (ranged) play once at
+`ScheduledWindupSeconds` on `TryGetAttackPresentationSeconds`, not at acceptance. Resume consumes
+the release cue silently; cancellation suppresses it. Non-player events without a release timeline
+retain immediate audio. Audio remains presentation, not a timing authority. Sequence replication retains
+the existing latest-attack semantics, not an event history: intermediate attacks missed entirely between
+snapshots are not reconstructed.
+
+### Release audio, committed aim and draw completion
+
+- **Confirmed weapon audio.** Hit sound resolves `CombatPresentationEvent.WeaponCatalogIndexPlusOne`,
+  not current Equipment (`Attack` > `Hit` for characters, `Block` otherwise, unchanged). Optional ranged
+  `Cast` replaces `Shoot`; absent `Cast` keeps `Shoot`. Alias selection tests key presence, so an authored
+  but empty Attack/Cast entry does not fall through. Missing/untagged identity uses
+  the serialized fallback audio config. Registry lookup stays on the avatar's runner (or explicit
+  reference); there is no global runner/object search. Melee scenery Block checks occur at release.
+- **Charge.** Optional `Charge` starts once per confirmed sequence/hand while still in wind-up,
+  using a stoppable attached source from `AudioManager`'s shared mixer-routed SFX source factory.
+  No clip is required. Release, cancellation/interruption, disable or replacement cuts that hand's source.
+  Resume consumes Charge and release audio silently; a late observation after release never starts Charge.
+- **Reload.** `TryGetAttackReloadPresentation` reads `HandAttacks[i].Reload`, matching the accepted
+  sequence/catalog identity and `UsesReload`. `WeaponAudioCue` plays Reload when `Reloading` starts
+  with a new `ReloadEndTick`, gated by the confirmed clock. It is not a fixed .25-second delay or
+  inferred cooldown. Legacy strategies have no reload state and synthesize no Reload cue.
+- **Committed wind-up aim.** `CommittedAimDirection` selects the accepted ranged direction from
+  acceptance until release on the confirmed clock; idle, cancellation and post-release pose return
+  to live smoothed aim. Main and Off Hand resolve independently. `PlayerAnimatorView`,
+  `PlayerWeaponPresenter` and `PlayerAttackVfxPresenter` share this rule; release VFX retain the
+  shot's committed axis even on the release frame. The animated grip still supplies the VFX anchor.
+  No new aim state is replicated and melee is unchanged.
+- **Draw-complete cue.** `PlayerMovementNetworkController.Render` derives `AimStanceDrawCompleted`
+  from replicated stance/start tick and the tick-rounded draw duration on the shared render clock.
+  `AimStanceDrawCue` consumes once per `AimStanceStartTick`; a newer start re-arms it, rewind cannot
+  replay it, and completion more than .1 s late is silently consumed (including late join/resume).
+  First observation at most .1 s late may play. Optional `AimStanceDrawPresenter` plays spatial
+  sound through `AudioManager` on each peer and pulses an assigned visual root, restoring its scale
+  on completion/disable. Missing outputs are quiet; the cue never changes gameplay draw state.
+
+### Projectile expiry and detached trails
+
+`NetworkProjectile` commits `[Networked] ExpiryConsumed` before lifetime/range despawn. In
+`Despawned`, `ImpactConsumed` raises `ImpactResolved`; otherwise `ExpiryConsumed` raises the local
+`Expired(position, direction)` event once. A proxy reads the authoritative cause instead of inferring
+range expiry from interpolation. Missing state, runner shutdown (including migration teardown) and
+external despawn without a terminal cause do not produce a fizzle. Existing snapshot copying retains
+terminal state; no presentation event is replayed solely because migration disposes a runner.
+
+Optional `WeaponDefinition.ProjectileVisual` references a `ProjectileVisualProfile`: sprite, Animator
+controller, explicit tint or damage-type tint, visual trail prefab, impact and fizzle particles.
+`ProjectileVisualProfilePresenter` resolves the replicated `WeaponAttackTag` via the prefab-assigned
+`LootDefinitionCatalog.TryGetByIndex(indexPlusOne - 1)`; an explicitly assigned Equipment source is a
+fallback only when no catalog is assigned, never a lookup of the currently equipped weapon.
+Missing/stale/untagged identity or null profile quietly retains defaults on every peer.
+A controller override enables the assigned Animator; a sprite-only profile disables the arrow Animator
+so it cannot overwrite the sprite. Damage-type tint, when enabled and resolvable from the optional
+palette, wins over explicit profile tint and uses the projectile's networked `DamageType`.
+
+Non-null profile impact/fizzle independently supersede the corresponding default presenter (not the
+attacker-only weapon particle layer). Profile clones are one-shot; default impact clones preserve
+authored looping/stop action. `ProjectileImpactParticlePresenter` now emits on character as well as
+geometry terminal impacts for **all projectiles**, with its own optional damage-type palette even
+without a weapon profile/tag. Null palette keeps authored particle color. Profile trail roots are
+registered through `ProjectileTrailDetacher.Register`; they must contain only visual components,
+never NetworkObjects/gameplay. Terminal subscribers consume profile overrides before `RestoreDefaults`
+restores sprite, Animator controller/enabled state and tint; disable and new flight also restore them.
+This reset contract does not imply pooling: the current Fusion default provider destroys projectiles.
+
+Optional `ProjectileExpiryParticlePresenter` subscribes/unsubscribes with enable/disable and instantiates
+a direction-aligned fizzle with looping disabled and `StopAction.Destroy`. `ProjectileTrailDetacher`
+detaches only explicitly assigned visual child trails/particles on normal despawn, stops emission and
+schedules cleanup after trail time or remaining particle life (plus particle-trail lifetime). Teardown
+leaves children owned by the projectile. It does not extend projectile simulation or search the hierarchy;
+particle-tail capture allocates once per despawn, not per frame. All `[CombatTrace]` logs were removed;
+configuration errors remain one-shot diagnostics.
+
+### Weighted deal-shake
+
+`LocalPlayerCameraShakeBinder` weights positive confirmed character hits through `CombatShakeWeights`.
+An enabled `WeaponDefinition.Presentation.DealShake` (`WeaponDealShake`) overrides intensity/duration;
+otherwise `CameraShakeConfig` supplies them. Fatal hits multiply intensity and directional kick by
+`KillMultiplier` (default 1.5), not duration. Kick follows normalized `HitDirection` and
+`DirectionalKickStrength` (default 0: off until tuned). Invalid/zero direction yields no kick.
+`CameraShakeController.RequestDirectionalImpulse` adds bounded impulses through the existing
+`ShakeOffset`, alongside trauma noise, respecting `MaxOffset` and `AccessibilityScale`. Task-286
+camera aim compensation therefore covers the kick too; simulation aim and damage are untouched.
 
 ### 1. Damage Feedback Visuals
+Damage-number damage-type palette and fatal-style precedence belong to `CombatFeedbackPresenter`
+(see Confirmed local combat feedback); they do not recolor the generic Health-driven reaction below.
 When a character takes damage (authoritatively confirmed by `Health` changes on State Authority):
 * `DamageFeedbackPresenter` observes replicated Health in `LateUpdate` and triggers procedural feedback.
 * **Sprite Flash**: Temporarily overrides the character's material colors to a bright flash color to signify a hit.
 * **Scale Pulse**: Briefly scales the character's transform down/up to provide physical impact feedback.
-* These reactions run completely client-side in `LateUpdate`; confirmed attacker-local melee can replace/coalesce this generic feedback as described in **Melee hit reaction**.
+* These reactions run completely client-side in `LateUpdate`; confirmed attacker-local weapon reactions can replace/coalesce this generic feedback as described in **Weapon hit reaction**.
 
 
 Players do not go from Active straight to definitive Defeat. The lifecycle is
@@ -1347,7 +1472,8 @@ authored six-bucket animation; an aim mode only adds a presentation-only residua
   `AimedReleaseSeconds`, `AimStanceDrawnClipSeconds`, `AimStanceTorsoPivot`, `AimStanceOutwardOffset`,
   `AimStanceNockPoint`) are rejected on other modes, and the drawn clip time may not pass the attack release.
 
-**Aim and body facing.** `PlayerAnimatorView` samples the aim every frame, including during attacks.
+**Aim and body facing.** `PlayerAnimatorView` samples live aim every frame, including during attacks;
+`CommittedAimDirection` overrides its presented result with accepted ranged aim during wind-up.
 `AimDirectionSmoothing` returns it unchanged for the owning player and turns it through the shortest arc at
 a bounded rate on proxies; an unusable aim falls back to `FacingDirection`. A `FreeAim` weapon uses the hybrid
 selection `FreeAimFacingSelection`: the body keeps the bucket of `FacingDirection` while the aim stays within
@@ -1390,6 +1516,8 @@ whose timed attack evaluates the Animator, so the presenter always writes last. 
 posed it pushes the live weapon pivot (anchor, angle, mirror, front/back) to `PlayerAttackVfxPresenter` every
 `LateUpdate`. `FreeAimAttackVfxPose` rebuilds the VFX pose from that pivot, keeps the authored reach and depth,
 and a playing VFX re-anchors when the push starts or stops; without a push the baked pose applies.
+For a confirmed ranged release impulse the anchor remains grip-driven, but the axis uses the committed
+shot direction rather than a later live pivot angle.
 
 ### Weapon attack sprite animation
 
@@ -1465,7 +1593,31 @@ for in-flight replication; local persistence stores `LootId` strings.
 
 ## Known Limitations and Technical Debt
 
-* **Load state identity is template-based**: a hand's Unloaded state belongs to the weapon catalog identity that fired. Replacing that slot's weapon resets the state to Loaded. Raid carries weapon modifiers, never backend instance IDs ([Item Instances §6.3](ItemInstanceArchitecture.md#63-raid-transport)); this does not define a new reload-identity rule. Reload has no dedicated presentation; HUD availability reflects it through `TryGetAttackStatus`.
+* **Game-feel asset wiring and visual approval remain manual**: optional ranged HitReaction/ImpactParticles, weapon deal-shake overrides, directional kick tuning (default off), fizzle prefabs, detached trail children, draw-complete sound/pulse and audio keys require assignment/inspection. No new art/audio assets are supplied. Verify release-synced Swing/Cast/Shoot, event-weapon hit sound, reload interruption/restart, committed wind-up aim and fatal number pool reuse on Host and Client; inspect attacker-only reaction/particles versus generic target/proxy feedback and unchanged melee hitstop/freeze. Single-runner tests do not prove visual quality or multi-peer delivery.
+
+### M7 wiring — pending manual assignment and checks
+
+- [ ] Assign optional Charge/Cast clips in weapon audio configs; check per-hand cut/resume, Shoot fallback,
+  Attack > Hit character sound and unchanged Block on Host/Client.
+- [ ] Assign `WeaponDefinition.ProjectileVisual`; add `ProjectileVisualProfilePresenter` on projectile root
+  with catalog, explicit child SpriteRenderer/Animator, optional palette and `ProjectileTrailDetacher`.
+  Set the default impact presenter's palette separately. Use visual-only trail prefabs; verify sprite-only
+  Animator suppression, controller override, profile/default supersession, tint, fizzle and tail cleanup.
+- [ ] Assign `Presentation.WindupChargeVfx` and/or `ReleaseBurstParticles` on intended magic weapons;
+  verify tip/depth, .25→1 ramp, Staff full draw ×1.5, cancel/resume and Main/Off Hand slash/thrust poses.
+  Dedicated thrust burst-pose assertion is still absent; visual approval is not automated proof.
+- [ ] Assign `AttackVfxTintPalette.asset` to controller `_impactTintPalette` and feedback `_tintPalette`;
+  check target-color precedence, violet magical numbers, fatal style and pooled reset.
+- [ ] Verify world-visible projectile character impacts versus attacker-only weapon/generic layers on all
+  peers. Leave ranged `Presentation.ImpactParticles` empty for a single projectile burst; opt in to stacking.
+  Asset assignment and Host/Client aesthetic approval remain pending; no new art/audio assets are supplied.
+
+### Other limitations
+
+* **Migration with projectiles in flight still needs a real multi-process check**: snapshot copying preserves tags; legacy missing metadata must degrade silently to generic feedback, and teardown must not emit expiry/fizzle/trails. Confirm restored hits and no replay with Host plus at least two Clients.
+* **No client-side prediction of attack start or projectiles**: deliberately out of scope; these cues follow confirmed state and its observation latency.
+
+* **Load state identity is template-based**: a hand's Unloaded state belongs to the weapon catalog identity that fired. Replacing that slot's weapon resets the state to Loaded. Raid carries weapon modifiers, never backend instance IDs ([Item Instances §6.3](ItemInstanceArchitecture.md#63-raid-transport)); this does not define a new reload-identity rule. Reload audio observes the replicated hand state; dedicated reload art/HUD remains absent, while availability reflects it through `TryGetAttackStatus`.
 
 * **Layer Configuration Dependency**: The system requires strict layer separation. If targets or obstacles are not on the correct layers specified in `MeleeAttackConfig` and `RangedAttackConfig`, collision queries will fail to report hits.
 * **Component Casting**: Configured strategies rely on a serialized `MonoBehaviour` cast to `IAttack`. An empty source is a valid neutral state; a non-empty source must implement the contract.

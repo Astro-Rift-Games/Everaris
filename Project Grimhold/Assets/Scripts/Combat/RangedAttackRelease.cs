@@ -55,7 +55,8 @@ public struct RangedAttackRelease : INetworkStruct
     }
 
     /// <summary>Consumes before any external spawn call, including failed/invalid release attempts.</summary>
-    public bool TryConsume(int tick, EntityId owner, Vector2 currentOrigin, out ProjectileSpawnRequest request)
+    public bool TryConsume(int tick, EntityId owner, Vector2 currentOrigin, out ProjectileSpawnRequest request,
+        WeaponAttackTag weaponTag = default)
     {
         request = default;
         if (!Pending || tick < ReleaseTick) return false;
@@ -63,7 +64,7 @@ public struct RangedAttackRelease : INetworkStruct
         if (!AttackTiming.IsFinite(currentOrigin) || !Prefab.IsValid || ImpactMask == 0 ||
             !AttackTiming.IsFinite(SpawnOffset) || SpawnOffset < 0f) return false;
         request = new ProjectileSpawnRequest(owner, currentOrigin + Direction * SpawnOffset, Direction,
-            Damage, DamageType, Speed, Lifetime, Range, tick, Knockback, Prefab, ImpactMask);
+            Damage, DamageType, Speed, Lifetime, Range, tick, Knockback, Prefab, ImpactMask, weaponTag: weaponTag);
         return request.TryValidate();
     }
 

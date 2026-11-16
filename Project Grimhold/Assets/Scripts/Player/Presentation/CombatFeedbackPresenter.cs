@@ -27,6 +27,13 @@ public sealed class CombatFeedbackPresenter : MonoBehaviour
     [SerializeField, Min(0f)]
     private float _impactRisePixels = 42f;
 
+    [SerializeField, Tooltip("Optional damage-type colors. White or missing entries preserve the authored template color; fatal style takes precedence.")]
+    private AttackVfxTintPalette _tintPalette;
+
+    [Header("Fatal damage numbers (presentation only)")]
+    [SerializeField] private Color _killColor = new Color(1f, 0.75f, 0.2f, 1f);
+    [SerializeField, Min(1f)] private float _killScaleMultiplier = 1.35f;
+
     [SerializeField, Min(0.01f)]
     private float _cooldownPulseDuration = 0.18f;
 
@@ -127,7 +134,7 @@ public sealed class CombatFeedbackPresenter : MonoBehaviour
         if (feedbackEvent.Kind == CombatFeedbackKind.ConfirmedImpact &&
             feedbackEvent.AppliedDamage > 0f)
         {
-            PresentImpact(feedbackEvent.HitPoint, feedbackEvent.AppliedDamage);
+            PresentImpact(feedbackEvent.HitPoint, feedbackEvent.AppliedDamage, feedbackEvent.IsFatal, feedbackEvent.DamageType);
             return;
         }
 
@@ -138,7 +145,7 @@ public sealed class CombatFeedbackPresenter : MonoBehaviour
         }
     }
 
-    private void PresentImpact(Vector2 worldPoint, float appliedDamage)
+    private void PresentImpact(Vector2 worldPoint, float appliedDamage, bool isFatal, DamageType damageType = DamageType.Physical)
     {
         if (_impactSlots == null || _impactSlots.Length == 0)
         {
@@ -151,7 +158,13 @@ public sealed class CombatFeedbackPresenter : MonoBehaviour
         slot.WorldPoint = worldPoint;
         slot.Remaining = _impactDuration;
         slot.Text.text = appliedDamage.ToString("0.#");
-        slot.Text.color = slot.BaseColor;
+        Color damageColor = slot.BaseColor;
+        if (_tintPalette != null && _tintPalette.TryGetTint(damageType, out Color tint) && tint != Color.white)
+            damageColor = tint;
+        slot.PresentationColor = isFatal ? _killColor : damageColor;
+        slot.ScaleMultiplier = isFatal ? _killScaleMultiplier : 1f;
+        slot.Text.color = slot.PresentationColor;
+        slot.Text.rectTransform.localScale = Vector3.one * slot.ScaleMultiplier;
         slot.Text.gameObject.SetActive(true);
         PositionImpact(slot, 0f);
     }
@@ -179,10 +192,10 @@ public sealed class CombatFeedbackPresenter : MonoBehaviour
             float progress = 1f - slot.Remaining / _impactDuration;
             PositionImpact(slot, progress);
 
-            Color color = slot.BaseColor;
+            Color color = slot.PresentationColor;
             color.a *= 1f - progress;
             slot.Text.color = color;
-            slot.Text.rectTransform.localScale = Vector3.one * Mathf.Lerp(1.2f, 1f, progress);
+            slot.Text.rectTransform.localScale = Vector3.one * (slot.ScaleMultiplier * Mathf.Lerp(1.2f, 1f, progress));
             if (slot.Remaining <= 0f)
             {
                 slot.Text.gameObject.SetActive(false);
@@ -289,6 +302,8 @@ public sealed class CombatFeedbackPresenter : MonoBehaviour
     {
         public TMP_Text Text { get; }
         public Color BaseColor { get; }
+        public Color PresentationColor { get; set; }
+        public float ScaleMultiplier { get; set; } = 1f;
         public Vector2 WorldPoint { get; set; }
         public float Remaining { get; set; }
 

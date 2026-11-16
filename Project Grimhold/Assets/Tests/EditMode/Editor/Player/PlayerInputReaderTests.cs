@@ -166,8 +166,9 @@ namespace Tests.EditMode.Player
             method.Invoke(_reader, null);
         }
 
-        [Test]
-        public void ScreenToAimWorldPosition_CompensatesForCameraShakeOffset()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void ScreenToAimWorldPosition_CompensatesForCameraShakeOffset(bool directionalKick)
         {
             var cameraGo = new GameObject("TestCam");
             var camera = cameraGo.AddComponent<Camera>();
@@ -189,7 +190,11 @@ namespace Tests.EditMode.Player
                 Vector2 screenPos = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
                 Vector2 aimWithoutShake = _reader.ScreenToAimWorldPosition(screenPos);
 
-                shake.RequestShake(1f, 1f);
+                if (directionalKick)
+                {
+                    shake.RequestDirectionalImpulse(new Vector2(.1f, .05f), 1f);
+                }
+                else shake.RequestShake(1f, 1f);
                 shake.UpdateShake(0.01f);
                 Vector3 offset = shake.ShakeOffset;
                 camera.transform.position += offset;
@@ -203,6 +208,7 @@ namespace Tests.EditMode.Player
             {
                 UnityEngine.Object.DestroyImmediate(cameraGo);
                 UnityEngine.Object.DestroyImmediate(shakeGo);
+                UnityEngine.Object.DestroyImmediate(config);
             }
         }
     }

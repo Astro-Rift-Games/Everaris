@@ -6,6 +6,8 @@ using UnityEngine;
 /// </summary>
 public readonly struct DamageRequest
 {
+    /// <summary>Optional presentation metadata; never used by damage resolution.</summary>
+    public WeaponAttackTag WeaponTag { get; }
     public EntityId AttackerId { get; }
     public EntityId TargetId { get; }
     public float Amount { get; }
@@ -41,8 +43,10 @@ public readonly struct DamageRequest
         float knockbackForce = 0f,
         bool isAllyDirectDamage = false,
         RaidParticipantId empowerSourceId = default,
-        EntityId environmentalHazardId = default)
+        EntityId environmentalHazardId = default,
+        WeaponAttackTag weaponTag = default)
     {
+        WeaponTag = weaponTag;
         AttackerId     = attackerId;
         TargetId       = targetId;
         Amount         = amount;

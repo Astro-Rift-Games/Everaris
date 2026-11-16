@@ -73,15 +73,19 @@ public sealed class AudioManager : MonoBehaviour, IAudioVolumeControl
 
         for (int i = 0; i < _sfxPoolSize; i++)
         {
-            GameObject go = new GameObject($"SFX_Source_{i}");
-            go.transform.SetParent(sfxParent.transform);
-            
-            AudioSource source = go.AddComponent<AudioSource>();
-            source.outputAudioMixerGroup = _sfxGroup;
-            source.playOnAwake = false;
-            
-            _sfxSources[i] = source;
+            _sfxSources[i] = CreateSfxSource(sfxParent.transform, $"SFX_Source_{i}");
         }
+    }
+
+    /// <summary>Creates an owner-controlled SFX source with the same routing as pooled one-shots.</summary>
+    public AudioSource CreateSfxSource(Transform owner, string sourceName)
+    {
+        GameObject go = new GameObject(sourceName);
+        go.transform.SetParent(owner, false);
+        AudioSource source = go.AddComponent<AudioSource>();
+        source.outputAudioMixerGroup = _sfxGroup;
+        source.playOnAwake = false;
+        return source;
     }
 
     private void InitializeMusicSource()

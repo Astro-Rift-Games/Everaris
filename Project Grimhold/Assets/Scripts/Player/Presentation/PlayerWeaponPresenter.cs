@@ -191,6 +191,7 @@ public sealed class PlayerWeaponPresenter : MonoBehaviour
             _animatorView.TryGetPresentedOffHandAttack(out AttackPerformedEvent offAttack, out _, out _))
             offFacing = offAttack.Direction;
         RefreshOffHandDepth(CharacterVisualDirectionResolver.Resolve(offFacing));
+        if (_attackVfx != null) _attackVfx.PresentOptionalMainFrame();
     }
 
     // Presentation only: observes the networked Downed state. Visibility combines with the equipment
@@ -515,16 +516,6 @@ public sealed class PlayerWeaponPresenter : MonoBehaviour
         AttackVfxDefinition vfx = presentation.AttackVfx;
         if (vfx == null || _attackVfx == null || !_attackVfx.TryGetWeaponTint(loot.WeaponDefinition.DamageType, out Color tint) ||
             !_animatorView.TryGetOffHandAttackElapsed(out float elapsed)) return;
-        float vfxSeconds = AttackTiming.ReleaseVfxSeconds(elapsed, attack.ScheduledWindupSeconds, vfx.ReleaseLeadSeconds);
-        if (vfxSeconds < -VfxBoundaryToleranceSeconds || vfxSeconds + VfxBoundaryToleranceSeconds >= vfx.Clip.length) return;
-        vfxSeconds = Mathf.Max(0f, vfxSeconds + VfxBoundaryToleranceSeconds);
-        if (_offHandAttackVfx == null)
-        {
-            var visual = new GameObject("OffHandAttackVfx");
-            visual.transform.SetParent(_animatorView.transform, false);
-            _offHandAttackVfx = visual.AddComponent<SpriteRenderer>();
-            _offHandAttackVfx.sortingLayerID = _offHandRenderer.sortingLayerID;
-        }
         if (!vfx.TryResolvePose(PlayerAnimatorView.DirectionIndex(attack.Direction), presentation.BladeReach,
             out AttackVfxDefinition.ResolvedPose pose)) return;
         Vector3 position = pose.Position + (Vector3)presentation.OffHandAttackAnimationSet.GetGripOriginOffset(direction);
@@ -545,13 +536,28 @@ public sealed class PlayerWeaponPresenter : MonoBehaviour
         }
         if (presentation.AimMode == WeaponAimMode.FreeAim)
         {
-            Vector2 aim = _animatorView.HasPresentedAim ? _animatorView.PresentedAimDirection : attack.Direction;
+            // A release impulse retains its shot direction even after the held weapon returns to live aim.
+            Vector2 aim = attack.AttackType == AttackType.Ranged && attack.HasReleaseTimeline
+                ? attack.Direction
+                : _animatorView.HasPresentedAim ? _animatorView.PresentedOffHandAimDirection : attack.Direction;
             var source = FreeAimAttackVfxPose.ResolveAtGrip(_animatorView.transform, _offHandGrip, aim,
                 PlayerWeaponPresentationMath.ShouldMirror(_animatorView.VisualFacingDirection), vfx.GetPose(direction), pose.SortingOrder);
             if (!vfx.TryResolvePose(source, presentation.BladeReach, out pose)) return;
             position = pose.Position;
             rotation = pose.Rotation;
             scale = pose.Scale;
+        }
+        _attackVfx.PresentOptionalOffHandFrame(attack,
+            new AttackVfxDefinition.ResolvedPose(position, rotation, scale, pose.SortingOrder));
+        float vfxSeconds = AttackTiming.ReleaseVfxSeconds(elapsed, attack.ScheduledWindupSeconds, vfx.ReleaseLeadSeconds);
+        if (vfxSeconds < -VfxBoundaryToleranceSeconds || vfxSeconds + VfxBoundaryToleranceSeconds >= vfx.Clip.length) return;
+        vfxSeconds = Mathf.Max(0f, vfxSeconds + VfxBoundaryToleranceSeconds);
+        if (_offHandAttackVfx == null)
+        {
+            var visual = new GameObject("OffHandAttackVfx");
+            visual.transform.SetParent(_animatorView.transform, false);
+            _offHandAttackVfx = visual.AddComponent<SpriteRenderer>();
+            _offHandAttackVfx.sortingLayerID = _offHandRenderer.sortingLayerID;
         }
         _offHandAttackVfx.transform.SetLocalPositionAndRotation(position, rotation);
         _offHandAttackVfx.transform.localScale = scale;
@@ -584,7 +590,7 @@ public sealed class PlayerWeaponPresenter : MonoBehaviour
         }
         float angle = PlayerWeaponPresentationMath.CalculateFacingAngleDegrees(facing);
         if (weapon.Presentation.AimMode == WeaponAimMode.FreeAim && _animatorView.HasPresentedAim)
-            angle += FreeAimResidual.AngleDegrees(facing, _animatorView.PresentedAimDirection);
+            angle += FreeAimResidual.AngleDegrees(facing, _animatorView.PresentedOffHandAimDirection);
         float correction = PlayerWeaponPresentationMath.ResolveAngleCorrection(weapon.Presentation.AngleCorrection, mirrored);
         // Main Hand applies correction below a mirrored pivot. Flattening that hierarchy must
         // reverse the correction across the reflection; rotation and reflection do not commute.
@@ -722,12 +728,34 @@ public sealed class PlayerWeaponPresenter : MonoBehaviour
 
         Transform visualRoot = _animatorView.transform;
         Vector3 anchor = visualRoot.InverseTransformPoint(_mainHandWeaponPivot.position);
-        Vector3 axis = visualRoot.InverseTransformDirection(_mainHandWeaponPivot.right);
         _attackVfx.SetFreeAimPivot(
             new Vector2(anchor.x, anchor.y),
-            Mathf.Atan2(axis.y, axis.x) * Mathf.Rad2Deg,
+            ResolveAttackVfxPivotAngle(_animatorView.PresentedAimDirection),
             mirrored,
-            frontFacing);
+            frontFacing,
+            this);
+    }
+
+    // Resolve both live and committed aim through the same authored holding-transform basis.
+    // AimStance rotates the whole block in Animator-root space; FreeAim turns inside the grip.
+    internal float ResolveAttackVfxPivotAngle(Vector2 aim)
+    {
+        Transform visualRoot = _animatorView.transform;
+        Vector2 liveAim = _animatorView.PresentedAimDirection;
+        float delta = Vector2.SignedAngle(liveAim, aim);
+        Vector3 axis;
+        if (_mainHandAimMode == WeaponAimMode.AimStance)
+        {
+            axis = visualRoot.InverseTransformDirection(_mainHandWeaponPivot.right);
+            axis = Quaternion.AngleAxis(delta, Vector3.forward) * axis;
+        }
+        else
+        {
+            Vector3 localAxis = _mainHandWeaponPivot.localRotation * Vector3.right;
+            localAxis = Quaternion.AngleAxis(delta, Vector3.forward) * localAxis;
+            axis = visualRoot.InverseTransformDirection(_mainHandWeaponPivot.parent.TransformDirection(localAxis));
+        }
+        return Mathf.Atan2(axis.y, axis.x) * Mathf.Rad2Deg;
     }
 
     private void CacheDependencies()

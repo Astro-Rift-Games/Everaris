@@ -39,6 +39,9 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
     [SerializeField]
     private EmpowerNetworkEffect _empowerEffect;
 
+    [SerializeField, Tooltip("Optional damage-type tint for confirmed weapon impact particles. Target body color takes precedence; white preserves the profile color.")]
+    private AttackVfxTintPalette _impactTintPalette;
+
     private ICharacter _character;
     private IAttack _activeAttack;
     private bool _dependenciesValid;
@@ -77,10 +80,8 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
     }
     private readonly Queue<CombatPresentationEvent> _pendingFeedbackEvents = new();
 
-    // Synchronous Execute scope only: projectile/ability callbacks outside it remain untagged.
-    private EquipmentSlot _meleeFeedbackSlot;
-    private int _meleeFeedbackSequence;
-    private int _meleeFeedbackWeapon;
+    // Synchronous melee scope; asynchronous weapon projectiles carry their own committed tag.
+    private WeaponAttackTag _weaponFeedbackScope;
     private readonly AttackHitstop[] _hitstop = new AttackHitstop[5]; // Four hands + legacy.
     private readonly HitstopTargetFreeze _targetFreeze = new();
     private readonly MeleeImpactParticleEmitter _impactParticles = new();
@@ -349,8 +350,9 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
             if (feedbackEvent.Sequence > _lastHitstopFeedbackSequence)
             {
                 _lastHitstopFeedbackSequence = feedbackEvent.Sequence;
-                TryScheduleHitstop(feedbackEvent);
-                TryEmitMeleeImpactParticles(feedbackEvent);
+                TryScheduleHitstop(feedbackEvent, out float delay, out float hold);
+                TryPlayWeaponReaction(feedbackEvent, delay, hold);
+                TryEmitWeaponImpactParticles(feedbackEvent);
             }
             CombatFeedbackResolved?.Invoke(feedbackEvent);
         }
@@ -411,10 +413,10 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
             resolvedDamage.Result.AppliedDamage,
             resolvedDamage.Request.SimulationTick,
             AttackFailureReason.None,
-            _meleeFeedbackSlot,
-            _meleeFeedbackSequence,
-            _meleeFeedbackWeapon,
-            resolvedDamage.Request.Direction);
+            resolvedDamage.Request.WeaponTag.HasWeaponTag ? resolvedDamage.Request.WeaponTag : _weaponFeedbackScope,
+            resolvedDamage.Request.Direction,
+            resolvedDamage.Result.IsFatal,
+            resolvedDamage.Request.DamageType);
     }
 
     /// <summary>
@@ -589,15 +591,14 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
                 GetAttackOriginPosition(),
                 direction,
                 (int)Runner.Tick);
-            _meleeFeedbackSlot = EquipmentSlot.None;
-            _meleeFeedbackSequence = AttackSequence;
-            _meleeFeedbackWeapon = LastAttackWeaponCatalogIndexPlusOne;
+            _weaponFeedbackScope = new WeaponAttackTag(EquipmentSlot.None, AttackSequence,
+                LastAttackWeaponCatalogIndexPlusOne, AttackType.Melee);
             try
             {
                 if (meleeAttack.Execute(in request, GetBasicAttackDamageMultiplier(), GetBasicAttackEmpowerSource()).WasExecuted)
                     LastAttackCancellationTick = -1;
             }
-            finally { ClearMeleeFeedbackScope(); }
+            finally { _weaponFeedbackScope = default; }
         }
     }
 
@@ -605,7 +606,8 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
     {
         RangedAttackRelease release = PendingRangedRelease;
         if (!release.Pending || Runner.Tick < release.ReleaseTick) return;
-        bool valid = release.TryConsume(Runner.Tick, _character.Id, _attackOrigin.position, out ProjectileSpawnRequest request);
+        bool valid = release.TryConsume(Runner.Tick, _character.Id, _attackOrigin.position, out ProjectileSpawnRequest request,
+            new WeaponAttackTag(EquipmentSlot.None, AttackSequence, LastAttackWeaponCatalogIndexPlusOne, AttackType.Ranged));
         PendingRangedRelease = release; // Commit consumption BEFORE the irreversible spawn, even on failure.
         // A throwing adapter must also leave a consumed/cancelled shot; do not hide its exception.
         LastAttackCancellationTick = Runner.Tick;
@@ -671,6 +673,28 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
         if (rawElapsed < 0f || (attack.Sequence == AttackSequence && LastAttackCancellationTick >= 0 &&
             AttackRenderTime >= (double)LastAttackCancellationTick * Runner.DeltaTime)) return false;
         seconds = _hitstop[4].Map(attack.Sequence, rawElapsed);
+        return true;
+    }
+
+    /// <summary>
+    /// Read-only audio view of the real replicated hand reload, gated by the confirmed render clock.
+    /// Legacy strategies have no reload state and deliberately do not synthesize one from cooldown.
+    /// </summary>
+    public bool TryGetAttackReloadPresentation(in AttackPerformedEvent attack, out WeaponReloadState reload)
+    {
+        reload = default;
+        int index = HandIndex(attack.SourceSlot);
+        if (index < 0 || Runner == null || !Runner.IsRunning || Object == null || !Object.IsValid ||
+            _equipmentController == null) return false;
+        WeaponHandAttackState state = HandAttacks[index];
+        if (state.Sequence != attack.Sequence || state.WeaponCatalogIndexPlusOne != attack.WeaponCatalogIndexPlusOne ||
+            !_equipmentController.TryGetWeaponByCatalogIndexPlusOne(attack.WeaponCatalogIndexPlusOne, out LootDefinition loot) ||
+            !loot.WeaponDefinition.UsesReload) return false;
+        reload = state.Reload;
+        if (reload.Reloading &&
+            (!AttackTiming.TryGetReleaseTick(0, loot.WeaponDefinition.ReloadSeconds, Runner.DeltaTime, out int durationTicks) ||
+             AttackRenderTime < (double)(reload.ReloadEndTick - durationTicks) * Runner.DeltaTime))
+            reload = default;
         return true;
     }
 
@@ -891,9 +915,8 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
                     {
                         AttackRequest request = new(_character.Id, GetAttackOriginPosition(), direction, Runner.Tick);
                         AttackExecutionParameters parameters = release.ExecutionParameters;
-                        _meleeFeedbackSlot = slot;
-                        _meleeFeedbackSequence = state.Sequence;
-                        _meleeFeedbackWeapon = state.WeaponCatalogIndexPlusOne;
+                        _weaponFeedbackScope = new WeaponAttackTag(slot, state.Sequence,
+                            state.WeaponCatalogIndexPlusOne, AttackType.Melee);
                         try
                         {
                             if (melee.Execute(request, parameters, GetBasicAttackDamageMultiplier(), GetBasicAttackEmpowerSource()).WasExecuted)
@@ -902,13 +925,14 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
                                 HandAttacks.Set(index, state);
                             }
                         }
-                        finally { ClearMeleeFeedbackScope(); }
+                        finally { _weaponFeedbackScope = default; }
                     }
                 }
             }
             if (state.Ranged.Pending && Runner.Tick >= state.Ranged.ReleaseTick)
             {
-                bool valid = state.Ranged.TryConsume(Runner.Tick, _character.Id, GetAttackOriginPosition(), out ProjectileSpawnRequest request);
+                bool valid = state.Ranged.TryConsume(Runner.Tick, _character.Id, GetAttackOriginPosition(), out ProjectileSpawnRequest request,
+                    new WeaponAttackTag(slot, state.Sequence, state.WeaponCatalogIndexPlusOne, AttackType.Ranged));
                 state.CancellationTick = Runner.Tick;
                 HandAttacks.Set(index, state);
                 if (valid && TrySpawnBasicAttackProjectile(request, state.Ranged.EmpowerSourceParticipantValue))
@@ -957,13 +981,6 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
                 _lastObservedSequence = AttackSequence;
     }
 
-    private void ClearMeleeFeedbackScope()
-    {
-        _meleeFeedbackSlot = EquipmentSlot.None;
-        _meleeFeedbackSequence = 0;
-        _meleeFeedbackWeapon = 0;
-    }
-
     private bool CanPresentHitstop => HasInputAuthority && _character != null && _character.IsAlive &&
         IsAttackEnabled && !PlayerDownedGate.IsDowned(_character) && !PlayerConsumptionGate.IsConsuming(_character) &&
         !PlayerStunGate.IsStunned(_character) &&
@@ -996,13 +1013,14 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
             (cancellationTick < 0 || AttackRenderTime < (double)cancellationTick * Runner.DeltaTime);
     }
 
-    private void TryEmitMeleeImpactParticles(in CombatPresentationEvent feedback)
+    private void TryEmitWeaponImpactParticles(in CombatPresentationEvent feedback)
     {
-        if (!HasInputAuthority || !feedback.IsMeleeImpact ||
+        if (!HasInputAuthority || !feedback.IsWeaponImpact ||
             feedback.Kind != CombatFeedbackKind.ConfirmedImpact || !(feedback.AppliedDamage > 0f) ||
             _character == null || feedback.TargetId == _character.Id || _equipmentController == null ||
-            !_equipmentController.TryGetWeaponByCatalogIndexPlusOne(feedback.MeleeWeaponCatalogIndexPlusOne, out LootDefinition loot) ||
-            loot.WeaponDefinition == null || loot.WeaponDefinition.PrimaryAttack is not MeleeAttackConfig ||
+            !_equipmentController.TryGetWeaponByCatalogIndexPlusOne(feedback.WeaponCatalogIndexPlusOne, out LootDefinition loot) ||
+            loot.WeaponDefinition == null ||
+            (feedback.IsMeleeImpact && loot.WeaponDefinition.PrimaryAttack is not MeleeAttackConfig) ||
             _hitstopRegistry == null || !_hitstopRegistry.TryGetCharacter(feedback.TargetId, out _) ||
             !_hitstopRegistry.TryGetTransform(feedback.TargetId, out Transform target) || target == null ||
             target == transform || target.IsChildOf(transform) || transform.IsChildOf(target)) return;
@@ -1010,20 +1028,25 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
         // Unlike target deformation/freezing, contact VFX also survive a killing blow. The unparented
         // emitter keeps existing bursts alive when another target is hit or the victim is pooled.
         var generic = target.GetComponentInChildren<CharacterDamageParticlePresenter>(true);
+        MeleeImpactParticleProfile profile = loot.WeaponDefinition.Presentation.ImpactParticles;
         Color? colorOverride = generic != null && generic.TryGetMeleeImpactColor(out Color color)
             ? color : (Color?)null;
-        if (!_impactParticles.Emit(loot.WeaponDefinition.Presentation.ImpactParticles,
+        if (!colorOverride.HasValue && _impactTintPalette != null &&
+            _impactTintPalette.TryGetTint(feedback.DamageType, out Color tint) && tint != Color.white)
+            colorOverride = tint;
+        if (!_impactParticles.Emit(profile,
             feedback.HitPoint, feedback.HitDirection, colorOverride)) return;
         if (generic != null) generic.AbsorbConfirmedMeleeImpact(feedback.AppliedDamage);
     }
 
-    private void TryScheduleHitstop(in CombatPresentationEvent feedback)
+    private void TryScheduleHitstop(in CombatPresentationEvent feedback, out float delay, out float hold)
     {
+        delay = hold = 0f;
         if (!feedback.IsMeleeImpact || !CanPresentHitstop || _equipmentController == null) return;
-        int index = feedback.MeleeSourceSlot == EquipmentSlot.None ? 4 : HandIndex(feedback.MeleeSourceSlot);
-        if (index < 0 || !TryGetHitstopAttack(index, feedback.MeleeAttackSequence, out AttackPerformedEvent attack) ||
-            attack.WeaponCatalogIndexPlusOne != feedback.MeleeWeaponCatalogIndexPlusOne ||
-            !_equipmentController.TryGetWeaponByCatalogIndexPlusOne(feedback.MeleeWeaponCatalogIndexPlusOne, out LootDefinition loot) ||
+        int index = feedback.SourceSlot == EquipmentSlot.None ? 4 : HandIndex(feedback.SourceSlot);
+        if (index < 0 || !TryGetHitstopAttack(index, feedback.AttackSequence, out AttackPerformedEvent attack) ||
+            attack.WeaponCatalogIndexPlusOne != feedback.WeaponCatalogIndexPlusOne ||
+            !_equipmentController.TryGetWeaponByCatalogIndexPlusOne(feedback.WeaponCatalogIndexPlusOne, out LootDefinition loot) ||
             loot.WeaponDefinition == null || loot.WeaponDefinition.PrimaryAttack is not MeleeAttackConfig) return;
         float raw = GetAttackElapsedSeconds(attack);
         bool scheduled = _hitstop[index].TrySchedule(attack.Sequence, attack.ScheduledWindupSeconds, raw,
@@ -1034,7 +1057,6 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
             target == transform || target.IsChildOf(transform) || transform.IsChildOf(target) ||
             (_hitstopRegistry.TryGetCharacter(feedback.TargetId, out ICharacter character) &&
                 (!character.IsAlive || PlayerDownedGate.IsDowned(character)))) return;
-        float delay = 0f, hold = 0f;
         // A second target can share an already scheduled hold, but never schedules another freeze.
         if (scheduled || _hitstop[index].Sequence == attack.Sequence)
             _hitstop[index].GetRemaining(raw, out delay, out hold);
@@ -1045,13 +1067,31 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
             _hitstopTargetRoot = target;
             _targetFreezeTimeline = index;
         }
+    }
+
+    private void TryPlayWeaponReaction(in CombatPresentationEvent feedback, float delay, float hold)
+    {
+        if (!feedback.IsWeaponImpact || !CanPresentHitstop || !(feedback.AppliedDamage > 0f) ||
+            _equipmentController == null ||
+            !_equipmentController.TryGetWeaponByCatalogIndexPlusOne(feedback.WeaponCatalogIndexPlusOne, out LootDefinition loot) ||
+            loot.WeaponDefinition == null ||
+            (feedback.IsMeleeImpact && loot.WeaponDefinition.PrimaryAttack is not MeleeAttackConfig) ||
+            feedback.TargetId == _character.Id || _hitstopRegistry == null ||
+            !_hitstopRegistry.TryGetTransform(feedback.TargetId, out Transform target) || target == null ||
+            target == transform || target.IsChildOf(transform) || transform.IsChildOf(target)) return;
+        if (feedback.IsMeleeImpact)
+        {
+            int index = feedback.SourceSlot == EquipmentSlot.None ? 4 : HandIndex(feedback.SourceSlot);
+            if (index < 0 || !TryGetHitstopAttack(index, feedback.AttackSequence, out AttackPerformedEvent attack) ||
+                attack.WeaponCatalogIndexPlusOne != feedback.WeaponCatalogIndexPlusOne) return;
+        }
         if (target.gameObject.activeInHierarchy &&
             _hitstopRegistry.TryGetCharacter(feedback.TargetId, out ICharacter reactionTarget) &&
             reactionTarget.IsAlive && !PlayerDownedGate.IsDowned(reactionTarget))
         {
             var presenter = target.GetComponentInChildren<DamageFeedbackPresenter>(true);
             if (presenter != null)
-                presenter.TryPlayMeleeReaction(loot.WeaponDefinition.Presentation.HitReaction,
+                presenter.TryPlayWeaponReaction(loot.WeaponDefinition.Presentation.HitReaction,
                     feedback.HitDirection, delay, hold);
         }
     }
@@ -1112,10 +1152,10 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
         float appliedDamage,
         int simulationTick,
         AttackFailureReason failureReason,
-        EquipmentSlot meleeSourceSlot = EquipmentSlot.None,
-        int meleeAttackSequence = 0,
-        int meleeWeaponCatalogIndexPlusOne = 0,
-        Vector2 hitDirection = default)
+        WeaponAttackTag weaponTag = default,
+        Vector2 hitDirection = default,
+        bool isFatal = false,
+        DamageType damageType = DamageType.Physical)
     {
         CombatFeedbackSequence++;
         RPC_ReceiveCombatFeedback(
@@ -1126,10 +1166,13 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
             appliedDamage,
             simulationTick,
             (int)failureReason,
-            (int)meleeSourceSlot,
-            meleeAttackSequence,
-            meleeWeaponCatalogIndexPlusOne,
-            hitDirection);
+            (int)weaponTag.SourceSlot,
+            weaponTag.AttackSequence,
+            weaponTag.WeaponCatalogIndexPlusOne,
+            (int)weaponTag.AttackType,
+            hitDirection,
+            isFatal,
+            (int)damageType);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
@@ -1141,10 +1184,13 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
         float appliedDamage,
         int simulationTick,
         int failureReasonValue,
-        int meleeSourceSlotValue,
-        int meleeAttackSequence,
-        int meleeWeaponCatalogIndexPlusOne,
-        Vector2 hitDirection)
+        int sourceSlotValue,
+        int attackSequence,
+        int weaponCatalogIndexPlusOne,
+        int attackTypeValue,
+        Vector2 hitDirection,
+        bool isFatal,
+        int damageTypeValue)
     {
         _pendingFeedbackEvents.Enqueue(new CombatPresentationEvent(
             sequence,
@@ -1154,10 +1200,10 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
             appliedDamage,
             simulationTick,
             (AttackFailureReason)failureReasonValue,
-            (EquipmentSlot)meleeSourceSlotValue,
-            meleeAttackSequence,
-            meleeWeaponCatalogIndexPlusOne,
-            HitReactionMath.NormalizeDirection(hitDirection)));
+            new WeaponAttackTag((EquipmentSlot)sourceSlotValue, attackSequence, weaponCatalogIndexPlusOne, (AttackType)attackTypeValue),
+            HitReactionMath.NormalizeDirection(hitDirection),
+            isFatal,
+            (DamageType)damageTypeValue));
     }
 
     /// <summary>

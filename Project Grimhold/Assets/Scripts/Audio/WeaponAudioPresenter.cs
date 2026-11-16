@@ -1,49 +1,39 @@
-using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Observa eventos de combate y reproduce los efectos de sonido del arma actualmente equipada,
-/// resolviendo la configuración de audio dinámicamente desde el WeaponDefinition o usando un fallback.
-/// Soporta Swing, Shoot, Reload, y reacciones de impacto (Attack contra personajes, Block contra destructibles o escenario).
+/// Presents confirmed weapon audio. Optional Charge uses a stoppable per-hand source, cut on
+/// cancellation, disable and release. Optional Cast replaces ranged Shoot; Attack precedes Hit
+/// for character impacts. Swing/Shoot/Cast use the shared release clock; Reload observes
+/// replicated hand reload starts. Impacts resolve only the event weapon, or the generic fallback.
+/// Missing optional clips and unavailable runner registries are quiet.
 /// </summary>
 [DisallowMultipleComponent]
 public class WeaponAudioPresenter : MonoBehaviour
 {
     [Header("Dependencies")]
-    [SerializeField]
-    private MonoBehaviour _combatControllerSource;
-
-    [SerializeField]
-    private PlayerWeaponEquipmentNetworkController _equipmentSource;
+    [SerializeField] private MonoBehaviour _combatControllerSource;
+    [SerializeField] private PlayerWeaponEquipmentNetworkController _equipmentSource;
+    [SerializeField] private EntityRegistry _entityRegistry;
 
     [Header("Fallback Configuration")]
     [SerializeField]
-    [Tooltip("Configuración opcional de fallback en caso de no contar con un controlador de equipamiento dinámico.")]
+    [Tooltip("Optional generic audio for attacks without a resolvable confirmed weapon.")]
     private WeaponAudioConfig _fallbackAudioConfig;
-
-    [Header("Ranged Configuration")]
-    [SerializeField, Min(0f)]
-    [Tooltip("Retardo en segundos antes de disparar el sonido de Reload tras un disparo a distancia.")]
-    private float _reloadDelaySeconds = 0.25f;
 
     [Header("Environment Detection")]
     [SerializeField]
     [Tooltip("Capas consideradas escenario u obstáculo para impactos de bloqueo.")]
-    private LayerMask _obstacleLayers = 1 << 6 | 1 << 11; // Layer 6: WorldCollision, Layer 11: Obstacles
-
-    [SerializeField, Min(0.1f)]
-    private float _sceneryCheckRadius = 0.8f;
+    private LayerMask _obstacleLayers = 1 << 6 | 1 << 11;
+    [SerializeField, Min(0.1f)] private float _sceneryCheckRadius = 0.8f;
 
     private ICombatController _combatController;
     private PlayerCombatNetworkController _playerCombatController;
     private bool _isSubscribed;
-    private Coroutine _reloadCoroutine;
-    private EntityRegistry _entityRegistry;
+    private readonly AudioSource[] _chargeSources = new AudioSource[5];
+    private readonly WeaponAudioCue[] _cues =
+        { new(), new(), new(), new(), new() }; // Four independent hand slots + legacy strategy.
 
-    private void Awake()
-    {
-        CacheDependencies();
-    }
+    private void Awake() => CacheDependencies();
 
     private void OnEnable()
     {
@@ -54,10 +44,10 @@ public class WeaponAudioPresenter : MonoBehaviour
     private void OnDisable()
     {
         Unsubscribe();
-        if (_reloadCoroutine != null)
+        for (int i = 0; i < _cues.Length; i++)
         {
-            StopCoroutine(_reloadCoroutine);
-            _reloadCoroutine = null;
+            _cues[i].Suspend();
+            StopCharge(i);
         }
     }
 
@@ -68,200 +58,157 @@ public class WeaponAudioPresenter : MonoBehaviour
             _combatController = _combatControllerSource as ICombatController;
             _playerCombatController = _combatControllerSource as PlayerCombatNetworkController;
         }
-
         if (_combatController == null)
         {
             _combatController = GetComponentInParent<ICombatController>();
             _playerCombatController = GetComponentInParent<PlayerCombatNetworkController>();
         }
-
         if (_equipmentSource == null)
-        {
             _equipmentSource = GetComponentInParent<PlayerWeaponEquipmentNetworkController>();
-        }
+        ResolveRunnerRegistry();
+    }
+
+    private void ResolveRunnerRegistry()
+    {
+        // Awake/OnEnable can precede Fusion Spawned; retry only this avatar's explicit runner.
+        if (_entityRegistry == null && _playerCombatController != null && _playerCombatController.Runner != null)
+            _entityRegistry = _playerCombatController.Runner.GetComponent<EntityRegistry>();
     }
 
     private void Subscribe()
     {
         if (_isSubscribed) return;
-
-        if (_combatController != null)
-        {
-            _combatController.AttackPerformed += OnAttackPerformed;
-        }
-
+        if (_combatController != null) _combatController.AttackPerformed += OnAttackPerformed;
         if (_playerCombatController != null)
         {
             _playerCombatController.CombatFeedbackResolved += OnCombatFeedbackResolved;
+            _playerCombatController.AttackPresentationResumed += OnAttackPresentationResumed;
         }
-
         _isSubscribed = true;
     }
 
     private void Unsubscribe()
     {
         if (!_isSubscribed) return;
-
-        if (_combatController != null)
-        {
-            _combatController.AttackPerformed -= OnAttackPerformed;
-        }
-
+        if (_combatController != null) _combatController.AttackPerformed -= OnAttackPerformed;
         if (_playerCombatController != null)
         {
             _playerCombatController.CombatFeedbackResolved -= OnCombatFeedbackResolved;
+            _playerCombatController.AttackPresentationResumed -= OnAttackPresentationResumed;
         }
-
         _isSubscribed = false;
     }
 
-    private void OnAttackPerformed(AttackPerformedEvent attackEvent)
+    private static int CueIndex(EquipmentSlot slot) => slot switch
     {
-        if (AudioManager.Instance == null) return;
+        EquipmentSlot.WeaponSetAMainHand => 0, EquipmentSlot.WeaponSetAOffHand => 1,
+        EquipmentSlot.WeaponSetBMainHand => 2, EquipmentSlot.WeaponSetBOffHand => 3, _ => 4
+    };
 
-        WeaponAudioConfig config = ResolveAudioConfig(attackEvent.WeaponCatalogIndexPlusOne);
-        if (config == null) return;
+    private void OnAttackPerformed(AttackPerformedEvent attack)
+    {
+        int index = CueIndex(attack.SourceSlot);
+        WeaponAudioCue cue = _cues[index];
+        if (cue.Accept(attack)) StopCharge(index);
+        if (_playerCombatController == null) UpdateCharge(index, 0f);
+        else if (_playerCombatController.TryGetAttackPresentationSeconds(attack, out float seconds))
+            UpdateCharge(index, seconds);
+        // Non-player strategies without a confirmed timeline retain their immediate notification.
+        if (!attack.HasReleaseTimeline && cue.TryRelease(0f)) PlayRelease(attack);
+    }
 
-        if (attackEvent.AttackType == AttackType.Melee)
+    private void OnAttackPresentationResumed(AttackPerformedEvent attack)
+    {
+        int index = CueIndex(attack.SourceSlot);
+        if (_cues[index].Accept(attack, resumed: true)) StopCharge(index);
+    }
+
+    private void LateUpdate()
+    {
+        if (_playerCombatController == null) return;
+        for (int i = 0; i < _cues.Length; i++)
         {
-            // 1. Sonido de Swing
-            if (config.TryGetClip("Swing", out var swingClip))
+            WeaponAudioCue cue = _cues[i];
+            if (!cue.Active) continue;
+            AttackPerformedEvent attack = cue.Attack;
+            if (attack.HasReleaseTimeline)
             {
-                AudioManager.Instance.PlaySfx(swingClip, transform.position);
-            }
-
-            // 2. Chequeo de colisión con escenario estático (WorldCollision / Obstacles)
-            Vector2 origin = attackEvent.Origin != Vector2.zero ? attackEvent.Origin : (Vector2)transform.position;
-            Vector2 checkPosition = origin + attackEvent.Direction * (_sceneryCheckRadius * 0.7f);
-            Collider2D obstacleHit = Physics2D.OverlapCircle(checkPosition, _sceneryCheckRadius, _obstacleLayers);
-
-            if (obstacleHit != null)
-            {
-                if (config.TryGetClip("Block", out var blockClip))
+                if (!_playerCombatController.TryGetAttackPresentationSeconds(attack, out float seconds))
                 {
-                    AudioManager.Instance.PlaySfx(blockClip, obstacleHit.transform.position);
+                    cue.CancelRelease();
+                    StopCharge(i);
+                }
+                else
+                {
+                    UpdateCharge(i, seconds);
+                    if (cue.TryRelease(seconds)) PlayRelease(attack);
                 }
             }
-        }
-        else if (attackEvent.AttackType == AttackType.Ranged)
-        {
-            // 1. Sonido de Shoot
-            if (config.TryGetClip("Shoot", out var shootClip))
-            {
-                AudioManager.Instance.PlaySfx(shootClip, transform.position);
-            }
-
-            // 2. Sonido de Reload temporizado al inicio del cooldown
-            if (config.TryGetClip("Reload", out var reloadClip))
-            {
-                if (_reloadCoroutine != null)
-                {
-                    StopCoroutine(_reloadCoroutine);
-                }
-                _reloadCoroutine = StartCoroutine(PlayDelayedReload(reloadClip, _reloadDelaySeconds));
-            }
+            if (_playerCombatController.TryGetAttackReloadPresentation(attack, out WeaponReloadState reload) &&
+                cue.TryReload(reload))
+                Play(ResolveAudioConfig(attack.WeaponCatalogIndexPlusOne), "Reload", transform.position);
         }
     }
 
-    private void OnCombatFeedbackResolved(CombatPresentationEvent feedbackEvent)
+    private void UpdateCharge(int index, float seconds)
     {
-        if (AudioManager.Instance == null) return;
-        if (feedbackEvent.Kind != CombatFeedbackKind.ConfirmedImpact || feedbackEvent.AppliedDamage <= 0f) return;
-
-        WeaponAudioConfig config = ResolveAudioConfig();
-        if (config == null) return;
-
-        Vector3 hitWorldPos = new Vector3(feedbackEvent.HitPoint.x, feedbackEvent.HitPoint.y, transform.position.z);
-
-        if (IsCharacterEntity(feedbackEvent.TargetId))
-        {
-            // Impacto confirmado contra enemigo
-            if (config.TryGetClip("Attack", out var attackClip))
-            {
-                AudioManager.Instance.PlaySfx(attackClip, hitWorldPos);
-            }
-        }
-        else
-        {
-            // Impacto confirmado contra destructible (BreakableObject) u obstáculo interactivo
-            if (config.TryGetClip("Block", out var blockClip))
-            {
-                AudioManager.Instance.PlaySfx(blockClip, hitWorldPos);
-            }
-        }
+        if (!_cues[index].TryCharge(seconds)) return;
+        WeaponAudioConfig config = ResolveAudioConfig(_cues[index].Attack.WeaponCatalogIndexPlusOne);
+        AudioManager manager = AudioManager.Instance;
+        if (manager == null || config == null || !config.TryGetClip("Charge", out CustomClip clip) || !clip.IsValid) return;
+        if (_chargeSources[index] == null)
+            _chargeSources[index] = manager.CreateSfxSource(transform, $"WeaponCharge_{index}");
+        manager.PlaySfxAttached(clip, _chargeSources[index]);
     }
 
-    private IEnumerator PlayDelayedReload(CustomClip reloadClip, float delay)
+    private void StopCharge(int index)
     {
-        if (delay > 0f)
-        {
-            yield return new WaitForSeconds(delay);
-        }
-
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.PlaySfx(reloadClip, transform.position);
-        }
-
-        _reloadCoroutine = null;
+        if (_chargeSources[index] != null) _chargeSources[index].Stop();
     }
 
-    private bool IsCharacterEntity(EntityId targetId)
+    private void PlayRelease(in AttackPerformedEvent attack)
     {
-        if (_entityRegistry == null)
-        {
-            if (Fusion.NetworkRunner.Instances != null)
-            {
-                foreach (var runner in Fusion.NetworkRunner.Instances)
-                {
-                    if (runner != null && runner.IsRunning)
-                    {
-                        _entityRegistry = runner.GetComponent<EntityRegistry>();
-                        if (_entityRegistry != null) break;
-                    }
-                }
-            }
-
-            if (_entityRegistry == null)
-            {
-                _entityRegistry = FindAnyObjectByType<EntityRegistry>();
-            }
-        }
-
-        if (_entityRegistry == null || targetId.Value == 0) return false;
-
-        if (_entityRegistry.TryGetDamageable(targetId, out IDamageable damageable))
-        {
-            return damageable is CharacterBase;
-        }
-
-        return false;
+        StopCharge(CueIndex(attack.SourceSlot));
+        WeaponAudioConfig config = ResolveAudioConfig(attack.WeaponCatalogIndexPlusOne);
+        Play(config, WeaponAudioCue.ReleaseKey(attack.AttackType,
+            config != null && config.TryGetClip("Cast", out _)), transform.position);
+        if (attack.AttackType != AttackType.Melee || config == null || AudioManager.Instance == null) return;
+        Vector2 origin = attack.Origin != Vector2.zero ? attack.Origin : (Vector2)transform.position;
+        Vector2 checkPosition = origin + attack.Direction * (_sceneryCheckRadius * 0.7f);
+        Collider2D obstacle = Physics2D.OverlapCircle(checkPosition, _sceneryCheckRadius, _obstacleLayers);
+        if (obstacle != null) Play(config, "Block", obstacle.transform.position);
     }
+
+    private void OnCombatFeedbackResolved(CombatPresentationEvent feedback)
+    {
+        if (feedback.Kind != CombatFeedbackKind.ConfirmedImpact || feedback.AppliedDamage <= 0f) return;
+        ResolveRunnerRegistry();
+        WeaponAudioConfig config = ResolveAudioConfig(feedback.WeaponCatalogIndexPlusOne);
+        Play(config, WeaponAudioCue.ImpactKey(IsCharacterEntity(feedback.TargetId),
+            config != null && config.TryGetClip("Attack", out _)),
+            new Vector3(feedback.HitPoint.x, feedback.HitPoint.y, transform.position.z));
+    }
+
+    private static void Play(WeaponAudioConfig config, string key, Vector3 position)
+    {
+        if (AudioManager.Instance != null && config != null && config.TryGetClip(key, out CustomClip clip))
+            AudioManager.Instance.PlaySfx(clip, position);
+    }
+
+    private bool IsCharacterEntity(EntityId targetId) =>
+        _entityRegistry != null && targetId.Value != 0 &&
+        _entityRegistry.TryGetDamageable(targetId, out IDamageable damageable) && damageable is CharacterBase;
 
     private WeaponAudioConfig ResolveAudioConfig(int confirmedWeaponIndexPlusOne = 0)
     {
         if (_equipmentSource == null)
-        {
             _equipmentSource = GetComponentInParent<PlayerWeaponEquipmentNetworkController>();
-        }
-
-        if (confirmedWeaponIndexPlusOne > 0)
+        if (confirmedWeaponIndexPlusOne > 0 && _equipmentSource != null &&
+            _equipmentSource.TryGetWeaponByCatalogIndexPlusOne(confirmedWeaponIndexPlusOne, out LootDefinition weapon))
         {
-            return _equipmentSource != null &&
-                _equipmentSource.TryGetWeaponByCatalogIndexPlusOne(
-                    confirmedWeaponIndexPlusOne, out LootDefinition confirmedWeapon)
-                ? confirmedWeapon.WeaponDefinition.AudioConfig ?? _fallbackAudioConfig
-                : _fallbackAudioConfig;
+            WeaponAudioConfig config = weapon.WeaponDefinition.AudioConfig;
+            if (config != null) return config;
         }
-
-        if (_equipmentSource != null && _equipmentSource.TryGetEquippedDefinition(out LootDefinition lootDefinition))
-        {
-            if (lootDefinition != null && lootDefinition.WeaponDefinition != null && lootDefinition.WeaponDefinition.AudioConfig != null)
-            {
-                return lootDefinition.WeaponDefinition.AudioConfig;
-            }
-        }
-
         return _fallbackAudioConfig;
     }
 }

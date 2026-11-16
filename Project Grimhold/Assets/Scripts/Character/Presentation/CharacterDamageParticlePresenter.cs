@@ -19,10 +19,10 @@ public sealed class CharacterDamageParticlePresenter : MonoBehaviour
     [SerializeField, Min(0f)]
     private float _healthEpsilon = 0.001f;
 
-    [SerializeField, Min(0f), Tooltip("One-shot coalescing window for attacker-local confirmed melee particles, in seconds.")]
+    [SerializeField, Min(0f), Tooltip("One-shot coalescing window for attacker-local confirmed weapon particles, in seconds.")]
     private float _meleeMergeWindowSeconds = .15f;
 
-    [SerializeField, Tooltip("Use this target's body color for confirmed melee impact particles only.")]
+    [SerializeField, Tooltip("Use this target's body color for confirmed weapon impact particles only.")]
     private bool _overrideMeleeImpactColor;
 
     [SerializeField]
