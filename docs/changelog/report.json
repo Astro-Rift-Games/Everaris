@@ -1,73 +1,73 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1135,
-  "canonicalEntries": 1132,
+  "rawCommits": 1137,
+  "canonicalEntries": 1134,
   "before": {
+    "Features": 401,
     "Other Changes": 368,
     "Architecture & Infrastructure": 24,
     "Documentation": 122,
     "Bug Fixes": 165,
     "Tests": 43,
-    "Features": 399,
     "Refactoring": 14
   },
   "after": {
+    "Features": 539,
     "Other Changes": 176,
     "Maintenance": 22,
     "Documentation": 138,
     "Bug Fixes": 181,
     "Tests": 48,
-    "Features": 537,
     "Architecture & Infrastructure": 6,
     "Refactoring": 27
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Combat": 377,
+    "Abilities": 134,
+    "Inventory & Loot": 453,
+    "Art & Animation": 246,
+    "Build & Tooling": 581,
+    "Tests": 713,
+    "Movement": 97,
+    "Networking & Sessions": 337,
+    "Persistence & Backend": 283,
+    "Audio": 37,
+    "Input": 31,
+    "Documentation": 424,
     "World & Visibility": 150,
-    "Art & Animation": 244,
-    "Combat": 375,
     "UI": 333,
-    "Movement": 96,
-    "Documentation": 423,
     "Unassigned": 42,
-    "Extraction": 167,
-    "Inventory & Loot": 452,
-    "Networking & Sessions": 336,
-    "Persistence & Backend": 282,
-    "Build & Tooling": 579,
-    "Tests": 711,
-    "Abilities": 132,
-    "Audio": 36,
-    "Input": 30
+    "Extraction": 167
   },
   "canonical": {
     "sections": {
+      "Features": 538,
       "Other Changes": 175,
       "Maintenance": 22,
       "Documentation": 138,
       "Bug Fixes": 180,
       "Tests": 48,
-      "Features": 536,
       "Architecture & Infrastructure": 6,
       "Refactoring": 27
     },
     "systems": {
+      "Combat": 375,
+      "Abilities": 132,
+      "Inventory & Loot": 453,
+      "Art & Animation": 243,
+      "Build & Tooling": 579,
+      "Tests": 711,
+      "Movement": 97,
+      "Networking & Sessions": 337,
+      "Persistence & Backend": 283,
+      "Audio": 37,
+      "Input": 31,
+      "Documentation": 422,
       "World & Visibility": 148,
-      "Art & Animation": 241,
-      "Combat": 373,
       "UI": 332,
-      "Movement": 96,
-      "Documentation": 421,
       "Unassigned": 42,
-      "Extraction": 167,
-      "Inventory & Loot": 452,
-      "Networking & Sessions": 336,
-      "Persistence & Backend": 282,
-      "Build & Tooling": 577,
-      "Tests": 709,
-      "Abilities": 130,
-      "Audio": 36,
-      "Input": 30
+      "Extraction": 167
     }
   },
   "unknownEntries": [
@@ -74524,8 +74524,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 258,
-      "canonicalEntries": 258
+      "originalCommits": 260,
+      "canonicalEntries": 260
     },
     {
       "key": "v0.5.0",
@@ -74569,6 +74569,1214 @@
     }
   ],
   "commits": [
+    {
+      "sha": "a3b1344a383af592b6838b1dfdc81bc2e01a4914",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a3b1344a383af592b6838b1dfdc81bc2e01a4914",
+      "subject": "feat(art): give each ranged weapon its own projectile sprite",
+      "body": "Player ranged weapons share RangePlayerAttackConfig and\nMagicProjectile.prefab, so bolts looked like arrows. Each weapon now\npoints to a sprite-only ProjectileVisualProfile, applied locally from\nthe replicated weapon tag by ProjectileVisualProfilePresenter.\n\n- LongBow: Arrow-V2; CompoundBow: Arrow-V1; MagicStaff: MagicMissile;\n  MagicWand: MagicDart-V1; TrainingWand: MagicDart-V2. LightCrossbow,\n  the ArcaneProjectile ability and the base PlaceholderProjectile\n  prefab are unchanged.\n- New sprites imported like the existing projectile art: 16 PPU,\n  Point filter, Full Rect, uncompressed, max size 64. MagicMissile and\n  MagicDart-V2 slices cover the full texture.\n- MagicProjectile.prefab variant adds the presenter, wired to the\n  equipment catalog and the visual child SpriteRenderer and Animator.\n- Editor saves materialized value-equivalent serialization in the\n  weapon definitions (FormerlySerializedAs release field rename, zero\n  reload/hitstop/shake defaults) and the prefab (ally damage\n  multiplier 1); no effective value changed.\n\nTests: ProjectileVisualAssignmentTests (mapping, import settings,\nprefab wiring, crossbow preservation, orientation).\n\nPlayer-Added: Long bows, compound bows, staves and wands now fire their own distinct arrows and magic missiles.\n",
+      "date": "2026-11-15T21:47:11-03:00",
+      "files": [
+        "Project Grimhold/Assets/Art/Projectiles/New.meta",
+        "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V1.png",
+        "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V1.png.meta",
+        "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V2.png",
+        "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V2.png.meta",
+        "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V1.png",
+        "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V1.png.meta",
+        "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V2.png",
+        "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V2.png.meta",
+        "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicMissile.png",
+        "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicMissile.png.meta",
+        "Project Grimhold/Assets/Prefabs/MagicProjectile.prefab",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicStaffProjectileVisual.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicStaffProjectileVisual.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicWandProjectileVisual.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicWandProjectileVisual.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/TrainingWandProjectileVisual.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/TrainingWandProjectileVisual.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CompoundBowWeaponDefinition.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LongBowWeaponDefinition.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaffWeaponDefinition.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWandWeaponDefinition.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TrainingWandWeaponDefinition.asset",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "art",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Abilities",
+        "Inventory & Loot",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V1.png",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V1.png.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V2.png",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V2.png.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V1.png",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V1.png.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V2.png",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V2.png.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicMissile.png",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicMissile.png.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/MagicProjectile.prefab",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicStaffProjectileVisual.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicStaffProjectileVisual.asset.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicWandProjectileVisual.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicWandProjectileVisual.asset.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/TrainingWandProjectileVisual.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/TrainingWandProjectileVisual.asset.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CompoundBowWeaponDefinition.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LongBowWeaponDefinition.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaffWeaponDefinition.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWandWeaponDefinition.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TrainingWandWeaponDefinition.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "ability",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CompoundBowWeaponDefinition.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LongBowWeaponDefinition.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaffWeaponDefinition.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWandWeaponDefinition.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TrainingWandWeaponDefinition.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V1.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V1.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V2.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V2.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V1.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V1.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V2.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V2.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicMissile.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicMissile.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "scope",
+          "value": "art",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "sprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "ce7b91ad70a44eaeb6957510221287811bdb3439",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ce7b91ad70a44eaeb6957510221287811bdb3439",
+      "subject": "feat(combat): finish combat and magic weapon game feel presentation",
+      "body": "Confirmed ranged impacts now share the melee feedback pipeline, audio\nand camera feedback follow the real release moment, and magic weapons\nget optional casting, projectile and impact presentation. Presentation\nonly: no damage, release timing, collision, cooldown, knockback, mana\nor Game Design value changes. All new asset fields are optional and\nkeep today's look and sound when empty.\n\nContracts reviewers should verify:\n- WeaponAttackTag (slot, sequence, catalog index, attack type) travels\n  ProjectileSpawnRequest -> four [Networked] ints on NetworkProjectile\n  -> DamageRequest -> RecordResolvedDamage; IsFatal and DamageType are\n  forwarded by RPC_ReceiveCombatFeedback. Untagged sources degrade to\n  generic feedback without logs.\n- Hitstop and target freeze stay melee-only; hit reaction and impact\n  particles apply to any tagged weapon impact.\n- Swing/Shoot/Cast play at release on the shared presentation clock and\n  never replay on resume; Charge plays per hand and is cut on release\n  or cancel; character impacts use Attack, falling back to Hit; Reload\n  follows the hand reload state.\n- NetworkProjectile raises Expired (excluding shutdown and Host\n  Migration) and replicates ExpiryConsumed; [CombatTrace] logs removed.\n- Ranged windup pose and release VFX use the committed direction via\n  PlayerWeaponPresenter.ResolveAttackVfxPivotAngle.\n- Deal-shake: per-weapon override, kill multiplier 1.5, directional\n  kick through the aim-compensated ShakeOffset (strength 0 by default).\n- ProjectileVisualProfile per weapon, applied locally from the\n  replicated tag; projectile particles also play on character hits.\n- Optional windup charge (ramp .25->1, full draw x1.5) and release\n  burst; damage-type tint for impact particles and damage numbers;\n  PlayerAttackVfxPresenter still requires its tint palette.\n\nTests added or generalized: WeaponAttackTagTests, WeaponAudioCueTests,\nWeaponAudioPresenterTests, CameraShakeDealTests, AimStanceDrawCueTests,\nCommittedAimDirectionTests, DamageNumberStyleTests,\nWindupChargeWindowTests, ProjectileVisualProfileTests,\nProjectilePresentationPlayModeTests, AttackReleaseBurstLifetimeTests,\nPlayerCombatNetworkControllerPlayModeTests and presentation seam tests.\n\nDocs: PlayerCombatArchitecture.md and GameFeelParticlesArchitecture.md.\nTrackers odd/tasks/combat-game-feel.md and magic-weapon-feel.md list\nthe pending asset wiring and possible improvements.\n\nPlayer-Improved: Bow and staff shots now sound exactly when the projectile leaves, and reload sounds start when reloading actually begins.\nPlayer-Improved: While drawing a ranged attack, the weapon and its effect stay pointed where you aimed until the shot fires.\nPlayer-Improved: Finishing blows show a larger golden damage number and a stronger camera shake.\nPlayer-Improved: Projectiles now burst with particles when they hit a character, not only walls.\nPlayer-Fixed: Sword hits on characters play their hit sound again.\n",
+      "date": "2026-11-15T21:46:59-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Audio/AudioManager.cs",
+        "Project Grimhold/Assets/Scripts/Audio/WeaponAudioConfig.cs",
+        "Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs",
+        "Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/WeaponAudioPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Character/Presentation/CharacterDamageParticlePresenter.cs",
+        "Project Grimhold/Assets/Scripts/Character/Presentation/DamageFeedbackPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Combat/FusionProjectileSpawner.cs",
+        "Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs",
+        "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileExpiryParticlePresenter.cs",
+        "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileExpiryParticlePresenter.cs.meta",
+        "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileImpactParticlePresenter.cs",
+        "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileParticlePlayer.cs",
+        "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileParticlePlayer.cs.meta",
+        "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileTrailDetacher.cs",
+        "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileTrailDetacher.cs.meta",
+        "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs",
+        "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs.meta",
+        "Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs",
+        "Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs.meta",
+        "Project Grimhold/Assets/Scripts/Combat/RangedAttackRelease.cs",
+        "Project Grimhold/Assets/Scripts/Combat/WeaponDealShake.cs",
+        "Project Grimhold/Assets/Scripts/Combat/WeaponDealShake.cs.meta",
+        "Project Grimhold/Assets/Scripts/Combat/WeaponDefinition.cs",
+        "Project Grimhold/Assets/Scripts/Combat/WindupChargeVfx.cs",
+        "Project Grimhold/Assets/Scripts/Combat/WindupChargeVfx.cs.meta",
+        "Project Grimhold/Assets/Scripts/Core/CombatPresentationEvent.cs",
+        "Project Grimhold/Assets/Scripts/Core/DamageRequest.cs",
+        "Project Grimhold/Assets/Scripts/Core/ProjectileSpawnRequest.cs",
+        "Project Grimhold/Assets/Scripts/Core/WeaponAttackTag.cs",
+        "Project Grimhold/Assets/Scripts/Core/WeaponAttackTag.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Combat/PlayerCombatNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Movement/AimStanceDrawCue.cs",
+        "Project Grimhold/Assets/Scripts/Player/Movement/AimStanceDrawCue.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Movement/PlayerMovementNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/AimStanceDrawPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/AimStanceDrawPresenter.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/AttackReleaseBurstLifetime.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/AttackReleaseBurstLifetime.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/CameraShakeConfig.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/CameraShakeController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/CombatFeedbackPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/CombatShakeWeights.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/CombatShakeWeights.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/CommittedAimDirection.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/CommittedAimDirection.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/LocalPlayerCameraShakeBinder.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/PlayerAnimatorView.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/PlayerAttackVfxPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/PlayerWeaponPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/WindupChargePresentation.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/WindupChargePresentation.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/WindupChargeWindow.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/WindupChargeWindow.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeHitReactionProfileTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/AimStanceDrawCueTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/AimStanceDrawCueTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/CommittedAimDirectionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/CommittedAimDirectionTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/WindupChargeWindowTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/WindupChargeWindowTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/ArcaneProjectileAbilityPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Combat.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/PlayerCombatNetworkControllerPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/AttackReleaseBurstLifetimeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/AttackReleaseBurstLifetimeTests.cs.meta",
+        "Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md",
+        "Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md",
+        "odd/tasks/combat-game-feel.md",
+        "odd/tasks/magic-weapon-feel.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "combat",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Abilities",
+        "Movement",
+        "Networking & Sessions",
+        "Persistence & Backend",
+        "Audio",
+        "Art & Animation",
+        "Input",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/WeaponAudioConfig.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/WeaponAudioPresenter.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Character/Presentation/CharacterDamageParticlePresenter.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Character/Presentation/DamageFeedbackPresenter.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/FusionProjectileSpawner.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileExpiryParticlePresenter.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileExpiryParticlePresenter.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileImpactParticlePresenter.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileParticlePlayer.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileParticlePlayer.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileTrailDetacher.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileTrailDetacher.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/RangedAttackRelease.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/WeaponDealShake.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/WeaponDealShake.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/WeaponDefinition.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/WindupChargeVfx.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/WindupChargeVfx.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Core/CombatPresentationEvent.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Core/DamageRequest.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Core/ProjectileSpawnRequest.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Core/WeaponAttackTag.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Core/WeaponAttackTag.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Combat/PlayerCombatNetworkController.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/AttackReleaseBurstLifetime.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/AttackReleaseBurstLifetime.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/CombatFeedbackPresenter.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/CombatShakeWeights.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/CombatShakeWeights.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/PlayerAttackVfxPresenter.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/PlayerWeaponPresenter.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeHitReactionProfileTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/ArcaneProjectileAbilityPlayModeTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Combat.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/PlayerCombatNetworkControllerPlayModeTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/AttackReleaseBurstLifetimeTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/AttackReleaseBurstLifetimeTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/combat-game-feel.md",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/magic-weapon-feel.md",
+          "supports": "Combat"
+        },
+        {
+          "source": "scope",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/ArcaneProjectileAbilityPlayModeTests.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "message-term",
+          "value": "casting",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Movement/AimStanceDrawCue.cs",
+          "supports": "Movement"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Movement/AimStanceDrawCue.cs.meta",
+          "supports": "Movement"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Movement/PlayerMovementNetworkController.cs",
+          "supports": "Movement"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/FusionProjectileSpawner.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeHitReactionProfileTests.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/AudioManager.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/WeaponAudioConfig.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/WeaponAudioPresenter.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "message-term",
+          "value": "audio",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/PlayerAnimatorView.cs",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs",
+          "supports": "Input"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeHitReactionProfileTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/AimStanceDrawCueTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/AimStanceDrawCueTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/CommittedAimDirectionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/CommittedAimDirectionTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/WindupChargeWindowTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/WindupChargeWindowTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeHitReactionProfileTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/AimStanceDrawCueTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/AimStanceDrawCueTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/CommittedAimDirectionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/CommittedAimDirectionTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/WindupChargeWindowTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/WindupChargeWindowTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/ArcaneProjectileAbilityPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Combat.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/PlayerCombatNetworkControllerPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/AttackReleaseBurstLifetimeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/AttackReleaseBurstLifetimeTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "cf305f3703fd55d6eb40f7548129d41e6bb94ffb",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/cf305f3703fd55d6eb40f7548129d41e6bb94ffb",

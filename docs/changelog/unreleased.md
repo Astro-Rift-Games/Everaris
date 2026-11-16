@@ -4,32 +4,489 @@
 
 Release: Unreleased
 
-258 original commits; 258 canonical entries.
+260 original commits; 260 canonical entries.
 
 ## Canonical classification
 
-77 features; 87 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 14 other changes
+79 features; 87 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 14 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Abilities | 8 | 9 | 1 | 0 | 9 | 1 |
-| Art & Animation | 10 | 9 | 1 | 0 | 9 | 5 |
-| Audio | 4 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 51 | 57 | 1 | 1 | 22 | 6 |
-| Combat | 34 | 12 | 0 | 0 | 12 | 1 |
-| Documentation | 29 | 38 | 0 | 0 | 13 | 0 |
+| Abilities | 10 | 9 | 1 | 0 | 9 | 1 |
+| Art & Animation | 12 | 9 | 1 | 0 | 9 | 5 |
+| Audio | 5 | 2 | 0 | 0 | 0 | 0 |
+| Build & Tooling | 53 | 57 | 1 | 1 | 22 | 6 |
+| Combat | 36 | 12 | 0 | 0 | 12 | 1 |
+| Documentation | 30 | 38 | 0 | 0 | 13 | 0 |
 | Extraction | 15 | 21 | 0 | 0 | 9 | 3 |
-| Input | 0 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 56 | 51 | 1 | 1 | 24 | 3 |
-| Movement | 3 | 2 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 27 | 33 | 0 | 0 | 18 | 2 |
-| Persistence & Backend | 28 | 46 | 0 | 1 | 19 | 3 |
-| Tests | 74 | 81 | 1 | 1 | 29 | 4 |
+| Input | 1 | 1 | 0 | 0 | 1 | 0 |
+| Inventory & Loot | 57 | 51 | 1 | 1 | 24 | 3 |
+| Movement | 4 | 2 | 0 | 0 | 2 | 0 |
+| Networking & Sessions | 28 | 33 | 0 | 0 | 18 | 2 |
+| Persistence & Backend | 29 | 46 | 0 | 1 | 19 | 3 |
+| Tests | 76 | 81 | 1 | 1 | 29 | 4 |
 | UI | 31 | 18 | 1 | 0 | 12 | 2 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
 | World & Visibility | 19 | 9 | 0 | 0 | 3 | 9 |
 
 ## Original commit records
+
+### a3b1344a383af592b6838b1dfdc81bc2e01a4914
+
+[a3b1344a383af592b6838b1dfdc81bc2e01a4914](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a3b1344a383af592b6838b1dfdc81bc2e01a4914)
+
+Date: 2026-11-15T21:47:11-03:00 · Classification: Features (explicit) · Systems: Combat, Abilities, Inventory & Loot, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(art): give each ranged weapon its own projectile sprite
+```
+
+#### Original body
+
+```text
+Player ranged weapons share RangePlayerAttackConfig and
+MagicProjectile.prefab, so bolts looked like arrows. Each weapon now
+points to a sprite-only ProjectileVisualProfile, applied locally from
+the replicated weapon tag by ProjectileVisualProfilePresenter.
+
+- LongBow: Arrow-V2; CompoundBow: Arrow-V1; MagicStaff: MagicMissile;
+  MagicWand: MagicDart-V1; TrainingWand: MagicDart-V2. LightCrossbow,
+  the ArcaneProjectile ability and the base PlaceholderProjectile
+  prefab are unchanged.
+- New sprites imported like the existing projectile art: 16 PPU,
+  Point filter, Full Rect, uncompressed, max size 64. MagicMissile and
+  MagicDart-V2 slices cover the full texture.
+- MagicProjectile.prefab variant adds the presenter, wired to the
+  equipment catalog and the visual child SpriteRenderer and Animator.
+- Editor saves materialized value-equivalent serialization in the
+  weapon definitions (FormerlySerializedAs release field rename, zero
+  reload/hitstop/shake defaults) and the prefab (ally damage
+  multiplier 1); no effective value changed.
+
+Tests: ProjectileVisualAssignmentTests (mapping, import settings,
+prefab wiring, crossbow preservation, orientation).
+
+Player-Added: Long bows, compound bows, staves and wands now fire their own distinct arrows and magic missiles.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Art/Projectiles/New.meta
+Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V1.png
+Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V1.png.meta
+Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V2.png
+Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V2.png.meta
+Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V1.png
+Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V1.png.meta
+Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V2.png
+Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V2.png.meta
+Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicMissile.png
+Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicMissile.png.meta
+Project Grimhold/Assets/Prefabs/MagicProjectile.prefab
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals.meta
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicStaffProjectileVisual.asset
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicStaffProjectileVisual.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicWandProjectileVisual.asset
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicWandProjectileVisual.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/TrainingWandProjectileVisual.asset
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/TrainingWandProjectileVisual.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CompoundBowWeaponDefinition.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LongBowWeaponDefinition.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaffWeaponDefinition.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWandWeaponDefinition.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TrainingWandWeaponDefinition.asset
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Art/Projectiles/New.meta
+- path → Combat: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V1.png
+- path → Combat: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V1.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V2.png
+- path → Combat: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V2.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V1.png
+- path → Combat: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V1.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V2.png
+- path → Combat: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V2.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicMissile.png
+- path → Combat: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicMissile.png.meta
+- path → Combat: Project Grimhold/Assets/Prefabs/MagicProjectile.prefab
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals.meta
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset.meta
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset.meta
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicStaffProjectileVisual.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicStaffProjectileVisual.asset.meta
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicWandProjectileVisual.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicWandProjectileVisual.asset.meta
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/TrainingWandProjectileVisual.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/TrainingWandProjectileVisual.asset.meta
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CompoundBowWeaponDefinition.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LongBowWeaponDefinition.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaffWeaponDefinition.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWandWeaponDefinition.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TrainingWandWeaponDefinition.asset
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs.meta
+- message-term → Combat: weapon
+- message-term → Abilities: ability
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CompoundBowWeaponDefinition.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LongBowWeaponDefinition.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaffWeaponDefinition.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWandWeaponDefinition.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TrainingWandWeaponDefinition.asset
+- message-term → Inventory &amp; Loot: equipment
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Projectiles/New.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V1.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V1.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V2.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-Arrow-V2.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V1.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V1.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V2.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicDart-V2.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicMissile.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Projectiles/New/Projectiles-MagicMissile.png.meta
+- scope → Art &amp; Animation: art
+- message-term → Art &amp; Animation: sprite
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### ce7b91ad70a44eaeb6957510221287811bdb3439
+
+[ce7b91ad70a44eaeb6957510221287811bdb3439](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ce7b91ad70a44eaeb6957510221287811bdb3439)
+
+Date: 2026-11-15T21:46:59-03:00 · Classification: Features (explicit) · Systems: Combat, Abilities, Movement, Networking & Sessions, Persistence & Backend, Audio, Art & Animation, Input, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(combat): finish combat and magic weapon game feel presentation
+```
+
+#### Original body
+
+```text
+Confirmed ranged impacts now share the melee feedback pipeline, audio
+and camera feedback follow the real release moment, and magic weapons
+get optional casting, projectile and impact presentation. Presentation
+only: no damage, release timing, collision, cooldown, knockback, mana
+or Game Design value changes. All new asset fields are optional and
+keep today's look and sound when empty.
+
+Contracts reviewers should verify:
+- WeaponAttackTag (slot, sequence, catalog index, attack type) travels
+  ProjectileSpawnRequest -> four [Networked] ints on NetworkProjectile
+  -> DamageRequest -> RecordResolvedDamage; IsFatal and DamageType are
+  forwarded by RPC_ReceiveCombatFeedback. Untagged sources degrade to
+  generic feedback without logs.
+- Hitstop and target freeze stay melee-only; hit reaction and impact
+  particles apply to any tagged weapon impact.
+- Swing/Shoot/Cast play at release on the shared presentation clock and
+  never replay on resume; Charge plays per hand and is cut on release
+  or cancel; character impacts use Attack, falling back to Hit; Reload
+  follows the hand reload state.
+- NetworkProjectile raises Expired (excluding shutdown and Host
+  Migration) and replicates ExpiryConsumed; [CombatTrace] logs removed.
+- Ranged windup pose and release VFX use the committed direction via
+  PlayerWeaponPresenter.ResolveAttackVfxPivotAngle.
+- Deal-shake: per-weapon override, kill multiplier 1.5, directional
+  kick through the aim-compensated ShakeOffset (strength 0 by default).
+- ProjectileVisualProfile per weapon, applied locally from the
+  replicated tag; projectile particles also play on character hits.
+- Optional windup charge (ramp .25->1, full draw x1.5) and release
+  burst; damage-type tint for impact particles and damage numbers;
+  PlayerAttackVfxPresenter still requires its tint palette.
+
+Tests added or generalized: WeaponAttackTagTests, WeaponAudioCueTests,
+WeaponAudioPresenterTests, CameraShakeDealTests, AimStanceDrawCueTests,
+CommittedAimDirectionTests, DamageNumberStyleTests,
+WindupChargeWindowTests, ProjectileVisualProfileTests,
+ProjectilePresentationPlayModeTests, AttackReleaseBurstLifetimeTests,
+PlayerCombatNetworkControllerPlayModeTests and presentation seam tests.
+
+Docs: PlayerCombatArchitecture.md and GameFeelParticlesArchitecture.md.
+Trackers odd/tasks/combat-game-feel.md and magic-weapon-feel.md list
+the pending asset wiring and possible improvements.
+
+Player-Improved: Bow and staff shots now sound exactly when the projectile leaves, and reload sounds start when reloading actually begins.
+Player-Improved: While drawing a ranged attack, the weapon and its effect stay pointed where you aimed until the shot fires.
+Player-Improved: Finishing blows show a larger golden damage number and a stronger camera shake.
+Player-Improved: Projectiles now burst with particles when they hit a character, not only walls.
+Player-Fixed: Sword hits on characters play their hit sound again.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Audio/AudioManager.cs
+Project Grimhold/Assets/Scripts/Audio/WeaponAudioConfig.cs
+Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs
+Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs.meta
+Project Grimhold/Assets/Scripts/Audio/WeaponAudioPresenter.cs
+Project Grimhold/Assets/Scripts/Character/Presentation/CharacterDamageParticlePresenter.cs
+Project Grimhold/Assets/Scripts/Character/Presentation/DamageFeedbackPresenter.cs
+Project Grimhold/Assets/Scripts/Combat/FusionProjectileSpawner.cs
+Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs
+Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileExpiryParticlePresenter.cs
+Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileExpiryParticlePresenter.cs.meta
+Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileImpactParticlePresenter.cs
+Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileParticlePlayer.cs
+Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileParticlePlayer.cs.meta
+Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileTrailDetacher.cs
+Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileTrailDetacher.cs.meta
+Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs
+Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs.meta
+Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs
+Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs.meta
+Project Grimhold/Assets/Scripts/Combat/RangedAttackRelease.cs
+Project Grimhold/Assets/Scripts/Combat/WeaponDealShake.cs
+Project Grimhold/Assets/Scripts/Combat/WeaponDealShake.cs.meta
+Project Grimhold/Assets/Scripts/Combat/WeaponDefinition.cs
+Project Grimhold/Assets/Scripts/Combat/WindupChargeVfx.cs
+Project Grimhold/Assets/Scripts/Combat/WindupChargeVfx.cs.meta
+Project Grimhold/Assets/Scripts/Core/CombatPresentationEvent.cs
+Project Grimhold/Assets/Scripts/Core/DamageRequest.cs
+Project Grimhold/Assets/Scripts/Core/ProjectileSpawnRequest.cs
+Project Grimhold/Assets/Scripts/Core/WeaponAttackTag.cs
+Project Grimhold/Assets/Scripts/Core/WeaponAttackTag.cs.meta
+Project Grimhold/Assets/Scripts/Player/Combat/PlayerCombatNetworkController.cs
+Project Grimhold/Assets/Scripts/Player/Movement/AimStanceDrawCue.cs
+Project Grimhold/Assets/Scripts/Player/Movement/AimStanceDrawCue.cs.meta
+Project Grimhold/Assets/Scripts/Player/Movement/PlayerMovementNetworkController.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/AimStanceDrawPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/AimStanceDrawPresenter.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/AttackReleaseBurstLifetime.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/AttackReleaseBurstLifetime.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/CameraShakeConfig.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/CameraShakeController.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/CombatFeedbackPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/CombatShakeWeights.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/CombatShakeWeights.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/CommittedAimDirection.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/CommittedAimDirection.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/LocalPlayerCameraShakeBinder.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/PlayerAnimatorView.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/PlayerAttackVfxPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/PlayerWeaponPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/WindupChargePresentation.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/WindupChargePresentation.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/WindupChargeWindow.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/WindupChargeWindow.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeHitReactionProfileTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/AimStanceDrawCueTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/AimStanceDrawCueTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/CommittedAimDirectionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/CommittedAimDirectionTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/WindupChargeWindowTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/WindupChargeWindowTests.cs.meta
+Project Grimhold/Assets/Tests/PlayMode/ArcaneProjectileAbilityPlayModeTests.cs
+Project Grimhold/Assets/Tests/PlayMode/Audio.meta
+Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs
+Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs.meta
+Project Grimhold/Assets/Tests/PlayMode/Combat.meta
+Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs
+Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs.meta
+Project Grimhold/Assets/Tests/PlayMode/PlayerCombatNetworkControllerPlayModeTests.cs
+Project Grimhold/Assets/Tests/PlayMode/Presentation/AttackReleaseBurstLifetimeTests.cs
+Project Grimhold/Assets/Tests/PlayMode/Presentation/AttackReleaseBurstLifetimeTests.cs.meta
+Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md
+Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md
+odd/tasks/combat-game-feel.md
+odd/tasks/magic-weapon-feel.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Scripts/Audio/WeaponAudioConfig.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Audio/WeaponAudioPresenter.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Character/Presentation/CharacterDamageParticlePresenter.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Character/Presentation/DamageFeedbackPresenter.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/FusionProjectileSpawner.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileExpiryParticlePresenter.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileExpiryParticlePresenter.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileImpactParticlePresenter.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileParticlePlayer.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileParticlePlayer.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileTrailDetacher.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileTrailDetacher.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/RangedAttackRelease.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/WeaponDealShake.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/WeaponDealShake.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/WeaponDefinition.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/WindupChargeVfx.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/WindupChargeVfx.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Core/CombatPresentationEvent.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Core/DamageRequest.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Core/ProjectileSpawnRequest.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Core/WeaponAttackTag.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Core/WeaponAttackTag.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Combat/PlayerCombatNetworkController.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Presentation/AttackReleaseBurstLifetime.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Presentation/AttackReleaseBurstLifetime.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Presentation/CombatFeedbackPresenter.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Presentation/CombatShakeWeights.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Presentation/CombatShakeWeights.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Presentation/PlayerAttackVfxPresenter.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Presentation/PlayerWeaponPresenter.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs.meta
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeHitReactionProfileTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs.meta
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs.meta
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs.meta
+- path → Combat: Project Grimhold/Assets/Tests/PlayMode/ArcaneProjectileAbilityPlayModeTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs.meta
+- path → Combat: Project Grimhold/Assets/Tests/PlayMode/Combat.meta
+- path → Combat: Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs.meta
+- path → Combat: Project Grimhold/Assets/Tests/PlayMode/PlayerCombatNetworkControllerPlayModeTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/PlayMode/Presentation/AttackReleaseBurstLifetimeTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/PlayMode/Presentation/AttackReleaseBurstLifetimeTests.cs.meta
+- path → Combat: Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md
+- path → Combat: odd/tasks/combat-game-feel.md
+- path → Combat: odd/tasks/magic-weapon-feel.md
+- scope → Combat: combat
+- message-term → Combat: combat
+- path → Abilities: Project Grimhold/Assets/Tests/PlayMode/ArcaneProjectileAbilityPlayModeTests.cs
+- message-term → Abilities: casting
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/AimStanceDrawCue.cs
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/AimStanceDrawCue.cs.meta
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/PlayerMovementNetworkController.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Combat/FusionProjectileSpawner.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeHitReactionProfileTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs.meta
+- path → Audio: Project Grimhold/Assets/Scripts/Audio/AudioManager.cs
+- path → Audio: Project Grimhold/Assets/Scripts/Audio/WeaponAudioConfig.cs
+- path → Audio: Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs
+- path → Audio: Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs.meta
+- path → Audio: Project Grimhold/Assets/Scripts/Audio/WeaponAudioPresenter.cs
+- path → Audio: Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs
+- path → Audio: Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs.meta
+- path → Audio: Project Grimhold/Assets/Tests/PlayMode/Audio.meta
+- path → Audio: Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs
+- path → Audio: Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs.meta
+- message-term → Audio: audio
+- path → Art &amp; Animation: Project Grimhold/Assets/Scripts/Player/Presentation/PlayerAnimatorView.cs
+- path → Input: Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeHitReactionProfileTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/AimStanceDrawCueTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/AimStanceDrawCueTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/CommittedAimDirectionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/CommittedAimDirectionTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/WindupChargeWindowTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/WindupChargeWindowTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Audio/WeaponAudioCueTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeHitReactionProfileTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileSpawnRequestTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualProfileTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WeaponAttackTagTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CameraShakeDealTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/AimStanceDrawCueTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/AimStanceDrawCueTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/CommittedAimDirectionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/CommittedAimDirectionTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DamageNumberStyleTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/WindupChargeWindowTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/WindupChargeWindowTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/ArcaneProjectileAbilityPlayModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Audio.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Combat.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/PlayerCombatNetworkControllerPlayModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/AttackReleaseBurstLifetimeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/AttackReleaseBurstLifetimeTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### cf305f3703fd55d6eb40f7548129d41e6bb94ffb
 

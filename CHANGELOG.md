@@ -22,6 +22,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Players are told on screen when the host leaves and who the new host is.
 - Dungeon wall torches now burn with an animated flickering flame.
 - Standard and locked chests now play an opening animation when opened.
+- Long bows, compound bows, staves and wands now fire their own distinct arrows and magic missiles.
 
 ### Improved
 
@@ -39,6 +40,10 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Abandoning a raid now clearly warns that you lose all your equipment.
 - When the Host cannot start a raid because a player's group is still loading in Town, the Host now sees a message asking to wait a few seconds and try again.
 - Minor damage ticks no longer trigger an aggressive screen hit flash.
+- Bow and staff shots now sound exactly when the projectile leaves, and reload sounds start when reloading actually begins.
+- While drawing a ranged attack, the weapon and its effect stay pointed where you aimed until the shot fires.
+- Finishing blows show a larger golden damage number and a stronger camera shake.
+- Projectiles now burst with particles when they hit a character, not only walls.
 
 ### Fixed
 
@@ -89,6 +94,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Fixed an issue where entering a raid with a shield in the first weapon set bounced the player back to Town.
 - The dungeon collapse phase no longer triggers prematurely before 8 minutes of raid time.
 - Re-entering the Downed state quickly after being revived no longer carries over visual darkening or color tint from the previous cycle.
+- Sword hits on characters play their hit sound again.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08
