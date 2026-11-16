@@ -23,6 +23,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Dungeon wall torches now burn with an animated flickering flame.
 - Standard and locked chests now play an opening animation when opened.
 - Long bows, compound bows, staves and wands now fire their own distinct arrows and magic missiles.
+- Raids now take place in the new Catacombs map, with eight extraction sanctuaries and many more enemies, chests and breakables to find.
 
 ### Improved
 
@@ -44,6 +45,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - While drawing a ranged attack, the weapon and its effect stay pointed where you aimed until the shot fires.
 - Finishing blows show a larger golden damage number and a stronger camera shake.
 - Projectiles now burst with particles when they hit a character, not only walls.
+- Extraction sanctuaries have new art and visibly light up while their activation ritual runs.
 
 ### Fixed
 

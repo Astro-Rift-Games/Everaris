@@ -4,32 +4,278 @@
 
 Release: Unreleased
 
-260 original commits; 260 canonical entries.
+262 original commits; 262 canonical entries.
 
 ## Canonical classification
 
-79 features; 87 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 14 other changes
+81 features; 87 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 14 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 10 | 9 | 1 | 0 | 9 | 1 |
-| Art & Animation | 12 | 9 | 1 | 0 | 9 | 5 |
-| Audio | 5 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 53 | 57 | 1 | 1 | 22 | 6 |
-| Combat | 36 | 12 | 0 | 0 | 12 | 1 |
-| Documentation | 30 | 38 | 0 | 0 | 13 | 0 |
-| Extraction | 15 | 21 | 0 | 0 | 9 | 3 |
+| Art & Animation | 13 | 9 | 1 | 0 | 9 | 5 |
+| Audio | 7 | 2 | 0 | 0 | 0 | 0 |
+| Build & Tooling | 55 | 57 | 1 | 1 | 22 | 6 |
+| Combat | 37 | 12 | 0 | 0 | 12 | 1 |
+| Documentation | 31 | 38 | 0 | 0 | 13 | 0 |
+| Extraction | 17 | 21 | 0 | 0 | 9 | 3 |
 | Input | 1 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 57 | 51 | 1 | 1 | 24 | 3 |
+| Inventory & Loot | 58 | 51 | 1 | 1 | 24 | 3 |
 | Movement | 4 | 2 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 28 | 33 | 0 | 0 | 18 | 2 |
+| Networking & Sessions | 29 | 33 | 0 | 0 | 18 | 2 |
 | Persistence & Backend | 29 | 46 | 0 | 1 | 19 | 3 |
-| Tests | 76 | 81 | 1 | 1 | 29 | 4 |
-| UI | 31 | 18 | 1 | 0 | 12 | 2 |
+| Tests | 78 | 81 | 1 | 1 | 29 | 4 |
+| UI | 32 | 18 | 1 | 0 | 12 | 2 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
-| World & Visibility | 19 | 9 | 0 | 0 | 3 | 9 |
+| World & Visibility | 20 | 9 | 0 | 0 | 3 | 9 |
 
 ## Original commit records
+
+### 2179227613c99c45bdb12140dd0f4ba15ee430b1
+
+[2179227613c99c45bdb12140dd0f4ba15ee430b1](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2179227613c99c45bdb12140dd0f4ba15ee430b1)
+
+Date: 2026-11-16T00:45:50-03:00 · Classification: Features (explicit) · Systems: Combat, Extraction, Inventory & Loot, Networking & Sessions, UI, World & Visibility, Audio, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(map): make Catacombs the playable raid map
+```
+
+#### Original body
+
+```text
+CatacombsMap was a tilemap graybox without gameplay wiring. It is now a
+complete minimal raid scene and replaces Gameplay as the raid that
+SessionConnectionCoordinator loads.
+
+- Eight ExtractionSanctuary instances on the user-placed points; their
+  Spawnpoint children form the eight player spawn areas (8 x 4 = 32
+  points >= MaxParticipants 16), following the Gameplay convention.
+- NetworkSpawnManager with a Required NetworkSpawnSceneConfiguration
+  using Gameplay's prefab/catalog references. Groups scaled to the map
+  size (about 16x Gameplay's floor): Enemies 64/64, Loot 64 of 96,
+  Breakables 64 of 96, Reinforcements 64/64 points. Markers were placed
+  on physics-checked floor reachable from every sanctuary, at least
+  15 units from sanctuaries (20 for combat groups).
+- PathfindingGrid, VisionFog, VisibilityManager, Gameplay Camera,
+  Global Light 2D, EventSystem and input objects; Catacombs minimap
+  declaration and generated CatacombsMinimapLayout.
+- Raid scene: _gameplaySceneName is CatacombsMap in Systems.prefab and
+  in the coordinator default. CatacombsMap is appended to Build Settings
+  at index 3; Gameplay stays at index 1 for its tests and tools. Host
+  Migration keeps preserving the running scene's build index.
+- LockedChest and LootContainer render on sorting layer 4, order 100.
+
+Out of scope: doors, traps, patrol routes (enemies idle until they see
+a player), torches, ambient particles, music, mission zone.
+
+Tests: CatacombsSceneCompositionTests, CatacombsMinimapSceneTests,
+CatacombsRaidSceneTests. Docs: SessionLifecycleAndSpawning,
+LobbyAndSessionTransitionArchitecture, RaidMainHudArchitecture and
+ExtractionArchitecture. Tracker: odd/tasks/catacombs-playable-map.md
+(Host/Client playtest and full-suite verification still pending).
+
+Player-Added: Raids now take place in the new Catacombs map, with eight extraction sanctuaries and many more enemies, chests and breakables to find.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset
+Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset.meta
+Project Grimhold/Assets/Prefabs/LockedChest.prefab
+Project Grimhold/Assets/Prefabs/LootContainer.prefab
+Project Grimhold/Assets/Prefabs/Systems.prefab
+Project Grimhold/Assets/Scenes/CatacombsMap.unity
+Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs.meta
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md
+Project Grimhold/Docs/Architecture/RaidMainHudArchitecture.md
+Project Grimhold/Docs/Architecture/SessionLifecycleAndSpawning.md
+Project Grimhold/ProjectSettings/EditorBuildSettings.asset
+odd/assets/catacombs-regions.png
+odd/tasks/catacombs-playable-map.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- message-term → Combat: combat
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- message-term → Extraction: extraction
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/LootContainer.prefab
+- message-term → Inventory &amp; Loot: Loot
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md
+- path → Networking &amp; Sessions: Project Grimhold/Docs/Architecture/SessionLifecycleAndSpawning.md
+- path → UI: Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset
+- path → UI: Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset.meta
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs.meta
+- path → UI: Project Grimhold/Docs/Architecture/RaidMainHudArchitecture.md
+- message-term → UI: minimap
+- path → World &amp; Visibility: Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset
+- path → World &amp; Visibility: Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scenes/CatacombsMap.unity
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs.meta
+- path → World &amp; Visibility: odd/assets/catacombs-regions.png
+- path → World &amp; Visibility: odd/tasks/catacombs-playable-map.md
+- message-term → World &amp; Visibility: Catacombs
+- message-term → Audio: music
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/ProjectSettings/EditorBuildSettings.asset
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/RaidMainHudArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/SessionLifecycleAndSpawning.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs.meta
+- message-term → Tests: tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### ffb2369aa664cfd8c26493b7d5289b6f91f3fd19
+
+[ffb2369aa664cfd8c26493b7d5289b6f91f3fd19](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ffb2369aa664cfd8c26493b7d5289b6f91f3fd19)
+
+Date: 2026-11-16T00:45:27-03:00 · Classification: Features (explicit) · Systems: Extraction, Audio, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(extraction): show sanctuary activation with Off/On sanctuary art
+```
+
+#### Original body
+
+```text
+Replaces the placeholder hole sprite and per-state color tints with the
+new sanctuary art. The sanctuary reads Off while free, assigned without
+a ritual or cancelled; during the ritual the On art fades in over Off
+by ritual progress with a soft pulse; once completed it stays On.
+
+- ExtractionSanctuary.prefab: gameplay root keeps scale 1.5, its 2x2
+  collider, zone references and Spawnpoint 1-4. A new Visuals child at
+  0.6666667 holds Off and OnOverlay renderers at local scale 1, so the
+  128 px art renders at 16 PPU world scale.
+- Off uses Sanctuary-Large-Inactive and OnOverlay Sanctuary-Large-Active
+  (16 PPU, Point, uncompressed, Full Rect). The other uploaded variants
+  (V1, V2, Small, Small-2x) are included but unused.
+- SanctuaryActivationVisual: pure overlay-alpha rule; the presenter no
+  longer tints the sprite. Audio cues, particles and owner-only cues
+  are unchanged.
+
+Tests: ExtractionSanctuaryPrefabTests (art, import settings, hierarchy,
+gameplay geometry, alpha per state).
+
+Player-Improved: Extraction sanctuaries have new art and visibly light up while their activation ritual runs.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Art/Props/Sanctuary.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active.png
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive.png
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active.png
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive.png
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active.png
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive.png
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1.png
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2.png
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1.png
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2.png
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2.png.meta
+Project Grimhold/Assets/Prefabs/ExtractionSanctuary.prefab
+Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryPresenter.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/SanctuaryActivationVisual.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/SanctuaryActivationVisual.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Extraction: Project Grimhold/Assets/Prefabs/ExtractionSanctuary.prefab
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryPresenter.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/SanctuaryActivationVisual.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/SanctuaryActivationVisual.cs.meta
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs
+- scope → Extraction: extraction
+- message-term → Extraction: extraction
+- message-term → Audio: Audio
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2.png.meta
+- message-term → Art &amp; Animation: sprite
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### a3b1344a383af592b6838b1dfdc81bc2e01a4914
 

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1137,
-  "canonicalEntries": 1134,
+  "rawCommits": 1139,
+  "canonicalEntries": 1136,
   "before": {
-    "Features": 401,
+    "Features": 403,
     "Other Changes": 368,
     "Architecture & Infrastructure": 24,
     "Documentation": 122,
@@ -12,7 +12,7 @@
     "Refactoring": 14
   },
   "after": {
-    "Features": 539,
+    "Features": 541,
     "Other Changes": 176,
     "Maintenance": 22,
     "Documentation": 138,
@@ -23,26 +23,26 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Combat": 377,
+    "Combat": 378,
+    "Extraction": 169,
+    "Inventory & Loot": 454,
+    "Networking & Sessions": 338,
+    "UI": 334,
+    "World & Visibility": 151,
+    "Audio": 39,
+    "Build & Tooling": 583,
+    "Documentation": 425,
+    "Tests": 715,
+    "Art & Animation": 247,
     "Abilities": 134,
-    "Inventory & Loot": 453,
-    "Art & Animation": 246,
-    "Build & Tooling": 581,
-    "Tests": 713,
     "Movement": 97,
-    "Networking & Sessions": 337,
     "Persistence & Backend": 283,
-    "Audio": 37,
     "Input": 31,
-    "Documentation": 424,
-    "World & Visibility": 150,
-    "UI": 333,
-    "Unassigned": 42,
-    "Extraction": 167
+    "Unassigned": 42
   },
   "canonical": {
     "sections": {
-      "Features": 538,
+      "Features": 540,
       "Other Changes": 175,
       "Maintenance": 22,
       "Documentation": 138,
@@ -52,22 +52,22 @@
       "Refactoring": 27
     },
     "systems": {
-      "Combat": 375,
+      "Combat": 376,
+      "Extraction": 169,
+      "Inventory & Loot": 454,
+      "Networking & Sessions": 338,
+      "UI": 333,
+      "World & Visibility": 149,
+      "Audio": 39,
+      "Build & Tooling": 581,
+      "Documentation": 423,
+      "Tests": 713,
+      "Art & Animation": 244,
       "Abilities": 132,
-      "Inventory & Loot": 453,
-      "Art & Animation": 243,
-      "Build & Tooling": 579,
-      "Tests": 711,
       "Movement": 97,
-      "Networking & Sessions": 337,
       "Persistence & Backend": 283,
-      "Audio": 37,
       "Input": 31,
-      "Documentation": 422,
-      "World & Visibility": 148,
-      "UI": 332,
-      "Unassigned": 42,
-      "Extraction": 167
+      "Unassigned": 42
     }
   },
   "unknownEntries": [
@@ -74524,8 +74524,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 260,
-      "canonicalEntries": 260
+      "originalCommits": 262,
+      "canonicalEntries": 262
     },
     {
       "key": "v0.5.0",
@@ -74569,6 +74569,539 @@
     }
   ],
   "commits": [
+    {
+      "sha": "2179227613c99c45bdb12140dd0f4ba15ee430b1",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2179227613c99c45bdb12140dd0f4ba15ee430b1",
+      "subject": "feat(map): make Catacombs the playable raid map",
+      "body": "CatacombsMap was a tilemap graybox without gameplay wiring. It is now a\ncomplete minimal raid scene and replaces Gameplay as the raid that\nSessionConnectionCoordinator loads.\n\n- Eight ExtractionSanctuary instances on the user-placed points; their\n  Spawnpoint children form the eight player spawn areas (8 x 4 = 32\n  points >= MaxParticipants 16), following the Gameplay convention.\n- NetworkSpawnManager with a Required NetworkSpawnSceneConfiguration\n  using Gameplay's prefab/catalog references. Groups scaled to the map\n  size (about 16x Gameplay's floor): Enemies 64/64, Loot 64 of 96,\n  Breakables 64 of 96, Reinforcements 64/64 points. Markers were placed\n  on physics-checked floor reachable from every sanctuary, at least\n  15 units from sanctuaries (20 for combat groups).\n- PathfindingGrid, VisionFog, VisibilityManager, Gameplay Camera,\n  Global Light 2D, EventSystem and input objects; Catacombs minimap\n  declaration and generated CatacombsMinimapLayout.\n- Raid scene: _gameplaySceneName is CatacombsMap in Systems.prefab and\n  in the coordinator default. CatacombsMap is appended to Build Settings\n  at index 3; Gameplay stays at index 1 for its tests and tools. Host\n  Migration keeps preserving the running scene's build index.\n- LockedChest and LootContainer render on sorting layer 4, order 100.\n\nOut of scope: doors, traps, patrol routes (enemies idle until they see\na player), torches, ambient particles, music, mission zone.\n\nTests: CatacombsSceneCompositionTests, CatacombsMinimapSceneTests,\nCatacombsRaidSceneTests. Docs: SessionLifecycleAndSpawning,\nLobbyAndSessionTransitionArchitecture, RaidMainHudArchitecture and\nExtractionArchitecture. Tracker: odd/tasks/catacombs-playable-map.md\n(Host/Client playtest and full-suite verification still pending).\n\nPlayer-Added: Raids now take place in the new Catacombs map, with eight extraction sanctuaries and many more enemies, chests and breakables to find.\n",
+      "date": "2026-11-16T00:45:50-03:00",
+      "files": [
+        "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset",
+        "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset.meta",
+        "Project Grimhold/Assets/Prefabs/LockedChest.prefab",
+        "Project Grimhold/Assets/Prefabs/LootContainer.prefab",
+        "Project Grimhold/Assets/Prefabs/Systems.prefab",
+        "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+        "Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs.meta",
+        "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+        "Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md",
+        "Project Grimhold/Docs/Architecture/RaidMainHudArchitecture.md",
+        "Project Grimhold/Docs/Architecture/SessionLifecycleAndSpawning.md",
+        "Project Grimhold/ProjectSettings/EditorBuildSettings.asset",
+        "odd/assets/catacombs-regions.png",
+        "odd/tasks/catacombs-playable-map.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "map",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Extraction",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "UI",
+        "World & Visibility",
+        "Audio",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "message-term",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/LootContainer.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "Loot",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/SessionLifecycleAndSpawning.md",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/RaidMainHudArchitecture.md",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "minimap",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "odd/assets/catacombs-regions.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/catacombs-playable-map.md",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "Catacombs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "music",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ProjectSettings/EditorBuildSettings.asset",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/LobbyAndSessionTransitionArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/RaidMainHudArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/SessionLifecycleAndSpawning.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsRaidSceneTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CatacombsMinimapSceneTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "ffb2369aa664cfd8c26493b7d5289b6f91f3fd19",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ffb2369aa664cfd8c26493b7d5289b6f91f3fd19",
+      "subject": "feat(extraction): show sanctuary activation with Off/On sanctuary art",
+      "body": "Replaces the placeholder hole sprite and per-state color tints with the\nnew sanctuary art. The sanctuary reads Off while free, assigned without\na ritual or cancelled; during the ritual the On art fades in over Off\nby ritual progress with a soft pulse; once completed it stays On.\n\n- ExtractionSanctuary.prefab: gameplay root keeps scale 1.5, its 2x2\n  collider, zone references and Spawnpoint 1-4. A new Visuals child at\n  0.6666667 holds Off and OnOverlay renderers at local scale 1, so the\n  128 px art renders at 16 PPU world scale.\n- Off uses Sanctuary-Large-Inactive and OnOverlay Sanctuary-Large-Active\n  (16 PPU, Point, uncompressed, Full Rect). The other uploaded variants\n  (V1, V2, Small, Small-2x) are included but unused.\n- SanctuaryActivationVisual: pure overlay-alpha rule; the presenter no\n  longer tints the sprite. Audio cues, particles and owner-only cues\n  are unchanged.\n\nTests: ExtractionSanctuaryPrefabTests (art, import settings, hierarchy,\ngameplay geometry, alpha per state).\n\nPlayer-Improved: Extraction sanctuaries have new art and visibly light up while their activation ritual runs.\n",
+      "date": "2026-11-16T00:45:27-03:00",
+      "files": [
+        "Project Grimhold/Assets/Art/Props/Sanctuary.meta",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/New.meta",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active.png",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active.png.meta",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive.png",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive.png.meta",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active.png",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active.png.meta",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive.png",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive.png.meta",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active.png",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active.png.meta",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive.png",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive.png.meta",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1.png",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1.png.meta",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2.png",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2.png.meta",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1.png",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1.png.meta",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2.png",
+        "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2.png.meta",
+        "Project Grimhold/Assets/Prefabs/ExtractionSanctuary.prefab",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/SanctuaryActivationVisual.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/SanctuaryActivationVisual.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs"
+      ],
+      "originalType": "feat",
+      "originalScope": "extraction",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Audio",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/ExtractionSanctuary.prefab",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryPresenter.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/SanctuaryActivationVisual.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/SanctuaryActivationVisual.cs.meta",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "scope",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "Audio",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/New.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "sprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "a3b1344a383af592b6838b1dfdc81bc2e01a4914",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a3b1344a383af592b6838b1dfdc81bc2e01a4914",
