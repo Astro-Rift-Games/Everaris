@@ -15,8 +15,8 @@ MonoBehaviour:
   _id: TRE_CROWN
   _displayName: Ancient Crown
   _description: A regal diadem recovered from a fallen sovereign.
-  _icon: {fileID: 21300000, guid: 1d146328d2b503e49b51da00f2533826, type: 3}
-  _worldSprite: {fileID: 21300000, guid: 1d146328d2b503e49b51da00f2533826, type: 3}
+  _icon: {fileID: 21300000, guid: cd0f86e75518dcd46b62a5bdc337fbab, type: 3}
+  _worldSprite: {fileID: 21300000, guid: b2c6dc4dd1dd8bb40b92151630104158, type: 3}
   _category: 2
   _rarity: 3
   _objectValue: 350
@@ -34,6 +34,7 @@ MonoBehaviour:
   _canBeUsed: 0
   _missionCompatible: 0
   _useMode: 0
+  _isTrainingWeapon: 0
   _extractionValuePerUnit: 350
   _sellValuePerUnit: 350
   _buyValuePerUnit: 700
@@ -42,10 +43,10 @@ MonoBehaviour:
   _weaponDefinition: {fileID: 0}
   _shieldDefinition: {fileID: 0}
   _armorDefinition: {fileID: 0}
-  _equipmentVisualDefinition: {fileID: 0}
-  _defenseSprites:
-    _up: {fileID: 0}
-    _down: {fileID: 0}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+  _gemDefinition: {fileID: 0}
+  _equipmentVisualDefinition:
+    _usesBaseSpritesAsPlaceholder: 1
+    _tint: {r: 1, g: 1, b: 1, a: 1}
+    _spriteMappings: []
+  _defenseSprites: {fileID: 0}
   _quickSlotCompatible: 0
