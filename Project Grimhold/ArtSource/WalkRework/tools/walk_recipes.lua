@@ -259,4 +259,8 @@ for facing, hands in pairs(handOffsets) do
   end
 end
 
+-- Leg pieces shared with other locomotion recipes (see sprint_recipes.lua). The builder only reads
+-- facing keys, so this entry is ignored when the Walk itself is built.
+R._parts = { sLeg = sLeg, nLeg = nLeg, join = join, seN = seN, seF = seF, neNear = neNear, neFar0 = neFar0 }
+
 return R

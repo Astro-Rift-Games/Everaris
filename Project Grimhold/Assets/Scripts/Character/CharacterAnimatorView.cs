@@ -62,6 +62,9 @@ public class CharacterAnimatorView : MonoBehaviour, IAnimatorController
     }
 
     /// <summary>Explicit movement binding for editor previews without a network simulation.</summary>
+    /// <summary>Whether the bound movement state reports locomotion; false while nothing is bound.</summary>
+    protected bool IsLocomotionMoving => _movementState != null && _movementState.IsMoving;
+
     internal void BindMovementState(IMovementState state)
     {
         _movementState = state ?? throw new System.ArgumentNullException(nameof(state));

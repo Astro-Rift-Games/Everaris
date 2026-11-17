@@ -466,10 +466,16 @@ public sealed class PlayerWeaponPresenter : MonoBehaviour
             }
         }
         PoseOffHandWeapon(facing, mirrored);
+        // A hand-held item stays on the side of the body its hand is on: Walk and Sprint carry the hand
+        // across the body every cycle. A weapon-driven weapon is held by the left hand, whose depth this
+        // presenter sets from the facing below, so it keeps the facing's order.
+        int handOrder = (_mainHandHoldingRenderer ??= _mainHandGrip.parent.GetComponent<SpriteRenderer>()).sortingOrder;
+        int heldOrder = _weaponDriven
+            ? order
+            : PlayerWeaponPresentationMath.ResolveHeldItemSortingOrder(SortingOrderFront, SortingOrderBack, handOrder);
         _mainHandRenderer.sortingOrder = _mainHandShield
-            ? PlayerWeaponPresentationMath.ResolveShieldSortingOrder(order,
-                (_mainHandHoldingRenderer ??= _mainHandGrip.parent.GetComponent<SpriteRenderer>()).sortingOrder)
-            : order;
+            ? PlayerWeaponPresentationMath.ResolveShieldSortingOrder(heldOrder, handOrder)
+            : heldOrder;
         // The weapon-pose hand is the LeftHand renderer that also carries OffHandGrip.
         RefreshOffHandDepth(direction);
         RefreshOffHandSprite(direction);
@@ -569,9 +575,12 @@ public sealed class PlayerWeaponPresenter : MonoBehaviour
 
     private void RefreshOffHandDepth(CharacterVisualDirection direction)
     {
+        // While an Off Hand attack overlay poses the hand, the item keeps the facing's depth; otherwise the
+        // Animator owns the hand's depth and the item follows it across the body.
+        bool handOwnsDepth = !_animatorView.TryGetPresentedOffHandAttack(out _, out _, out _);
         _offHandRenderer.sortingOrder = PlayerWeaponPresentationMath.ResolveOffHandSortingOrder(
             CharacterVisualDirectionResolver.IsFrontFacing(direction), SortingOrderFront, SortingOrderBack,
-            _weaponPoseHandRenderer.sortingOrder);
+            _weaponPoseHandRenderer.sortingOrder, handOwnsDepth);
         // Shields intentionally cover their holding hand and glove, in either hemisphere.
         if (_offHandDefinition != null && _offHandDefinition.Category == LootCategory.Shield)
             _offHandRenderer.sortingOrder = PlayerWeaponPresentationMath.ResolveShieldSortingOrder(

@@ -11,7 +11,7 @@ folder lives outside `Assets/`, so Unity does not import it.
 | `aseprite/` | `Walk_<facing>.aseprite`: one group per skin (Base + 6 sets), one layer per module, 8 frames at 12 fps, `Walk_<facing>` tag, hidden `REF Legs (original)` layer. |
 | `previews/` | Before/After GIFs per facing and skin (left = before at the shipped 12 fps, right = after at the proposed 10 fps) and contact sheets. |
 | `hand_grip_offsets.csv` | Per facing, hand and frame: how far the hand moved, in pixels and in Unity units (16 PPU, Y up). |
-| `tools/` | `walk_recipes.lua` (the edit, as data), `walk_rework.lua` (Aseprite builder), `preview.py`, `validate.py`. |
+| `tools/` | `walk_recipes.lua` (the edit, as data), `walk_rework.lua` (Aseprite builder), `preview.py`, `validate.py`, `apply_to_unity.py`. Also `sprint_recipes.lua` and `sprint_preview.py`, which build `../SprintAnimation` from the same sources. |
 
 ## Integration contract (verified against the project)
 

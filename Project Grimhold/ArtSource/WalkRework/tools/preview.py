@@ -49,32 +49,46 @@ def load_frames(skin, module, direction, version):
 HANDS = ("LeftHand", "RightHand")
 
 
-def hands_in_front(module, direction, version):
+def hands_in_front(module, direction, version, loader=None, per_facing=False):
     """Per frame: is this hand drawn over the body, as the Walk clips sort it in game?
 
     The shipped clips kept one depth per facing: over the body in S/SE/SW, behind it in
-    N/NE/NW. The reworked clips draw a hand in front only for the camera-side (lower) half
-    of its swing (DirectionalAnimationGenerator.ResolveWalkSwingSortingOrders).
+    N/NE/NW. The reworked clips sort each hand by where it is relative to the torso
+    (DirectionalAnimationGenerator.ResolveLocomotionHandSortingOrders):
+    - S / N: both arms swing along the view axis, so a hand is in front for the camera-side
+      (lower) half of its swing and behind for the rest;
+    - diagonals: the arm on the camera side of the torso stays in front for the whole cycle
+      and the other one stays behind (right hand near in SE/NE, left hand near in SW/NW).
     """
-    if version == "before":
+    if version == "before" or per_facing:
         return [not direction.startswith("N")] * COUNT
+    if len(direction) == 2:
+        near = "RightHand" if direction.endswith("E") else "LeftHand"
+        return [module == near] * COUNT
     heights = []
-    for frame in load_frames("Base", module, direction, version):
+    for frame in (loader or load_frames)("Base", module, direction, version):
         box = frame.getbbox()
         heights.append((box[1] + box[3]) / 2)  # image rows grow downward
     middle = (min(heights) + max(heights)) / 2
     return [height > middle for height in heights]
 
 
-def composite(direction, version, skin="Base", modules=MODULES):
-    """Base body with the optional equipment set drawn over each module, in game depth order."""
+def composite(direction, version, skin="Base", modules=MODULES, loader=None, per_facing_depth=False):
+    """Base body with the optional equipment set drawn over each module, in game depth order.
+
+    `loader(skin, module, direction, version)` returns the eight frames; it defaults to the Walk sheets.
+    `per_facing_depth` keeps the hands on one side of the body for the whole cycle (over it in
+    S/SE/SW, behind it in N/NE/NW) instead of the Walk's per-frame swing depth.
+    """
+    load = loader or load_frames
     frames = [Image.new("RGBA", (FRAME, FRAME)) for _ in range(COUNT)]
 
     def draw(module, wanted_front):
-        front = hands_in_front(module, direction, version) if module in HANDS else [False] * COUNT
-        layers = [load_frames("Base", module, direction, version)]
+        front = (hands_in_front(module, direction, version, load, per_facing_depth)
+                 if module in HANDS else [False] * COUNT)
+        layers = [load("Base", module, direction, version)]
         if skin != "Base":
-            layers.append(load_frames(skin, module, direction, version))
+            layers.append(load(skin, module, direction, version))
         for layer in layers:
             for index, frame in enumerate(layer):
                 if module not in HANDS or front[index] == wanted_front:

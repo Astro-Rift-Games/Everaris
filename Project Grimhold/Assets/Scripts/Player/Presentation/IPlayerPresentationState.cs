@@ -34,5 +34,7 @@ public interface IPlayerPresentationState
 
     /// <summary>Guarded shield defense state; false before a valid network object exists.</summary>
     bool IsDefending { get; }
+    /// <summary>The replicated sprint state: true only on ticks where the sprint actually applies.</summary>
+    bool IsSprinting { get; }
     bool TryGetConsumingDefinition(out LootDefinition definition);
 }

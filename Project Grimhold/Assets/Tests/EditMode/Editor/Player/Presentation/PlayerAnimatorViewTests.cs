@@ -225,16 +225,108 @@ public sealed class PlayerAnimatorViewTests
             Is.EqualTo(new[] { "Base Layer", "RightHand", "LeftHand" }));
 
         AssertDirectionalTree(FindState(controller.layers[1], "RightHand-Idle").motion, "RightHand-Idle");
-        AssertDirectionalTree(FindState(controller.layers[1], "RightHand-Movement").motion, "RightHand-Walk");
         AssertDirectionalTree(FindState(controller.layers[2], "LeftHand-Idle").motion, "LeftHand-Idle");
-        AssertDirectionalTree(FindState(controller.layers[2], "LeftHand-Movement").motion, "LeftHand-Walk");
+        AssertDirectionalTree(
+            LocomotionChild(FindState(controller.layers[1], "RightHand-Movement").motion, 0), "RightHand-Walk");
+        AssertDirectionalTree(
+            LocomotionChild(FindState(controller.layers[1], "RightHand-Movement").motion, 1), "RightHand-Sprint");
+        AssertDirectionalTree(
+            LocomotionChild(FindState(controller.layers[2], "LeftHand-Movement").motion, 0), "LeftHand-Walk");
+        AssertDirectionalTree(
+            LocomotionChild(FindState(controller.layers[2], "LeftHand-Movement").motion, 1), "LeftHand-Sprint");
+    }
+
+    // Sprint is not a state: every Movement state keeps its transitions and picks the Walk or the
+    // Sprint directional tree with one float, so no attack, defend or knockback path changes.
+    [Test]
+    public void MovementStates_SelectWalkOrSprintWithTheSprintBlendParameter()
+    {
+        AnimatorController controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(AnimatorControllerPath);
+        Assert.That(controller, Is.Not.Null);
+        AnimatorControllerParameter parameter = controller.parameters.SingleOrDefault(
+            candidate => candidate.name == "SprintBlend");
+        Assert.That(parameter, Is.Not.Null);
+        Assert.That(parameter.type, Is.EqualTo(AnimatorControllerParameterType.Float));
+        Assert.That(parameter.defaultFloat, Is.EqualTo(0f));
+
+        var expected = new[]
+        {
+            (layer: 0, state: "Movement", walk: "Walk", sprint: "Sprint", folder: ""),
+            (layer: 1, state: "RightHand-Movement", walk: "RightHand-Walk", sprint: "RightHand-Sprint", folder: "RightHand/RightHand_"),
+            (layer: 2, state: "LeftHand-Movement", walk: "LeftHand-Walk", sprint: "LeftHand-Sprint", folder: "LeftHand/LeftHand_"),
+        };
+        foreach (var entry in expected)
+        {
+            Motion motion = FindState(controller.layers[entry.layer], entry.state).motion;
+            BlendTree walk = LocomotionChild(motion, 0);
+            BlendTree sprint = LocomotionChild(motion, 1);
+            Assert.That(walk.name, Is.EqualTo(entry.walk));
+            Assert.That(sprint.name, Is.EqualTo(entry.sprint));
+            Assert.That(sprint.blendType, Is.EqualTo(walk.blendType));
+            Assert.That(sprint.children.Length, Is.EqualTo(walk.children.Length));
+            for (int index = 0; index < walk.children.Length; index++)
+            {
+                AnimationClip walkClip = (AnimationClip)walk.children[index].motion;
+                string direction = walkClip.name.Substring(walkClip.name.LastIndexOf('_') + 1);
+                AnimationClip sprintClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(
+                    $"Assets/Animations/Player/Sprint/{entry.folder}Sprint_{direction}.anim");
+                Assert.That(sprintClip, Is.Not.Null, $"{entry.sprint} {direction}");
+                Assert.That(sprint.children[index].motion, Is.SameAs(sprintClip), $"{entry.sprint} child {index}");
+                Assert.That(sprint.children[index].position, Is.EqualTo(walk.children[index].position));
+                Assert.That(sprint.children[index].threshold, Is.EqualTo(walk.children[index].threshold));
+            }
+        }
+    }
+
+    [TestCase(true, true, 1f)]
+    [TestCase(true, false, 0f)]
+    [TestCase(false, true, 0f)]
+    public void SprintBlend_FollowsTheReplicatedSprintWhileMoving(bool isSprinting, bool isMoving, float expected)
+    {
+        var gameObject = new GameObject(nameof(SprintBlend_FollowsTheReplicatedSprintWhileMoving));
+        try
+        {
+            Animator animator = gameObject.AddComponent<Animator>();
+            animator.runtimeAnimatorController = AssetDatabase.LoadAssetAtPath<AnimatorController>(AnimatorControllerPath);
+            PlayerAnimatorView view = gameObject.AddComponent<PlayerAnimatorView>();
+            var state = new Tests.EditMode.Player.Presentation.FakePlayerPresentationState
+            {
+                IsSprinting = isSprinting,
+                IsMoving = isMoving
+            };
+            view.BindPresentationState(state);
+            view.BindMovementState(state);
+            typeof(PlayerAnimatorView).GetMethod("RefreshSprintBlend", BindingFlags.Instance | BindingFlags.NonPublic)
+                .Invoke(view, null);
+
+            Assert.That(animator.GetFloat("SprintBlend"), Is.EqualTo(expected));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(gameObject);
+        }
+    }
+
+    // A Movement state's motion: a 1D tree on SprintBlend whose children are the Walk (0) and Sprint (1) trees.
+    private static BlendTree LocomotionChild(Motion motion, int index)
+    {
+        BlendTree locomotion = motion as BlendTree;
+        Assert.That(locomotion, Is.Not.Null);
+        Assert.That(locomotion.blendType, Is.EqualTo(BlendTreeType.Simple1D));
+        Assert.That(locomotion.blendParameter, Is.EqualTo("SprintBlend"));
+        Assert.That(locomotion.children.Length, Is.EqualTo(2));
+        Assert.That(locomotion.children[0].threshold, Is.EqualTo(0f));
+        Assert.That(locomotion.children[1].threshold, Is.EqualTo(1f));
+        BlendTree child = locomotion.children[index].motion as BlendTree;
+        Assert.That(child, Is.Not.Null);
+        return child;
     }
 
     [Test]
     public void BodyLocomotionClips_AnimateTheNestedMainHandGrip()
     {
         string[] directions = { "N", "NE", "NW", "S", "SE", "SW" };
-        string[] states = { "Idle", "Walk" };
+        string[] states = { "Idle", "Walk", "Sprint" };
 
         foreach (string state in states)
         {

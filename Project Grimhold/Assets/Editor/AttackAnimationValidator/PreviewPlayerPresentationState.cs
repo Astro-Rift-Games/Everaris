@@ -102,6 +102,7 @@ using UnityEngine;
         public bool IsEquipmentReadable => _combination != null;
         public bool IsAimReadable => _combination != null;
         public bool IsAimStance => false;
+        public bool IsSprinting => false;
         public bool HasInputAuthority => IsAimReadable;
         public bool IsDefending => _combination?.Action == AttackPreviewAction.Defend &&
             (HasEligibleShield(false) || HasEligibleShield(true));

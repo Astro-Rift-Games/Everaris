@@ -13,6 +13,8 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
         Animator.StringToHash("LocomotionPlaybackRate");
     private static readonly int HasGenericAttackHash = Animator.StringToHash("HasGenericAttack");
     private static readonly int IsDefendingHash = Animator.StringToHash("IsDefending");
+    // Selects the Walk (0) or Sprint (1) tree inside every Movement state.
+    private static readonly int SprintBlendHash = Animator.StringToHash("SprintBlend");
     private static readonly string[] AttackDirections = { "N", "NE", "NW", "S", "SE", "SW" };
     private const string MainHandCombatLayerName = "RightHand";
 
@@ -285,6 +287,7 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
         {
             AnimatorInstance.SetBool(HasGenericAttackHash, false);
             AnimatorInstance.SetBool(IsDefendingHash, false);
+            AnimatorInstance.SetFloat(SprintBlendHash, 0f);
             if (_attackOverrides != null && AnimatorInstance.runtimeAnimatorController == _attackOverrides)
             {
                 AnimatorInstance.runtimeAnimatorController = _baseController;
@@ -335,6 +338,7 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
             LocomotionPlaybackRateHash,
             playbackRate);
 
+        RefreshSprintBlend();
         RefreshCombatParameters();
         RefreshKnockbackReaction();
         if (_hasTimedAttack)
@@ -570,6 +574,19 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
 
         RefreshAttackAnimation();
         AnimatorInstance.SetBool(IsDefendingHash, IsDefending());
+    }
+
+    // Mirrors the replicated sprint state. Gameplay alone decides when sprint applies (input, Stamina,
+    // action gates); presentation only picks the Sprint clips while the character is seen moving.
+    private void RefreshSprintBlend()
+    {
+        if (AnimatorInstance == null)
+        {
+            return;
+        }
+
+        bool sprinting = _presentationState != null && _presentationState.IsSprinting && IsLocomotionMoving;
+        AnimatorInstance.SetFloat(SprintBlendHash, sprinting ? 1f : 0f);
     }
 
     // Mirrors the replicated defense state; gameplay alone decides when it holds.

@@ -17,8 +17,50 @@ public sealed class DirectionalAnimationGeneratorTests
         Assert.That(DirectionalAnimationGenerator.ResolveOffHandSortingOrder(direction), Is.EqualTo(expected));
     }
 
+    // The Main Hand grip is authored: Sprint must hold the weapon at the same place in the drawn
+    // right hand as the Walk clip of that facing does, on every frame.
+    [TestCase("N")]
+    [TestCase("NE")]
+    [TestCase("NW")]
+    [TestCase("S")]
+    [TestCase("SE")]
+    [TestCase("SW")]
+    public void SprintGrips_MainHandGripFollowsTheDrawnRightHand(string direction)
+    {
+        Vector2 walkOffset = MainHandGripOffsets("Walk", direction).Distinct().Single();
+        Vector2[] sprintOffsets = MainHandGripOffsets("Sprint", direction);
+
+        Assert.That(sprintOffsets, Has.Length.EqualTo(8));
+        foreach (Vector2 offset in sprintOffsets)
+            Assert.That((offset - walkOffset).magnitude, Is.LessThan(0.0001f), $"Sprint_{direction}");
+    }
+
+    // Grip key minus the drawn right hand's anchor, per sprite frame.
+    private static Vector2[] MainHandGripOffsets(string motion, string direction)
+    {
+        var body = AssetDatabase.LoadAssetAtPath<AnimationClip>($"Assets/Animations/Player/{motion}/{motion}_{direction}.anim");
+        var hand = AssetDatabase.LoadAssetAtPath<AnimationClip>(
+            $"Assets/Animations/Player/{motion}/RightHand/RightHand_{motion}_{direction}.anim");
+        Assert.That(body, Is.Not.Null, $"{motion}_{direction}");
+        Assert.That(hand, Is.Not.Null, $"RightHand_{motion}_{direction}");
+        ObjectReferenceKeyframe[] frames = AnimationUtility.GetObjectReferenceCurve(hand,
+            new EditorCurveBinding { path = Hand, type = typeof(SpriteRenderer), propertyName = "m_Sprite" });
+        AnimationCurve x = Curve(body, Grip, "m_LocalPosition.x");
+        AnimationCurve y = Curve(body, Grip, "m_LocalPosition.y");
+        Assert.That(x, Is.Not.Null);
+        Assert.That(y, Is.Not.Null);
+        return frames.Select(frame =>
+        {
+            Vector2 anchor = DirectionalAnimationGenerator.ResolveSpriteAnchor((Sprite)frame.value);
+            Vector2 grip = new Vector2(x.Evaluate(frame.time + 0.001f), y.Evaluate(frame.time + 0.001f));
+            return new Vector2(Mathf.Round((grip.x - anchor.x) * 10000f) / 10000f,
+                Mathf.Round((grip.y - anchor.y) * 10000f) / 10000f);
+        }).ToArray();
+    }
+
     [TestCase("Idle")]
     [TestCase("Walk")]
+    [TestCase("Sprint")]
     public void LocomotionSorting_KeysLeftHandForEveryFacing(string motion)
     {
         foreach (string direction in new[] { "N", "NE", "NW", "S", "SE", "SW" })
@@ -35,7 +77,7 @@ public sealed class DirectionalAnimationGeneratorTests
                     EditorCurveBinding.FloatCurve(SecondHand, typeof(SpriteRenderer), "m_SortingOrder"), null);
                 DirectionalAnimationGenerator.WriteWeaponPoseLocomotion(generated, hand);
                 bool north = direction.StartsWith("N", StringComparison.Ordinal);
-                if (motion == "Walk")
+                if (motion != "Idle")
                     AssertWalkSwingSorting(generated, hand, SecondHand, 22);
                 else
                     AssertConstantSorting(generated, SecondHand, north ? -2 : 22);
@@ -65,6 +107,39 @@ public sealed class DirectionalAnimationGeneratorTests
             Is.EqualTo(new[] { 22, 22, 22, 22, -2, -2, -2, -2 }));
     }
 
+    // Seen on a diagonal, the arm on the camera side of the torso is drawn over it and the other arm
+    // behind it for the whole swing: sorting it by height would hide the near hand, and the weapon it
+    // holds, behind the body for most of the cycle.
+    [TestCase("SE", true, 30)]
+    [TestCase("SE", false, -2)]
+    [TestCase("NE", true, 30)]
+    [TestCase("NE", false, -2)]
+    [TestCase("SW", true, -2)]
+    [TestCase("SW", false, 22)]
+    [TestCase("NW", true, -2)]
+    [TestCase("NW", false, 22)]
+    public void LocomotionHandSorting_DiagonalsKeepTheNearHandInFrontAndTheFarHandBehind(
+        string direction, bool mainHand, int expected)
+    {
+        float[] heights = { -0.25f, -0.3125f, -0.25f, -0.25f, -0.125f, -0.125f, -0.125f, -0.1875f };
+
+        Assert.That(
+            DirectionalAnimationGenerator.ResolveLocomotionHandSortingOrders(
+                direction, mainHand, heights, -2, mainHand ? 30 : 22),
+            Is.All.EqualTo(expected));
+    }
+
+    [TestCase("S")]
+    [TestCase("N")]
+    public void LocomotionHandSorting_TowardAndAwayFromTheCameraFollowsTheSwing(string direction)
+    {
+        float[] heights = { -0.25f, -0.3125f, -0.25f, -0.25f, -0.125f, -0.125f, -0.125f, -0.1875f };
+
+        Assert.That(
+            DirectionalAnimationGenerator.ResolveLocomotionHandSortingOrders(direction, false, heights, -2, 22),
+            Is.EqualTo(new[] { 22, 22, 22, 22, -2, -2, -2, -2 }));
+    }
+
     [Test]
     public void WalkSwingSorting_HandThatDoesNotSwingStaysBehindTheBody()
     {
@@ -73,27 +148,30 @@ public sealed class DirectionalAnimationGeneratorTests
     }
 
     // In every facing the half of the swing nearer the camera is in front of the torso and the other
-    // half is behind it, so a walking hand cannot keep one depth for the whole cycle: the baked Walk
-    // clips key it per drawn frame.
+    // half is behind it, so a swinging hand cannot keep one depth for the whole cycle: the baked Walk
+    // and Sprint clips key it per drawn frame.
     [TestCase("N")]
     [TestCase("NE")]
     [TestCase("NW")]
     [TestCase("S")]
     [TestCase("SE")]
     [TestCase("SW")]
-    public void WalkSorting_HandsPassInFrontOfTheBodyOnTheirCameraSideSwing(string direction)
+    public void SwingSorting_HandsPassInFrontOfTheBodyOnTheirCameraSideSwing(string direction)
     {
-        var body = AssetDatabase.LoadAssetAtPath<AnimationClip>($"Assets/Animations/Player/Walk/Walk_{direction}.anim");
-        var left = AssetDatabase.LoadAssetAtPath<AnimationClip>(
-            $"Assets/Animations/Player/Walk/LeftHand/LeftHand_Walk_{direction}.anim");
-        var right = AssetDatabase.LoadAssetAtPath<AnimationClip>(
-            $"Assets/Animations/Player/Walk/RightHand/RightHand_Walk_{direction}.anim");
-        Assert.That(body, Is.Not.Null);
-        Assert.That(left, Is.Not.Null);
-        Assert.That(right, Is.Not.Null);
+        foreach (string motion in new[] { "Walk", "Sprint" })
+        {
+            var body = AssetDatabase.LoadAssetAtPath<AnimationClip>($"Assets/Animations/Player/{motion}/{motion}_{direction}.anim");
+            var left = AssetDatabase.LoadAssetAtPath<AnimationClip>(
+                $"Assets/Animations/Player/{motion}/LeftHand/LeftHand_{motion}_{direction}.anim");
+            var right = AssetDatabase.LoadAssetAtPath<AnimationClip>(
+                $"Assets/Animations/Player/{motion}/RightHand/RightHand_{motion}_{direction}.anim");
+            Assert.That(body, Is.Not.Null);
+            Assert.That(left, Is.Not.Null);
+            Assert.That(right, Is.Not.Null);
 
-        AssertWalkSwingSorting(body, left, SecondHand, 22);
-        AssertWalkSwingSorting(right, right, Hand, 30);
+            AssertWalkSwingSorting(body, left, SecondHand, 22);
+            AssertWalkSwingSorting(right, right, Hand, 30);
+        }
     }
 
     // SocialPlayer has no hand pivots: its hands sit directly under the visual root and take their
@@ -105,29 +183,32 @@ public sealed class DirectionalAnimationGeneratorTests
     [TestCase("S")]
     [TestCase("SE")]
     [TestCase("SW")]
-    public void WalkSorting_PivotlessHandsFollowTheSameSwingDepth(string direction)
+    public void SwingSorting_PivotlessHandsFollowTheSameSwingDepth(string direction)
     {
-        var body = AssetDatabase.LoadAssetAtPath<AnimationClip>($"Assets/Animations/Player/Walk/Walk_{direction}.anim");
-        var hand = AssetDatabase.LoadAssetAtPath<AnimationClip>(
-            $"Assets/Animations/Player/Walk/LeftHand/LeftHand_Walk_{direction}.anim");
-        Assert.That(body, Is.Not.Null);
-        Assert.That(hand, Is.Not.Null);
-
-        AssertWalkSwingSorting(body, body, "LeftHand", 22);
-        AssertWalkSwingSorting(body, body, "RightHand", 30);
-
-        var generated = UnityEngine.Object.Instantiate(body);
-        try
+        foreach (string motion in new[] { "Walk", "Sprint" })
         {
-            // Remove the baked values so this proves the writer, not the current imported clip.
-            foreach (string path in new[] { "LeftHand", "RightHand" })
-                AnimationUtility.SetEditorCurve(generated,
-                    EditorCurveBinding.FloatCurve(path, typeof(SpriteRenderer), "m_SortingOrder"), null);
-            DirectionalAnimationGenerator.WriteWeaponPoseLocomotion(generated, hand);
-            AssertWalkSwingSorting(generated, body, "LeftHand", 22);
-            AssertWalkSwingSorting(generated, body, "RightHand", 30);
+            var body = AssetDatabase.LoadAssetAtPath<AnimationClip>($"Assets/Animations/Player/{motion}/{motion}_{direction}.anim");
+            var hand = AssetDatabase.LoadAssetAtPath<AnimationClip>(
+                $"Assets/Animations/Player/{motion}/LeftHand/LeftHand_{motion}_{direction}.anim");
+            Assert.That(body, Is.Not.Null);
+            Assert.That(hand, Is.Not.Null);
+
+            AssertWalkSwingSorting(body, body, "LeftHand", 22);
+            AssertWalkSwingSorting(body, body, "RightHand", 30);
+
+            var generated = UnityEngine.Object.Instantiate(body);
+            try
+            {
+                // Remove the baked values so this proves the writer, not the current imported clip.
+                foreach (string path in new[] { "LeftHand", "RightHand" })
+                    AnimationUtility.SetEditorCurve(generated,
+                        EditorCurveBinding.FloatCurve(path, typeof(SpriteRenderer), "m_SortingOrder"), null);
+                DirectionalAnimationGenerator.WriteWeaponPoseLocomotion(generated, hand);
+                AssertWalkSwingSorting(generated, body, "LeftHand", 22);
+                AssertWalkSwingSorting(generated, body, "RightHand", 30);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(generated); }
         }
-        finally { UnityEngine.Object.DestroyImmediate(generated); }
     }
 
     [TestCase("N")]
@@ -136,28 +217,36 @@ public sealed class DirectionalAnimationGeneratorTests
     [TestCase("S")]
     [TestCase("SE")]
     [TestCase("SW")]
-    public void WalkSorting_MainHandWriterKeysTheSwingFromTheDrawnFrames(string direction)
+    public void SwingSorting_MainHandWriterKeysTheSwingFromTheDrawnFrames(string direction)
     {
-        var right = AssetDatabase.LoadAssetAtPath<AnimationClip>(
-            $"Assets/Animations/Player/Walk/RightHand/RightHand_Walk_{direction}.anim");
-        Assert.That(right, Is.Not.Null);
-        var generated = UnityEngine.Object.Instantiate(right);
-        try
+        foreach (string motion in new[] { "Walk", "Sprint" })
         {
-            generated.name = right.name;
-            // Remove any baked value so this proves the writer, not the current imported clip.
-            AnimationUtility.SetEditorCurve(generated,
-                EditorCurveBinding.FloatCurve(Hand, typeof(SpriteRenderer), "m_SortingOrder"), null);
-            DirectionalAnimationGenerator.WriteMainHandWalkSorting(generated);
-            AssertWalkSwingSorting(generated, right, Hand, 30);
+            var right = AssetDatabase.LoadAssetAtPath<AnimationClip>(
+                $"Assets/Animations/Player/{motion}/RightHand/RightHand_{motion}_{direction}.anim");
+            Assert.That(right, Is.Not.Null);
+            var generated = UnityEngine.Object.Instantiate(right);
+            try
+            {
+                generated.name = right.name;
+                // Remove any baked value so this proves the writer, not the current imported clip.
+                AnimationUtility.SetEditorCurve(generated,
+                    EditorCurveBinding.FloatCurve(Hand, typeof(SpriteRenderer), "m_SortingOrder"), null);
+                DirectionalAnimationGenerator.WriteMainHandSwingSorting(generated);
+                AssertWalkSwingSorting(generated, right, Hand, 30);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(generated); }
         }
-        finally { UnityEngine.Object.DestroyImmediate(generated); }
     }
 
-    // Every sprite frame of the hand clip holds one order: in front of the body while the drawn hand
-    // is in the camera-side half of its swing, behind it (-2) otherwise. Both sides must occur.
+    // Every sprite frame of the hand clip holds one order. Toward and away from the camera a hand is in
+    // front of the body while it is drawn in the camera-side half of its swing and behind it (-2)
+    // otherwise, and both sides must occur. On a diagonal the hand on the camera side of the torso
+    // (right in SE/NE, left in SW/NW) stays in front for the whole cycle and the other stays behind.
     private static void AssertWalkSwingSorting(AnimationClip sortingClip, AnimationClip handClip, string path, int frontOrder)
     {
+        string direction = handClip.name.Substring(handClip.name.LastIndexOf('_') + 1);
+        bool diagonal = direction.Length == 2;
+        bool nearHand = path.Contains("RightHand") == direction.EndsWith("E", StringComparison.Ordinal);
         ObjectReferenceKeyframe[] frames = AnimationUtility.GetObjectReferenceCurve(handClip,
             new EditorCurveBinding { path = path, type = typeof(SpriteRenderer), propertyName = "m_Sprite" });
         Assert.That(frames, Is.Not.Null.And.Not.Empty, handClip.name);
@@ -170,7 +259,9 @@ public sealed class DirectionalAnimationGeneratorTests
         var seen = new System.Collections.Generic.HashSet<int>();
         for (int i = 0; i < frames.Length; i++)
         {
-            int expected = heights[i] < middle ? frontOrder : -2;
+            int expected = diagonal
+                ? (nearHand ? frontOrder : -2)
+                : heights[i] < middle ? frontOrder : -2;
             float end = i + 1 < frames.Length ? frames[i + 1].time : sortingClip.length;
             // Sample inside the frame: a stepped key must hold its order for the whole sprite frame.
             Assert.That(sorting.Evaluate(frames[i].time), Is.EqualTo((float)expected), $"{sortingClip.name} frame {i} start");
@@ -178,7 +269,8 @@ public sealed class DirectionalAnimationGeneratorTests
                 $"{sortingClip.name} frame {i} hold");
             seen.Add(expected);
         }
-        Assert.That(seen, Is.EquivalentTo(new[] { frontOrder, -2 }), $"{sortingClip.name} must use both sides of the body.");
+        if (!diagonal)
+            Assert.That(seen, Is.EquivalentTo(new[] { frontOrder, -2 }), $"{sortingClip.name} must use both sides of the body.");
     }
 
     private static void AssertConstantSorting(AnimationClip clip, string path, int expected)
@@ -914,6 +1006,12 @@ public sealed class DirectionalAnimationGeneratorTests
     [TestCase("Walk", "S")]
     [TestCase("Walk", "SE")]
     [TestCase("Walk", "SW")]
+    [TestCase("Sprint", "N")]
+    [TestCase("Sprint", "NE")]
+    [TestCase("Sprint", "NW")]
+    [TestCase("Sprint", "S")]
+    [TestCase("Sprint", "SE")]
+    [TestCase("Sprint", "SW")]
     public void LocomotionGrips_RestInEveryDrawnLeftHandFrame(string motion, string direction)
     {
         AnimationClip body = AssetDatabase.LoadAssetAtPath<AnimationClip>($"Assets/Animations/Player/{motion}/{motion}_{direction}.anim");

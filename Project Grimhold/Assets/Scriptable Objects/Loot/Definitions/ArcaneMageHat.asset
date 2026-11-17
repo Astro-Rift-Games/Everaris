@@ -247,3 +247,99 @@ MonoBehaviour:
       EquipmentSprite: {fileID: 5134935757873538647, guid: 2107992bff0d32bc1d25e55cd3ccd882, type: 3}
     - BaseSprite: {fileID: -2696805504030617251, guid: a067caf64aa65d440cf9240188e5f7ee, type: 3}
       EquipmentSprite: {fileID: 2506318710195259119, guid: 2107992bff0d32bc1d25e55cd3ccd882, type: 3}
+    - BaseSprite: {fileID: -8339215676123635955, guid: 191a4933ad965f7a982b602bf2549593, type: 3}
+      EquipmentSprite: {fileID: 65712624460762502, guid: e0e876790b0eb1d08d4d2bdadfd323c4, type: 3}
+    - BaseSprite: {fileID: 8267486509196369687, guid: 191a4933ad965f7a982b602bf2549593, type: 3}
+      EquipmentSprite: {fileID: 2176948115123460712, guid: e0e876790b0eb1d08d4d2bdadfd323c4, type: 3}
+    - BaseSprite: {fileID: 4496059924629934700, guid: 191a4933ad965f7a982b602bf2549593, type: 3}
+      EquipmentSprite: {fileID: 5101872858509481812, guid: e0e876790b0eb1d08d4d2bdadfd323c4, type: 3}
+    - BaseSprite: {fileID: 1732856334592671440, guid: 191a4933ad965f7a982b602bf2549593, type: 3}
+      EquipmentSprite: {fileID: 3733713694666313951, guid: e0e876790b0eb1d08d4d2bdadfd323c4, type: 3}
+    - BaseSprite: {fileID: -1146933084240203663, guid: 191a4933ad965f7a982b602bf2549593, type: 3}
+      EquipmentSprite: {fileID: -7524131540052864927, guid: e0e876790b0eb1d08d4d2bdadfd323c4, type: 3}
+    - BaseSprite: {fileID: -4508269980797684395, guid: 191a4933ad965f7a982b602bf2549593, type: 3}
+      EquipmentSprite: {fileID: -6965827553703949344, guid: e0e876790b0eb1d08d4d2bdadfd323c4, type: 3}
+    - BaseSprite: {fileID: 3227191694532931416, guid: 191a4933ad965f7a982b602bf2549593, type: 3}
+      EquipmentSprite: {fileID: 4323487496139316505, guid: e0e876790b0eb1d08d4d2bdadfd323c4, type: 3}
+    - BaseSprite: {fileID: -1441761501742602316, guid: 191a4933ad965f7a982b602bf2549593, type: 3}
+      EquipmentSprite: {fileID: -1237425134150615237, guid: e0e876790b0eb1d08d4d2bdadfd323c4, type: 3}
+    - BaseSprite: {fileID: -2929661169565912185, guid: 082579e68ac20cd7d641eb8930099126, type: 3}
+      EquipmentSprite: {fileID: 27611698832791166, guid: 762189588b1a47bf2b89e53e3ecc3290, type: 3}
+    - BaseSprite: {fileID: 2584306283627860488, guid: 082579e68ac20cd7d641eb8930099126, type: 3}
+      EquipmentSprite: {fileID: 9065651249838746555, guid: 762189588b1a47bf2b89e53e3ecc3290, type: 3}
+    - BaseSprite: {fileID: -7052329925843216012, guid: 082579e68ac20cd7d641eb8930099126, type: 3}
+      EquipmentSprite: {fileID: -4437042115195516585, guid: 762189588b1a47bf2b89e53e3ecc3290, type: 3}
+    - BaseSprite: {fileID: 4407225045098882951, guid: 082579e68ac20cd7d641eb8930099126, type: 3}
+      EquipmentSprite: {fileID: 3424542669666368220, guid: 762189588b1a47bf2b89e53e3ecc3290, type: 3}
+    - BaseSprite: {fileID: 1219106820401377132, guid: 082579e68ac20cd7d641eb8930099126, type: 3}
+      EquipmentSprite: {fileID: -7697788217944985556, guid: 762189588b1a47bf2b89e53e3ecc3290, type: 3}
+    - BaseSprite: {fileID: -2709489068790174743, guid: 082579e68ac20cd7d641eb8930099126, type: 3}
+      EquipmentSprite: {fileID: -7982120639695282183, guid: 762189588b1a47bf2b89e53e3ecc3290, type: 3}
+    - BaseSprite: {fileID: 1361336202070374272, guid: 082579e68ac20cd7d641eb8930099126, type: 3}
+      EquipmentSprite: {fileID: -6784682575793947823, guid: 762189588b1a47bf2b89e53e3ecc3290, type: 3}
+    - BaseSprite: {fileID: 3742545816640402928, guid: 082579e68ac20cd7d641eb8930099126, type: 3}
+      EquipmentSprite: {fileID: 7910455170666477501, guid: 762189588b1a47bf2b89e53e3ecc3290, type: 3}
+    - BaseSprite: {fileID: -1019579637060995713, guid: 8e09dbee325a48a7007aaa1aff12412f, type: 3}
+      EquipmentSprite: {fileID: 3430944572902024446, guid: 01f9d20a8a6d605532e1a43444b96f76, type: 3}
+    - BaseSprite: {fileID: -6710554440524806735, guid: 8e09dbee325a48a7007aaa1aff12412f, type: 3}
+      EquipmentSprite: {fileID: 6048355063759014976, guid: 01f9d20a8a6d605532e1a43444b96f76, type: 3}
+    - BaseSprite: {fileID: 9117869940114182505, guid: 8e09dbee325a48a7007aaa1aff12412f, type: 3}
+      EquipmentSprite: {fileID: 5436378981011695425, guid: 01f9d20a8a6d605532e1a43444b96f76, type: 3}
+    - BaseSprite: {fileID: 2648108710640647890, guid: 8e09dbee325a48a7007aaa1aff12412f, type: 3}
+      EquipmentSprite: {fileID: -1158524181607114299, guid: 01f9d20a8a6d605532e1a43444b96f76, type: 3}
+    - BaseSprite: {fileID: 5851789089327292923, guid: 8e09dbee325a48a7007aaa1aff12412f, type: 3}
+      EquipmentSprite: {fileID: 6114205962886268857, guid: 01f9d20a8a6d605532e1a43444b96f76, type: 3}
+    - BaseSprite: {fileID: -6149971712533943192, guid: 8e09dbee325a48a7007aaa1aff12412f, type: 3}
+      EquipmentSprite: {fileID: 6333791300635887046, guid: 01f9d20a8a6d605532e1a43444b96f76, type: 3}
+    - BaseSprite: {fileID: 3590688581246895756, guid: 8e09dbee325a48a7007aaa1aff12412f, type: 3}
+      EquipmentSprite: {fileID: -4310195920222945918, guid: 01f9d20a8a6d605532e1a43444b96f76, type: 3}
+    - BaseSprite: {fileID: 6987830568306019011, guid: 8e09dbee325a48a7007aaa1aff12412f, type: 3}
+      EquipmentSprite: {fileID: 6152839749426201204, guid: 01f9d20a8a6d605532e1a43444b96f76, type: 3}
+    - BaseSprite: {fileID: -8939240000838899502, guid: 818948ffab170278b078ca01c10f1067, type: 3}
+      EquipmentSprite: {fileID: 8316002146843444761, guid: e8057b91c1b9dcb258488e72e3ce0f70, type: 3}
+    - BaseSprite: {fileID: -4362249002994093185, guid: 818948ffab170278b078ca01c10f1067, type: 3}
+      EquipmentSprite: {fileID: 8163775313127183262, guid: e8057b91c1b9dcb258488e72e3ce0f70, type: 3}
+    - BaseSprite: {fileID: -553981928837579726, guid: 818948ffab170278b078ca01c10f1067, type: 3}
+      EquipmentSprite: {fileID: -3981780379296946313, guid: e8057b91c1b9dcb258488e72e3ce0f70, type: 3}
+    - BaseSprite: {fileID: 8718844116469644964, guid: 818948ffab170278b078ca01c10f1067, type: 3}
+      EquipmentSprite: {fileID: -6697622250058383505, guid: e8057b91c1b9dcb258488e72e3ce0f70, type: 3}
+    - BaseSprite: {fileID: 6148393441374460345, guid: 818948ffab170278b078ca01c10f1067, type: 3}
+      EquipmentSprite: {fileID: 6191756979056605770, guid: e8057b91c1b9dcb258488e72e3ce0f70, type: 3}
+    - BaseSprite: {fileID: -5241283538321470867, guid: 818948ffab170278b078ca01c10f1067, type: 3}
+      EquipmentSprite: {fileID: 2666722401988336061, guid: e8057b91c1b9dcb258488e72e3ce0f70, type: 3}
+    - BaseSprite: {fileID: -9124499290965604387, guid: 818948ffab170278b078ca01c10f1067, type: 3}
+      EquipmentSprite: {fileID: 2576739029650084086, guid: e8057b91c1b9dcb258488e72e3ce0f70, type: 3}
+    - BaseSprite: {fileID: -5455988470135821894, guid: 818948ffab170278b078ca01c10f1067, type: 3}
+      EquipmentSprite: {fileID: 4007586164591905891, guid: e8057b91c1b9dcb258488e72e3ce0f70, type: 3}
+    - BaseSprite: {fileID: 3114823817450990062, guid: d34d092f80d7541069c051d87c876f73, type: 3}
+      EquipmentSprite: {fileID: 1997511735588064170, guid: 405276616076ac302576185728670afe, type: 3}
+    - BaseSprite: {fileID: 3042490419531771290, guid: d34d092f80d7541069c051d87c876f73, type: 3}
+      EquipmentSprite: {fileID: 8042888651637333247, guid: 405276616076ac302576185728670afe, type: 3}
+    - BaseSprite: {fileID: -1498834764643004098, guid: d34d092f80d7541069c051d87c876f73, type: 3}
+      EquipmentSprite: {fileID: 3834847552141915405, guid: 405276616076ac302576185728670afe, type: 3}
+    - BaseSprite: {fileID: 7192047296779825585, guid: d34d092f80d7541069c051d87c876f73, type: 3}
+      EquipmentSprite: {fileID: 2842852362524473013, guid: 405276616076ac302576185728670afe, type: 3}
+    - BaseSprite: {fileID: 6648184445257860348, guid: d34d092f80d7541069c051d87c876f73, type: 3}
+      EquipmentSprite: {fileID: 7682618339186248298, guid: 405276616076ac302576185728670afe, type: 3}
+    - BaseSprite: {fileID: 7037777307190079616, guid: d34d092f80d7541069c051d87c876f73, type: 3}
+      EquipmentSprite: {fileID: 9089664748106601402, guid: 405276616076ac302576185728670afe, type: 3}
+    - BaseSprite: {fileID: -662700158368033532, guid: d34d092f80d7541069c051d87c876f73, type: 3}
+      EquipmentSprite: {fileID: -5460442363810818075, guid: 405276616076ac302576185728670afe, type: 3}
+    - BaseSprite: {fileID: 856099339687227393, guid: d34d092f80d7541069c051d87c876f73, type: 3}
+      EquipmentSprite: {fileID: 1651558791187121334, guid: 405276616076ac302576185728670afe, type: 3}
+    - BaseSprite: {fileID: 7721859473818699496, guid: 19ef34bb6b1d83c36f47e2f8e4f8521a, type: 3}
+      EquipmentSprite: {fileID: 8677725729035621358, guid: e3369bcab28884cdd58df1924e75fd84, type: 3}
+    - BaseSprite: {fileID: 5563741388652671285, guid: 19ef34bb6b1d83c36f47e2f8e4f8521a, type: 3}
+      EquipmentSprite: {fileID: -873537828254791193, guid: e3369bcab28884cdd58df1924e75fd84, type: 3}
+    - BaseSprite: {fileID: -5004126740877702457, guid: 19ef34bb6b1d83c36f47e2f8e4f8521a, type: 3}
+      EquipmentSprite: {fileID: 2761677496803666940, guid: e3369bcab28884cdd58df1924e75fd84, type: 3}
+    - BaseSprite: {fileID: -6010457740007674676, guid: 19ef34bb6b1d83c36f47e2f8e4f8521a, type: 3}
+      EquipmentSprite: {fileID: 5826306544278750783, guid: e3369bcab28884cdd58df1924e75fd84, type: 3}
+    - BaseSprite: {fileID: 3265032185155693449, guid: 19ef34bb6b1d83c36f47e2f8e4f8521a, type: 3}
+      EquipmentSprite: {fileID: -7439812769838275018, guid: e3369bcab28884cdd58df1924e75fd84, type: 3}
+    - BaseSprite: {fileID: 8632526388495185646, guid: 19ef34bb6b1d83c36f47e2f8e4f8521a, type: 3}
+      EquipmentSprite: {fileID: 1958765298829200372, guid: e3369bcab28884cdd58df1924e75fd84, type: 3}
+    - BaseSprite: {fileID: -4601895412397486614, guid: 19ef34bb6b1d83c36f47e2f8e4f8521a, type: 3}
+      EquipmentSprite: {fileID: -7413976091058539066, guid: e3369bcab28884cdd58df1924e75fd84, type: 3}
+    - BaseSprite: {fileID: 6043509343950002846, guid: 19ef34bb6b1d83c36f47e2f8e4f8521a, type: 3}
+      EquipmentSprite: {fileID: -4390911883473334283, guid: e3369bcab28884cdd58df1924e75fd84, type: 3}

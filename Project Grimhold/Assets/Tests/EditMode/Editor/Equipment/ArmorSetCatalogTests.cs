@@ -21,6 +21,7 @@ namespace Tests.EditMode.Equipment
         {
             new("Idle", 6),
             new("Walk", 8),
+            new("Sprint", 8),
             new("Knockback", 4)
         };
 
@@ -208,7 +209,8 @@ namespace Tests.EditMode.Equipment
             {
                 LootDefinition definition = LoadDefinition(spec);
                 Dictionary<Sprite, Sprite> mappings = ReadMappings(definition, spec);
-                int expectedCount = 108 * spec.Parts.Length;
+                // Idle 6 + Walk 8 + Sprint 8 + Knockback 4 frames, in six facings.
+                int expectedCount = 156 * spec.Parts.Length;
 
                 Assert.That(mappings.Count, Is.EqualTo(expectedCount), spec.AssetName);
                 AssertExpectedMappings(spec, definition, mappings);
@@ -218,11 +220,11 @@ namespace Tests.EditMode.Equipment
                 mappingsPerSet[spec.SetName] = setCount + mappings.Count;
             }
 
-            Assert.That(totalMappings, Is.EqualTo(3240));
+            Assert.That(totalMappings, Is.EqualTo(4680));
             Assert.That(mappingsPerSet.Count, Is.EqualTo(6));
             foreach (int count in mappingsPerSet.Values)
             {
-                Assert.That(count, Is.EqualTo(540));
+                Assert.That(count, Is.EqualTo(780));
             }
         }
 

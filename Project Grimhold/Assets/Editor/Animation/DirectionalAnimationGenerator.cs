@@ -93,11 +93,11 @@ public static class DirectionalAnimationGenerator
     // Outside attacks, OffHandGrip and a weapon-driven WeaponPose rest in the drawn left hand.
     // Every Idle and Walk body clip keys both at each matching LeftHand sprite frame's opaque-pixel
     // centroid, stepped like the authored MainHandGrip keys. WeaponPose also rests unrotated.
-    // Walk clips also key each hand's depth per drawn frame; see ResolveWalkSwingSortingOrders.
+    // Walk and Sprint clips also key each hand's depth per drawn frame; see ResolveWalkSwingSortingOrders.
     [MenuItem("Tools/Animations/Generate Weapon Pose Locomotion")]
     public static void GenerateWeaponPoseLocomotion()
     {
-        foreach (string motion in new[] { "Idle", "Walk" })
+        foreach (string motion in new[] { "Idle", "Walk", "Sprint" })
         {
             foreach (string direction in Directions)
             {
@@ -107,11 +107,11 @@ public static class DirectionalAnimationGenerator
                 WriteWeaponPoseLocomotion(body, hand);
                 EditorUtility.SetDirty(body);
                 AssetDatabase.SaveAssetIfDirty(body);
-                if (motion == "Walk")
+                if (motion != "Idle")
                 {
                     AnimationClip mainHand = RequireClip(
-                        $"Assets/Animations/Player/Walk/RightHand/RightHand_Walk_{direction}.anim");
-                    WriteMainHandWalkSorting(mainHand);
+                        $"Assets/Animations/Player/{motion}/RightHand/RightHand_{motion}_{direction}.anim");
+                    WriteMainHandSwingSorting(mainHand);
                     EditorUtility.SetDirty(mainHand);
                     AssetDatabase.SaveAssetIfDirty(mainHand);
                 }
@@ -128,14 +128,21 @@ public static class DirectionalAnimationGenerator
             throw new ArgumentException("Expected a directional LeftHand locomotion clip.", nameof(hand));
         ReadHandFrames(hand, SecondHand, out var times, out var anchors);
         AnimationUtility.SetEditorCurve(body, Binding(SecondHand, typeof(SpriteRenderer), "m_SortingOrder"),
-            IsWalkClip(hand)
-                ? Stepped(times, ResolveWalkSwingSortingOrders(anchors.Select(anchor => anchor.y).ToArray(),
+            HasSwingDepth(hand)
+                ? Stepped(times, ResolveLocomotionHandSortingOrders(direction, false,
+                    anchors.Select(anchor => anchor.y).ToArray(),
                     NorthHandSortingOrder, FrontOffHandSortingOrder), body.length)
                 : Constant(ResolveOffHandSortingOrder(direction), body.length));
-        if (IsWalkClip(hand))
+        if (HasSwingDepth(hand))
         {
-            WritePivotlessWalkSorting(body, PivotlessSecondHand, FrontOffHandSortingOrder);
-            WritePivotlessWalkSorting(body, PivotlessHand, FrontMainHandSortingOrder);
+            WritePivotlessWalkSorting(body, direction, false, PivotlessSecondHand, FrontOffHandSortingOrder);
+            WritePivotlessWalkSorting(body, direction, true, PivotlessHand, FrontMainHandSortingOrder);
+        }
+        else
+        {
+            // Idle keeps one depth per facing: a rig without pivots stays on its prefab orders.
+            foreach (string path in new[] { PivotlessSecondHand, PivotlessHand })
+                AnimationUtility.SetEditorCurve(body, Binding(path, typeof(SpriteRenderer), "m_SortingOrder"), null);
         }
         // The body loop holds the last frame until its end, as its MainHandGrip keys do.
         if (body.length - times[times.Count - 1] > 0.0001f)
@@ -161,7 +168,7 @@ public static class DirectionalAnimationGenerator
     }
 
     /// <summary>
-    /// Depth of a hand through the walk cycle. In every facing the half of the swing nearer the camera
+    /// Depth of a hand through a Walk or Sprint cycle. In every facing the half of the swing nearer the camera
     /// (the lower half as drawn) passes between the camera and the torso, and the other half passes
     /// behind it: the hand draws in front of the body for the first and behind it for the second.
     /// Heights are the sprite-local anchors of the drawn frames; a hand that does not swing stays behind.
@@ -176,33 +183,56 @@ public static class DirectionalAnimationGenerator
     }
 
     /// <summary>
-    /// Keys Main Hand's depth on its own Walk clip from that clip's drawn frames. Idle keeps one depth:
+    /// Depth of a hand through a Walk or Sprint cycle, by where the arm is relative to the torso.
+    /// Toward and away from the camera (S, N) both arms swing along the view axis, so each hand follows
+    /// <see cref="ResolveWalkSwingSortingOrders"/>. On a diagonal the arms sit on either side of the torso
+    /// as seen by the camera: the near one (Main Hand in SE/NE, Off Hand in SW/NW) is drawn over the body
+    /// for the whole cycle and the far one behind it, whatever the height of the swing.
+    /// </summary>
+    public static int[] ResolveLocomotionHandSortingOrders(string direction, bool mainHand,
+        System.Collections.Generic.IReadOnlyList<float> anchorHeights, int backOrder, int frontOrder)
+    {
+        if (anchorHeights == null) throw new ArgumentNullException(nameof(anchorHeights));
+        if (Array.IndexOf(Directions, direction) < 0)
+            throw new ArgumentException("Unknown facing direction.", nameof(direction));
+        if (direction.Length == 1)
+            return ResolveWalkSwingSortingOrders(anchorHeights, backOrder, frontOrder);
+        bool nearHand = mainHand == direction.EndsWith("E", StringComparison.Ordinal);
+        return Enumerable.Repeat(nearHand ? frontOrder : backOrder, anchorHeights.Count).ToArray();
+    }
+
+    /// <summary>
+    /// Keys Main Hand's depth on its own Walk or Sprint clip from that clip's drawn frames. Idle keeps one depth:
     /// the prefab order in front facings, behind the body in back facings.
     /// </summary>
-    public static void WriteMainHandWalkSorting(AnimationClip hand)
+    public static void WriteMainHandSwingSorting(AnimationClip hand)
     {
         if (hand == null) throw new ArgumentNullException(nameof(hand));
         string direction = hand.name.Substring(hand.name.LastIndexOf('_') + 1);
-        if (!IsWalkClip(hand) || Array.IndexOf(Directions, direction) < 0)
-            throw new ArgumentException("Expected a directional RightHand Walk clip.", nameof(hand));
+        if (!HasSwingDepth(hand) || Array.IndexOf(Directions, direction) < 0)
+            throw new ArgumentException("Expected a directional RightHand Walk or Sprint clip.", nameof(hand));
         ReadHandFrames(hand, Hand, out var times, out var anchors);
         AnimationUtility.SetEditorCurve(hand, Binding(Hand, typeof(SpriteRenderer), "m_SortingOrder"),
-            Stepped(times, ResolveWalkSwingSortingOrders(anchors.Select(anchor => anchor.y).ToArray(),
+            Stepped(times, ResolveLocomotionHandSortingOrders(direction, true,
+                anchors.Select(anchor => anchor.y).ToArray(),
                 NorthHandSortingOrder, FrontMainHandSortingOrder), hand.length));
     }
 
     // A rig without hand pivots (SocialPlayer) takes its hand sprites from the body clip's flat bindings,
     // so the body clip keys the same swing depth there. A rig with pivots has no such transform and
     // ignores these curves.
-    private static void WritePivotlessWalkSorting(AnimationClip body, string path, int frontOrder)
+    private static void WritePivotlessWalkSorting(AnimationClip body, string direction, bool mainHand, string path,
+        int frontOrder)
     {
         ReadHandFrames(body, path, out var times, out var anchors);
         AnimationUtility.SetEditorCurve(body, Binding(path, typeof(SpriteRenderer), "m_SortingOrder"),
-            Stepped(times, ResolveWalkSwingSortingOrders(anchors.Select(anchor => anchor.y).ToArray(),
-                NorthHandSortingOrder, frontOrder), body.length));
+            Stepped(times, ResolveLocomotionHandSortingOrders(direction, mainHand,
+                anchors.Select(anchor => anchor.y).ToArray(), NorthHandSortingOrder, frontOrder), body.length));
     }
 
-    private static bool IsWalkClip(AnimationClip clip) => clip.name.Contains("_Walk_");
+    // Locomotion whose hands swing across the body: its hand clips are named <Hand>_<Motion>_<Facing>.
+    private static bool HasSwingDepth(AnimationClip clip) =>
+        clip.name.Contains("_Walk_") || clip.name.Contains("_Sprint_");
 
     private static void ReadHandFrames(AnimationClip hand, string path,
         out System.Collections.Generic.List<float> times, out System.Collections.Generic.List<Vector2> anchors)

@@ -24,6 +24,7 @@ namespace Tests.EditMode.Player.Presentation
         public bool IsAimStance { get; set; }
         public bool HasInputAuthority { get; set; } = true;
         public bool IsDefending { get; set; }
+        public bool IsSprinting { get; set; }
         public WeaponSetSlot ActiveWeaponSetSlot { get; set; } = WeaponSetSlot.SetA;
         public NetworkBool IsMoving { get; set; }
         public NetworkBool IsControlEnabled { get; set; } = true;

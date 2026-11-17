@@ -94,10 +94,28 @@ internal static class PlayerWeaponPresentationMath
         return Mathf.Max(itemOrder, handOrder + 2);
     }
 
-    // Offensive items use fixed configured depth, independent of previous-frame hand sorting.
-    internal static int ResolveOffHandSortingOrder(bool frontFacing, int frontOrder, int backOrder, int handOrder)
+    /// <summary>The Body renderer's sorting order in the player rigs; hands sort above or below it.</summary>
+    internal const int BodySortingOrder = 2;
+
+    /// <summary>
+    /// A held item stays on the side of the body its holding hand is on: Walk and Sprint carry each hand
+    /// across the body every cycle, and both item orders sit just under the hand orders of their side.
+    /// </summary>
+    internal static int ResolveHeldItemSortingOrder(int frontOrder, int backOrder, int handOrder)
     {
-        return frontFacing ? frontOrder : backOrder;
+        return handOrder > BodySortingOrder ? frontOrder : backOrder;
+    }
+
+    /// <summary>
+    /// Off Hand offensive items follow their hand while the Animator owns that hand's depth. While an
+    /// Off Hand attack overlay poses the hand, the depth is the facing's, independent of the overlay.
+    /// </summary>
+    internal static int ResolveOffHandSortingOrder(bool frontFacing, int frontOrder, int backOrder, int handOrder,
+        bool handOwnsDepth = false)
+    {
+        return handOwnsDepth
+            ? ResolveHeldItemSortingOrder(frontOrder, backOrder, handOrder)
+            : frontFacing ? frontOrder : backOrder;
     }
 
     /// <summary>

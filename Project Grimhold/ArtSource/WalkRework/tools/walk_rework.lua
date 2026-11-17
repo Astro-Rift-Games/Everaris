@@ -1,15 +1,25 @@
--- Walk rework builder. Runs inside Aseprite (File > Scripts, or the MCP
--- run_lua tool with `WALK_REWORK_ROOT` set). For each facing it:
+-- Locomotion sheet builder. Runs inside Aseprite (File > Scripts, or the MCP
+-- run_lua tool with `WALK_REWORK_ROOT` set). Optional globals build another
+-- animation from the same Walk/Idle sources:
+--   WALK_REWORK_ANIM     output animation name (default "Walk")
+--   WALK_REWORK_RECIPES  recipe file (default tools/walk_recipes.lua)
+--   WALK_REWORK_OUT      folder that receives png/ and aseprite/ (default the root)
+-- For each facing it:
 --   1. loads the source sheets (copies of the Unity PNGs) for the base body
 --      and every equipment set,
 --   2. rebuilds each 96x96 frame from the stamps in walk_recipes.lua,
 --   3. saves an editable .aseprite (one group per skin, one layer per module,
 --      8 frames at 12 fps, "Walk" tag),
---   4. exports every sheet whose pixels changed as a 768x96 PNG that keeps the
---      original file name and frame layout.
+--   4. exports 768x96 PNG sheets with the Unity file names and frame layout:
+--      for Walk only the sheets whose pixels changed, for a new animation all.
 
 local ROOT = WALK_REWORK_ROOT
 assert(ROOT, "WALK_REWORK_ROOT is not set")
+
+local ANIM = WALK_REWORK_ANIM or "Walk"
+local OUT = WALK_REWORK_OUT or ROOT
+local RECIPES = WALK_REWORK_RECIPES or (ROOT .. "/tools/walk_recipes.lua")
+local EXPORT_ALL = ANIM ~= "Walk" -- a new animation has no existing sheets to keep
 
 local FRAME, COUNT, FRAME_SECONDS = 96, 8, 1 / 12
 local MODULES = { "Legs", "Body", "LeftHand", "Head", "RightHand" } -- bottom to top, as sorted in NetworkPlayer.prefab
@@ -162,14 +172,14 @@ local function buildDirection(recipes, dir)
       addLayer(sprite, group, skin.parts[module], frames)
       -- export only sheets whose pixels actually changed (some overlays already
       -- had the corrected frame, so the recipe is a no-op for them)
-      local changed = false
-      if moduleRecipe then
+      local changed = EXPORT_ALL
+      if moduleRecipe and not changed then
         for index = 0, COUNT - 1 do
           if not frames[index]:isEqual(buildFrame(skin, module, dir, index, nil)) then changed = true end
         end
       end
       if changed then
-        local out = ROOT .. "/png/" .. relPath(skin, module, "Walk", dir)
+        local out = OUT .. "/png/" .. relPath(skin, module, ANIM, dir)
         app.fs.makeAllDirectories(app.fs.filePath(out))
         exportSheet(frames, out)
         exported = exported + 1
@@ -179,14 +189,14 @@ local function buildDirection(recipes, dir)
 
   sprite:deleteLayer(starter)
   local tag = sprite:newTag(1, COUNT)
-  tag.name = "Walk_" .. dir
-  app.fs.makeAllDirectories(ROOT .. "/aseprite")
-  sprite:saveAs(ROOT .. "/aseprite/Walk_" .. dir .. ".aseprite")
+  tag.name = ANIM .. "_" .. dir
+  app.fs.makeAllDirectories(OUT .. "/aseprite")
+  sprite:saveAs(OUT .. "/aseprite/" .. ANIM .. "_" .. dir .. ".aseprite")
   sprite:close()
   return exported
 end
 
-local recipes = dofile(ROOT .. "/tools/walk_recipes.lua")
+local recipes = dofile(RECIPES)
 local total = 0
 for _, dir in ipairs(WALK_REWORK_DIRS or DIRS) do
   local count = buildDirection(recipes, dir)

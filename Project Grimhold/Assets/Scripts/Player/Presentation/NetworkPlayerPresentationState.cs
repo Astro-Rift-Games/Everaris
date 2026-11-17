@@ -55,6 +55,7 @@ public sealed class NetworkPlayerPresentationState : IPlayerPresentationState, I
     public bool IsAimStance => IsAimReadable && _movement.IsAimStance;
     public bool HasInputAuthority => IsAimReadable && _movement.Object.HasInputAuthority;
     public bool IsDefending => _shield != null && _shield.Object != null && _shield.Object.IsValid && _shield.IsDefending;
+    public bool IsSprinting => IsAimReadable && _movement.IsSprinting;
     public WeaponSetSlot ActiveWeaponSetSlot => _equipment != null ? _equipment.ActiveWeaponSetSlot : WeaponSetSlot.None;
 
     public bool TryGetAttackPresentationSeconds(in AttackPerformedEvent attack, out float seconds)

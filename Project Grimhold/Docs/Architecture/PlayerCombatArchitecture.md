@@ -1126,14 +1126,37 @@ authored hand pose, not the selected shield art.
 The holding hand and its weapon stay on the same side of Body (order 2). In back facings N/NE/NW,
 both hands rest at -2 and weapons draw at -10. RightHand Idle/Walk clips key that rest depth; generated
 body locomotion clips key LeftHand depth so Write Defaults cannot restore the prefab's order 4.
-Walk is the one exception to the hand's side, in every facing: the half of the swing nearer the camera
+In Walk and Sprint a hand's depth follows where its arm is relative to the torso
+(`DirectionalAnimationGenerator.ResolveLocomotionHandSortingOrders`). On a diagonal the arms sit on either side
+of the torso as the camera sees it: the near hand (Main Hand in SE/NE, Off Hand in SW/NW) draws in front of the
+body for the whole cycle and the far hand stays at -2, because the near hand is drawn almost entirely over the
+torso and sorting it by swing height would hide it, and the weapon it holds, behind the body for most of the
+cycle. Toward and away from the camera (S, N) both arms swing along the view axis: the half of the swing nearer the camera
 passes between the camera and the torso and the other half passes behind it. Each hand therefore draws in
 front of the body (Off Hand 22, Main Hand 30) for the camera-side half of its drawn swing and at -2 for the
 rest, keyed per sprite frame by `DirectionalAnimationGenerator.ResolveWalkSwingSortingOrders` (LeftHand on
 the body clip, RightHand on its own Walk clip). The body clip keys the same depth on the flat `LeftHand` and
 `RightHand` bindings, which only a rig without hand pivots (SocialPlayer) has, so the Town avatar follows the
-same rule; its Idle keeps the prefab orders. Weapons keep their facing depth (20 front, -10 back), so in
-a front facing a weapon stays over the body while its hand passes behind it. Idle keeps a constant depth.
+same rule; its Idle keeps the prefab orders. Idle keeps a constant depth.
+
+A held item follows its hand across the body, so hand and weapon still stay on the same side. `PlayerWeaponPresenter`
+reads the holding hand's evaluated order each frame and `PlayerWeaponPresentationMath.ResolveHeldItemSortingOrder`
+picks the item's front order (20) while the hand is above Body and its back order (-10) while it is below, both
+just under the hand orders of their side; a shield then applies its `max(itemOrder, holdingHandOrder + 2)` rule
+on that result. Two cases keep the facing's depth instead: a weapon-driven weapon, whose holding hand the
+presenter sorts from the facing, and an Off Hand item while an Off Hand attack overlay poses its hand.
+
+Sprint has its own sheets and clips (`Assets/Art/Character/**/Sprint/`, `Assets/Animations/Player/Sprint/`)
+but is not an Animator state. The `Movement`, `RightHand-Movement` and `LeftHand-Movement` states keep their
+transitions; each one's motion is a 1D tree on the float `SprintBlend` whose children are the Walk (0) and
+Sprint (1) directional trees. `PlayerAnimatorView` sets `SprintBlend` to 1 only while
+`IPlayerPresentationState.IsSprinting` (the replicated `PlayerMovementNetworkController.IsSprinting`) is true
+and the character is moving, so gameplay alone decides when sprint applies. Sprint clips reuse the Walk key
+grid; the Sprint trees play at time scale 0.78 under the 1.5 sprint playback rate, about 14 frames per second.
+Sprint hands use the same per-frame swing depth as Walk, written by the same generator; their art keeps the
+hands level on the flight frames so the camera-side half of the swing covers the sides of the torso under
+armor. Sprint grips follow the drawn hands exactly as in Walk, and every equipment definition maps each Sprint
+base sprite to its overlay.
 In front facings S/SE/SW, Off Hand stays at 22, Main Hand at 30, and weapons at 20; gloves follow one
 slot above their hand. Shared Defend clips use the same LeftHand depths (-2 back, 22 front), including
 when Main Hand holds the shield and Off Hand holds a weapon. Shields alone draw at

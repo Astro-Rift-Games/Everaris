@@ -414,5 +414,38 @@ namespace Tests.EditMode.Presentation
             Assert.That(actual.x, Is.EqualTo(expected.x).Within(tolerance));
             Assert.That(actual.y, Is.EqualTo(expected.y).Within(tolerance));
         }
+
+        // A held item stays with its hand: over the body while the hand is over it, behind while
+        // the hand is behind, whatever the facing. Walk and Sprint move each hand across the body
+        // every cycle, so a facing-only depth would leave the weapon on the other side.
+        [TestCase(30, 20)]
+        [TestCase(22, 20)]
+        [TestCase(25, 20)]
+        [TestCase(4, 20)]
+        [TestCase(-2, -10)]
+        [TestCase(-5, -10)]
+        public void HeldItemSorting_FollowsTheSideOfTheBodyItsHandIsOn(int handOrder, int expected)
+        {
+            Assert.That(PlayerWeaponPresentationMath.ResolveHeldItemSortingOrder(20, -10, handOrder), Is.EqualTo(expected));
+        }
+
+        [TestCase(true, -2, 20)]
+        [TestCase(false, 22, -10)]
+        public void OffHandSorting_KeepsTheFacingDepthWhileItsAttackOverlayOwnsTheHand(
+            bool frontFacing, int handOrder, int expected)
+        {
+            Assert.That(
+                PlayerWeaponPresentationMath.ResolveOffHandSortingOrder(frontFacing, 20, -10, handOrder, handOwnsDepth: false),
+                Is.EqualTo(expected));
+        }
+
+        [TestCase(true, -2, -10)]
+        [TestCase(false, 22, 20)]
+        public void OffHandSorting_FollowsItsHandDuringLocomotion(bool frontFacing, int handOrder, int expected)
+        {
+            Assert.That(
+                PlayerWeaponPresentationMath.ResolveOffHandSortingOrder(frontFacing, 20, -10, handOrder, handOwnsDepth: true),
+                Is.EqualTo(expected));
+        }
     }
 }
