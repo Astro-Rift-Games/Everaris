@@ -64,6 +64,16 @@ public sealed class TorchFlameAnimationTests
     }
 
     [Test]
+    public void TorchUnlit_SharesLitBaseImageOrigin_SoExtinguishingDoesNotShiftTheSconce()
+    {
+        Sprite unlit = LoadSingleSprite(TorchUnlitPath, "Torch-Unlit_0");
+
+        Assert.That((unlit.rect.position + unlit.pivot - ExpectedImageOrigin).magnitude,
+            Is.LessThan(0.001f),
+            "Torch-Unlit_0 pivot must match Torch-Lit-Base_0 so swapping sprites keeps the sconce in place.");
+    }
+
+    [Test]
     public void TorchFlameSheet_UsesProjectPixelArtImportSettings_AndUniformAlignedFrames()
     {
         Assert.That(AssetDatabase.AssetPathToGUID(TorchFlameSheetPath), Is.EqualTo(TorchFlameSheetGuid));
@@ -148,8 +158,10 @@ public sealed class TorchFlameAnimationTests
         SpriteRenderer rootRenderer = torchPrefab.GetComponent<SpriteRenderer>();
         Assert.That(rootRenderer, Is.Not.Null);
         Assert.That(rootRenderer.sprite, Is.SameAs(litBase));
-        Assert.That(rootRenderer.sortingLayerName, Is.EqualTo("Traps"));
-        Assert.That(rootRenderer.sortingOrder, Is.EqualTo(1));
+        Assert.That(rootRenderer.sortingLayerName, Is.EqualTo("Walls"),
+            "Wall-mounted torch must use a fixed wall-decoration order instead of Y-sorting with characters.");
+        Assert.That(rootRenderer.sortingOrder, Is.EqualTo(3),
+            "Torch sconce must render above every wall tilemap (Walls order 0-2).");
 
         Transform flameTransform = torchPrefab.transform.Find("FlameVisual");
         Assert.That(flameTransform, Is.Not.Null);
@@ -161,9 +173,10 @@ public sealed class TorchFlameAnimationTests
         SpriteRenderer flameRenderer = flameTransform.GetComponent<SpriteRenderer>();
         Assert.That(flameRenderer, Is.Not.Null);
         Assert.That(flameRenderer.sprite, Is.SameAs(firstFlame));
-        Assert.That(flameRenderer.sortingLayerName, Is.EqualTo("Traps"),
-            "FlameVisual must render above Default dungeon tiles and above the torch sconce (Order 1).");
-        Assert.That(flameRenderer.sortingOrder, Is.EqualTo(2));
+        Assert.That(flameRenderer.sortingLayerName, Is.EqualTo("Walls"),
+            "FlameVisual must share the sconce's wall-decoration layer.");
+        Assert.That(flameRenderer.sortingOrder, Is.EqualTo(4),
+            "FlameVisual must render above the torch sconce (Walls order 3).");
 
         Animator animator = flameTransform.GetComponent<Animator>();
         Assert.That(animator, Is.Not.Null);
@@ -267,8 +280,10 @@ public sealed class TorchFlameAnimationTests
                 Assert.That(flame.localPosition, Is.EqualTo(Vector3.zero), torch.name);
 
                 SpriteRenderer flameRenderer = flame.GetComponent<SpriteRenderer>();
-                Assert.That(flameRenderer.sortingLayerName, Is.EqualTo("Traps"), torch.name);
-                Assert.That(flameRenderer.sortingOrder, Is.EqualTo(2), torch.name);
+                Assert.That(rootRenderer.sortingLayerName, Is.EqualTo("Walls"), torch.name);
+                Assert.That(rootRenderer.sortingOrder, Is.EqualTo(3), torch.name);
+                Assert.That(flameRenderer.sortingLayerName, Is.EqualTo("Walls"), torch.name);
+                Assert.That(flameRenderer.sortingOrder, Is.EqualTo(4), torch.name);
 
                 Animator animator = flame.GetComponent<Animator>();
                 Assert.That(animator, Is.Not.Null, torch.name);
