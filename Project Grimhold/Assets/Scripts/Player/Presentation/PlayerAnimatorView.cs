@@ -95,6 +95,10 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
 
     private static readonly int AttackStateHash = Animator.StringToHash("RightHand.Attack");
     private static readonly int IdleStateHash = Animator.StringToHash("RightHand.RightHand-Idle");
+    private static readonly int MovementStateHash = Animator.StringToHash("RightHand.RightHand-Movement");
+    private static readonly int BodyIdleStateHash = Animator.StringToHash("Base Layer.Idle");
+    private static readonly int BodyMovementStateHash = Animator.StringToHash("Base Layer.Movement");
+    private const int BodyLayerIndex = 0;
     private readonly List<AnimatorClipInfo> _attackClipBuffer = new List<AnimatorClipInfo>(2);
 
     /// <summary>
@@ -481,7 +485,7 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
             _stancePoseActive = false;
             if (_mainHandCombatLayerIndex >= 0)
             {
-                AnimatorInstance.Play(IdleStateHash, _mainHandCombatLayerIndex, 0f);
+                ResumeMainHandLocomotion(AnimatorInstance, _mainHandCombatLayerIndex);
             }
         }
 
@@ -555,7 +559,7 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
             _confirmedAttackWeapon = null;
             _attackWeaponPinned = false;
             ClearTemporalFacingDirection();
-            AnimatorInstance.Play(IdleStateHash, _mainHandCombatLayerIndex, 0f);
+            ResumeMainHandLocomotion(AnimatorInstance, _mainHandCombatLayerIndex);
             RefreshAttackAnimation();
             return;
         }
@@ -563,6 +567,24 @@ public sealed class PlayerAnimatorView : CharacterAnimatorView
         // The main-hand layer alone is sought; locomotion and off-hand defense keep running.
         AnimatorInstance.Play(AttackStateHash, _mainHandCombatLayerIndex, seconds / _timedAttackClip.length);
         AnimatorInstance.Update(0f);
+    }
+
+    /// <summary>
+    /// Hands the main-hand layer back to locomotion after it was sought alone. The body clips key the grip the weapon
+    /// hangs from while this layer draws the hand, so it rejoins the body's state at the body's phase; restarting its
+    /// own cycle would leave the drawn hand and the held weapon a fixed fraction of a step apart from then on.
+    /// </summary>
+    internal static void ResumeMainHandLocomotion(Animator animator, int mainHandLayer)
+    {
+        AnimatorStateInfo body = animator.GetCurrentAnimatorStateInfo(BodyLayerIndex);
+        if (body.fullPathHash == BodyMovementStateHash)
+            animator.Play(MovementStateHash, mainHandLayer, body.normalizedTime);
+        else if (body.fullPathHash == BodyIdleStateHash)
+            animator.Play(IdleStateHash, mainHandLayer, body.normalizedTime);
+        else
+            animator.Play(IdleStateHash, mainHandLayer, 0f);
+        // Apply the seek now, as the attack seeks do: deferred to the next Update it would start one frame behind.
+        animator.Update(0f);
     }
 
     private void RefreshCombatParameters()
