@@ -212,7 +212,7 @@ public sealed class CurrencyPersistenceEditModeTests
         store.TryCreditCurrency(500);
         Assert.That(store.GetCurrency(), Is.EqualTo(500L));
 
-        var items = new[] { new StashItem(new LootId("healthpotion"), 2) };
+        var items = new[] { new StashItem(new LootId("CON_HEALTH_POTION"), 2) };
         Assert.That(store.TrySecureLoot(items), Is.EqualTo(StashOperationResult.Success));
         
         Assert.That(store.GetCurrency(), Is.EqualTo(500L));
@@ -258,7 +258,7 @@ public sealed class CurrencyPersistenceEditModeTests
         int eventCount = 0;
         service.CurrencyChanged += _ => eventCount++;
 
-        var items = new[] { new StashItem(new LootId("healthpotion"), 2) };
+        var items = new[] { new StashItem(new LootId("CON_HEALTH_POTION"), 2) };
         Assert.That(store.TrySecureLoot(items), Is.EqualTo(StashOperationResult.Success));
 
         Assert.That(eventCount, Is.EqualTo(0));
@@ -305,7 +305,7 @@ public sealed class CurrencyPersistenceEditModeTests
         int eventCount = 0;
         service.CurrencyChanged += _ => eventCount++;
 
-        var items = new[] { new StashItem(new LootId("healthpotion"), 2) };
+        var items = new[] { new StashItem(new LootId("CON_HEALTH_POTION"), 2) };
         Assert.That(store.TrySecureLoot(items), Is.EqualTo(StashOperationResult.Success));
 
         Assert.That(eventCount, Is.EqualTo(0));

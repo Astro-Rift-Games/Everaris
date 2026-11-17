@@ -68,9 +68,9 @@ public sealed class LootDefinitionCatalog : ScriptableObject
             return true;
         }
 
-        if (string.Equals(id, "CON_HEALTH_POTION", StringComparison.Ordinal))
+        if (string.Equals(id, "healthpotion", StringComparison.Ordinal))
         {
-            return _definitionsById.TryGetValue("healthpotion", out definition);
+            return _definitionsById.TryGetValue("CON_HEALTH_POTION", out definition);
         }
 
         return false;
@@ -95,9 +95,9 @@ public sealed class LootDefinitionCatalog : ScriptableObject
             return true;
         }
 
-        if (string.Equals(lootId.Value, "CON_HEALTH_POTION", StringComparison.Ordinal))
+        if (string.Equals(lootId.Value, "healthpotion", StringComparison.Ordinal))
         {
-            return _indicesById.TryGetValue(new LootId("healthpotion"), out index);
+            return _indicesById.TryGetValue(new LootId("CON_HEALTH_POTION"), out index);
         }
 
         return false;

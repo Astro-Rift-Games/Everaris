@@ -8,7 +8,7 @@ public class MerchantTradePreviewTests
 {
     private const int Capacity = 3;
 
-    private static readonly LootId Potion = new LootId("healthpotion");
+    private static readonly LootId Potion = new LootId("CON_HEALTH_POTION");
     private static readonly LootId Bone = new LootId("bone");
     private static readonly LootId Hat = new LootId("arcane_mage_hat");
     private static readonly LootId Relic = new LootId("relic");

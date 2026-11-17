@@ -4,7 +4,7 @@ using NUnit.Framework;
 [Category("TASK214"), Category("TASK230")]
 public sealed class QuickSlotAssignmentRulesTests
 {
-    private static readonly LootId Potion = new LootId("healthpotion");
+    private static readonly LootId Potion = new LootId("CON_HEALTH_POTION");
     private static readonly LootId Elixir = new LootId("elixir");
 
     [Test]
@@ -112,7 +112,7 @@ public sealed class QuickSlotAssignmentRulesTests
     [Test]
     public void TryCreate_BlankEntriesAreUnassigned()
     {
-        Assert.That(QuickSlotBindings.TryCreate(new[] { "healthpotion", "", null, "elixir" }, out var bindings, out _), Is.True);
+        Assert.That(QuickSlotBindings.TryCreate(new[] { "CON_HEALTH_POTION", "", null, "elixir" }, out var bindings, out _), Is.True);
 
         Assert.That(bindings.Get(0), Is.EqualTo(Potion));
         Assert.That(bindings.IsAssigned(1), Is.False);

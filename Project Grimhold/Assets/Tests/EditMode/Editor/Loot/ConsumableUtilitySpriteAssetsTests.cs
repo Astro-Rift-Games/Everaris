@@ -18,9 +18,7 @@ namespace Tests.EditMode.Loot
         [TestCase("UTL_RUNE_COMPASS", "RuneCompass")]
         public void Definition_UsesExactSpritesAndRetainsCatalogValidation(string id, string family)
         {
-            string assetPath = id == "CON_HEALTH_POTION"
-                ? "Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset"
-                : $"Assets/Scriptable Objects/Loot/Definitions/{id}.asset";
+            string assetPath = $"Assets/Scriptable Objects/Loot/Definitions/{id}.asset";
             var definition = AssetDatabase.LoadAssetAtPath<LootDefinition>(assetPath);
             Assert.That(definition, Is.Not.Null, id);
 

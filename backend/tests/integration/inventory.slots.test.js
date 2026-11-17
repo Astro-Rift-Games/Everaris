@@ -158,12 +158,12 @@ test('B2 physical slots HTTP and atomic persistence', async t => {
     await Result.create({ accountId, raidId: 'raid', resultId: 'result', items, experienceGranted: 0 });
     const result = await send('post', '/me/extraction/commit', payload);
     assert.equal(result.status, 201, JSON.stringify(result.body));
-    assert.deepEqual(result.body.loadout, [entry(0, 'bone', 6), entry(1, 'healthpotion')]);
+    assert.deepEqual(result.body.loadout, [entry(0, 'bone', 6), entry(1, 'CON_HEALTH_POTION')]);
     assert.equal((await send('post', '/me/extraction/commit', payload)).body.alreadySecured, true);
     await Character.updateOne({ accountId }, { $set: { 'inventory.loadout': [] } });
     const legacy = await send('post', '/me/inventory/extraction', { ...payload, raidId: 'legacy', items });
     assert.equal(legacy.status, 200, JSON.stringify(legacy.body));
-    assert.deepEqual(legacy.body.loadout, [entry(0, 'bone', 6), entry(1, 'healthpotion')]);
+    assert.deepEqual(legacy.body.loadout, [entry(0, 'bone', 6), entry(1, 'CON_HEALTH_POTION')]);
     await Character.updateOne({ accountId }, { $set: { 'inventory.loadout': [] } });
     await Result.create({ accountId, raidId: 'overflow', resultId: 'overflow', items: full(31).map(({ lootId, amount }) => ({ lootId, amount })), experienceGranted: 0 });
     await rejected('post', '/me/extraction/commit', { ...payload, raidId: 'overflow' }, 409, 'INVENTORY_FULL');

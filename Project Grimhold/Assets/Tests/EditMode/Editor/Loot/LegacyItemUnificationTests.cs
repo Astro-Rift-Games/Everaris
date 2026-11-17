@@ -30,7 +30,7 @@ namespace Tests.EditMode.Loot
                 if (item != null && (item.Id == "healthpotion" || item.Id == "CON_HEALTH_POTION"))
                 {
                     healthPotionCount++;
-                    Assert.That(item.Id, Is.EqualTo("healthpotion"), "Expected only canonical 'healthpotion' ID in catalog entries.");
+                    Assert.That(item.Id, Is.EqualTo("CON_HEALTH_POTION"), "Expected only canonical 'CON_HEALTH_POTION' ID in catalog entries.");
                 }
             }
 
@@ -38,13 +38,13 @@ namespace Tests.EditMode.Loot
         }
 
         [Test]
-        public void Catalog_TryGet_ResolvesLegacyConHealthPotionToCanonical()
+        public void Catalog_TryGet_ResolvesLegacyHealthPotionToCanonical()
         {
-            Assert.That(_catalog.TryGet("healthpotion", out LootDefinition canonical), Is.True);
+            Assert.That(_catalog.TryGet("CON_HEALTH_POTION", out LootDefinition canonical), Is.True);
             Assert.That(canonical, Is.Not.Null);
-            Assert.That(canonical.Id, Is.EqualTo("healthpotion"));
+            Assert.That(canonical.Id, Is.EqualTo("CON_HEALTH_POTION"));
 
-            Assert.That(_catalog.TryGet("CON_HEALTH_POTION", out LootDefinition resolved), Is.True);
+            Assert.That(_catalog.TryGet("healthpotion", out LootDefinition resolved), Is.True);
             Assert.That(resolved, Is.SameAs(canonical));
         }
 

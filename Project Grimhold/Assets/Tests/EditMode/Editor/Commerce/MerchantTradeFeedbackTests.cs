@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 
 public class MerchantTradeFeedbackTests
 {
-    private static readonly LootId Potion = new LootId("healthpotion");
+    private static readonly LootId Potion = new LootId("CON_HEALTH_POTION");
     private static readonly LootId Hat = new LootId("placeholder_helmet");
 
     private LootDefinition _potion;
@@ -49,7 +49,7 @@ public class MerchantTradeFeedbackTests
     {
         string message = Describe(0, new MerchantTradeBlock(MerchantTradeBlockReason.InsufficientStock, Potion));
 
-        Assert.That(message, Is.EqualTo("Stock insuficiente: healthpotion"));
+        Assert.That(message, Is.EqualTo("Stock insuficiente: CON_HEALTH_POTION"));
     }
 
     [Test]

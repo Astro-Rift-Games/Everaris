@@ -259,7 +259,7 @@ namespace Tests.EditMode.Loot
             Assert.That(pickup, Is.Not.Null);
             Assert.That(renderer, Is.Not.Null);
             Assert.That(pickup.SortingLayerName, Is.EqualTo("Characters"));
-            Assert.That(pickup.SortingOrder, Is.EqualTo(2));
+            Assert.That(pickup.SortingOrder, Is.EqualTo(100));
             Assert.That(renderer.sortingLayerName, Is.EqualTo(pickup.SortingLayerName));
             Assert.That(renderer.sortingOrder, Is.EqualTo(pickup.SortingOrder));
 
@@ -277,6 +277,39 @@ namespace Tests.EditMode.Loot
             Assert.That(
                 networkObject.Flags.HasFlag(Fusion.NetworkObjectFlags.HasMainNetworkTRSP),
                 Is.True);
+        }
+
+        [Test]
+        public void AllLootPickupPrefabs_UseCharactersSortingLayerAtOrder100()
+        {
+            string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets" });
+            int verifiedCount = 0;
+
+            foreach (string guid in prefabGuids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                if (prefab == null)
+                {
+                    continue;
+                }
+
+                NetworkLootPickup pickup = prefab.GetComponent<NetworkLootPickup>();
+                if (pickup == null)
+                {
+                    continue;
+                }
+
+                SpriteRenderer renderer = prefab.GetComponentInChildren<SpriteRenderer>(true);
+                Assert.That(renderer, Is.Not.Null, $"{path} missing SpriteRenderer.");
+                Assert.That(pickup.SortingLayerName, Is.EqualTo("Characters"), path);
+                Assert.That(pickup.SortingOrder, Is.EqualTo(100), path);
+                Assert.That(renderer.sortingLayerName, Is.EqualTo("Characters"), path);
+                Assert.That(renderer.sortingOrder, Is.EqualTo(100), path);
+                verifiedCount++;
+            }
+
+            Assert.That(verifiedCount, Is.GreaterThanOrEqualTo(16));
         }
 
     }

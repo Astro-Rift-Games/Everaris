@@ -13,7 +13,8 @@ const LOOT_ID_ALIASES = Object.freeze({
   training_shield: 'shield',
   // Legacy leg armor stored without the separator before "plate"
   heavy_armor_legplate: 'heavy_armor_leg_plate',
-  CON_HEALTH_POTION: 'healthpotion'
+  // Legacy pre-MVP health potion id replaced by CON_HEALTH_POTION
+  healthpotion: 'CON_HEALTH_POTION'
 });
 
 function normalizeLootId(lootId) {

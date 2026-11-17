@@ -132,7 +132,7 @@ public sealed class RaidLootTestSpawner : MonoBehaviour
 
         if (_lootCatalog != null)
         {
-            if (_healthPotion == null) _lootCatalog.TryGet("healthpotion", out _healthPotion);
+            if (_healthPotion == null) _lootCatalog.TryGet("CON_HEALTH_POTION", out _healthPotion);
             if (_manaPotion == null) _lootCatalog.TryGet("CON_MANA_POTION", out _manaPotion);
             if (_manaFragment == null) _lootCatalog.TryGet("CON_MANA_FRAGMENT", out _manaFragment);
             if (_explosiveBomb == null) _lootCatalog.TryGet("CON_EXPLOSIVE_BOMB", out _explosiveBomb);

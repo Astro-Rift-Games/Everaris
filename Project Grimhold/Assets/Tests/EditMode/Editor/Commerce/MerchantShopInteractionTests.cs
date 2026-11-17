@@ -4,7 +4,7 @@ using Assert = NUnit.Framework.Assert;
 
 public class MerchantShopInteractionTests
 {
-    private static readonly LootId Potion = new LootId("healthpotion");
+    private static readonly LootId Potion = new LootId("CON_HEALTH_POTION");
     private static readonly LootId Hat = new LootId("placeholder_helmet");
 
     private FakeIntentions _intentions;
@@ -109,7 +109,7 @@ public class MerchantShopInteractionTests
 
         Assert.That(_interaction.ApplyLine(), Is.True);
 
-        Assert.That(_intentions.Calls, Is.EqualTo(new[] { "AddPurchase healthpotion 3" }));
+        Assert.That(_intentions.Calls, Is.EqualTo(new[] { "AddPurchase CON_HEALTH_POTION 3" }));
     }
 
     [Test]
@@ -136,7 +136,7 @@ public class MerchantShopInteractionTests
         _interaction.SetQuantity(4);
         Assert.That(_interaction.ApplyLine(), Is.True);
 
-        Assert.That(_intentions.Calls, Is.EqualTo(new[] { "SetPurchaseAmount healthpotion 4" }));
+        Assert.That(_intentions.Calls, Is.EqualTo(new[] { "SetPurchaseAmount CON_HEALTH_POTION 4" }));
     }
 
     [Test]
@@ -161,7 +161,7 @@ public class MerchantShopInteractionTests
         _interaction.Present(View(MerchantRow(Potion, draft: 2, max: 5)));
         Assert.That(_interaction.RemoveLine(), Is.True);
 
-        Assert.That(_intentions.Calls, Is.EqualTo(new[] { "RemovePurchase healthpotion" }));
+        Assert.That(_intentions.Calls, Is.EqualTo(new[] { "RemovePurchase CON_HEALTH_POTION" }));
     }
 
     [Test]

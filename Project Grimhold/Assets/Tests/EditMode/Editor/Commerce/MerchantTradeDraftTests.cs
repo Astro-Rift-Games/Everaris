@@ -5,7 +5,7 @@ using Assert = NUnit.Framework.Assert;
 
 public class MerchantTradeDraftTests
 {
-    private static readonly LootId Potion = new LootId("healthpotion");
+    private static readonly LootId Potion = new LootId("CON_HEALTH_POTION");
     private static readonly LootId Bone = new LootId("bone");
     private static readonly LootId Helmet = new LootId("placeholder_helmet");
 

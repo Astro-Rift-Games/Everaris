@@ -5,6 +5,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { isKnownLootId } = require('../src/config/itemCatalog');
+const { normalizeLootId } = require('../src/services/InventoryLootIdNormalizer');
 
 const definitions = path.resolve(__dirname, '../../Project Grimhold/Assets/Scriptable Objects/Loot/Definitions');
 
@@ -36,5 +37,6 @@ test('the backend item registry rejects identifiers that name no item', () => {
     assert.equal(isKnownLootId(lootId), false, String(lootId));
   }
   assert.equal(isKnownLootId('longsword'), true, 'legacy aliases resolve to their canonical item');
-  assert.equal(isKnownLootId('CON_HEALTH_POTION'), true, 'CON_HEALTH_POTION normalizes to canonical healthpotion');
+  assert.equal(normalizeLootId('healthpotion'), 'CON_HEALTH_POTION');
+  assert.equal(isKnownLootId('healthpotion'), true, 'legacy healthpotion resolves to CON_HEALTH_POTION');
 });

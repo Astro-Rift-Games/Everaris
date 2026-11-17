@@ -6,7 +6,7 @@ using Assert = NUnit.Framework.Assert;
 public class MerchantTradeTicketTests
 {
     private static readonly ShopTransactionId Id = new ShopTransactionId(1000, new Guid("22222222-2222-2222-2222-222222222222"));
-    private static readonly LootId Potion = new LootId("healthpotion");
+    private static readonly LootId Potion = new LootId("CON_HEALTH_POTION");
     private static readonly LootId Bone = new LootId("bone");
     private static readonly MerchantPricedTradeLine[] None = Array.Empty<MerchantPricedTradeLine>();
 

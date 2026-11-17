@@ -113,11 +113,11 @@ public sealed class PhysicalProfileSlotTests
         var id = new ProfileId("49494949494949494949494949494949");
         var snapshot = new LocalProfileSnapshot { ProfileId = id };
         snapshot.Stash.Add(new StashItem(Bone, 3, 7));
-        snapshot.Stash.Add(new StashItem(new LootId("healthpotion"), 4, 11));
+        snapshot.Stash.Add(new StashItem(new LootId("CON_HEALTH_POTION"), 4, 11));
         snapshot.Loadout.Add(new StashItem(Bone, 5, 9));
         string json = LocalProfileSaveCodec.Encode(snapshot).Replace($"\"schemaVersion\": {LocalProfileSnapshot.CurrentSchemaVersion}", "\"schemaVersion\": 9");
         Assert.That(LocalProfileSaveCodec.TryDecode(json, id, Catalog, out var decoded, out _, out var error), Is.True, error);
-        Assert.That(decoded.Stash, Is.EqualTo(new[] { new StashItem(Bone, 3, 0), new StashItem(new LootId("healthpotion"), 4, 1) }));
+        Assert.That(decoded.Stash, Is.EqualTo(new[] { new StashItem(Bone, 3, 0), new StashItem(new LootId("CON_HEALTH_POTION"), 4, 1) }));
         Assert.That(decoded.Loadout.Single(), Is.EqualTo(new StashItem(Bone, 5, 0)));
         Assert.That(LocalProfileSaveCodec.TryDecode(LocalProfileSaveCodec.Encode(decoded), id, Catalog,
             out var roundTrip, out _, out error), Is.True, error);

@@ -17,7 +17,7 @@ public class MerchantShopUIRenderTests
     private const string MerchantShopPrefabPath = "Assets/Prefabs/UI/MerchantShopUI.prefab";
     private const BindingFlags PrivateInstance = BindingFlags.Instance | BindingFlags.NonPublic;
 
-    private static readonly LootId Potion = new LootId("healthpotion");
+    private static readonly LootId Potion = new LootId("CON_HEALTH_POTION");
     private static readonly LootId Hat = new LootId("placeholder_helmet");
 
     private MerchantShopUI _ui;

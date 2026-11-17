@@ -138,7 +138,7 @@ namespace Tests.EditMode.Stash
                     new ExtractionReceipt("raid-shop-recovery", _profile, 3),
                     new[] { new StashItem(new LootId("bone"), 4) }, default, 150, 2)
             };
-            snapshot.Stash.Add(new StashItem(new LootId("healthpotion"), 2, 5));
+            snapshot.Stash.Add(new StashItem(new LootId("CON_HEALTH_POTION"), 2, 5));
             snapshot.Loadout.Add(new StashItem(new LootId("bone"), 4, 8));
             snapshot.AppliedExtractionReceipts.Add(snapshot.PendingExtractionCommit.Receipt);
             snapshot.AppliedShopTransactionReceipts.Add(new ShopTransactionReceipt(

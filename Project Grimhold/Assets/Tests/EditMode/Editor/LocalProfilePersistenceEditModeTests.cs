@@ -65,7 +65,7 @@ public sealed class LocalProfilePersistenceEditModeTests
 
         Assert.That(repository.Initialize(profile, _catalog), Is.True);
         var snapshot = repository.Snapshot.Clone();
-        snapshot.Stash.Add(new StashItem(new LootId("healthpotion"), 2, 5));
+        snapshot.Stash.Add(new StashItem(new LootId("CON_HEALTH_POTION"), 2, 5));
         Assert.That(repository.TrySave(snapshot, out string error), Is.True, error);
 
         var reloaded = new LocalProfileRepository(files, ".");
@@ -252,7 +252,7 @@ public sealed class LocalProfilePersistenceEditModeTests
         var receipt = new ExtractionReceipt("raid-non-empty-loadout", profile, 1);
 
         Assert.That(
-            store.TryCommitExtraction(receipt, new[] { new StashItem(new LootId("healthpotion"), 1) }, new PreparedEquipmentLoadout(), 0, 1, 0),
+            store.TryCommitExtraction(receipt, new[] { new StashItem(new LootId("CON_HEALTH_POTION"), 1) }, new PreparedEquipmentLoadout(), 0, 1, 0),
             Is.EqualTo(StashOperationResult.PersistenceFailed));
         CollectionAssert.AreEqual(initial.Loadout, store.GetLoadout());
         CollectionAssert.AreEqual(initial.Stash, store.GetStash());
@@ -696,7 +696,7 @@ public sealed class LocalProfilePersistenceEditModeTests
         Assert.That(migrated.SchemaVersion, Is.EqualTo(LocalProfileSnapshot.CurrentSchemaVersion));
         Assert.That(migrated.PendingDefeatCommit, Is.Null);
         Assert.That(migrated.Stash.Count, Is.EqualTo(1));
-        Assert.That(migrated.Stash[0].LootId.Value, Is.EqualTo("healthpotion"));
+        Assert.That(migrated.Stash[0].LootId.Value, Is.EqualTo("CON_HEALTH_POTION"));
         Assert.That(migrated.Stash[0].Amount, Is.EqualTo(5));
         Assert.That(migrated.Stash[0].ExpeditionId, Is.EqualTo(string.Empty));
         Assert.That(migrated.Stash[0].Origin, Is.EqualTo(string.Empty));
@@ -718,7 +718,7 @@ public sealed class LocalProfilePersistenceEditModeTests
             Currency = 50,
             InventorySchemaVersion = 3
         };
-        snapshot.Stash.Add(new StashItem(new LootId("healthpotion"), 3, 0, null, "exp-alpha", "Town"));
+        snapshot.Stash.Add(new StashItem(new LootId("CON_HEALTH_POTION"), 3, 0, null, "exp-alpha", "Town"));
         snapshot.Loadout.Add(new StashItem(new LootId("bone"), 1, 0, null, "exp-beta", "Dungeon"));
 
         string json = LocalProfileSaveCodec.Encode(snapshot);
