@@ -4,18 +4,18 @@
 
 Release: Unreleased
 
-282 original commits; 282 canonical entries.
+283 original commits; 283 canonical entries.
 
 ## Canonical classification
 
-88 features; 92 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 19 tests; 11 maintenance; 19 other changes
+88 features; 93 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 19 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 10 | 11 | 1 | 0 | 9 | 1 |
-| Art & Animation | 18 | 11 | 3 | 0 | 9 | 7 |
+| Art & Animation | 18 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 7 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 61 | 62 | 3 | 1 | 22 | 6 |
+| Build & Tooling | 61 | 63 | 3 | 1 | 22 | 6 |
 | Combat | 42 | 16 | 2 | 0 | 12 | 1 |
 | Documentation | 33 | 41 | 0 | 0 | 13 | 0 |
 | Extraction | 17 | 21 | 2 | 0 | 9 | 5 |
@@ -24,12 +24,69 @@ Release: Unreleased
 | Movement | 5 | 4 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 29 | 35 | 0 | 0 | 18 | 2 |
 | Persistence & Backend | 29 | 48 | 2 | 1 | 19 | 3 |
-| Tests | 84 | 86 | 3 | 1 | 29 | 4 |
+| Tests | 84 | 87 | 3 | 1 | 29 | 4 |
 | UI | 33 | 20 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
-| World & Visibility | 24 | 11 | 0 | 0 | 3 | 12 |
+| World & Visibility | 24 | 12 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 41b115da1222182ce4aa619306810489200e6df5
+
+[41b115da1222182ce4aa619306810489200e6df5](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/41b115da1222182ce4aa619306810489200e6df5)
+
+Date: 2026-11-17T13:15:06-03:00 · Classification: Bug Fixes (explicit) · Systems: World & Visibility, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(props): keep wall torches aligned and layered with the walls
+```
+
+#### Original body
+
+```text
+The extinguished torch sprite used a centered pivot while the lit base
+uses a custom (0.5, 0.9) pivot, so the sconce dropped 6 px whenever a
+torch went out. Both sprites now share the same image origin.
+
+The Torch variant also renders on the Walls sorting layer (sconce
+order 3, flame order 4) instead of Y-sorting with characters, so a
+wall-mounted torch always draws above the wall tilemaps (Walls 0-2)
+and below traps, characters and VFX. Brazier, Candle and Multiple
+Candles keep the base Characters layer.
+
+Tests:
+- TorchUnlit_SharesLitBaseImageOrigin_SoExtinguishingDoesNotShiftTheSconce
+- Torch prefab and gameplay-scene torch assertions now expect Walls 3/4
+
+Player-Fixed: Torches no longer jump out of place when they go out.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Art/Props/Torch-Unlit.png.meta
+Project Grimhold/Assets/Prefabs/Lighting Props/Torch.prefab
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → World &amp; Visibility: tilemaps
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Torch-Unlit.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs
+- message-term → Art &amp; Animation: sprite
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 53fa74341e843b8de761ee1cd5da00f517ee1932
 

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1159,
-  "canonicalEntries": 1156,
+  "rawCommits": 1160,
+  "canonicalEntries": 1157,
   "before": {
-    "Bug Fixes": 170,
+    "Bug Fixes": 171,
     "Features": 410,
     "Refactoring": 16,
     "Documentation": 123,
@@ -12,7 +12,7 @@
     "Tests": 43
   },
   "after": {
-    "Bug Fixes": 186,
+    "Bug Fixes": 187,
     "Features": 548,
     "Refactoring": 29,
     "Documentation": 139,
@@ -23,13 +23,13 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "World & Visibility": 161,
+    "Art & Animation": 259,
+    "Build & Tooling": 597,
+    "Tests": 729,
     "Combat": 389,
     "Movement": 100,
-    "Art & Animation": 258,
-    "Build & Tooling": 596,
-    "Tests": 728,
     "Inventory & Loot": 466,
-    "World & Visibility": 160,
     "Extraction": 173,
     "Persistence & Backend": 287,
     "UI": 338,
@@ -42,7 +42,7 @@
   },
   "canonical": {
     "sections": {
-      "Bug Fixes": 185,
+      "Bug Fixes": 186,
       "Features": 547,
       "Refactoring": 29,
       "Documentation": 139,
@@ -52,13 +52,13 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "World & Visibility": 159,
+      "Art & Animation": 256,
+      "Build & Tooling": 595,
+      "Tests": 727,
       "Combat": 387,
       "Movement": 100,
-      "Art & Animation": 255,
-      "Build & Tooling": 594,
-      "Tests": 726,
       "Inventory & Loot": 466,
-      "World & Visibility": 158,
       "Extraction": 173,
       "Persistence & Backend": 287,
       "UI": 337,
@@ -74826,8 +74826,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 282,
-      "canonicalEntries": 282
+      "originalCommits": 283,
+      "canonicalEntries": 283
     },
     {
       "key": "v0.5.0",
@@ -74871,6 +74871,76 @@
     }
   ],
   "commits": [
+    {
+      "sha": "41b115da1222182ce4aa619306810489200e6df5",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/41b115da1222182ce4aa619306810489200e6df5",
+      "subject": "fix(props): keep wall torches aligned and layered with the walls",
+      "body": "The extinguished torch sprite used a centered pivot while the lit base\nuses a custom (0.5, 0.9) pivot, so the sconce dropped 6 px whenever a\ntorch went out. Both sprites now share the same image origin.\n\nThe Torch variant also renders on the Walls sorting layer (sconce\norder 3, flame order 4) instead of Y-sorting with characters, so a\nwall-mounted torch always draws above the wall tilemaps (Walls 0-2)\nand below traps, characters and VFX. Brazier, Candle and Multiple\nCandles keep the base Characters layer.\n\nTests:\n- TorchUnlit_SharesLitBaseImageOrigin_SoExtinguishingDoesNotShiftTheSconce\n- Torch prefab and gameplay-scene torch assertions now expect Walls 3/4\n\nPlayer-Fixed: Torches no longer jump out of place when they go out.\n",
+      "date": "2026-11-17T13:15:06-03:00",
+      "files": [
+        "Project Grimhold/Assets/Art/Props/Torch-Unlit.png.meta",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/Torch.prefab",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs"
+      ],
+      "originalType": "fix",
+      "originalScope": "props",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "World & Visibility",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "message-term",
+          "value": "tilemaps",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Torch-Unlit.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "sprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "53fa74341e843b8de761ee1cd5da00f517ee1932",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/53fa74341e843b8de761ee1cd5da00f517ee1932",

@@ -107,6 +107,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Arcane Projectiles now properly dissipate in open spaces.
 - Protective Orbs now intercept enemy player shots and trap darts.
 - While walking or sprinting, hands and held weapons no longer slip behind or in front of the body at the wrong moments.
+- Torches no longer jump out of place when they go out.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08
