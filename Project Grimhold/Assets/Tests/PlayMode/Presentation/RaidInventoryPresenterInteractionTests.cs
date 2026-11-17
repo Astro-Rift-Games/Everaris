@@ -477,6 +477,30 @@ namespace Tests.PlayMode.Presentation
             Assert.That(_view.IsOpen, Is.False);
         }
 
+        [UnityTest]
+        [Category(PhysicalUiCategory)]
+        public IEnumerator OnInteractionResolved_LockpickingStarted_DoesNotOpenContainerLoot()
+        {
+            yield return BeginPhysicalUi();
+            _presenter.Close();
+            Assert.That(GetPresenterMode(_presenter), Is.EqualTo(0));
+
+            var interactionEvent = new InteractionPresentationEvent(
+                99,
+                _uiReceiver.Id,
+                new EntityId(999),
+                10,
+                true,
+                false,
+                InteractionFailureReason.LockpickingStarted);
+
+            InvokeMethod(_presenter, "OnInteractionResolved", interactionEvent);
+
+            Assert.That(GetPresenterMode(_presenter), Is.EqualTo(0));
+            Assert.That(_view.IsOpen, Is.False);
+            yield return StopPhysicalUi();
+        }
+
         [Test]
         public void LostTargetWhileOpening_CancelsPendingScreenAndInputSuppression()
         {

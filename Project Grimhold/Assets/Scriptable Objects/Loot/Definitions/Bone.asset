@@ -22,7 +22,7 @@ MonoBehaviour:
   _objectValue: 0
   _stackMax: 10
   _maxTransportable: 0
-  _family: 
+  _family: Legacy
   _tags: []
   _tradable: 1
   _canBeTransferred: 1

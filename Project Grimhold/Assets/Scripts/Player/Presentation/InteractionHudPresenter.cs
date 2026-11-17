@@ -1,6 +1,7 @@
 using Fusion;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Presents the local predictive interaction prompt and confirmed interaction results.
@@ -21,6 +22,12 @@ public sealed class InteractionHudPresenter : MonoBehaviour
     [SerializeField]
     private TMP_Text _feedbackText;
 
+    [SerializeField]
+    private GameObject _progressBarRoot;
+
+    [SerializeField]
+    private Image _progressBarFill;
+
     [SerializeField, Min(0f)]
     private float _feedbackDuration = 1.25f;
 
@@ -37,7 +44,11 @@ public sealed class InteractionHudPresenter : MonoBehaviour
     private float _feedbackRemaining;
     private float _attemptPulseRemaining;
     private bool _isBound;
+    private bool _wasLockpicking;
     private Color _promptBaseColor = Color.white;
+
+    public bool IsLockpickingProgressVisible => _progressBarRoot != null && _progressBarRoot.activeSelf;
+    public float LockpickProgressFill => _progressBarFill != null ? _progressBarFill.fillAmount : 0f;
 
     private void Awake()
     {
@@ -80,6 +91,7 @@ public sealed class InteractionHudPresenter : MonoBehaviour
         _interactionController = null;
         _runner = null;
         _isBound = false;
+        _wasLockpicking = false;
         HideAll();
     }
 
@@ -91,6 +103,15 @@ public sealed class InteractionHudPresenter : MonoBehaviour
         }
 
         RefreshPrompt();
+
+        if (_interactionController != null && _interactionController.IsLockpicking)
+        {
+            UpdateLockpickProgress();
+        }
+        else if (_wasLockpicking)
+        {
+            EndLockpickProgress();
+        }
 
         if (_attemptPulseRemaining > 0f)
         {
@@ -108,6 +129,11 @@ public sealed class InteractionHudPresenter : MonoBehaviour
             _promptText.color = _promptBaseColor;
         }
 
+        if (_wasLockpicking)
+        {
+            return;
+        }
+
         if (_feedbackRemaining <= 0f)
         {
             return;
@@ -117,6 +143,10 @@ public sealed class InteractionHudPresenter : MonoBehaviour
         if (_feedbackRemaining <= 0f && _feedbackRoot != null)
         {
             _feedbackRoot.SetActive(false);
+            if (_progressBarRoot != null)
+            {
+                _progressBarRoot.SetActive(false);
+            }
         }
     }
 
@@ -154,6 +184,13 @@ public sealed class InteractionHudPresenter : MonoBehaviour
         {
             _attemptPulseRemaining = _attemptPulseDuration;
             HideFeedback();
+            return;
+        }
+
+        if (interactionEvent.Success
+            && interactionEvent.FailureReason == InteractionFailureReason.LockpickingStarted)
+        {
+            UpdateLockpickProgress();
             return;
         }
 
@@ -208,6 +245,112 @@ public sealed class InteractionHudPresenter : MonoBehaviour
         {
             _feedbackRoot.SetActive(false);
         }
+        if (_progressBarRoot != null)
+        {
+            _progressBarRoot.SetActive(false);
+        }
+    }
+
+    private void UpdateLockpickProgress()
+    {
+        _wasLockpicking = true;
+        float duration = _interactionController != null ? Mathf.Max(0.01f, _interactionController.LockpickDurationSeconds) : 3f;
+        float remaining = _interactionController != null ? Mathf.Max(0f, _interactionController.LockpickRemainingSeconds) : 0f;
+        float progress = Mathf.Clamp01(1f - (remaining / duration));
+
+        if (_feedbackRoot != null && !_feedbackRoot.activeSelf)
+        {
+            _feedbackRoot.SetActive(true);
+        }
+
+        EnsureProgressBar();
+
+        if (_progressBarFill != null)
+        {
+            _progressBarFill.fillAmount = progress;
+        }
+
+        if (_progressBarRoot != null && !_progressBarRoot.activeSelf)
+        {
+            _progressBarRoot.SetActive(true);
+        }
+
+        if (_feedbackText != null)
+        {
+            _feedbackText.text = $"Forzando cerradura… {Mathf.RoundToInt(progress * 100f)}%";
+        }
+
+        _feedbackRemaining = _feedbackDuration;
+    }
+
+    private void EndLockpickProgress()
+    {
+        _wasLockpicking = false;
+        if (_progressBarRoot != null)
+        {
+            _progressBarRoot.SetActive(false);
+        }
+
+        if (_feedbackText != null && _feedbackRemaining > 0f)
+        {
+            _feedbackText.text = "Forzado interrumpido";
+            _feedbackRemaining = 1.0f;
+        }
+    }
+
+    private void EnsureProgressBar()
+    {
+        if (_progressBarRoot != null && _progressBarFill != null)
+        {
+            return;
+        }
+
+        if (_feedbackRoot == null)
+        {
+            return;
+        }
+
+        Transform existing = _feedbackRoot.transform.Find("LockpickProgressBar");
+        if (existing != null)
+        {
+            _progressBarRoot = existing.gameObject;
+            Transform fillChild = existing.Find("Fill");
+            if (fillChild != null)
+            {
+                _progressBarFill = fillChild.GetComponent<Image>();
+            }
+            return;
+        }
+
+        GameObject barRoot = new GameObject("LockpickProgressBar", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        barRoot.transform.SetParent(_feedbackRoot.transform, false);
+        RectTransform barRect = barRoot.GetComponent<RectTransform>();
+        barRect.anchorMin = new Vector2(0.5f, 0f);
+        barRect.anchorMax = new Vector2(0.5f, 0f);
+        barRect.pivot = new Vector2(0.5f, 1f);
+        barRect.anchoredPosition = new Vector2(0f, -8f);
+        barRect.sizeDelta = new Vector2(320f, 12f);
+
+        Image bgImage = barRoot.GetComponent<Image>();
+        bgImage.color = new Color(0.12f, 0.12f, 0.16f, 0.85f);
+
+        GameObject fillObj = new GameObject("Fill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        fillObj.transform.SetParent(barRoot.transform, false);
+        RectTransform fillRect = fillObj.GetComponent<RectTransform>();
+        fillRect.anchorMin = Vector2.zero;
+        fillRect.anchorMax = Vector2.one;
+        fillRect.sizeDelta = Vector2.zero;
+        fillRect.anchoredPosition = Vector2.zero;
+
+        Image fillImage = fillObj.GetComponent<Image>();
+        fillImage.type = Image.Type.Filled;
+        fillImage.fillMethod = Image.FillMethod.Horizontal;
+        fillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
+        fillImage.fillAmount = 0f;
+        fillImage.color = new Color(0.95f, 0.72f, 0.2f, 1f);
+
+        _progressBarRoot = barRoot;
+        _progressBarFill = fillImage;
     }
 
     private void HideAll()

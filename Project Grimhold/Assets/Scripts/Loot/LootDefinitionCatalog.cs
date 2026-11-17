@@ -63,7 +63,17 @@ public sealed class LootDefinitionCatalog : ScriptableObject
 
         EnsureCache();
 
-        return _definitionsById.TryGetValue(id, out definition);
+        if (_definitionsById.TryGetValue(id, out definition))
+        {
+            return true;
+        }
+
+        if (string.Equals(id, "CON_HEALTH_POTION", StringComparison.Ordinal))
+        {
+            return _definitionsById.TryGetValue("healthpotion", out definition);
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -80,7 +90,17 @@ public sealed class LootDefinitionCatalog : ScriptableObject
         }
 
         EnsureCache();
-        return _indicesById.TryGetValue(lootId, out index);
+        if (_indicesById.TryGetValue(lootId, out index))
+        {
+            return true;
+        }
+
+        if (string.Equals(lootId.Value, "CON_HEALTH_POTION", StringComparison.Ordinal))
+        {
+            return _indicesById.TryGetValue(new LootId("healthpotion"), out index);
+        }
+
+        return false;
     }
 
     /// <summary>

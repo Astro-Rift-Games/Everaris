@@ -15,7 +15,6 @@ public sealed class QuickSlotControllerTests
     private LootDefinitionCatalog _catalog;
     private LocalProfileStore _store;
     private FakeInventory _inventory;
-    private bool _canRelease;
     private QuickSlotController _controller;
 
     [SetUp]
@@ -28,8 +27,7 @@ public sealed class QuickSlotControllerTests
         Assert.That(repository.Initialize(Profile, _catalog), Is.True);
         _store = new LocalProfileStore(repository, Profile, _catalog);
         _inventory = new FakeInventory();
-        _canRelease = true;
-        _controller = new QuickSlotController(_store, _inventory, () => _canRelease);
+        _controller = new QuickSlotController(_store, _inventory);
     }
 
     [TearDown]
@@ -143,9 +141,7 @@ public sealed class QuickSlotControllerTests
     {
         _inventory.Set(new LootEntry(Potion, 1));
         _controller.TryAssign(0, Potion);
-        _canRelease = false;
         _inventory.Set();
-        _canRelease = true;
 
         _inventory.Set(new LootEntry(Potion, 4));
 

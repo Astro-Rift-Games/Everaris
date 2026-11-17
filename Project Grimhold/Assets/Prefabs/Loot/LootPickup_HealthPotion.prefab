@@ -71,11 +71,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65d6f7a6d81b0434f92fdf16bacca592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NetworkLootPickup
-  _lootDefinition: {fileID: 11400000, guid: 24a3850db41a2b33d4435b816dd4e4a5, type: 2}
+  _lootDefinition: {fileID: 11400000, guid: b61e8bc9f2bfa7b4a83ed98b979edb77, type: 2}
   _amount: 2
   _lootCatalog: {fileID: 11400000, guid: f11f98d3ce1283d47adcf8bc420f88a2, type: 2}
   _worldRenderer: {fileID: 3134618034655897849}
-  _sortingLayerName: Default
+  _sortingLayerName: Characters
   _sortingOrder: 2
   _IsInitialized:
     RawValue: 0
@@ -268,8 +268,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -605295079
+  m_SortingLayer: 4
   m_SortingOrder: 2
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: b77b4a38f9eaab143b6e877a7ba93435, type: 3}

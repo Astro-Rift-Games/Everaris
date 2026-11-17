@@ -721,13 +721,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RaidLootTestSpawner
   _pickupPrefab: {fileID: 647995032513395088, guid: 5d26f13a358d7894b9419465e4ba1869, type: 3}
   _lootCatalog: {fileID: 11400000, guid: f11f98d3ce1283d47adcf8bc420f88a2, type: 2}
+  _spawnConsumablesHotkey: 287
   _spawnAllHotkey: 289
   _manaPotion: {fileID: 11400000, guid: 7839d1743fa835c83321b5450915e343, type: 2}
   _manaFragment: {fileID: 11400000, guid: 20440c15ceb9efecff6f2230c1edde47, type: 2}
-  _healthPotion: {fileID: 11400000, guid: 24a3850db41a2b33d4435b816dd4e4a5, type: 2}
-  _explosiveBomb: {fileID: 0}
-  _smokeBomb: {fileID: 0}
-  _throwingDagger: {fileID: 0}
+  _healthPotion: {fileID: 11400000, guid: b61e8bc9f2bfa7b4a83ed98b979edb77, type: 2}
+  _lockpick: {fileID: 11400000, guid: aece145388d6ac5324fd098f64b9fde3, type: 2}
+  _selfRevive: {fileID: 11400000, guid: 755c0b717343179b68f8906acc14b425, type: 2}
+  _explosiveBomb: {fileID: 11400000, guid: cbe7a95d883d31898cfdc56e79d8657f, type: 2}
+  _smokeBomb: {fileID: 11400000, guid: ed767a87916428419e18512823b201fb, type: 2}
+  _throwingDagger: {fileID: 11400000, guid: fce5e6d48dd6e41dfd769a6344097f00, type: 2}
   _chaosCoin: {fileID: 11400000, guid: 1d44a8b530a48cd895a112783d7cc52d, type: 2}
   _pilgrimLight: {fileID: 11400000, guid: 755c3c09023a345ab5db92e4887e26a7, type: 2}
   _sanctuaryHeart: {fileID: 11400000, guid: 651ca375664ff35f7b8f992ca07a2039, type: 2}

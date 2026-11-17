@@ -281,7 +281,7 @@ public sealed class NetworkExplosiveBomb : NetworkBehaviour
         sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, sizeCurve);
 
         ParticleSystemRenderer renderer = go.GetComponent<ParticleSystemRenderer>();
-        renderer.sortingLayerName = "Default";
+        renderer.sortingLayerName = "VFX";
         renderer.sortingOrder = 10;
         Material mat = Resources.Load<Material>("Materials/Default-Particle");
         if (mat == null)

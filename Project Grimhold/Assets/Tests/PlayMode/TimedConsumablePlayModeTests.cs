@@ -19,6 +19,7 @@ namespace Tests.PlayMode.Consumables
         private PlayerAbilityRuntimeSimulationDriver _driver;
         private CharacterAttributeState _attributes;
         private static readonly LootId Potion = new("healthpotion");
+        private static readonly LootId ManaPotion = new("CON_MANA_POTION");
 
         [UnityTearDown]
         public IEnumerator TearDown()
@@ -91,6 +92,88 @@ namespace Tests.PlayMode.Consumables
             yield return InSimulation(() => Assert.That(player.GetComponent<PlayerDownedStateNetworkController>().TryEnterDowned(), Is.True));
             yield return WaitFor(() => !consume.IsConsuming);
             Assert.That(loot.GetLootAmount(Potion), Is.EqualTo(2));
+        }
+
+        [UnityTest]
+        public IEnumerator ManaPotion_FullMana_RejectsWithoutConsumingOrChanneling()
+        {
+            yield return Begin();
+            var player = SpawnAvatar(1, Vector3.zero);
+            var consume = player.GetComponent<PlayerConsumableNetworkController>();
+            var loot = player.GetComponent<PlayerLootReceiver>();
+            var mana = player.GetComponent<PlayerManaNetworkController>();
+            yield return InSimulation(() => AddItems(loot, ManaPotion, 2));
+
+            Assert.That(mana.TryGetMaximumMana(out float maxMana), Is.True);
+            Assert.That(mana.CurrentMana, Is.EqualTo(maxMana));
+            ConsumableFailureReason rejectedReason = ConsumableFailureReason.None;
+            consume.ConsumeRejected += r => rejectedReason = r;
+
+            Assert.That(consume.TryRequestConsume(ManaPotion), Is.True);
+            yield return WaitFor(() => rejectedReason != ConsumableFailureReason.None);
+
+            Assert.That(rejectedReason, Is.EqualTo(ConsumableFailureReason.ManaFull));
+            Assert.That(consume.IsConsuming, Is.False);
+            Assert.That(loot.GetLootAmount(ManaPotion), Is.EqualTo(2));
+            Assert.That(mana.CurrentMana, Is.EqualTo(maxMana));
+        }
+
+        [UnityTest]
+        public IEnumerator ManaPotion_DamageInterruptsChannel_WithoutSpendingOrRestoringMana()
+        {
+            yield return Begin();
+            var player = SpawnAvatar(1, Vector3.zero);
+            var consume = player.GetComponent<PlayerConsumableNetworkController>();
+            var loot = player.GetComponent<PlayerLootReceiver>();
+            var mana = player.GetComponent<PlayerManaNetworkController>();
+            yield return InSimulation(() =>
+            {
+                AddItems(loot, ManaPotion, 2);
+                Assert.That(mana.TrySpend(50f), Is.True);
+            });
+
+            float manaBefore = mana.CurrentMana;
+            Assert.That(manaBefore, Is.EqualTo(50f));
+
+            Assert.That(consume.TryRequestConsume(ManaPotion), Is.True);
+            yield return WaitFor(() => consume.IsConsuming);
+
+            yield return InSimulation(() => Damage(player, 5));
+
+            Assert.That(consume.IsConsuming, Is.False);
+            Assert.That(mana.CurrentMana, Is.EqualTo(manaBefore));
+            Assert.That(loot.GetLootAmount(ManaPotion), Is.EqualTo(2));
+
+            yield return WaitTicks(150);
+            Assert.That(mana.CurrentMana, Is.EqualTo(manaBefore));
+            Assert.That(loot.GetLootAmount(ManaPotion), Is.EqualTo(2));
+        }
+
+        [UnityTest]
+        public IEnumerator ConsumableDefinition_Assets_HaveConsumeSoundAssigned()
+        {
+            yield return Begin();
+            var player = SpawnAvatar(1, Vector3.zero);
+            var loot = player.GetComponent<PlayerLootReceiver>();
+            var catalog = loot.LootCatalog;
+            Assert.That(catalog, Is.Not.Null);
+
+            foreach (string id in new[] { "CON_MANA_POTION", "CON_MANA_FRAGMENT", "healthpotion" })
+            {
+                if (catalog.TryGet(id, out var def) && def.ConsumableDefinition != null)
+                {
+                    Assert.That(def.ConsumableDefinition.ConsumeSound, Is.Not.Null,
+                        $"Consumable {id} must have a valid ConsumeSound assigned.");
+                }
+            }
+        }
+
+        private void AddItems(PlayerLootReceiver loot, LootId item, int count = 2)
+        {
+            var request = new LootTransferRequest(new EntityId(123), loot.Id, item, count, _runner.Tick);
+            var origin = RaidLootOriginTransfer.Dungeon(count);
+            Assert.That(loot.ValidateRaidLootOriginReceive(request, origin), Is.EqualTo(LootTransferFailureReason.None));
+            loot.CommitRaidLootReceive(request, origin);
         }
 
         private void AddPotions(PlayerLootReceiver loot)

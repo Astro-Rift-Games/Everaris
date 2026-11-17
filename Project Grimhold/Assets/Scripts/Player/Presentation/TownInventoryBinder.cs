@@ -110,8 +110,7 @@ public sealed class TownInventoryBinder : NetworkBehaviour
             SyncPreparedEquipmentAsync);
         _quickSlots = new QuickSlotController(
             _profileContext.Store,
-            _inventorySource,
-            CanReleaseDepletedQuickSlot);
+            _inventorySource);
         _inputContext.ReaderChanged += OnInputReaderChanged;
         _isLifecycleBound = true;
         OnInputReaderChanged(_inputContext.Reader);
@@ -224,14 +223,6 @@ public sealed class TownInventoryBinder : NetworkBehaviour
             _menuPresenter.Bind(inputReader, uiParent);
         }
     }
-
-    /// <summary>
-    /// The Loadout is emptied while a reservation is pending, so only a profile without one may
-    /// unassign a Quick Slot whose last unit left the Loadout.
-    /// </summary>
-    private bool CanReleaseDepletedQuickSlot() =>
-        _profileContext != null && _profileContext.Store != null &&
-        _profileContext.Store.PendingReservation == null;
 
     private bool CanSortInventory() =>
         _profileContext != null && _profileContext.IsAvailable &&

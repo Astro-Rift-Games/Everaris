@@ -1,6 +1,7 @@
 #if UNITY_EDITOR && UNITY_INCLUDE_TESTS
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using Fusion;
 using NUnit.Framework;
@@ -137,6 +138,58 @@ namespace Tests.PlayMode.Utilities
             TickTimer cooldown = consume.GetUtilityCooldown(DetectorId);
             Assert.That(cooldown.ExpiredOrNotRunning(_runner), Is.True, "Interruption must NOT activate cooldown.");
             Assert.That(loot.GetLootAmount(DetectorId), Is.EqualTo(1), "Detector must remain in inventory.");
+        }
+
+        [UnityTest]
+        public IEnumerator ArcaneDetector_MovementDuringChannel_CancelsWithoutActivatingCooldown()
+        {
+            yield return Begin();
+            var player = SpawnAvatar(1, Vector3.zero);
+            var consume = player.GetComponent<PlayerConsumableNetworkController>();
+            var loot = player.GetComponent<PlayerLootReceiver>();
+            var movement = player.GetComponent<PlayerMovementNetworkController>();
+
+            yield return InSimulation(() => AddLoot(loot, DetectorId, 1));
+            Assert.That(loot.GetLootAmount(DetectorId), Is.EqualTo(1));
+
+            Assert.That(consume.TryRequestConsume(DetectorId), Is.True);
+            yield return WaitTicks(3);
+
+            Assert.That(consume.IsConsuming, Is.True, "Arcane Detector must channel for 2.0s.");
+
+            _inputDriver.MoveDirection = Vector2.right;
+            yield return WaitTicks(4);
+
+            Assert.That(consume.IsConsuming, Is.False, "Movement must cancel Arcane Detector channel.");
+            TickTimer cooldown = consume.GetUtilityCooldown(DetectorId);
+            Assert.That(cooldown.ExpiredOrNotRunning(_runner), Is.True, "Movement interruption must NOT activate cooldown.");
+            Assert.That(loot.GetLootAmount(DetectorId), Is.EqualTo(1), "Detector must remain in inventory.");
+        }
+
+        [UnityTest]
+        public IEnumerator ArcaneDetector_WhenChannelCompletes_HighlightsOnlyContainersWithArcaneContent()
+        {
+            yield return Begin();
+            var player = SpawnAvatar(1, Vector3.zero);
+            var consume = player.GetComponent<PlayerConsumableNetworkController>();
+            var loot = player.GetComponent<PlayerLootReceiver>();
+
+            var arcaneContainer = SpawnContainer(new Vector3(3f, 0f, 0f), new[] { new LootEntry(EtherDustId, 2) });
+            var normalContainer = SpawnContainer(new Vector3(5f, 0f, 0f), new[] { new LootEntry(BoneId, 2) });
+
+            yield return InSimulation(() => AddLoot(loot, DetectorId, 1));
+            Assert.That(loot.GetLootAmount(DetectorId), Is.EqualTo(1));
+
+            int detectedCount = -1;
+            consume.ArcaneDetectorActivated += (count, dur) => detectedCount = count;
+
+            Assert.That(consume.TryRequestConsume(DetectorId), Is.True);
+            yield return WaitSimulationSeconds(2.2f);
+            yield return WaitTicks(3);
+
+            Assert.That(detectedCount, Is.EqualTo(1), "Only the container with arcane content must be detected.");
+            Assert.That(arcaneContainer.GetComponent<ArcaneHighlightEffect>(), Is.Not.Null, "Arcane container must receive ArcaneHighlightEffect.");
+            Assert.That(normalContainer.GetComponent<ArcaneHighlightEffect>(), Is.Null, "Normal container must NOT receive ArcaneHighlightEffect.");
         }
 
         [UnityTest]
@@ -460,9 +513,19 @@ namespace Tests.PlayMode.Utilities
             loot.CommitRaidLootReceive(request, origin);
         }
 
-        private NetworkLootContainer SpawnContainer(Vector3 position)
+        private NetworkLootContainer SpawnContainer(Vector3 position, IReadOnlyList<LootEntry> content = null)
         {
-            NetworkObject containerObj = _runner.Spawn(Load(LootContainerGuid), position, Quaternion.identity);
+            NetworkObject containerObj = _runner.Spawn(
+                Load(LootContainerGuid),
+                position,
+                Quaternion.identity,
+                onBeforeSpawned: (runner, instance) =>
+                {
+                    if (content != null)
+                    {
+                        instance.GetComponent<NetworkLootContainer>().TrySetInitialContentOverride(runner, instance, content);
+                    }
+                });
             return containerObj.GetComponent<NetworkLootContainer>();
         }
 

@@ -124,6 +124,24 @@ namespace Tests.PlayMode.Presentation
             Assert.That(_feedbackRoot.activeSelf, Is.False);
         }
 
+        [Test]
+        public void LockpickingStarted_ShowsFeedbackAndProgressBar()
+        {
+            InvokeResult(new InteractionPresentationEvent(
+                6,
+                new EntityId(1),
+                default,
+                10,
+                true,
+                false,
+                InteractionFailureReason.LockpickingStarted));
+
+            Assert.That(_feedbackRoot.activeSelf, Is.True);
+            Assert.That(_presenter.IsLockpickingProgressVisible, Is.True);
+            TMP_Text feedbackText = _feedbackRoot.GetComponent<TextMeshProUGUI>();
+            Assert.That(feedbackText.text, Does.Contain("Forzando cerradura"));
+        }
+
         private void InvokeResult(InteractionPresentationEvent presentationEvent)
         {
             MethodInfo method = typeof(InteractionHudPresenter).GetMethod(

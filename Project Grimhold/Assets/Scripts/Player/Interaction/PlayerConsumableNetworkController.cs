@@ -227,7 +227,15 @@ public sealed class PlayerConsumableNetworkController : NetworkBehaviour,
 
         if (IsConsuming)
         {
-            if (!IsGameplayPhaseActive() || _character == null || !_character.IsAlive ||
+            bool isArcaneDetector = _lootCatalog != null &&
+                _lootCatalog.TryGetByIndex(ConsumptionCatalogIndex, out LootDefinition currentDef) &&
+                currentDef != null && currentDef.LootId == ArcaneDetectorId;
+
+            bool movedDuringArcaneDetector = isArcaneDetector &&
+                ((_movementState != null && _movementState.IsMoving) ||
+                 (GetInput(out PlayerNetworkInput input) && input.MoveDirection.sqrMagnitude > 0.0001f));
+
+            if (movedDuringArcaneDetector || !IsGameplayPhaseActive() || _character == null || !_character.IsAlive ||
                 PlayerDownedGate.IsDowned(_character) || PlayerStunGate.IsStunned(_character) ||
                 _extraction != null && _extraction.State == ExtractionState.Extracted)
             {
@@ -621,31 +629,6 @@ public sealed class PlayerConsumableNetworkController : NetworkBehaviour,
             return CardinalDirectionHelper.GetCardinalDirection(playerPos, sanctuaryPos);
         }
 
-        var sanctuaries = UnityEngine.Object.FindObjectsByType<ExtractionSanctuary>(FindObjectsSortMode.None);
-        if (sanctuaries != null && sanctuaries.Length > 0)
-        {
-            float minSqr = float.MaxValue;
-            Vector2 nearestPos = default;
-            bool found = false;
-            for (int i = 0; i < sanctuaries.Length; i++)
-            {
-                if (sanctuaries[i] == null) continue;
-                Vector2 pos = sanctuaries[i].transform.position;
-                float sqr = (pos - playerPos).sqrMagnitude;
-                if (sqr < minSqr)
-                {
-                    minSqr = sqr;
-                    nearestPos = pos;
-                    found = true;
-                }
-            }
-            if (found)
-            {
-                sanctuaryPosition = nearestPos;
-                return CardinalDirectionHelper.GetCardinalDirection(playerPos, nearestPos);
-            }
-        }
-
         sanctuaryPosition = Vector2.zero;
         return CardinalDirection.None;
     }
@@ -673,11 +656,30 @@ public sealed class PlayerConsumableNetworkController : NetworkBehaviour,
             }
             else if (no.TryGetComponent(out NetworkLootContainer container))
             {
-                detectedNetworkIds.Add(no.Id);
+                if (container.IsAvailable && ContainerHasArcaneContent(container))
+                {
+                    detectedNetworkIds.Add(no.Id);
+                }
             }
         }
 
         RPC_ReceiveArcaneDetection(detectedNetworkIds.ToArray(), ArcaneElementDetectionRules.HighlightDuration);
+    }
+
+    private bool ContainerHasArcaneContent(NetworkLootContainer container)
+    {
+        if (_lootCatalog == null || !container.TryGetLootContent(out var content) || content == null)
+            return false;
+
+        for (int i = 0; i < content.Count; i++)
+        {
+            if (_lootCatalog.TryGet(content[i].LootId.Value, out LootDefinition def) &&
+                ArcaneElementDetectionRules.IsArcaneDefinition(def))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]

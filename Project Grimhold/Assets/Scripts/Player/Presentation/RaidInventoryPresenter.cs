@@ -713,7 +713,8 @@ public sealed class RaidInventoryPresenter : MonoBehaviour
 
         _lastObservedInteractionSequence = interactionEvent.Sequence;
         if (_lootReceiver == null || interactionEvent.InteractorId != _lootReceiver.Id ||
-            !interactionEvent.Success || interactionEvent.TargetId.Value == 0)
+            !interactionEvent.Success || interactionEvent.TargetId.Value == 0 ||
+            interactionEvent.FailureReason == InteractionFailureReason.LockpickingStarted)
         {
             return;
         }
@@ -744,7 +745,8 @@ public sealed class RaidInventoryPresenter : MonoBehaviour
             container.Id != targetId || interactable.Id != targetId ||
             !_registry.TryGetInteractable(targetId, out IInteractable registered) ||
             !ReferenceEquals(registered, interactable) ||
-            !container.IsInitialized || !container.IsAvailable)
+            !container.IsInitialized || !container.IsAvailable ||
+            container.IsLocked)
         {
             return;
         }

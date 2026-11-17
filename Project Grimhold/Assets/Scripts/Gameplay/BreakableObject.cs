@@ -99,6 +99,14 @@ public sealed class BreakableObject : NetworkBehaviour, IDamageable
         {
             _intactRenderers = GetComponentsInChildren<SpriteRenderer>(true);
         }
+        for (int i = 0; i < _intactRenderers.Length; i++)
+        {
+            if (_intactRenderers[i] != null &&
+                (_intactRenderers[i].sortingLayerName == "Default" || string.IsNullOrEmpty(_intactRenderers[i].sortingLayerName)))
+            {
+                _intactRenderers[i].sortingLayerName = "Characters";
+            }
+        }
     }
 
     public override void Spawned()

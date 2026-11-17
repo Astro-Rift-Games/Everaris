@@ -38,7 +38,7 @@ public sealed class PlayerDownedRecoveryNetworkController :
     [SerializeField, Min(0.01f)]
     private float _selfReviveDurationSeconds = 5f;
 
-    [Tooltip("Health restored by the Self-reviver variant (GD 13 section 10; provisional balance value).")]
+    [Tooltip("Health restored by the Self-reviver variant (GD 13 section 10; canonical balance value).")]
     [SerializeField, Min(0.01f)]
     private float _selfReviveRestoredHealth = 25f;
 

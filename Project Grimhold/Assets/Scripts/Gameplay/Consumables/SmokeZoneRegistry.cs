@@ -1,35 +1,72 @@
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
 /// <summary>
 /// Registry tracking active smoke zones in the match to evaluate line-of-sight
 /// occlusion for enemy AI perception and player visibility (Doc 14 TASK-233).
+/// Isolated per NetworkRunner to avoid global state leakage across concurrent sessions.
 /// </summary>
 public static class SmokeZoneRegistry
 {
-    private static readonly List<ISmokeZone> _activeZones = new();
+    private static readonly Dictionary<NetworkRunner, List<ISmokeZone>> _runnerZones = new();
+    private static readonly List<ISmokeZone> _fallbackZones = new();
 
-    public static IReadOnlyList<ISmokeZone> ActiveZones => _activeZones;
-
-    public static void Register(ISmokeZone zone)
+    public static IReadOnlyList<ISmokeZone> ActiveZones
     {
-        if (zone != null && !_activeZones.Contains(zone))
+        get
         {
-            _activeZones.Add(zone);
+            if (_runnerZones.Count == 1)
+            {
+                foreach (var kvp in _runnerZones) return kvp.Value;
+            }
+            return _fallbackZones;
         }
     }
 
-    public static void Unregister(ISmokeZone zone)
+    public static IReadOnlyList<ISmokeZone> GetActiveZones(NetworkRunner runner = null)
     {
-        if (zone != null)
+        var list = ResolveZoneList(runner, false);
+        return list ?? (IReadOnlyList<ISmokeZone>)System.Array.Empty<ISmokeZone>();
+    }
+
+    public static void Register(ISmokeZone zone, NetworkRunner runner = null)
+    {
+        if (zone == null) return;
+        if (runner == null && zone is NetworkBehaviour nb && nb.Runner != null)
         {
-            _activeZones.Remove(zone);
+            runner = nb.Runner;
+        }
+
+        var list = ResolveZoneList(runner, true);
+        if (list != null && !list.Contains(zone))
+        {
+            list.Add(zone);
         }
     }
 
-    public static void Clear()
+    public static void Unregister(ISmokeZone zone, NetworkRunner runner = null)
     {
-        _activeZones.Clear();
+        if (zone == null) return;
+        if (runner == null && zone is NetworkBehaviour nb && nb.Runner != null)
+        {
+            runner = nb.Runner;
+        }
+
+        var list = ResolveZoneList(runner, false);
+        list?.Remove(zone);
+    }
+
+    public static void Clear(NetworkRunner runner = null)
+    {
+        if (runner != null)
+        {
+            _runnerZones.Remove(runner);
+            return;
+        }
+
+        _runnerZones.Clear();
+        _fallbackZones.Clear();
     }
 
     /// <summary>
@@ -37,11 +74,12 @@ public static class SmokeZoneRegistry
     /// If both points are within the same smoke zone, vision is preserved only if the distance
     /// between them is within <paramref name="closeVisionDistance"/> (default 1.2m).
     /// </summary>
-    public static bool IsLineOccluded(Vector2 start, Vector2 end, float closeVisionDistance = 1.2f)
+    public static bool IsLineOccluded(Vector2 start, Vector2 end, float closeVisionDistance = 1.2f, NetworkRunner runner = null)
     {
-        for (int i = 0; i < _activeZones.Count; i++)
+        var zones = ResolveZonesForQuery(runner);
+        for (int i = 0; i < zones.Count; i++)
         {
-            ISmokeZone zone = _activeZones[i];
+            ISmokeZone zone = zones[i];
             if (zone != null && zone.IsActive && zone.BlocksLine(start, end, closeVisionDistance))
             {
                 return true;
@@ -53,11 +91,12 @@ public static class SmokeZoneRegistry
     /// <summary>
     /// Checks whether the specified point is inside any active smoke zone.
     /// </summary>
-    public static bool IsPointInSmoke(Vector2 point)
+    public static bool IsPointInSmoke(Vector2 point, NetworkRunner runner = null)
     {
-        for (int i = 0; i < _activeZones.Count; i++)
+        var zones = ResolveZonesForQuery(runner);
+        for (int i = 0; i < zones.Count; i++)
         {
-            ISmokeZone zone = _activeZones[i];
+            ISmokeZone zone = zones[i];
             if (zone != null && zone.IsActive && zone.ContainsPoint(point))
             {
                 return true;
@@ -70,14 +109,15 @@ public static class SmokeZoneRegistry
     /// Evaluates ray occlusion against active smoke zones for vision fan calculations.
     /// Returns the distance to the smoke perimeter, or <paramref name="maxDistance"/> if clear.
     /// </summary>
-    public static float CastOcclusion(Vector2 origin, Vector2 direction, float maxDistance, float closeVisionDistance = 1.2f)
+    public static float CastOcclusion(Vector2 origin, Vector2 direction, float maxDistance, float closeVisionDistance = 1.2f, NetworkRunner runner = null)
     {
         if (maxDistance <= 0f) return 0f;
         float nearest = maxDistance;
 
-        for (int i = 0; i < _activeZones.Count; i++)
+        var zones = ResolveZonesForQuery(runner);
+        for (int i = 0; i < zones.Count; i++)
         {
-            ISmokeZone zone = _activeZones[i];
+            ISmokeZone zone = zones[i];
             if (zone == null || !zone.IsActive) continue;
 
             Vector2 center = zone.Position;
@@ -111,6 +151,43 @@ public static class SmokeZoneRegistry
         }
 
         return nearest;
+    }
+
+    private static List<ISmokeZone> ResolveZoneList(NetworkRunner runner, bool createIfMissing)
+    {
+        if (runner != null)
+        {
+            if (!_runnerZones.TryGetValue(runner, out var list))
+            {
+                if (createIfMissing)
+                {
+                    list = new List<ISmokeZone>();
+                    _runnerZones[runner] = list;
+                }
+            }
+            return list;
+        }
+
+        return _fallbackZones;
+    }
+
+    private static IReadOnlyList<ISmokeZone> ResolveZonesForQuery(NetworkRunner runner)
+    {
+        if (runner != null)
+        {
+            if (_runnerZones.TryGetValue(runner, out var list))
+            {
+                return list;
+            }
+            return System.Array.Empty<ISmokeZone>();
+        }
+
+        if (_runnerZones.Count == 1)
+        {
+            foreach (var kvp in _runnerZones) return kvp.Value;
+        }
+
+        return _fallbackZones;
     }
 
     /// <summary>

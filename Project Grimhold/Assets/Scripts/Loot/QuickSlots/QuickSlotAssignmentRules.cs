@@ -71,19 +71,4 @@ public static class QuickSlotAssignmentRules
         next = current.Without(slotIndex);
         return QuickSlotAssignmentResult.Success;
     }
-
-    /// <summary>
-    /// Evaluates slot depletion. Under Doc 14 §12.2 (TASK-230), reaching zero units retains the slot
-    /// assignment in an inactive state instead of clearing it, so this always returns false.
-    /// </summary>
-    [Obsolete("Depleted slots are retained with count 0 and inactive state (Doc 14 TASK-230).")]
-    public static bool TryReleaseDepleted(
-        QuickSlotBindings current,
-        int[] previousAmounts,
-        int[] currentAmounts,
-        out QuickSlotBindings next)
-    {
-        next = current;
-        return false;
-    }
 }

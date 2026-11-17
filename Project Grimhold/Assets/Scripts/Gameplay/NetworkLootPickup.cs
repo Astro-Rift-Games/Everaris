@@ -24,7 +24,7 @@ public sealed class NetworkLootPickup : NetworkBehaviour, IPickup
 
     [Header("World Presentation")]
     [SerializeField]
-    private string _sortingLayerName = "Default";
+    private string _sortingLayerName = "Characters";
 
     [SerializeField]
     private int _sortingOrder = 2;
@@ -315,11 +315,16 @@ public sealed class NetworkLootPickup : NetworkBehaviour, IPickup
         }
 
         if (receiver is not IRaidLootOriginReceiver originReceiver ||
-            !originReceiver.IsRaidLootOriginAware ||
-            !TryResolveRaidOriginTransfer(out RaidLootOriginTransfer originTransfer))
+            !originReceiver.IsRaidLootOriginAware)
         {
             IsConsumed = false;
-            throw new System.InvalidOperationException("Raid pickup provenance composition is unavailable.");
+            return ToInteractionResult(LootTransferResult.Rejected(LootTransferFailureReason.NotTransferable), false);
+        }
+
+        if (!TryResolveRaidOriginTransfer(out RaidLootOriginTransfer originTransfer))
+        {
+            IsConsumed = false;
+            return ToInteractionResult(LootTransferResult.Rejected(LootTransferFailureReason.InvalidLoot), false);
         }
 
         RaidLootOriginTransfer takenOrigins = originTransfer;
@@ -616,9 +621,13 @@ public sealed class NetworkLootPickup : NetworkBehaviour, IPickup
             return;
         }
 
-        if (!string.IsNullOrWhiteSpace(_sortingLayerName))
+        if (!string.IsNullOrWhiteSpace(_sortingLayerName) && _sortingLayerName != "Default")
         {
             _worldRenderer.sortingLayerName = _sortingLayerName;
+        }
+        else
+        {
+            _worldRenderer.sortingLayerName = "Characters";
         }
 
         _worldRenderer.sortingOrder = _sortingOrder;
