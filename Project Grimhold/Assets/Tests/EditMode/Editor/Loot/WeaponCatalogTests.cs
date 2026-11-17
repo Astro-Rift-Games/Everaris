@@ -278,7 +278,7 @@ namespace Tests.EditMode.Loot
             Assert.That(table.MinimumDistinctStacks, Is.EqualTo(2));
             Assert.That(table.MaximumDistinctStacks, Is.EqualTo(3));
             Assert.That(table.AllowEmpty, Is.False);
-            Assert.That(table.Entries.Count, Is.EqualTo(65));
+            Assert.That(table.Entries.Count, Is.EqualTo(82));
 
             foreach (string id in EquipmentIds)
             {

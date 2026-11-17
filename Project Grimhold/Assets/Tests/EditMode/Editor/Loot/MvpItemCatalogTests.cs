@@ -205,6 +205,35 @@ namespace Tests.EditMode.Loot
         }
 
         [Test]
+        public void DefaultLootTable_IncludesAllEightTreasuresAndValidatesSnapshot()
+        {
+            LootContainerContentTable table = AssetDatabase.LoadAssetAtPath<LootContainerContentTable>(DefaultLootTablePath);
+            Assert.That(table, Is.Not.Null, "Missing DefaultLootContainerContentTable.");
+
+            foreach (ExpectedItemData expected in ExpectedMvpItems.Where(item => item.Category == LootCategory.Treasure))
+            {
+                LootContainerContentTableEntry[] matches = table.Entries
+                    .Where(entry => entry.Definition != null && entry.Definition.Id == expected.Id)
+                    .ToArray();
+                Assert.That(matches, Has.Length.EqualTo(1), $"{expected.Id} must appear once in DefaultLootContainerContentTable.");
+                Assert.That(matches[0].Weight, Is.GreaterThan(0), expected.Id);
+                Assert.That(matches[0].MinimumAmount, Is.EqualTo(1), expected.Id);
+                Assert.That(matches[0].MaximumAmount, Is.EqualTo(1), expected.Id);
+            }
+
+            Assert.That(LootContainerContentTableValidation.TryCreateSnapshot(
+                table,
+                _catalog,
+                NetworkLootContainer.DefaultWorldSlotCapacity,
+                NetworkLootContainer.MaxDistinctLootTypes,
+                out ValidatedLootContainerContentSnapshot snapshot,
+                out string validationError), Is.True, validationError);
+            Assert.That(LootContainerContentTableValidation.HasAdditionalStackCapacity(
+                snapshot,
+                out string capacityError), Is.True, capacityError);
+        }
+
+        [Test]
         public void HealthPotion_IsCanonicalWithoutLegacyDuplicateAsset()
         {
             Assert.That(AssetDatabase.LoadAssetAtPath<LootDefinition>(
@@ -225,6 +254,40 @@ namespace Tests.EditMode.Loot
             TownMerchantNetworkController merchant = merchantPrefab.GetComponent<TownMerchantNetworkController>();
             Assert.That(merchant.Stock.Any(item => item.Item != null && item.Item.Id == "healthpotion"), Is.False);
             Assert.That(merchant.Stock.Count(item => item.Item == canonical), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void DefaultLootTable_IncludesAllRemainingMvpConsumablesAndUtilities()
+        {
+            LootContainerContentTable table = AssetDatabase.LoadAssetAtPath<LootContainerContentTable>(DefaultLootTablePath);
+            Assert.That(table, Is.Not.Null, "Missing DefaultLootContainerContentTable.");
+
+            foreach (ExpectedItemData expected in ExpectedMvpItems.Where(
+                item => item.Category == LootCategory.Consumable || item.Category == LootCategory.Utility))
+            {
+                LootContainerContentTableEntry[] matches = table.Entries
+                    .Where(entry => entry.Definition != null && entry.Definition.Id == expected.Id)
+                    .ToArray();
+                Assert.That(matches, Has.Length.EqualTo(1), $"{expected.Id} must appear once in DefaultLootContainerContentTable.");
+                Assert.That(matches[0].Weight, Is.GreaterThan(0), expected.Id);
+                Assert.That(matches[0].MinimumAmount, Is.GreaterThanOrEqualTo(1), expected.Id);
+                Assert.That(matches[0].MaximumAmount, Is.InRange(matches[0].MinimumAmount, expected.StackMax), expected.Id);
+                if (expected.MaxTransportable > 0)
+                {
+                    Assert.That(matches[0].MaximumAmount, Is.LessThanOrEqualTo(expected.MaxTransportable), expected.Id);
+                }
+            }
+
+            Assert.That(LootContainerContentTableValidation.TryCreateSnapshot(
+                table,
+                _catalog,
+                NetworkLootContainer.DefaultWorldSlotCapacity,
+                NetworkLootContainer.MaxDistinctLootTypes,
+                out ValidatedLootContainerContentSnapshot snapshot,
+                out string validationError), Is.True, validationError);
+            Assert.That(LootContainerContentTableValidation.HasAdditionalStackCapacity(
+                snapshot,
+                out string capacityError), Is.True, capacityError);
         }
     }
 }

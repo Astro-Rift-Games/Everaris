@@ -273,6 +273,74 @@ MonoBehaviour:
     _weight: 3
     _minimumAmount: 1
     _maximumAmount: 1
+  - _definition: {fileID: 11400000, guid: b8a2a144b07dce711e66aa9fe20df352, type: 2}
+    _weight: 1
+    _minimumAmount: 1
+    _maximumAmount: 1
+  - _definition: {fileID: 11400000, guid: c50553effef0c2f35ad5e86ff0e7c6d1, type: 2}
+    _weight: 1
+    _minimumAmount: 1
+    _maximumAmount: 1
+  - _definition: {fileID: 11400000, guid: 553b67fbcc6cf7b653c618c9f57e46db, type: 2}
+    _weight: 1
+    _minimumAmount: 1
+    _maximumAmount: 1
+  - _definition: {fileID: 11400000, guid: 4b5c132fb871b6efb6cd8e51b3a3a150, type: 2}
+    _weight: 1
+    _minimumAmount: 1
+    _maximumAmount: 1
+  - _definition: {fileID: 11400000, guid: 755c3c09023a345ab5db92e4887e26a7, type: 2}
+    _weight: 1
+    _minimumAmount: 1
+    _maximumAmount: 1
+  - _definition: {fileID: 11400000, guid: 651ca375664ff35f7b8f992ca07a2039, type: 2}
+    _weight: 1
+    _minimumAmount: 1
+    _maximumAmount: 1
+  - _definition: {fileID: 11400000, guid: 1d44a8b530a48cd895a112783d7cc52d, type: 2}
+    _weight: 1
+    _minimumAmount: 1
+    _maximumAmount: 1
+  - _definition: {fileID: 11400000, guid: 2fce397122f2860402217adc54a92b1d, type: 2}
+    _weight: 1
+    _minimumAmount: 1
+    _maximumAmount: 1
+  - _definition: {fileID: 11400000, guid: 7839d1743fa835c83321b5450915e343, type: 2}
+    _weight: 15
+    _minimumAmount: 1
+    _maximumAmount: 2
+  - _definition: {fileID: 11400000, guid: 20440c15ceb9efecff6f2230c1edde47, type: 2}
+    _weight: 20
+    _minimumAmount: 1
+    _maximumAmount: 3
+  - _definition: {fileID: 11400000, guid: cbe7a95d883d31898cfdc56e79d8657f, type: 2}
+    _weight: 8
+    _minimumAmount: 1
+    _maximumAmount: 2
+  - _definition: {fileID: 11400000, guid: fce5e6d48dd6e41dfd769a6344097f00, type: 2}
+    _weight: 10
+    _minimumAmount: 1
+    _maximumAmount: 3
+  - _definition: {fileID: 11400000, guid: ed767a87916428419e18512823b201fb, type: 2}
+    _weight: 6
+    _minimumAmount: 1
+    _maximumAmount: 1
+  - _definition: {fileID: 11400000, guid: aece145388d6ac5324fd098f64b9fde3, type: 2}
+    _weight: 8
+    _minimumAmount: 1
+    _maximumAmount: 2
+  - _definition: {fileID: 11400000, guid: 755c0b717343179b68f8906acc14b425, type: 2}
+    _weight: 1
+    _minimumAmount: 1
+    _maximumAmount: 1
+  - _definition: {fileID: 11400000, guid: caec32de0973163dec5d29e7d249085e, type: 2}
+    _weight: 2
+    _minimumAmount: 1
+    _maximumAmount: 1
+  - _definition: {fileID: 11400000, guid: 2dab6115653dd92ce00289a6f6fcb3f4, type: 2}
+    _weight: 2
+    _minimumAmount: 1
+    _maximumAmount: 1
   _minimumDistinctStacks: 2
   _maximumDistinctStacks: 3
   _allowEmpty: 0
