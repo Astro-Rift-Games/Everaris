@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1164,
-  "canonicalEntries": 1161,
+  "rawCommits": 1166,
+  "canonicalEntries": 1163,
   "before": {
+    "Tests": 46,
     "Bug Fixes": 173,
-    "Tests": 44,
     "Features": 411,
     "Refactoring": 16,
     "Documentation": 123,
@@ -12,8 +12,8 @@
     "Architecture & Infrastructure": 24
   },
   "after": {
+    "Tests": 51,
     "Bug Fixes": 189,
-    "Tests": 49,
     "Features": 549,
     "Refactoring": 29,
     "Documentation": 139,
@@ -23,12 +23,12 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Inventory & Loot": 468,
-    "Networking & Sessions": 342,
+    "Combat": 392,
+    "Inventory & Loot": 470,
+    "Build & Tooling": 601,
+    "Tests": 735,
+    "Networking & Sessions": 343,
     "Persistence & Backend": 289,
-    "Tests": 733,
-    "Combat": 391,
-    "Build & Tooling": 599,
     "Abilities": 138,
     "World & Visibility": 161,
     "Art & Animation": 259,
@@ -42,8 +42,8 @@
   },
   "canonical": {
     "sections": {
+      "Tests": 51,
       "Bug Fixes": 188,
-      "Tests": 49,
       "Features": 548,
       "Refactoring": 29,
       "Documentation": 139,
@@ -52,12 +52,12 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Inventory & Loot": 468,
-      "Networking & Sessions": 342,
+      "Combat": 390,
+      "Inventory & Loot": 470,
+      "Build & Tooling": 599,
+      "Tests": 733,
+      "Networking & Sessions": 343,
       "Persistence & Backend": 289,
-      "Tests": 731,
-      "Combat": 389,
-      "Build & Tooling": 597,
       "Abilities": 136,
       "World & Visibility": 159,
       "Art & Animation": 256,
@@ -74826,8 +74826,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 287,
-      "canonicalEntries": 287
+      "originalCommits": 289,
+      "canonicalEntries": 289
     },
     {
       "key": "v0.5.0",
@@ -74871,6 +74871,239 @@
     }
   ],
   "commits": [
+    {
+      "sha": "c6433a4a77fdb833a42cfafe886d93101f0d3da9",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c6433a4a77fdb833a42cfafe886d93101f0d3da9",
+      "subject": "test(equipment): audit generated weapons with an independent Doc 09 oracle",
+      "body": "TASK-296. The 1,000-weapon generator test validated each instance with\nWeaponInstanceModifiers.TryValidate, the same production validator the\ngenerator calls, so a rule bug would pass on both sides. A test-side\noracle now restates Doc 09 and audits every generated weapon instead.\n\nDoc09WeaponLegalityValidator checks, from public instance data only:\n- 8.1: grade E..S and the coefficient production reports for it\n  (S 1.00, A 0.85, B 0.70, C 0.55, D 0.40, E 0.25);\n- 8.2: natural competence STR/DEX/INT, primary equals it, secondary\n  only with a primary, from VIT/RES/STR/DEX/INT/LUK and never repeated;\n- 22: 0-2 gem sockets.\n\n- Doc09WeaponLegalityValidatorTests: the doc examples (STR B + VIT D\n  legal, STR B + STR D illegal) and every illegal shape yield exactly\n  one violation; all six grades accepted with their coefficients.\n- WeaponInstanceGeneratorTests: the 1,000-weapon audit per natural\n  attribute uses the oracle; reachability checks are kept.\n\nGems stay damage-type agnostic and DamageType is unchanged (Doc 09 22).\nAdds the ODD execution tracker for TASK-296.\n",
+      "date": "2026-11-17T15:06:02-03:00",
+      "files": [
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/WeaponInstanceGeneratorTests.cs",
+        "odd/tasks/task-296-stash-split-weapon-validator.md"
+      ],
+      "originalType": "test",
+      "originalScope": "equipment",
+      "originalSection": "Tests",
+      "breaking": false,
+      "reverts": null,
+      "section": "Tests",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Inventory & Loot",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "test",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/WeaponInstanceGeneratorTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/task-296-stash-split-weapon-validator.md",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "weapons",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/WeaponInstanceGeneratorTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "scope",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/WeaponInstanceGeneratorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/WeaponInstanceGeneratorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "e2fdec004b910924f7d8690fb2f5f735b2e4e56e",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e2fdec004b910924f7d8690fb2f5f735b2e4e56e",
+      "subject": "test(stash): cover coordinator split rules and a real 13 into 5 + 8 split",
+      "body": "TASK-296. StashTransferCoordinator split had no coordinator-level tests\nfor its rejection rules, and the PlayMode test named \"thirteen into five\nand eight\" actually split a 10-unit raid stack into 5 + 5. Raid stacks\ncannot hold 13 units (catalog StackMax is at most 10), while Town lists\ndo not enforce StackMax, so the real 13 -> 5 + 8 split now lives in the\nTown Stash PlayMode suite.\n\n- StashTransferCoordinatorTests: invalid input (zero, negative, excess,\n  same slot, occupied, missing source, mismatched id, capacity), pending\n  reservation, smallest split, schema 3 and EvaluateSplit; every\n  rejection asserts no remote call, no reconciliation and no mutation.\n- LobbyStashPresenterPlayModeTests: TownSplit_ThirteenIntoFiveAndEight\n  splits one 13-unit stack in Stash and Loadout through the quantity\n  dialog, remote-first, leaving 5 + 8 and the other list untouched.\n- PlayerLootReceiverSlotsPlayModeTests: rename the raid test to\n  SplitStack_TenIntoFiveAndFive to match what it verifies.\n",
+      "date": "2026-11-17T15:05:43-03:00",
+      "files": [
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/StashTransferCoordinatorTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/PlayerLootReceiverSlotsPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/LobbyStashPresenterPlayModeTests.cs"
+      ],
+      "originalType": "test",
+      "originalScope": "stash",
+      "originalSection": "Tests",
+      "breaking": false,
+      "reverts": null,
+      "section": "Tests",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "test",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/PlayerLootReceiverSlotsPlayModeTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/LobbyStashPresenterPlayModeTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/StashTransferCoordinatorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/StashTransferCoordinatorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/PlayerLootReceiverSlotsPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/LobbyStashPresenterPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
     {
       "sha": "ad64356f1a51cb8772a1317a9bfaf9fb44711e8f",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ad64356f1a51cb8772a1317a9bfaf9fb44711e8f",

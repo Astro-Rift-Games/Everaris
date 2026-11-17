@@ -4,32 +4,173 @@
 
 Release: Unreleased
 
-287 original commits; 287 canonical entries.
+289 original commits; 289 canonical entries.
 
 ## Canonical classification
 
-89 features; 95 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 20 tests; 11 maintenance; 19 other changes
+89 features; 95 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 22 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 11 | 11 | 1 | 0 | 10 | 1 |
 | Art & Animation | 18 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 7 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 62 | 64 | 3 | 1 | 22 | 6 |
-| Combat | 43 | 17 | 2 | 0 | 12 | 1 |
+| Build & Tooling | 62 | 64 | 3 | 1 | 24 | 6 |
+| Combat | 43 | 17 | 2 | 0 | 13 | 1 |
 | Documentation | 33 | 41 | 0 | 0 | 13 | 0 |
 | Extraction | 17 | 21 | 2 | 0 | 9 | 5 |
 | Input | 1 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 63 | 55 | 3 | 1 | 25 | 5 |
+| Inventory & Loot | 63 | 55 | 3 | 1 | 27 | 5 |
 | Movement | 5 | 4 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 29 | 37 | 0 | 0 | 18 | 2 |
+| Networking & Sessions | 29 | 37 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 29 | 50 | 2 | 1 | 19 | 3 |
-| Tests | 85 | 89 | 3 | 1 | 30 | 4 |
+| Tests | 85 | 89 | 3 | 1 | 32 | 4 |
 | UI | 33 | 20 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
 | World & Visibility | 24 | 12 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### c6433a4a77fdb833a42cfafe886d93101f0d3da9
+
+[c6433a4a77fdb833a42cfafe886d93101f0d3da9](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c6433a4a77fdb833a42cfafe886d93101f0d3da9)
+
+Date: 2026-11-17T15:06:02-03:00 · Classification: Tests (explicit) · Systems: Combat, Inventory & Loot, Build & Tooling, Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+test(equipment): audit generated weapons with an independent Doc 09 oracle
+```
+
+#### Original body
+
+```text
+TASK-296. The 1,000-weapon generator test validated each instance with
+WeaponInstanceModifiers.TryValidate, the same production validator the
+generator calls, so a rule bug would pass on both sides. A test-side
+oracle now restates Doc 09 and audits every generated weapon instead.
+
+Doc09WeaponLegalityValidator checks, from public instance data only:
+- 8.1: grade E..S and the coefficient production reports for it
+  (S 1.00, A 0.85, B 0.70, C 0.55, D 0.40, E 0.25);
+- 8.2: natural competence STR/DEX/INT, primary equals it, secondary
+  only with a primary, from VIT/RES/STR/DEX/INT/LUK and never repeated;
+- 22: 0-2 gem sockets.
+
+- Doc09WeaponLegalityValidatorTests: the doc examples (STR B + VIT D
+  legal, STR B + STR D illegal) and every illegal shape yield exactly
+  one violation; all six grades accepted with their coefficients.
+- WeaponInstanceGeneratorTests: the 1,000-weapon audit per natural
+  attribute uses the oracle; reachability checks are kept.
+
+Gems stay damage-type agnostic and DamageType is unchanged (Doc 09 22).
+Adds the ODD execution tracker for TASK-296.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/WeaponInstanceGeneratorTests.cs
+odd/tasks/task-296-stash-split-weapon-validator.md
+```
+
+#### Classification evidence
+
+- type → Tests: test
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs.meta
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs.meta
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/WeaponInstanceGeneratorTests.cs
+- path → Combat: odd/tasks/task-296-stash-split-weapon-validator.md
+- message-term → Combat: weapons
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/WeaponInstanceGeneratorTests.cs
+- scope → Inventory &amp; Loot: equipment
+- message-term → Inventory &amp; Loot: equipment
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/WeaponInstanceGeneratorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidator.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/Doc09WeaponLegalityValidatorTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/WeaponInstanceGeneratorTests.cs
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### e2fdec004b910924f7d8690fb2f5f735b2e4e56e
+
+[e2fdec004b910924f7d8690fb2f5f735b2e4e56e](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e2fdec004b910924f7d8690fb2f5f735b2e4e56e)
+
+Date: 2026-11-17T15:05:43-03:00 · Classification: Tests (explicit) · Systems: Inventory & Loot, Networking & Sessions, Build & Tooling, Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+test(stash): cover coordinator split rules and a real 13 into 5 + 8 split
+```
+
+#### Original body
+
+```text
+TASK-296. StashTransferCoordinator split had no coordinator-level tests
+for its rejection rules, and the PlayMode test named "thirteen into five
+and eight" actually split a 10-unit raid stack into 5 + 5. Raid stacks
+cannot hold 13 units (catalog StackMax is at most 10), while Town lists
+do not enforce StackMax, so the real 13 -> 5 + 8 split now lives in the
+Town Stash PlayMode suite.
+
+- StashTransferCoordinatorTests: invalid input (zero, negative, excess,
+  same slot, occupied, missing source, mismatched id, capacity), pending
+  reservation, smallest split, schema 3 and EvaluateSplit; every
+  rejection asserts no remote call, no reconciliation and no mutation.
+- LobbyStashPresenterPlayModeTests: TownSplit_ThirteenIntoFiveAndEight
+  splits one 13-unit stack in Stash and Loadout through the quantity
+  dialog, remote-first, leaving 5 + 8 and the other list untouched.
+- PlayerLootReceiverSlotsPlayModeTests: rename the raid test to
+  SplitStack_TenIntoFiveAndFive to match what it verifies.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/StashTransferCoordinatorTests.cs
+Project Grimhold/Assets/Tests/PlayMode/PlayerLootReceiverSlotsPlayModeTests.cs
+Project Grimhold/Assets/Tests/PlayMode/Presentation/LobbyStashPresenterPlayModeTests.cs
+```
+
+#### Classification evidence
+
+- type → Tests: test
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/PlayMode/PlayerLootReceiverSlotsPlayModeTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/PlayMode/Presentation/LobbyStashPresenterPlayModeTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/StashTransferCoordinatorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/StashTransferCoordinatorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/PlayerLootReceiverSlotsPlayModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/LobbyStashPresenterPlayModeTests.cs
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### ad64356f1a51cb8772a1317a9bfaf9fb44711e8f
 
