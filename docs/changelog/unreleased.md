@@ -4,32 +4,1241 @@
 
 Release: Unreleased
 
-271 original commits; 271 canonical entries.
+273 original commits; 273 canonical entries.
 
 ## Canonical classification
 
-84 features; 89 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 18 other changes
+85 features; 89 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 10 | 10 | 1 | 0 | 9 | 1 |
-| Art & Animation | 16 | 9 | 1 | 0 | 9 | 6 |
+| Art & Animation | 17 | 9 | 1 | 0 | 9 | 7 |
 | Audio | 7 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 57 | 59 | 1 | 1 | 22 | 6 |
-| Combat | 38 | 14 | 0 | 0 | 12 | 1 |
-| Documentation | 32 | 40 | 0 | 0 | 13 | 0 |
+| Build & Tooling | 58 | 59 | 1 | 1 | 22 | 6 |
+| Combat | 39 | 14 | 0 | 0 | 12 | 1 |
+| Documentation | 33 | 40 | 0 | 0 | 13 | 0 |
 | Extraction | 17 | 21 | 0 | 0 | 9 | 5 |
 | Input | 1 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 59 | 51 | 1 | 1 | 24 | 4 |
-| Movement | 4 | 3 | 0 | 0 | 2 | 0 |
+| Inventory & Loot | 60 | 51 | 1 | 1 | 24 | 5 |
+| Movement | 5 | 3 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 29 | 35 | 0 | 0 | 18 | 2 |
 | Persistence & Backend | 29 | 47 | 0 | 1 | 19 | 3 |
-| Tests | 80 | 83 | 1 | 1 | 29 | 4 |
+| Tests | 81 | 83 | 1 | 1 | 29 | 4 |
 | UI | 33 | 18 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
 | World & Visibility | 22 | 10 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### a3fd0ca2695c6578089819bbe5d55bac97399169
+
+[a3fd0ca2695c6578089819bbe5d55bac97399169](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a3fd0ca2695c6578089819bbe5d55bac97399169)
+
+Date: 2026-11-16T21:01:33-03:00 · Classification: Other Changes (unknown) · Systems: Inventory & Loot, Art & Animation
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+Update loot pickup sprites
+```
+
+#### Original body
+
+```text
+Replaces the sprites for five loot pickup prefabs and removes obsolete Fusion NetworkObjectPrefabData components from the smoke bomb and throwing dagger prefabs.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_ArcaneDetector.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_ExplosiveBomb.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_RuneCompass.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_SmokeBomb.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_ThrowingDagger.prefab
+```
+
+#### Classification evidence
+
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_ArcaneDetector.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_ExplosiveBomb.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_RuneCompass.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_SmokeBomb.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_ThrowingDagger.prefab
+- message-term → Inventory &amp; Loot: loot
+- message-term → Art &amp; Animation: sprites
+
+#### Diagnostics
+
+- **ambiguous-kind:** No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages.
+
+### a5156ac4498ce020fce98d6000c3c89e371e3392
+
+[a5156ac4498ce020fce98d6000c3c89e371e3392](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a5156ac4498ce020fce98d6000c3c89e371e3392)
+
+Date: 2026-11-16T21:00:13-03:00 · Classification: Features (explicit) · Systems: Combat, Movement, Inventory & Loot, Art & Animation, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(animation): add a dedicated player Sprint and fix hand and weapon depth
+```
+
+#### Original body
+
+```text
+Sprinting used to play the Walk faster. It now has its own animation: a
+heavy run with a flight phase, a one-pixel sink on every landing, the
+upper body leaning into the direction of travel and hands pumping at
+chest height. Hands and held items also sort coherently in Walk and
+Sprint, which they did not once the Walk hands moved closer to the body.
+
+Sprint art and wiring:
+- 210 sheets under Assets/Art/Character/**/Sprint (base body and the
+  six equipment sets), sliced like the Walk sheets: each .meta is the
+  Walk meta with a new GUID, so sprite ids match frame for frame.
+- 18 clips under Assets/Animations/Player/Sprint; grips follow the
+  drawn hands as in Walk.
+- Sprint is not an Animator state. Movement, RightHand-Movement and
+  LeftHand-Movement keep their transitions; each one's motion is a 1D
+  tree on the new float SprintBlend with the Walk (0) and Sprint (1)
+  directional trees. Sprint trees play at time scale 0.78, about 14
+  fps under the 1.5 sprint playback rate.
+- IPlayerPresentationState.IsSprinting mirrors the replicated movement
+  state; PlayerAnimatorView sets SprintBlend to 1 only while sprinting
+  and moving.
+- 1440 Sprint mappings appended to the 24 equipment definitions.
+
+Hand and held-item depth (Walk and Sprint):
+- ResolveLocomotionHandSortingOrders: toward and away from the camera
+  each hand is in front of the body for the camera-side half of its
+  swing; on a diagonal the near hand (Main Hand in SE/NE, Off Hand in
+  SW/NW) stays in front for the whole cycle and the far hand behind.
+  The near hand is drawn almost entirely over the torso, so sorting it
+  by swing height hid it and its weapon for most of the cycle.
+- ResolveHeldItemSortingOrder: a weapon or shield draws on the side of
+  the body its holding hand is on. Weapon-driven weapons and the Off
+  Hand item during an Off Hand attack overlay keep the facing depth.
+
+Tests: generator rule and baked Walk/Sprint clips in all six facings
+(pivot and pivotless bindings), Sprint grips, controller trees and
+SprintBlend, held-item depth math, equipment mapping totals (156 per
+part, 4680 total, 780 per set).
+
+Docs: PlayerCombatArchitecture.md; tracker in
+odd/tasks/player-sprint-animation.md. ArtSource holds the Sprint
+recipes, the editable .aseprite files and the import script.
+
+Player-Added: Sprinting now has its own running animation instead of a sped-up walk.
+Player-Fixed: While walking or sprinting, hands and held weapons no longer slip behind or in front of the body at the wrong moments.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/ArtSource/SprintAnimation/.gitignore
+Project Grimhold/ArtSource/SprintAnimation/README.md
+Project Grimhold/ArtSource/SprintAnimation/aseprite/Sprint_N.aseprite
+Project Grimhold/ArtSource/SprintAnimation/aseprite/Sprint_NE.aseprite
+Project Grimhold/ArtSource/SprintAnimation/aseprite/Sprint_NW.aseprite
+Project Grimhold/ArtSource/SprintAnimation/aseprite/Sprint_S.aseprite
+Project Grimhold/ArtSource/SprintAnimation/aseprite/Sprint_SE.aseprite
+Project Grimhold/ArtSource/SprintAnimation/aseprite/Sprint_SW.aseprite
+Project Grimhold/ArtSource/WalkRework/README.md
+Project Grimhold/ArtSource/WalkRework/tools/apply_sprint_to_unity.py
+Project Grimhold/ArtSource/WalkRework/tools/preview.py
+Project Grimhold/ArtSource/WalkRework/tools/sprint_preview.py
+Project Grimhold/ArtSource/WalkRework/tools/sprint_recipes.lua
+Project Grimhold/ArtSource/WalkRework/tools/walk_recipes.lua
+Project Grimhold/ArtSource/WalkRework/tools/walk_rework.lua
+Project Grimhold/Assets/Animations/Player/Character.controller
+Project Grimhold/Assets/Animations/Player/Sprint.meta
+Project Grimhold/Assets/Animations/Player/Sprint/LeftHand.meta
+Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand_Sprint_N.anim
+Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand_Sprint_N.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand_Sprint_NE.anim
+Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand_Sprint_NE.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand_Sprint_NW.anim
+Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand_Sprint_NW.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand_Sprint_S.anim
+Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand_Sprint_S.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand_Sprint_SE.anim
+Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand_Sprint_SE.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand_Sprint_SW.anim
+Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand_Sprint_SW.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/RightHand.meta
+Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand_Sprint_N.anim
+Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand_Sprint_N.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand_Sprint_NE.anim
+Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand_Sprint_NE.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand_Sprint_NW.anim
+Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand_Sprint_NW.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand_Sprint_S.anim
+Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand_Sprint_S.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand_Sprint_SE.anim
+Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand_Sprint_SE.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand_Sprint_SW.anim
+Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand_Sprint_SW.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/Sprint_N.anim
+Project Grimhold/Assets/Animations/Player/Sprint/Sprint_N.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/Sprint_NE.anim
+Project Grimhold/Assets/Animations/Player/Sprint/Sprint_NE.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/Sprint_NW.anim
+Project Grimhold/Assets/Animations/Player/Sprint/Sprint_NW.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/Sprint_S.anim
+Project Grimhold/Assets/Animations/Player/Sprint/Sprint_S.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/Sprint_SE.anim
+Project Grimhold/Assets/Animations/Player/Sprint/Sprint_SE.anim.meta
+Project Grimhold/Assets/Animations/Player/Sprint/Sprint_SW.anim
+Project Grimhold/Assets/Animations/Player/Sprint/Sprint_SW.anim.meta
+Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand_Walk_NE.anim
+Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand_Walk_NW.anim
+Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand_Walk_SE.anim
+Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand_Walk_SW.anim
+Project Grimhold/Assets/Animations/Player/Walk/Walk_NE.anim
+Project Grimhold/Assets/Animations/Player/Walk/Walk_NW.anim
+Project Grimhold/Assets/Animations/Player/Walk/Walk_SE.anim
+Project Grimhold/Assets/Animations/Player/Walk/Walk_SW.anim
+Project Grimhold/Assets/Art/Character/Body/Sprint.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-N-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-S-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SE-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SW-Sheet.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Editor/Animation/DirectionalAnimationGenerator.cs
+Project Grimhold/Assets/Editor/AttackAnimationValidator/PreviewPlayerPresentationState.cs
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageGarb.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageGloves.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageHat.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageTrousers.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerArmor.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerGloves.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerHat.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerTrousers.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageGarb.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageGloves.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageHood.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageTrousers.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerGloves.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerHood.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerLeatherArmor.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerTrousers.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorBreastplate.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorGauntlets.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorHelmet.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorLegPlate.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorChainMailArmor.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorChainMailTrousers.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorGloves.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorOpenSallet.asset
+Project Grimhold/Assets/Scripts/Character/CharacterAnimatorView.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/IPlayerPresentationState.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/NetworkPlayerPresentationState.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/PlayerAnimatorView.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/PlayerWeaponPresentationMath.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/PlayerWeaponPresenter.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/ArmorSetCatalogTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DirectionalAnimationGeneratorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/FakePlayerPresentationState.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerAnimatorViewTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PlayerWeaponPresentationMathTests.cs
+Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md
+odd/tasks/player-sprint-animation.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Editor/AttackAnimationValidator/PreviewPlayerPresentationState.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Presentation/PlayerWeaponPresentationMath.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Presentation/PlayerWeaponPresenter.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PlayerWeaponPresentationMathTests.cs
+- path → Combat: Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md
+- message-term → Combat: weapon
+- message-term → Movement: Movement
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageGarb.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageGloves.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageHat.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageTrousers.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerArmor.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerGloves.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerHat.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerTrousers.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageGarb.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageGloves.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageHood.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageTrousers.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerGloves.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerHood.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerLeatherArmor.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerTrousers.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorBreastplate.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorGauntlets.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorHelmet.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorLegPlate.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorChainMailArmor.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorChainMailTrousers.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorGloves.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorOpenSallet.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/ArmorSetCatalogTests.cs
+- message-term → Inventory &amp; Loot: equipment
+- path → Art &amp; Animation: Project Grimhold/ArtSource/SprintAnimation/.gitignore
+- path → Art &amp; Animation: Project Grimhold/ArtSource/SprintAnimation/README.md
+- path → Art &amp; Animation: Project Grimhold/ArtSource/SprintAnimation/aseprite/Sprint\_N.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/SprintAnimation/aseprite/Sprint\_NE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/SprintAnimation/aseprite/Sprint\_NW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/SprintAnimation/aseprite/Sprint\_S.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/SprintAnimation/aseprite/Sprint\_SE.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/SprintAnimation/aseprite/Sprint\_SW.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/README.md
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/tools/apply\_sprint\_to\_unity.py
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/tools/preview.py
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/tools/sprint\_preview.py
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/tools/sprint\_recipes.lua
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/tools/walk\_recipes.lua
+- path → Art &amp; Animation: Project Grimhold/ArtSource/WalkRework/tools/walk\_rework.lua
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Character.controller
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/LeftHand.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand\_Sprint\_N.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand\_Sprint\_N.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand\_Sprint\_NE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand\_Sprint\_NE.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand\_Sprint\_NW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand\_Sprint\_NW.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand\_Sprint\_S.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand\_Sprint\_S.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand\_Sprint\_SE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand\_Sprint\_SE.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand\_Sprint\_SW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/LeftHand/LeftHand\_Sprint\_SW.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/RightHand.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand\_Sprint\_N.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand\_Sprint\_N.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand\_Sprint\_NE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand\_Sprint\_NE.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand\_Sprint\_NW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand\_Sprint\_NW.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand\_Sprint\_S.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand\_Sprint\_S.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand\_Sprint\_SE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand\_Sprint\_SE.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand\_Sprint\_SW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/RightHand/RightHand\_Sprint\_SW.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/Sprint\_N.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/Sprint\_N.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/Sprint\_NE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/Sprint\_NE.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/Sprint\_NW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/Sprint\_NW.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/Sprint\_S.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/Sprint\_S.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/Sprint\_SE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/Sprint\_SE.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/Sprint\_SW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Sprint/Sprint\_SW.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand\_Walk\_NE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand\_Walk\_NW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand\_Walk\_SE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/RightHand/RightHand\_Walk\_SW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/Walk\_NE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/Walk\_NW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/Walk\_SE.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Player/Walk/Walk\_SW.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-N-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SE-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SW-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Editor/Animation/DirectionalAnimationGenerator.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Editor/AttackAnimationValidator/PreviewPlayerPresentationState.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Scripts/Character/CharacterAnimatorView.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Scripts/Player/Presentation/PlayerAnimatorView.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DirectionalAnimationGeneratorTests.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerAnimatorViewTests.cs
+- path → Art &amp; Animation: odd/tasks/player-sprint-animation.md
+- scope → Art &amp; Animation: animation
+- message-term → Art &amp; Animation: animation
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/WalkRework/tools/apply\_sprint\_to\_unity.py
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/WalkRework/tools/preview.py
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/WalkRework/tools/sprint\_preview.py
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/WalkRework/tools/sprint\_recipes.lua
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/WalkRework/tools/walk\_recipes.lua
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/WalkRework/tools/walk\_rework.lua
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/Animation/DirectionalAnimationGenerator.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/AttackAnimationValidator/PreviewPlayerPresentationState.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/ArmorSetCatalogTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DirectionalAnimationGeneratorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/FakePlayerPresentationState.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerAnimatorViewTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PlayerWeaponPresentationMathTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Equipment/ArmorSetCatalogTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/DirectionalAnimationGeneratorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/FakePlayerPresentationState.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerAnimatorViewTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PlayerWeaponPresentationMathTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### d0ded1018c414772694f7581bd31cbb1f35864bd
 

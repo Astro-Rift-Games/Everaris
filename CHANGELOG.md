@@ -24,6 +24,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Standard and locked chests now play an opening animation when opened.
 - Long bows, compound bows, staves and wands now fire their own distinct arrows and magic missiles.
 - Raids now take place in the new Catacombs map, with eight extraction sanctuaries and many more enemies, chests and breakables to find.
+- Sprinting now has its own running animation instead of a sped-up walk.
 
 ### Improved
 
@@ -102,6 +103,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Host can now configure Friendly Fire in expedition preparation.
 - Arcane Projectiles now properly dissipate in open spaces.
 - Protective Orbs now intercept enemy player shots and trap darts.
+- While walking or sprinting, hands and held weapons no longer slip behind or in front of the body at the wrong moments.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08
