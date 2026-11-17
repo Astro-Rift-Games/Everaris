@@ -464,7 +464,7 @@ public static class ApplicationStashServiceBootstrapper
                  (item.instance != null && item.amount != 1))) return false;
             if (item.amount <= 0) continue;
             if (item.instance != null && !item.instance.TryToInstance(definition, inventorySchemaVersion == 3, out instance, out _, catalog)) return false;
-            normalized.Add(new StashItem(new LootId(item.lootId), item.amount, slot, instance));
+            normalized.Add(new StashItem(definition.LootId, item.amount, slot, instance));
         }
         normalized.Sort((a, b) => a.Slot.CompareTo(b.Slot));
 

@@ -38,17 +38,21 @@ public static class RaidAdmissionLoadoutMatcher
         var totals = new List<StashItem>();
         var expectedUnits = new List<ExpeditionWeaponUnit>();
         var packed = new WeaponInstanceModifiersNetworkData[expected.ReservedLoadout.Count];
+        // Reserved ids may be legacy aliases (for example "healthpotion"); materialized ownership always
+        // carries the catalog's canonical id, so both sides are compared by canonical identity.
+        var canonicalIds = new LootId[expected.ReservedLoadout.Count];
         for (int index = 0; index < expected.ReservedLoadout.Count; index++)
         {
             LootEntry entry = expected.ReservedLoadout[index];
-            totals.Add(new StashItem(entry.LootId, entry.Amount, index));
             if (!catalog.TryGet(entry.LootId.Value, out LootDefinition definition)) return false;
+            canonicalIds[index] = definition.LootId;
+            totals.Add(new StashItem(canonicalIds[index], entry.Amount, index));
             if (entry.Modifiers.HasValue &&
                 !WeaponInstanceModifiersNetworkData.TryCreate(entry.Modifiers.Value,
                     definition.WeaponDefinition.NaturalScalingAttribute, catalog, out packed[index], out _))
                 return false;
             if (!packed[index].IsEmpty)
-                expectedUnits.Add(new ExpeditionWeaponUnit(entry.LootId, RaidLootOrigin.Dungeon, packed[index]));
+                expectedUnits.Add(new ExpeditionWeaponUnit(canonicalIds[index], RaidLootOrigin.Dungeon, packed[index]));
         }
         if (!ProfileInventoryRules.TryAggregate(totals, out List<LootEntry> expectedTotals) ||
             expectedTotals.Count != combined.Count) return false;
@@ -69,8 +73,7 @@ public static class RaidAdmissionLoadoutMatcher
                 if (slots[index].HasValue || !slotModifiers[index].IsEmpty) return false;
                 continue;
             }
-            LootEntry entry = expected.ReservedLoadout[reference - 1];
-            if (!slots[index].HasValue || slots[index].Value.LootId != entry.LootId ||
+            if (!slots[index].HasValue || slots[index].Value.LootId != canonicalIds[reference - 1] ||
                 slots[index].Value.Amount != 1 || !slotModifiers[index].Equals(packed[reference - 1]))
                 return false;
         }

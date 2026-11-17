@@ -22,7 +22,9 @@ public sealed class RaidAdmissionLoadoutMatcherTests
         public bool Matches() => RaidAdmissionLoadoutMatcher.Matches(Expected, Combined, Units, Slots, Modifiers, ActiveSet, Catalog);
     }
 
-    private static Confirmation Create(bool ticket)
+    private static readonly LootId Potion = new LootId("CON_HEALTH_POTION");
+
+    private static Confirmation Create(bool ticket, string reservedPotionId = null)
     {
         Assert.That(WeaponInstanceModifiers.TryCreate(default, default, CharacterAttribute.Strength,
             1, default, default, out var first, out _), Is.True);
@@ -37,6 +39,8 @@ public sealed class RaidAdmissionLoadoutMatcherTests
             new StashItem(Sword, 1, 1, new EquipmentInstance(null, default(WeaponInstanceModifiers))),
             new StashItem(Bone, 3, 2), new StashItem(Bone, 2, 3)
         };
+        if (reservedPotionId != null)
+            inventory = new List<StashItem>(inventory) { new StashItem(new LootId(reservedPotionId), 2, 4) }.ToArray();
         var reservation = new PendingLoadoutReservation("reservation", inventory, prepared);
         RaidCode.TryParse("123456", out var code);
         var profile = new ProfileId("isolated-confirmation");
@@ -51,7 +55,9 @@ public sealed class RaidAdmissionLoadoutMatcherTests
             Assert.That(authoritative.TryToRaidAdmissionData(out expected, catalog: Catalog), Is.True);
         }
         var result = new Confirmation { Expected = expected,
-            Combined = new[] { new LootEntry(Sword, 4), new LootEntry(Bone, 5) } };
+            Combined = reservedPotionId == null
+                ? new[] { new LootEntry(Sword, 4), new LootEntry(Bone, 5) }
+                : new[] { new LootEntry(Sword, 4), new LootEntry(Bone, 5), new LootEntry(Potion, 2) } };
         Assert.That(Catalog.TryGet(Sword.Value, out var definition), Is.True);
         Assert.That(WeaponInstanceModifiersNetworkData.TryCreate(first,
             definition.WeaponDefinition.NaturalScalingAttribute, Catalog, out var firstPacked, out _), Is.True);
@@ -76,6 +82,36 @@ public sealed class RaidAdmissionLoadoutMatcherTests
         Assert.That(confirmation.Matches(), Is.True);
         confirmation.Units.Reverse();
         Assert.That(confirmation.Matches(), Is.True, "Unit order is not ownership identity.");
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void Confirmation_AdmitsLegacyReservedAliasMaterializedAsCanonicalId(bool ticket)
+    {
+        Assert.That(Catalog.TryGet("healthpotion", out var resolved), Is.True, "The catalog must alias the legacy id.");
+        Assert.That(resolved.LootId, Is.EqualTo(Potion));
+        var confirmation = Create(ticket, "healthpotion");
+        Assert.That(confirmation.Matches(), Is.True);
+    }
+
+    [TestCase(false, "quantity")]
+    [TestCase(true, "quantity")]
+    [TestCase(false, "different-item")]
+    [TestCase(true, "different-item")]
+    public void Confirmation_RejectsLegacyReservedAliasWhenOwnershipDiffers(bool ticket, string mutation)
+    {
+        var c = Create(ticket, "healthpotion");
+        if (mutation == "quantity") c.Combined[2] = new LootEntry(Potion, 3);
+        else c.Combined[2] = new LootEntry(new LootId("rapier"), 2);
+        Assert.That(c.Matches(), Is.False);
+    }
+
+    [Test]
+    public void Confirmation_RejectsUnknownReservedIdEvenWhenMaterializedIdMatchesRawText()
+    {
+        var c = Create(false, "healthpotion_unknown");
+        c.Combined[2] = new LootEntry(new LootId("healthpotion_unknown"), 2);
+        Assert.That(c.Matches(), Is.False);
     }
 
     private static IEnumerable<TestCaseData> Rejections()
