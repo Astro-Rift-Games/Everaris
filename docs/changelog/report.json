@@ -1,70 +1,70 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1150,
-  "canonicalEntries": 1147,
+  "rawCommits": 1153,
+  "canonicalEntries": 1150,
   "before": {
+    "Bug Fixes": 169,
+    "Documentation": 123,
     "Other Changes": 373,
     "Features": 407,
-    "Bug Fixes": 167,
     "Architecture & Infrastructure": 24,
-    "Documentation": 122,
     "Tests": 43,
     "Refactoring": 14
   },
   "after": {
+    "Bug Fixes": 185,
+    "Documentation": 139,
     "Other Changes": 181,
     "Features": 545,
-    "Bug Fixes": 183,
     "Maintenance": 22,
-    "Documentation": 138,
     "Tests": 48,
     "Architecture & Infrastructure": 6,
     "Refactoring": 27
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Inventory & Loot": 458,
-    "Art & Animation": 253,
-    "Combat": 382,
+    "Inventory & Loot": 461,
+    "UI": 338,
+    "Build & Tooling": 590,
+    "Tests": 722,
+    "Combat": 383,
+    "Abilities": 136,
+    "World & Visibility": 158,
+    "Persistence & Backend": 285,
+    "Art & Animation": 254,
+    "Documentation": 430,
     "Movement": 99,
-    "Build & Tooling": 588,
-    "Documentation": 429,
-    "Tests": 720,
-    "UI": 336,
-    "World & Visibility": 157,
     "Extraction": 171,
     "Networking & Sessions": 340,
-    "Abilities": 135,
-    "Persistence & Backend": 284,
     "Audio": 39,
     "Input": 31,
     "Unassigned": 42
   },
   "canonical": {
     "sections": {
+      "Bug Fixes": 184,
+      "Documentation": 139,
       "Other Changes": 180,
       "Features": 544,
-      "Bug Fixes": 182,
       "Maintenance": 22,
-      "Documentation": 138,
       "Tests": 48,
       "Architecture & Infrastructure": 6,
       "Refactoring": 27
     },
     "systems": {
-      "Inventory & Loot": 458,
-      "Art & Animation": 250,
-      "Combat": 380,
+      "Inventory & Loot": 461,
+      "UI": 337,
+      "Build & Tooling": 588,
+      "Tests": 720,
+      "Combat": 381,
+      "Abilities": 134,
+      "World & Visibility": 156,
+      "Persistence & Backend": 285,
+      "Art & Animation": 251,
+      "Documentation": 428,
       "Movement": 99,
-      "Build & Tooling": 586,
-      "Documentation": 427,
-      "Tests": 718,
-      "UI": 335,
-      "World & Visibility": 155,
       "Extraction": 171,
       "Networking & Sessions": 340,
-      "Abilities": 133,
-      "Persistence & Backend": 284,
       "Audio": 39,
       "Input": 31,
       "Unassigned": 42
@@ -74826,8 +74826,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 273,
-      "canonicalEntries": 273
+      "originalCommits": 276,
+      "canonicalEntries": 276
     },
     {
       "key": "v0.5.0",
@@ -74871,6 +74871,747 @@
     }
   ],
   "commits": [
+    {
+      "sha": "f17de9ca223f24aea73f83c473ea807d36358217",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f17de9ca223f24aea73f83c473ea807d36358217",
+      "subject": "fix(loot): enable self-reviver test spawning and ensure F6 binding",
+      "body": "Ensure test spawner robustly provisions Self-reviver consumables across all PlayMode testing scenarios:\n- Wire F6 hotkey binding and Self-reviver / Lockpick definitions explicitly in Gameplay.unity scene serialization.\n- Provide automatic key code and AssetDatabase definition fallbacks in RaidLootTestSpawner.\n- Grant Self-reviver directly to Downed players when triggering F6 in a live raid to eliminate test friction.\n- Expose dedicated Self-Reviver and Lockpick spawning actions in editor inspector and context menu.\n\nPlayer-Improved: The F6 debug hotkey now reliably spawns the Self-reviver (and grants it directly into inventory if currently downed).\n\nRefs: FIX-US-10 (#744), FIX-78 (#767)\n",
+      "date": "2026-11-16T22:16:04-03:00",
+      "files": [
+        "Project Grimhold/Assets/Editor/Gameplay/RaidLootTestSpawnerEditor.cs",
+        "Project Grimhold/Assets/Scenes/Gameplay.unity",
+        "Project Grimhold/Assets/Scripts/Gameplay/Debugging/RaidLootTestSpawner.cs",
+        "odd/tasks/fix-us-10-items-inventory-utilities.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "loot",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "UI",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/Gameplay/RaidLootTestSpawnerEditor.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/Debugging/RaidLootTestSpawner.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/fix-us-10-items-inventory-utilities.md",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "scope",
+          "value": "loot",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "loot",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "menu",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/Gameplay/RaidLootTestSpawnerEditor.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/Gameplay/RaidLootTestSpawnerEditor.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/Debugging/RaidLootTestSpawner.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "bcd961c55f089308ae26ee50eaf9954db7608b47",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bcd961c55f089308ae26ee50eaf9954db7608b47",
+      "subject": "docs(inventory): record delivery and HacknPlan transition in execution tracker",
+      "body": "",
+      "date": "2026-11-16T20:26:55-03:00",
+      "files": [
+        "odd/tasks/fix-us-10-items-inventory-utilities.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "inventory",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/fix-us-10-items-inventory-utilities.md",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "scope",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "6d4f3b867d45d36ec67fc7389c13d68a45693950",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6d4f3b867d45d36ec67fc7389c13d68a45693950",
+      "subject": "fix(inventory): unify Sprint 15 items, quick slots, utilities and chests",
+      "body": "Align inventory items, quick slots, consumable feedback, and treasure\nutilities with authoritative design specifications:\n- Canonicalize 'healthpotion' identity with backward-compatible alias and\n  profile codec migration; formalize Bone and Coins with Legacy family.\n- Eliminate dead depletion gate in quick slots and verify multi-origin\n  HUD count aggregation.\n- Safe rejection without exception for non-raid pickup receivers.\n- Arcane detector channel interruption on movement without cooldown,\n  arcane container filtering, and cached rune compass POI resolution.\n- Multi-runner isolation for SmokeZoneRegistry and wall impact despawn.\n- Correct sorting layers: dropped loot and breakables render on\n  'Characters' layer; bomb and smoke particles render on 'VFX' layer.\n- Defer chest UI opening during lockpicking and present real-time channel\n  progress bar with cancellation feedback.\n- Formalize self-reviver recovery at 25 HP with immediate auto-activation\n  following teammate handoff.\n\nAdded and updated tests:\n- EditMode: RaidQuickSlotHudBehaviorTests, LegacyItemUnificationTests,\n  NetworkLootPickupTests, NetworkSpawnManagerLootTests, MvpItemCatalogTests.\n- PlayMode: InteractionLootHudPlayModeTests, LockpickInteractionPlayModeTests,\n  RaidInventoryPresenterInteractionTests, BreakableObjectPlayModeTests,\n  ThrowableConsumablesPlayModeTests, TimedConsumablePlayModeTests,\n  UtilityExpeditionPlayModeTests, NetworkLootPickupPartialPickupPlayModeTests.\n- Backend: item.catalog.parity.test.js.\n\nPlayer-Fixed: Dropped items, breakable crates, and bomb visual effects are now properly visible above the dungeon floor.\nPlayer-Improved: Opening locked chests with a lockpick now displays a real-time progress bar and only opens the chest loot panel once unlocked.\nPlayer-Improved: Potions and consumable utilities now display correct aggregated counts and feedback across quick slots.\n\nRefs: FIX-US-10 (#744), FIX-67 (#756), FIX-68 (#757), FIX-69 (#758), FIX-74 (#763), FIX-75 (#764), FIX-76 (#765), FIX-77 (#766), FIX-78 (#767)\n",
+      "date": "2026-11-16T20:24:47-03:00",
+      "files": [
+        "Project Grimhold/Assets/Editor/Gameplay/RaidLootTestSpawnerEditor.cs",
+        "Project Grimhold/Assets/Prefabs/BreakableObject.prefab",
+        "Project Grimhold/Assets/Prefabs/Consumables/SmokeZone.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ArcaneDetector.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ChaosCoin.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ExplosiveBomb.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_FamineIdol.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_HealthPotion.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ManaFragment.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ManaPotion.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_PilgrimLight.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_RuneCompass.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_SanctuaryHeart.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_SmokeBomb.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ThrowingDagger.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_VoidBell.prefab",
+        "Project Grimhold/Assets/Prefabs/Loot/LootPickup_WandererEye.prefab",
+        "Project Grimhold/Assets/Prefabs/LootPickup 1.prefab",
+        "Project Grimhold/Assets/Prefabs/LootPickup.prefab",
+        "Project Grimhold/Assets/Scenes/Gameplay.unity",
+        "Project Grimhold/Assets/Scriptable Objects/HealthConsumableDefinition.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Catalogs/LootDefinitionCatalog.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Bone.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Coins.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset",
+        "Project Grimhold/Assets/Scriptable Objects/ManaFragmentDefinition.asset",
+        "Project Grimhold/Assets/Scriptable Objects/ManaPotionDefinition.asset",
+        "Project Grimhold/Assets/Scriptable Objects/RaidLootValueCatalog.asset",
+        "Project Grimhold/Assets/Scripts/Abilities/Debugging/AbilityPlayModeDebugger.cs",
+        "Project Grimhold/Assets/Scripts/Core/InteractionResult.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/BreakableObject.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/Consumables/NetworkExplosiveBomb.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/Consumables/NetworkSmokeZone.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/Consumables/SmokeZoneRegistry.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/Debugging/RaidLootTestSpawner.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/NetworkLootPickup.cs",
+        "Project Grimhold/Assets/Scripts/Loot/LootDefinitionCatalog.cs",
+        "Project Grimhold/Assets/Scripts/Loot/QuickSlots/QuickSlotAssignmentRules.cs",
+        "Project Grimhold/Assets/Scripts/Loot/QuickSlots/QuickSlotBindings.cs",
+        "Project Grimhold/Assets/Scripts/Loot/QuickSlots/QuickSlotController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Interaction/PlayerConsumableNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Interaction/PlayerInteractionNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Player/PlayerDownedRecoveryNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/LocalPlayerHudBinder.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/QuickSlotReleaseGate.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/QuickSlotReleaseGate.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/RaidInventoryPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs",
+        "Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ConsumableUtilitySpriteAssetsTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LegacyItemUnificationTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LegacyItemUnificationTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkLootPickupTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkSpawnManagerLootTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotAssignmentRulesTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotControllerTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotReleaseGateTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotReleaseGateTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/RaidQuickSlotHudBehaviorTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/RaidQuickSlotHudBehaviorTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/LockpickInteractionPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/NetworkLootPickupPartialPickupPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionLootHudPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidInventoryPresenterInteractionTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/ThrowableConsumablesPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/TimedConsumablePlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/UtilityExpeditionPlayModeTests.cs",
+        "Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md",
+        "backend/src/services/InventoryLootIdNormalizer.js",
+        "backend/tests/item.catalog.parity.test.js",
+        "odd/tasks/fix-us-10-items-inventory-utilities.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "inventory",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Abilities",
+        "Inventory & Loot",
+        "UI",
+        "World & Visibility",
+        "Persistence & Backend",
+        "Art & Animation",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_HealthPotion.prefab",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/HealthConsumableDefinition.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Debugging/AbilityPlayModeDebugger.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ConsumableUtilitySpriteAssetsTests.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/UtilityExpeditionPlayModeTests.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/Gameplay/RaidLootTestSpawnerEditor.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ArcaneDetector.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ChaosCoin.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ExplosiveBomb.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_FamineIdol.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_HealthPotion.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ManaFragment.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ManaPotion.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_PilgrimLight.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_RuneCompass.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_SanctuaryHeart.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_SmokeBomb.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_ThrowingDagger.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_VoidBell.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Loot/LootPickup_WandererEye.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/LootPickup 1.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/LootPickup.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Catalogs/LootDefinitionCatalog.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Bone.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Coins.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/RaidLootValueCatalog.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Core/InteractionResult.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/Debugging/RaidLootTestSpawner.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/NetworkLootPickup.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Loot/LootDefinitionCatalog.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Loot/QuickSlots/QuickSlotAssignmentRules.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Loot/QuickSlots/QuickSlotBindings.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Loot/QuickSlots/QuickSlotController.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Interaction/PlayerConsumableNetworkController.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Interaction/PlayerInteractionNetworkController.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/RaidInventoryPresenter.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ConsumableUtilitySpriteAssetsTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LegacyItemUnificationTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LegacyItemUnificationTests.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkLootPickupTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkSpawnManagerLootTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/LockpickInteractionPlayModeTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/NetworkLootPickupPartialPickupPlayModeTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionLootHudPlayModeTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidInventoryPresenterInteractionTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryLootIdNormalizer.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/fix-us-10-items-inventory-utilities.md",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "scope",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/LocalPlayerHudBinder.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/RaidQuickSlotHudBehaviorTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/RaidQuickSlotHudBehaviorTests.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionLootHudPlayModeTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "HUD",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "dungeon",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryLootIdNormalizer.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/item.catalog.parity.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "Backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ConsumableUtilitySpriteAssetsTests.cs",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/Gameplay/RaidLootTestSpawnerEditor.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ConsumableUtilitySpriteAssetsTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LegacyItemUnificationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LegacyItemUnificationTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkLootPickupTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkSpawnManagerLootTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotAssignmentRulesTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotControllerTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotReleaseGateTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotReleaseGateTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/RaidQuickSlotHudBehaviorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/RaidQuickSlotHudBehaviorTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/Gameplay/RaidLootTestSpawnerEditor.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/Debugging/RaidLootTestSpawner.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ConsumableUtilitySpriteAssetsTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LegacyItemUnificationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LegacyItemUnificationTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkLootPickupTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkSpawnManagerLootTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotAssignmentRulesTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotControllerTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotReleaseGateTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotReleaseGateTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/RaidQuickSlotHudBehaviorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/RaidQuickSlotHudBehaviorTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/LockpickInteractionPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/NetworkLootPickupPartialPickupPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionLootHudPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidInventoryPresenterInteractionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/ThrowableConsumablesPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/TimedConsumablePlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/UtilityExpeditionPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/item.catalog.parity.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "a3fd0ca2695c6578089819bbe5d55bac97399169",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a3fd0ca2695c6578089819bbe5d55bac97399169",
