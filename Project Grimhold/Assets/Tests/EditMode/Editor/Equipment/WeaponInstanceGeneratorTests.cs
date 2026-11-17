@@ -26,7 +26,7 @@ namespace Tests.EditMode.Equipment
         [TestCase(CharacterAttribute.Strength)]
         [TestCase(CharacterAttribute.Dexterity)]
         [TestCase(CharacterAttribute.Intelligence)]
-        public void TryGenerate_OneThousandWeapons_AllRespectLegalCombinationsAndSocketLimits(
+        public void TryGenerate_OneThousandWeapons_PassIndependentDoc09LegalityAudit(
             CharacterAttribute naturalAttribute)
         {
             LootDefinition template = CreateWeaponTemplate(naturalAttribute);
@@ -50,24 +50,23 @@ namespace Tests.EditMode.Equipment
                     Is.True,
                     error);
 
-                Assert.That(instance.TryValidate(naturalAttribute, out string validationError), Is.True, validationError);
-                Assert.That(instance.GemSocketCount, Is.InRange(0, WeaponInstanceModifiers.MaxGemSocketCount));
+                // Independent oracle (Doc 09 §8.1, §8.2, §22); never the production TryValidate.
+                List<string> violations = Doc09WeaponLegalityValidator.Audit(
+                    Doc09WeaponLegalityValidator.Observe(naturalAttribute, instance));
+                Assert.That(violations, Is.Empty, $"Seed {seed}: {string.Join(" | ", violations)}");
                 socketCounts.Add(instance.GemSocketCount);
 
                 if (instance.HasPrimary)
                 {
-                    Assert.That(instance.Primary.Attribute, Is.EqualTo(naturalAttribute));
                     grades.Add(instance.Primary.Grade);
                 }
                 else
                 {
                     sawUnscaled = true;
-                    Assert.That(instance.HasSecondary, Is.False);
                 }
 
                 if (instance.HasSecondary)
                 {
-                    Assert.That(instance.Secondary.Attribute, Is.Not.EqualTo(instance.Primary.Attribute));
                     secondaryAttributes.Add(instance.Secondary.Attribute);
                     grades.Add(instance.Secondary.Grade);
                 }
