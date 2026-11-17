@@ -25,6 +25,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Long bows, compound bows, staves and wands now fire their own distinct arrows and magic missiles.
 - Raids now take place in the new Catacombs map, with eight extraction sanctuaries and many more enemies, chests and breakables to find.
 - Sprinting now has its own running animation instead of a sped-up walk.
+- Treasures, remaining consumables, and utilities can now drop from dungeon chests.
 
 ### Improved
 
@@ -49,6 +50,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Extraction sanctuaries have new art and visibly light up while their activation ritual runs.
 - Walking now looks careful and grounded, with steadier steps, calmer arms and hands that pass naturally in front of and behind the body.
 - Treasures now display distinct world sprites and inventory icons.
+- Dropped items now render above floor tiles on the character layer.
+- Health Potions across chests, enemies, and the Town Merchant now stack together with matching sprites.
 
 ### Fixed
 

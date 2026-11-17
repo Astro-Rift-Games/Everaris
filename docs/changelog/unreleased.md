@@ -4,32 +4,515 @@
 
 Release: Unreleased
 
-276 original commits; 276 canonical entries.
+282 original commits; 282 canonical entries.
 
 ## Canonical classification
 
-85 features; 91 bug fixes; 1 refactoring; 1 architecture & infrastructure; 49 documentation; 19 tests; 11 maintenance; 19 other changes
+88 features; 92 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 19 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 10 | 11 | 1 | 0 | 9 | 1 |
-| Art & Animation | 17 | 10 | 1 | 0 | 9 | 7 |
+| Art & Animation | 18 | 11 | 3 | 0 | 9 | 7 |
 | Audio | 7 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 58 | 61 | 1 | 1 | 22 | 6 |
-| Combat | 39 | 15 | 0 | 0 | 12 | 1 |
+| Build & Tooling | 61 | 62 | 3 | 1 | 22 | 6 |
+| Combat | 42 | 16 | 2 | 0 | 12 | 1 |
 | Documentation | 33 | 41 | 0 | 0 | 13 | 0 |
-| Extraction | 17 | 21 | 0 | 0 | 9 | 5 |
+| Extraction | 17 | 21 | 2 | 0 | 9 | 5 |
 | Input | 1 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 60 | 53 | 1 | 1 | 25 | 5 |
-| Movement | 5 | 3 | 0 | 0 | 2 | 0 |
+| Inventory & Loot | 63 | 53 | 3 | 1 | 25 | 5 |
+| Movement | 5 | 4 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 29 | 35 | 0 | 0 | 18 | 2 |
-| Persistence & Backend | 29 | 48 | 0 | 1 | 19 | 3 |
-| Tests | 81 | 85 | 1 | 1 | 29 | 4 |
+| Persistence & Backend | 29 | 48 | 2 | 1 | 19 | 3 |
+| Tests | 84 | 86 | 3 | 1 | 29 | 4 |
 | UI | 33 | 20 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
-| World & Visibility | 22 | 11 | 0 | 0 | 3 | 12 |
+| World & Visibility | 24 | 11 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 53fa74341e843b8de761ee1cd5da00f517ee1932
+
+[53fa74341e843b8de761ee1cd5da00f517ee1932](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/53fa74341e843b8de761ee1cd5da00f517ee1932)
+
+Date: 2026-11-16T22:47:26-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Movement, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(animation): resume the main-hand layer at the body's locomotion phase
+```
+
+#### Original body
+
+```text
+After an attack or the aim stance, the RightHand layer restarted its own
+cycle while the body clips, which key MainHandGrip, kept their phase, so
+the held weapon stayed out of step with the drawn hand.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/Presentation/PlayerAnimatorView.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocomotionGripRuntimeTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocomotionGripRuntimeTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Combat: weapon
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocomotionGripRuntimeTests.cs
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocomotionGripRuntimeTests.cs.meta
+- message-term → Movement: locomotion
+- path → Art &amp; Animation: Project Grimhold/Assets/Scripts/Player/Presentation/PlayerAnimatorView.cs
+- scope → Art &amp; Animation: animation
+- message-term → Art &amp; Animation: animation
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocomotionGripRuntimeTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocomotionGripRuntimeTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocomotionGripRuntimeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocomotionGripRuntimeTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 1838d6165069d04b08dc9e3af9dd09766d55788e
+
+[1838d6165069d04b08dc9e3af9dd09766d55788e](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/1838d6165069d04b08dc9e3af9dd09766d55788e)
+
+Date: 2026-11-16T22:47:14-03:00 · Classification: Features (explicit) · Systems: Combat, Inventory & Loot, World & Visibility, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(loot): add MVP treasures, consumables, and utilities to chest loot table
+```
+
+#### Original body
+
+```text
+Add all eight MVP treasures, seven remaining dungeon-eligible consumables,
+and two expedition utilities to DefaultLootContainerContentTable (entries
+65 -> 82), respecting StackMax and MaxTransportable limits per Doc 14.
+
+Add MvpItemCatalogTests checks for treasure and consumable/utility chest
+entries and snapshot validation, and update expected DefaultLootTable count
+to 82 in WeaponCatalogTests.
+
+Player-Added: Treasures, remaining consumables, and utilities can now drop from dungeon chests.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scriptable Objects/Loot/Tables/DefaultLootContainerContentTable.asset
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/MvpItemCatalogTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Tables/DefaultLootContainerContentTable.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/MvpItemCatalogTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- scope → Inventory &amp; Loot: loot
+- message-term → Inventory &amp; Loot: loot
+- message-term → World &amp; Visibility: dungeon
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/MvpItemCatalogTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/MvpItemCatalogTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### e8239bcb68283928cec54a770444efe6629e2df0
+
+[e8239bcb68283928cec54a770444efe6629e2df0](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e8239bcb68283928cec54a770444efe6629e2df0)
+
+Date: 2026-11-16T22:47:14-03:00 · Classification: Refactoring (explicit) · Systems: Combat, Extraction, Inventory & Loot, Persistence & Backend, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+refactor(loot): remove legacy healthpotion and standardize on CON_HEALTH_POTION
+```
+
+#### Original body
+
+```text
+Delete the duplicate HealthPotion.asset definition and migrate chest,
+enemy, and Town Merchant references to canonical CON_HEALTH_POTION.
+Remove legacy entries from LootDefinitionCatalog and RaidLootValueCatalog,
+and normalize healthpotion to CON_HEALTH_POTION in backend inventory
+while preserving shop buy/sell offer compatibility via alias lookup.
+
+Update Unity EditMode/PlayMode and backend parity/integration tests to
+verify canonical CON_HEALTH_POTION references and legacy alias lookup.
+
+Player-Improved: Health Potions across chests, enemies, and the Town Merchant now stack together with matching sprites.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/TownMerchantNPC.prefab
+Project Grimhold/Assets/Scriptable Objects/Loot/Catalogs/LootDefinitionCatalog.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Loot/Tables/EnemyLootContainerContentTable.asset
+Project Grimhold/Assets/Scriptable Objects/RaidLootValueCatalog.asset
+Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotControllerTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotPersistenceEditModeTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionProgressPrefabTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/ShopTransactionPersistenceEditModeTests.cs
+Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidInventoryPresenterInteractionTests.cs
+Project Grimhold/Assets/Tests/PlayMode/TimedConsumablePlayModeTests.cs
+backend/src/config/shopCatalog.js
+backend/src/services/InventoryLootIdNormalizer.js
+backend/tests/integration/inventory.slots.test.js
+backend/tests/integration/migrate.inventory.slots.test.js
+backend/tests/integration/persistence.test.js
+backend/tests/integration/shop.authoritative.test.js
+backend/tests/integration/shop.trade.test.js
+backend/tests/inventory.slots.test.js
+backend/tests/item.catalog.parity.test.js
+backend/tests/shop.catalog.parity.test.js
+```
+
+#### Classification evidence
+
+- type → Refactoring: refactor
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset.meta
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionProgressPrefabTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Catalogs/LootDefinitionCatalog.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Tables/EnemyLootContainerContentTable.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/RaidLootValueCatalog.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidInventoryPresenterInteractionTests.cs
+- path → Inventory &amp; Loot: backend/src/services/InventoryLootIdNormalizer.js
+- path → Inventory &amp; Loot: backend/tests/integration/inventory.slots.test.js
+- path → Inventory &amp; Loot: backend/tests/integration/migrate.inventory.slots.test.js
+- path → Inventory &amp; Loot: backend/tests/inventory.slots.test.js
+- scope → Inventory &amp; Loot: loot
+- message-term → Inventory &amp; Loot: loot
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotPersistenceEditModeTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/ShopTransactionPersistenceEditModeTests.cs
+- path → Persistence &amp; Backend: backend/src/config/shopCatalog.js
+- path → Persistence &amp; Backend: backend/src/services/InventoryLootIdNormalizer.js
+- path → Persistence &amp; Backend: backend/tests/integration/inventory.slots.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/migrate.inventory.slots.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/persistence.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/shop.authoritative.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/shop.trade.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.slots.test.js
+- path → Persistence &amp; Backend: backend/tests/item.catalog.parity.test.js
+- path → Persistence &amp; Backend: backend/tests/shop.catalog.parity.test.js
+- message-term → Persistence &amp; Backend: backend
+- message-term → Art &amp; Animation: sprites
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotControllerTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotPersistenceEditModeTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionProgressPrefabTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/ShopTransactionPersistenceEditModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotControllerTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotPersistenceEditModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionProgressPrefabTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/ShopTransactionPersistenceEditModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidInventoryPresenterInteractionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/TimedConsumablePlayModeTests.cs
+- path → Tests: backend/tests/integration/inventory.slots.test.js
+- path → Tests: backend/tests/integration/migrate.inventory.slots.test.js
+- path → Tests: backend/tests/integration/persistence.test.js
+- path → Tests: backend/tests/integration/shop.authoritative.test.js
+- path → Tests: backend/tests/integration/shop.trade.test.js
+- path → Tests: backend/tests/inventory.slots.test.js
+- path → Tests: backend/tests/item.catalog.parity.test.js
+- path → Tests: backend/tests/shop.catalog.parity.test.js
+- message-term → Tests: tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 0dc1ba50468d4eee2d04b59b556724e76cf91018
+
+[0dc1ba50468d4eee2d04b59b556724e76cf91018](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0dc1ba50468d4eee2d04b59b556724e76cf91018)
+
+Date: 2026-11-16T22:49:02-03:00 · Classification: Features (explicit) · Systems: Combat, Inventory & Loot, World & Visibility, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(loot): add MVP treasures, consumables, and utilities to chest loot table
+```
+
+#### Original body
+
+```text
+Add all eight MVP treasures, seven remaining dungeon-eligible consumables,
+and two expedition utilities to DefaultLootContainerContentTable (entries
+65 -> 82), respecting StackMax and MaxTransportable limits per Doc 14.
+
+Add MvpItemCatalogTests checks for treasure and consumable/utility chest
+entries and snapshot validation, and update expected DefaultLootTable count
+to 82 in WeaponCatalogTests.
+
+Player-Added: Treasures, remaining consumables, and utilities can now drop from dungeon chests.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scriptable Objects/Loot/Tables/DefaultLootContainerContentTable.asset
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/MvpItemCatalogTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Tables/DefaultLootContainerContentTable.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/MvpItemCatalogTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- scope → Inventory &amp; Loot: loot
+- message-term → Inventory &amp; Loot: loot
+- message-term → World &amp; Visibility: dungeon
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/MvpItemCatalogTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/MvpItemCatalogTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 1380206db9e69c87b3c650d3a618b6f07d7533b1
+
+[1380206db9e69c87b3c650d3a618b6f07d7533b1](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/1380206db9e69c87b3c650d3a618b6f07d7533b1)
+
+Date: 2026-11-16T22:49:02-03:00 · Classification: Refactoring (explicit) · Systems: Combat, Extraction, Inventory & Loot, Persistence & Backend, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+refactor(loot): remove legacy healthpotion and standardize on CON_HEALTH_POTION
+```
+
+#### Original body
+
+```text
+Delete the duplicate HealthPotion.asset definition and migrate chest,
+enemy, and Town Merchant references to canonical CON_HEALTH_POTION.
+Remove legacy entries from LootDefinitionCatalog and RaidLootValueCatalog,
+and normalize healthpotion to CON_HEALTH_POTION in backend inventory
+while preserving shop buy/sell offer compatibility via alias lookup.
+
+Update Unity EditMode/PlayMode and backend parity/integration tests to
+verify canonical CON_HEALTH_POTION references and legacy alias lookup.
+
+Player-Improved: Health Potions across chests, enemies, and the Town Merchant now stack together with matching sprites.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/TownMerchantNPC.prefab
+Project Grimhold/Assets/Scriptable Objects/Loot/Catalogs/LootDefinitionCatalog.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Loot/Tables/DefaultLootContainerContentTable.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Tables/EnemyLootContainerContentTable.asset
+Project Grimhold/Assets/Scriptable Objects/RaidLootValueCatalog.asset
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/MvpItemCatalogTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotControllerTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotPersistenceEditModeTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionProgressPrefabTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/ShopTransactionPersistenceEditModeTests.cs
+Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidInventoryPresenterInteractionTests.cs
+Project Grimhold/Assets/Tests/PlayMode/TimedConsumablePlayModeTests.cs
+backend/src/config/shopCatalog.js
+backend/src/services/InventoryLootIdNormalizer.js
+backend/tests/integration/inventory.slots.test.js
+backend/tests/integration/migrate.inventory.slots.test.js
+backend/tests/integration/persistence.test.js
+backend/tests/integration/shop.authoritative.test.js
+backend/tests/integration/shop.trade.test.js
+backend/tests/inventory.slots.test.js
+backend/tests/item.catalog.parity.test.js
+backend/tests/shop.catalog.parity.test.js
+```
+
+#### Classification evidence
+
+- type → Refactoring: refactor
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset.meta
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionProgressPrefabTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Catalogs/LootDefinitionCatalog.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Tables/DefaultLootContainerContentTable.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Tables/EnemyLootContainerContentTable.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/RaidLootValueCatalog.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/MvpItemCatalogTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidInventoryPresenterInteractionTests.cs
+- path → Inventory &amp; Loot: backend/src/services/InventoryLootIdNormalizer.js
+- path → Inventory &amp; Loot: backend/tests/integration/inventory.slots.test.js
+- path → Inventory &amp; Loot: backend/tests/integration/migrate.inventory.slots.test.js
+- path → Inventory &amp; Loot: backend/tests/inventory.slots.test.js
+- scope → Inventory &amp; Loot: loot
+- message-term → Inventory &amp; Loot: loot
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotPersistenceEditModeTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/ShopTransactionPersistenceEditModeTests.cs
+- path → Persistence &amp; Backend: backend/src/config/shopCatalog.js
+- path → Persistence &amp; Backend: backend/src/services/InventoryLootIdNormalizer.js
+- path → Persistence &amp; Backend: backend/tests/integration/inventory.slots.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/migrate.inventory.slots.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/persistence.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/shop.authoritative.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/shop.trade.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.slots.test.js
+- path → Persistence &amp; Backend: backend/tests/item.catalog.parity.test.js
+- path → Persistence &amp; Backend: backend/tests/shop.catalog.parity.test.js
+- message-term → Persistence &amp; Backend: backend
+- message-term → Art &amp; Animation: sprites
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/MvpItemCatalogTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotControllerTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotPersistenceEditModeTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionProgressPrefabTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/ShopTransactionPersistenceEditModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/MvpItemCatalogTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotControllerTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/QuickSlots/QuickSlotPersistenceEditModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionProgressPrefabTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/ShopTransactionPersistenceEditModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidInventoryPresenterInteractionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/TimedConsumablePlayModeTests.cs
+- path → Tests: backend/tests/integration/inventory.slots.test.js
+- path → Tests: backend/tests/integration/migrate.inventory.slots.test.js
+- path → Tests: backend/tests/integration/persistence.test.js
+- path → Tests: backend/tests/integration/shop.authoritative.test.js
+- path → Tests: backend/tests/integration/shop.trade.test.js
+- path → Tests: backend/tests/inventory.slots.test.js
+- path → Tests: backend/tests/item.catalog.parity.test.js
+- path → Tests: backend/tests/shop.catalog.parity.test.js
+- message-term → Tests: tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### e81080826e538db6a44d4d1fc57684502d50f7fb
+
+[e81080826e538db6a44d4d1fc57684502d50f7fb](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e81080826e538db6a44d4d1fc57684502d50f7fb)
+
+Date: 2026-11-16T22:46:39-03:00 · Classification: Features (explicit) · Systems: Combat, Inventory & Loot, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(loot): render world pickups on Characters sorting layer at order 100
+```
+
+#### Original body
+
+```text
+Update NetworkLootPickup defaults and all sixteen LootPickup prefabs so
+world drops render on Sorting Layer Characters at sorting order 100,
+preventing dropped loot from sorting below floor tiles. Also flushes
+CON_*-Base sprites onto HealthPotion, ManaFragment, and ManaPotion
+pickup prefabs.
+
+Update GenericPickupPrefab_AppliesConfiguredWorldSorting and
+BreakablePrefab_IsDamageableWorldContentAndNotInspectableLoot, and add
+AllLootPickupPrefabs_UseCharactersSortingLayerAtOrder100.
+
+Player-Improved: Dropped items now render above floor tiles on the character layer.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_ArcaneDetector.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_ChaosCoin.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_ExplosiveBomb.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_FamineIdol.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_HealthPotion.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_ManaFragment.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_ManaPotion.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_PilgrimLight.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_RuneCompass.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_SanctuaryHeart.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_SmokeBomb.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_ThrowingDagger.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_VoidBell.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_WandererEye.prefab
+Project Grimhold/Assets/Prefabs/LootPickup 1.prefab
+Project Grimhold/Assets/Prefabs/LootPickup.prefab
+Project Grimhold/Assets/Scripts/Gameplay/NetworkLootPickup.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkLootPickupTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkSpawnManagerLootTests.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_HealthPotion.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_ArcaneDetector.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_ChaosCoin.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_ExplosiveBomb.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_FamineIdol.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_HealthPotion.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_ManaFragment.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_ManaPotion.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_PilgrimLight.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_RuneCompass.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_SanctuaryHeart.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_SmokeBomb.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_ThrowingDagger.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_VoidBell.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_WandererEye.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/LootPickup 1.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/LootPickup.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Gameplay/NetworkLootPickup.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkLootPickupTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkSpawnManagerLootTests.cs
+- scope → Inventory &amp; Loot: loot
+- message-term → Inventory &amp; Loot: loot
+- message-term → Art &amp; Animation: sprites
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkLootPickupTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkSpawnManagerLootTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkLootPickupTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/NetworkSpawnManagerLootTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### f17de9ca223f24aea73f83c473ea807d36358217
 
