@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 9100000000000000402}
   - component: {fileID: 6127578442150651613}
   - component: {fileID: 700000000000000005}
-  - component: {fileID: 1979492135813286010}
   m_Layer: 8
   m_Name: LootPickup_ThrowingDagger
   m_TagString: Untagged
@@ -192,20 +191,6 @@ MonoBehaviour:
     MinImpactfulCollisionAlignment: 0.3
     ImpactStartCorrectionTime: 0.1
     ImpactCorrectionTimeComplete: 0.3
---- !u!114 &1979492135813286010
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9071512846565298490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1541381998, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObjectPrefabData
-  Guid:
-    RawGuidValue: c6de009efbc688b503702910ed87d1a8
 --- !u!1 &9100000000000000400
 GameObject:
   m_ObjectHideFlags: 0
@@ -287,7 +272,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 7aff9a32d8a70f744ba76e4c411448b9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8745f608f1c95e66b311f44151d05c49, type: 3}
   m_Color: {r: 0.5377358, g: 0.5377358, b: 0.5377358, a: 1}
   m_FlipX: 0
   m_FlipY: 0
