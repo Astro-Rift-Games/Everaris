@@ -4,32 +4,214 @@
 
 Release: Unreleased
 
-270 original commits; 270 canonical entries.
+271 original commits; 271 canonical entries.
 
 ## Canonical classification
 
-83 features; 89 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 18 other changes
+84 features; 89 bug fixes; 1 refactoring; 1 architecture & infrastructure; 48 documentation; 19 tests; 11 maintenance; 18 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 10 | 10 | 1 | 0 | 9 | 1 |
-| Art & Animation | 15 | 9 | 1 | 0 | 9 | 6 |
+| Art & Animation | 16 | 9 | 1 | 0 | 9 | 6 |
 | Audio | 7 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 56 | 59 | 1 | 1 | 22 | 6 |
+| Build & Tooling | 57 | 59 | 1 | 1 | 22 | 6 |
 | Combat | 38 | 14 | 0 | 0 | 12 | 1 |
 | Documentation | 32 | 40 | 0 | 0 | 13 | 0 |
 | Extraction | 17 | 21 | 0 | 0 | 9 | 5 |
 | Input | 1 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 58 | 51 | 1 | 1 | 24 | 4 |
+| Inventory & Loot | 59 | 51 | 1 | 1 | 24 | 4 |
 | Movement | 4 | 3 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 29 | 35 | 0 | 0 | 18 | 2 |
 | Persistence & Backend | 29 | 47 | 0 | 1 | 19 | 3 |
-| Tests | 79 | 83 | 1 | 1 | 29 | 4 |
-| UI | 32 | 18 | 1 | 0 | 12 | 3 |
+| Tests | 80 | 83 | 1 | 1 | 29 | 4 |
+| UI | 33 | 18 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
 | World & Visibility | 22 | 10 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### d0ded1018c414772694f7581bd31cbb1f35864bd
+
+[d0ded1018c414772694f7581bd31cbb1f35864bd](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/d0ded1018c414772694f7581bd31cbb1f35864bd)
+
+Date: 2026-11-16T20:34:59-03:00 · Classification: Features (explicit) · Systems: Inventory & Loot, UI, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(art): integrate treasure sprites and world pickups
+```
+
+#### Original body
+
+```text
+Import all twenty-four treasure variants with 16 PPU, Point filtering,
+and no compression. Bind the eight existing treasure definitions to
+their world sprites and UI icons, and update placeholder sprites on the
+six LootPickup treasure prefabs.
+
+Add TreasureSpriteAssetsTests asserting exact sprite import settings,
+definition bindings, pickup prefab renderers, and catalog validation.
+Interactable variants are imported for parity, not behavior-wired.
+
+Player-Improved: Treasures now display distinct world sprites and inventory icons.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Art/Treasures.meta
+Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Base.png
+Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Base.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Icon.png
+Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Icon.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Interactable.png
+Project Grimhold/Assets/Art/Treasures/TRE_CHALICE-Interactable.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Base.png
+Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Base.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Icon.png
+Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Icon.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Interactable.png
+Project Grimhold/Assets/Art/Treasures/TRE_CHAOS_COIN-Interactable.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Base.png
+Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Base.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Icon.png
+Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Icon.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Interactable.png
+Project Grimhold/Assets/Art/Treasures/TRE_CROWN-Interactable.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Base.png
+Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Base.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Icon.png
+Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Icon.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Interactable.png
+Project Grimhold/Assets/Art/Treasures/TRE_FAMINE_IDOL-Interactable.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Base.png
+Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Base.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Icon.png
+Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Icon.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Interactable.png
+Project Grimhold/Assets/Art/Treasures/TRE_PILGRIM_LIGHT-Interactable.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Base.png
+Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Base.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Icon.png
+Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Icon.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Interactable.png
+Project Grimhold/Assets/Art/Treasures/TRE_SANCTUARY_HEART-Interactable.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Base.png
+Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Base.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Icon.png
+Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Icon.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Interactable.png
+Project Grimhold/Assets/Art/Treasures/TRE_VOID_BELL-Interactable.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Base.png
+Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Base.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Icon.png
+Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Icon.png.meta
+Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Interactable.png
+Project Grimhold/Assets/Art/Treasures/TRE_WANDERER_EYE-Interactable.png.meta
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_ChaosCoin.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_FamineIdol.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_PilgrimLight.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_SanctuaryHeart.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_VoidBell.prefab
+Project Grimhold/Assets/Prefabs/Loot/LootPickup_WandererEye.prefab
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CHALICE.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CHAOS_COIN.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CROWN.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_FAMINE_IDOL.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_PILGRIM_LIGHT.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_SANCTUARY_HEART.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_VOID_BELL.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_WANDERER_EYE.asset
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_ChaosCoin.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_FamineIdol.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_PilgrimLight.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_SanctuaryHeart.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_VoidBell.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/Loot/LootPickup\_WandererEye.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_CHALICE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_CHAOS\_COIN.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_CROWN.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_FAMINE\_IDOL.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_PILGRIM\_LIGHT.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_SANCTUARY\_HEART.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_VOID\_BELL.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_WANDERER\_EYE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs.meta
+- message-term → Inventory &amp; Loot: pickups
+- message-term → UI: UI
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CHALICE-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CHALICE-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CHALICE-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CHALICE-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CHALICE-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CHALICE-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CHAOS\_COIN-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CHAOS\_COIN-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CHAOS\_COIN-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CHAOS\_COIN-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CHAOS\_COIN-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CHAOS\_COIN-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CROWN-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CROWN-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CROWN-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CROWN-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CROWN-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_CROWN-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_FAMINE\_IDOL-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_FAMINE\_IDOL-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_FAMINE\_IDOL-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_FAMINE\_IDOL-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_FAMINE\_IDOL-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_FAMINE\_IDOL-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_PILGRIM\_LIGHT-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_PILGRIM\_LIGHT-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_PILGRIM\_LIGHT-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_PILGRIM\_LIGHT-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_PILGRIM\_LIGHT-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_PILGRIM\_LIGHT-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_SANCTUARY\_HEART-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_SANCTUARY\_HEART-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_SANCTUARY\_HEART-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_SANCTUARY\_HEART-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_SANCTUARY\_HEART-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_SANCTUARY\_HEART-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_VOID\_BELL-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_VOID\_BELL-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_VOID\_BELL-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_VOID\_BELL-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_VOID\_BELL-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_VOID\_BELL-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_WANDERER\_EYE-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_WANDERER\_EYE-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_WANDERER\_EYE-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_WANDERER\_EYE-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_WANDERER\_EYE-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Treasures/TRE\_WANDERER\_EYE-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs.meta
+- scope → Art &amp; Animation: art
+- message-term → Art &amp; Animation: sprites
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/TreasureSpriteAssetsTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 85c9d6aad75095990e14e5769e59168d8b8292e1
 
