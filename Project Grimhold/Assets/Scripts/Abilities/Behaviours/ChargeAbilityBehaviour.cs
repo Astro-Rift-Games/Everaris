@@ -6,7 +6,8 @@ using UnityEngine;
 /// accepted. It ends at the full distance, at the first Environment obstacle, or at the first valid enemy,
 /// which it damages and pushes through the existing damage pipeline. It never passes through an enemy.
 /// The movement controller owns the displacement; this behavior only starts it, watches it and ends it.
-/// The surviving creature receives configurable Stun after impact (zero disables it).
+/// The surviving creature receives configurable Stun only after an impact that dealt effective damage
+/// (see <see cref="ChargeStunRules"/>); a push-only or fully mitigated hit never stuns, and zero disables it.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class ChargeAbilityBehaviour : AbilityExecutionBehaviour
@@ -166,10 +167,11 @@ public sealed class ChargeAbilityBehaviour : AbilityExecutionBehaviour
         Vector2 direction = snapshot.AimDirection.normalized;
         Vector2 hitPoint = _hits[candidate.HitIndex].collider.ClosestPoint(_collider.bounds.center);
 
-        AbilityImpact.TryApply(_damageResolver, context.Character.Id, candidate.Id, target, _damage, _damageType,
-            _knockbackForce, direction, hitPoint, context.Runner.Tick.Raw, this);
-        if (_stunSeconds > 0f && target is Component targetComponent &&
-            target is ICharacter character && character.IsAlive)
+        if (!AbilityImpact.TryApply(_damageResolver, context.Character.Id, candidate.Id, target, _damage, _damageType,
+                _knockbackForce, direction, hitPoint, context.Runner.Tick.Raw, this, out DamageResult impact))
+            return;
+        if (target is Component targetComponent && target is ICharacter character &&
+            ChargeStunRules.ShouldApplyStun(_stunSeconds, impact, character.IsAlive))
             targetComponent.GetComponent<EnemyStunNetworkEffect>()?.TryApply(_stunSeconds);
     }
 

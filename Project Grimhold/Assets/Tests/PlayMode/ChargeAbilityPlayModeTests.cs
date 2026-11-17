@@ -19,6 +19,7 @@ namespace Tests.PlayMode.Abilities
         private const string PlayerPrefabGuid = "fea3a7b256f965a4eb9b965832939741";
         private const string ParticipantPrefabGuid = "c39d451563bae6e43934008a0dadc6d6";
         private const string GreenSlimePrefabGuid = "5deca87613df0fa409d98702aec643d4";
+        private const string SpecterPrefabGuid = "35da693761f9d7244bac33c1559a3918";
         private const float Damage = 5f;
         private const float KnockbackForce = 8f;
 
@@ -154,6 +155,46 @@ namespace Tests.PlayMode.Abilities
             Assert.That(Position.x, Is.LessThan(2f));
             Assert.That(enemy.Health, Is.EqualTo(health));
             Assert.That(Knockback(enemy), Is.EqualTo(new Vector2(KnockbackForce, 0f)).Using(new Vector2EqualityComparer(0.01f)));
+        }
+
+        [UnityTest]
+        public IEnumerator Charge_ZeroDamagePush_DoesNotStunTheEnemy()
+        {
+            yield return Begin(distance: 8f, speed: 8f, damage: 0f);
+            var enemy = SpawnEnemy(new Vector2(2f, 0f));
+            var stun = enemy.GetComponent<EnemyStunNetworkEffect>();
+            Assert.That(stun, Is.Not.Null, "Enemy prefabs must compose Stun.");
+            yield return SetAim(Vector2.right);
+
+            yield return Press();
+            yield return WaitForCompletion();
+            yield return WaitTicks();
+
+            Assert.That(Knockback(enemy), Is.EqualTo(new Vector2(KnockbackForce, 0f)).Using(new Vector2EqualityComparer(0.01f)),
+                "The push itself is still applied.");
+            Assert.That(stun.IsActive, Is.False, "A push without effective damage never stuns.");
+            Assert.That(stun.RemainingSeconds, Is.Zero);
+        }
+
+        [UnityTest]
+        public IEnumerator Charge_PhysicalDamageMitigatedToZero_DoesNotStunTheEnemy()
+        {
+            yield return Begin(distance: 8f, speed: 8f);
+            var specter = SpawnIncorporealSpecter(new Vector2(2f, 0f));
+            var stun = specter.GetComponent<EnemyStunNetworkEffect>();
+            Assert.That(stun, Is.Not.Null, "Enemy prefabs must compose Stun.");
+            Assert.That(specter.CanReceiveDamage, Is.True, "The target is not immune: only its damage is mitigated.");
+            float health = specter.Health;
+            yield return SetAim(Vector2.right);
+
+            yield return Press();
+            yield return WaitForCompletion();
+            yield return WaitTicks();
+
+            Assert.That(Position.x, Is.LessThan(2f), "The charge still stops at the specter.");
+            Assert.That(specter.Health, Is.EqualTo(health), "Incorporeal states mitigate physical damage to zero.");
+            Assert.That(stun.IsActive, Is.False, "Damage mitigated to zero never stuns.");
+            Assert.That(stun.RemainingSeconds, Is.Zero);
         }
 
         [UnityTest]
@@ -369,6 +410,28 @@ namespace Tests.PlayMode.Abilities
                 if (behaviour is EnemyFSM || behaviour is EnemyMovementAIController || behaviour is EnemyCombatAIController)
                     behaviour.enabled = false;
             }
+            Physics2D.SyncTransforms();
+            return enemy.GetComponent<EnemyCharacter>();
+        }
+
+        /// <summary>
+        /// Spawns a still Specter in its incorporeal spawn state: it can receive damage, but physical damage is
+        /// mitigated to zero (the resolver reports it applied with zero amount).
+        /// </summary>
+        private EnemyCharacter SpawnIncorporealSpecter(Vector2 position)
+        {
+            var enemy = _runner.Spawn(LoadPrefab(SpecterPrefabGuid), position, Quaternion.identity);
+            // Keep the creature and its state still: only the charge may act on it.
+            foreach (var behaviour in enemy.GetComponents<NetworkBehaviour>())
+            {
+                if (behaviour is EnemyFSM || behaviour is EnemyMovementAIController || behaviour is EnemyCombatAIController ||
+                    behaviour is ProjectGrimhold.Gameplay.Enemies.Specter.SpecterAIController)
+                    behaviour.enabled = false;
+            }
+            var specter = enemy.GetComponent<ProjectGrimhold.Gameplay.Enemies.Specter.SpecterAIController>();
+            Assert.That(specter, Is.Not.Null);
+            Assert.That(ProjectGrimhold.Gameplay.Enemies.Specter.SpecterRules.IsIncorporeal(specter.CurrentState), Is.True,
+                $"Expected an incorporeal spawn state, got {specter.CurrentState}.");
             Physics2D.SyncTransforms();
             return enemy.GetComponent<EnemyCharacter>();
         }
