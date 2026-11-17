@@ -24,10 +24,10 @@ public sealed class NetworkLootPickup : NetworkBehaviour, IPickup
 
     [Header("World Presentation")]
     [SerializeField]
-    private string _sortingLayerName = "Default";
+    private string _sortingLayerName = "Characters";
 
     [SerializeField]
-    private int _sortingOrder = 2;
+    private int _sortingOrder = 100;
 
     [Networked]
     private NetworkBool IsConsumed { get; set; }

@@ -106,8 +106,8 @@ namespace Tests.EditMode.Loot
             NetworkLootPickup pickup = pickupPrefab.GetComponent<NetworkLootPickup>();
             Assert.That(pickup, Is.Not.Null);
             Assert.That(pickup.LootCatalog, Is.SameAs(breakable.LootCatalog));
-            Assert.That(pickup.SortingLayerName, Is.EqualTo("Default"));
-            Assert.That(pickup.SortingOrder, Is.EqualTo(2));
+            Assert.That(pickup.SortingLayerName, Is.EqualTo("Characters"));
+            Assert.That(pickup.SortingOrder, Is.EqualTo(100));
             Assert.That(pickupPrefab.GetComponentInChildren<SpriteRenderer>(true).sortingOrder,
                 Is.EqualTo(pickup.SortingOrder));
             Assert.That(breakable.PickupPrefab.ToString(),
