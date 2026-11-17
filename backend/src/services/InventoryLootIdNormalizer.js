@@ -12,7 +12,9 @@ const LOOT_ID_ALIASES = Object.freeze({
   spellbook: 'magic_wand',
   training_shield: 'shield',
   // Legacy leg armor stored without the separator before "plate"
-  heavy_armor_legplate: 'heavy_armor_leg_plate'
+  heavy_armor_legplate: 'heavy_armor_leg_plate',
+  // Legacy pre-MVP health potion id replaced by CON_HEALTH_POTION
+  healthpotion: 'CON_HEALTH_POTION'
 });
 
 function normalizeLootId(lootId) {

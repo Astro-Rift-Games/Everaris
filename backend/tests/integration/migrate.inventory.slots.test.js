@@ -125,7 +125,7 @@ test('inventory slot migration against MongoDB', async t => {
     assert.equal(summary.exitCode, 0);
     const expected = expectedMigration(before);
     expected.revision = 6;
-    expected.inventory.stash.push({ lootId: 'healthpotion', amount: 11, other: 'concurrent', slot: 2 });
+    expected.inventory.stash.push({ lootId: 'CON_HEALTH_POTION', amount: 11, other: 'concurrent', slot: 2 });
     assert.deepEqual(await collection.findOne({ _id: 'race' }), expected);
     assert.equal(reports[0].lists.stash.entriesBefore, 4);
   });

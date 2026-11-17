@@ -7,7 +7,7 @@ using UnityEditor;
 public sealed class QuickSlotPersistenceEditModeTests
 {
     private static readonly ProfileId Profile = new ProfileId("21421421421421421421421421421421");
-    private static readonly LootId Potion = new LootId("healthpotion");
+    private static readonly LootId Potion = new LootId("CON_HEALTH_POTION");
     private static readonly LootId Rapier = new LootId("rapier");
 
     private LootDefinitionCatalog _catalog;

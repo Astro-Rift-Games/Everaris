@@ -18,7 +18,7 @@ namespace Tests.PlayMode.Consumables
         private NetworkRunner _runner;
         private PlayerAbilityRuntimeSimulationDriver _driver;
         private CharacterAttributeState _attributes;
-        private static readonly LootId Potion = new("healthpotion");
+        private static readonly LootId Potion = new("CON_HEALTH_POTION");
 
         [UnityTearDown]
         public IEnumerator TearDown()

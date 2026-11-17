@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -8,6 +9,8 @@ namespace Tests.EditMode.Loot
     public sealed class MvpItemCatalogTests
     {
         private const string CatalogPath = "Assets/Scriptable Objects/Loot/Catalogs/LootDefinitionCatalog.asset";
+        private const string DefaultLootTablePath =
+            "Assets/Scriptable Objects/Loot/Tables/DefaultLootContainerContentTable.asset";
 
         private LootDefinitionCatalog _catalog;
 
@@ -199,6 +202,29 @@ namespace Tests.EditMode.Loot
             Assert.That(gem.Category, Is.EqualTo(LootCategory.Resource));
             Assert.That(gem.GemDefinition, Is.Not.Null, $"{id} has no GemDefinition.");
             Assert.That(gem.GemDefinition.DamageBonus, Is.EqualTo(5));
+        }
+
+        [Test]
+        public void HealthPotion_IsCanonicalWithoutLegacyDuplicateAsset()
+        {
+            Assert.That(AssetDatabase.LoadAssetAtPath<LootDefinition>(
+                "Assets/Scriptable Objects/Loot/Definitions/HealthPotion.asset"), Is.Null);
+            Assert.That(_catalog.TryGet("healthpotion", out _), Is.False);
+            Assert.That(_catalog.TryGet("CON_HEALTH_POTION", out LootDefinition canonical), Is.True);
+
+            LootContainerContentTable defaultTable = AssetDatabase.LoadAssetAtPath<LootContainerContentTable>(DefaultLootTablePath);
+            LootContainerContentTable enemyTable = AssetDatabase.LoadAssetAtPath<LootContainerContentTable>(
+                "Assets/Scriptable Objects/Loot/Tables/EnemyLootContainerContentTable.asset");
+            Assert.That(defaultTable.Entries.Any(e => e.Definition != null && e.Definition.Id == "healthpotion"), Is.False);
+            Assert.That(enemyTable.Entries.Any(e => e.Definition != null && e.Definition.Id == "healthpotion"), Is.False);
+            Assert.That(defaultTable.Entries.Count(e => e.Definition == canonical), Is.EqualTo(1));
+            Assert.That(enemyTable.Entries.Count(e => e.Definition == canonical), Is.EqualTo(1));
+
+            GameObject merchantPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/TownMerchantNPC.prefab");
+            Assert.That(merchantPrefab, Is.Not.Null);
+            TownMerchantNetworkController merchant = merchantPrefab.GetComponent<TownMerchantNetworkController>();
+            Assert.That(merchant.Stock.Any(item => item.Item != null && item.Item.Id == "healthpotion"), Is.False);
+            Assert.That(merchant.Stock.Count(item => item.Item == canonical), Is.EqualTo(1));
         }
     }
 }

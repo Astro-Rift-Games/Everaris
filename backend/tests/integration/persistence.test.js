@@ -83,7 +83,7 @@ test('E2E Persistence across restarts (US-45)', async (t) => {
     
     assert.strictEqual(res.status, 200);
     assert.strictEqual(res.body.currency, 800);
-    assert.strictEqual(res.body.loadout.find(i => i.lootId === 'healthpotion').amount, 5);
+    assert.strictEqual(res.body.loadout.find(i => i.lootId === 'CON_HEALTH_POTION').amount, 5);
   });
 
   await t.test('7. Save Raid Reservation', async () => {

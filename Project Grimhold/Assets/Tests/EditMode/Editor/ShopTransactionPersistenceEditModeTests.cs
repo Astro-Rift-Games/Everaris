@@ -8,7 +8,7 @@ using UnityEditor;
 public sealed class ShopTransactionPersistenceEditModeTests
 {
     private static readonly ProfileId Profile = new ProfileId("11111111111111111111111111111111");
-    private static readonly LootId Potion = new LootId("healthpotion");
+    private static readonly LootId Potion = new LootId("CON_HEALTH_POTION");
     private static readonly LootId Bone = new LootId("bone");
     private static readonly LootId Coins = new LootId("coins");
 
