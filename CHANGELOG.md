@@ -110,6 +110,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Torches no longer jump out of place when they go out.
 - Charge no longer stuns enemies when the hit deals no damage.
 - Raids can be started again when a health potion is in the inventory.
+- Doors no longer stutter or let players clip through them in online raids when they open or close.
+- Clients are no longer offered "Close door" while someone is standing in the doorway.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08

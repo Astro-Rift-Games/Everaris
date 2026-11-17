@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1166,
-  "canonicalEntries": 1163,
+  "rawCommits": 1167,
+  "canonicalEntries": 1164,
   "before": {
+    "Bug Fixes": 174,
     "Tests": 46,
-    "Bug Fixes": 173,
     "Features": 411,
     "Refactoring": 16,
     "Documentation": 123,
@@ -12,8 +12,8 @@
     "Architecture & Infrastructure": 24
   },
   "after": {
+    "Bug Fixes": 190,
     "Tests": 51,
-    "Bug Fixes": 189,
     "Features": 549,
     "Refactoring": 29,
     "Documentation": 139,
@@ -23,27 +23,27 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Movement": 101,
+    "Inventory & Loot": 471,
+    "World & Visibility": 162,
+    "Documentation": 431,
+    "Tests": 736,
     "Combat": 392,
-    "Inventory & Loot": 470,
     "Build & Tooling": 601,
-    "Tests": 735,
     "Networking & Sessions": 343,
     "Persistence & Backend": 289,
     "Abilities": 138,
-    "World & Visibility": 161,
     "Art & Animation": 259,
-    "Movement": 100,
     "Extraction": 173,
     "UI": 338,
-    "Documentation": 430,
     "Audio": 39,
     "Input": 31,
     "Unassigned": 42
   },
   "canonical": {
     "sections": {
+      "Bug Fixes": 189,
       "Tests": 51,
-      "Bug Fixes": 188,
       "Features": 548,
       "Refactoring": 29,
       "Documentation": 139,
@@ -52,19 +52,19 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Movement": 101,
+      "Inventory & Loot": 471,
+      "World & Visibility": 160,
+      "Documentation": 429,
+      "Tests": 734,
       "Combat": 390,
-      "Inventory & Loot": 470,
       "Build & Tooling": 599,
-      "Tests": 733,
       "Networking & Sessions": 343,
       "Persistence & Backend": 289,
       "Abilities": 136,
-      "World & Visibility": 159,
       "Art & Animation": 256,
-      "Movement": 100,
       "Extraction": 173,
       "UI": 337,
-      "Documentation": 428,
       "Audio": 39,
       "Input": 31,
       "Unassigned": 42
@@ -74826,8 +74826,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 289,
-      "canonicalEntries": 289
+      "originalCommits": 290,
+      "canonicalEntries": 290
     },
     {
       "key": "v0.5.0",
@@ -74871,6 +74871,73 @@
     }
   ],
   "commits": [
+    {
+      "sha": "3baf1be161b33ee84d79764c5dde5e98f68307ab",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3baf1be161b33ee84d79764c5dde5e98f68307ab",
+      "subject": "fix(doors): sync door collider with simulation ticks on every peer",
+      "body": "TASK-292. NetworkDoor toggled its passage Collider2D in Render(), so 2D\nphysics followed frames instead of network ticks, and remote clients\n(proxies, which Fusion 2 does not simulate by default) only updated it\nthere. The close prompt also used each peer's local occupancy, so a\nclient could be offered \"Cerrar puerta\" that the host would reject.\n\n- The blocker is applied from replicated DungeonDoorState only in\n  FixedUpdateNetwork, before the State Authority guard, so every\n  simulated and resimulated tick collides with that tick's state.\n  Render() no longer touches it; Spawned keeps the one-time init.\n- Remote clients call Runner.SetIsSimulated(Object, true) in Spawned.\n- [DefaultExecutionOrder(-20)]: the door simulates before player mana,\n  stamina and movement (-12..-10), so movement never casts against the\n  previous tick's blocker on the first resimulated tick.\n- The host publishes its occupancy verdict every tick (private\n  networked flag, public bool IsDoorwayOccupied); non-authority peers\n  select the close prompt from it, the host still validates live.\n\nTests (DungeonDoorPlayModeTests):\n- Render_NeverMutatesBlocker_NextSimulationTickReappliesReplicatedState\n- MovementOrderSimulation_CollidesWithBlockerOfTheSameTick\n- DoorwayOccupancy_IsReplicatedFromAuthoritativeTicks_OnlyWhileOpen\n\nDocs: PlayerInteractionArchitecture door section. Adds the ODD\nexecution tracker for TASK-292. Host/Client behavior still needs a\nmanual Multiplayer Play Mode check.\n\nPlayer-Fixed: Doors no longer stutter or let players clip through them in online raids when they open or close.\nPlayer-Fixed: Clients are no longer offered \"Close door\" while someone is standing in the doorway.\n",
+      "date": "2026-11-17T16:38:38-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Scenario/Doors/NetworkDoor.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/DungeonDoorPlayModeTests.cs",
+        "Project Grimhold/Docs/Architecture/PlayerInteractionArchitecture.md",
+        "odd/tasks/task-292-network-door-tick-collider.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "doors",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Movement",
+        "Inventory & Loot",
+        "World & Visibility",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "message-term",
+          "value": "movement",
+          "supports": "Movement"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/PlayerInteractionArchitecture.md",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/DungeonDoorPlayModeTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/PlayerInteractionArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/DungeonDoorPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "c6433a4a77fdb833a42cfafe886d93101f0d3da9",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c6433a4a77fdb833a42cfafe886d93101f0d3da9",

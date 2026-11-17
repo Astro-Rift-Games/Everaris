@@ -4,11 +4,11 @@
 
 Release: Unreleased
 
-289 original commits; 289 canonical entries.
+290 original commits; 290 canonical entries.
 
 ## Canonical classification
 
-89 features; 95 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 22 tests; 11 maintenance; 19 other changes
+89 features; 96 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 22 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -17,19 +17,90 @@ Release: Unreleased
 | Audio | 7 | 2 | 0 | 0 | 0 | 0 |
 | Build & Tooling | 62 | 64 | 3 | 1 | 24 | 6 |
 | Combat | 43 | 17 | 2 | 0 | 13 | 1 |
-| Documentation | 33 | 41 | 0 | 0 | 13 | 0 |
+| Documentation | 33 | 42 | 0 | 0 | 13 | 0 |
 | Extraction | 17 | 21 | 2 | 0 | 9 | 5 |
 | Input | 1 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 63 | 55 | 3 | 1 | 27 | 5 |
-| Movement | 5 | 4 | 0 | 0 | 2 | 0 |
+| Inventory & Loot | 63 | 56 | 3 | 1 | 27 | 5 |
+| Movement | 5 | 5 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 29 | 37 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 29 | 50 | 2 | 1 | 19 | 3 |
-| Tests | 85 | 89 | 3 | 1 | 32 | 4 |
+| Tests | 85 | 90 | 3 | 1 | 32 | 4 |
 | UI | 33 | 20 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
-| World & Visibility | 24 | 12 | 0 | 0 | 3 | 12 |
+| World & Visibility | 24 | 13 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 3baf1be161b33ee84d79764c5dde5e98f68307ab
+
+[3baf1be161b33ee84d79764c5dde5e98f68307ab](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3baf1be161b33ee84d79764c5dde5e98f68307ab)
+
+Date: 2026-11-17T16:38:38-03:00 · Classification: Bug Fixes (explicit) · Systems: Movement, Inventory & Loot, World & Visibility, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(doors): sync door collider with simulation ticks on every peer
+```
+
+#### Original body
+
+```text
+TASK-292. NetworkDoor toggled its passage Collider2D in Render(), so 2D
+physics followed frames instead of network ticks, and remote clients
+(proxies, which Fusion 2 does not simulate by default) only updated it
+there. The close prompt also used each peer's local occupancy, so a
+client could be offered "Cerrar puerta" that the host would reject.
+
+- The blocker is applied from replicated DungeonDoorState only in
+  FixedUpdateNetwork, before the State Authority guard, so every
+  simulated and resimulated tick collides with that tick's state.
+  Render() no longer touches it; Spawned keeps the one-time init.
+- Remote clients call Runner.SetIsSimulated(Object, true) in Spawned.
+- [DefaultExecutionOrder(-20)]: the door simulates before player mana,
+  stamina and movement (-12..-10), so movement never casts against the
+  previous tick's blocker on the first resimulated tick.
+- The host publishes its occupancy verdict every tick (private
+  networked flag, public bool IsDoorwayOccupied); non-authority peers
+  select the close prompt from it, the host still validates live.
+
+Tests (DungeonDoorPlayModeTests):
+- Render_NeverMutatesBlocker_NextSimulationTickReappliesReplicatedState
+- MovementOrderSimulation_CollidesWithBlockerOfTheSameTick
+- DoorwayOccupancy_IsReplicatedFromAuthoritativeTicks_OnlyWhileOpen
+
+Docs: PlayerInteractionArchitecture door section. Adds the ODD
+execution tracker for TASK-292. Host/Client behavior still needs a
+manual Multiplayer Play Mode check.
+
+Player-Fixed: Doors no longer stutter or let players clip through them in online raids when they open or close.
+Player-Fixed: Clients are no longer offered "Close door" while someone is standing in the doorway.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Scenario/Doors/NetworkDoor.cs
+Project Grimhold/Assets/Tests/PlayMode/DungeonDoorPlayModeTests.cs
+Project Grimhold/Docs/Architecture/PlayerInteractionArchitecture.md
+odd/tasks/task-292-network-door-tick-collider.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Movement: movement
+- path → Inventory &amp; Loot: Project Grimhold/Docs/Architecture/PlayerInteractionArchitecture.md
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/PlayMode/DungeonDoorPlayModeTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/PlayerInteractionArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/DungeonDoorPlayModeTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### c6433a4a77fdb833a42cfafe886d93101f0d3da9
 
