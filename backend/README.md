@@ -589,6 +589,39 @@ procedimiento; este script sólo transforma v2, omite v1/versiones desconocidas 
 Summary: `dryRun,scanned,planned,migrated,skipped,aborted,conflicts,exitCode`. Exit 0: éxito;
 1: algún aborto/error de base; 2: argumentos CLI inválidos. Reejecutar v3 no cambia IDs ni revision.
 
+### Ids legados de ítems (`healthpotion` → `CON_HEALTH_POTION`)
+
+La tabla de alias es única: `InventoryLootIdNormalizer`. Los tickets de Raid v3 (items y equipo
+preparado) emiten el id canónico **sólo al serializar**: nunca reescriben el documento guardado ni
+mezclan stacks; los ids desconocidos pasan sin cambios. Las lecturas de inventario siguen devolviendo
+los ids guardados tal cual (contrato de lectura arriba; el cliente los canonicaliza al hidratar). Los
+datos guardados se reescriben únicamente con el script manual:
+
+```sh
+node scripts/migrate_legacy_item_ids.js --help
+node scripts/migrate_legacy_item_ids.js            # dry-run (por defecto): no escribe
+node scripts/migrate_legacy_item_ids.js --apply    # escribe
+```
+
+Usa `MONGODB_URI` del entorno/archivo local; no se invoca desde ninguna ruta de request. **Riesgo
+alto (reescribe datos persistidos):** backup de `characters`, dry-run sobre una copia y aplicar en
+mantenimiento.
+
+- Cubre `inventory.stash`, `inventory.loadout`, `pendingReservation.items`, `preparedEquipment` y
+  `pendingReservation.preparedEquipment`; conserva schema version, slots, instancias y demás campos.
+- Dentro de una lista, el stack legado se fusiona en el stack canónico de menor slot (stash/loadout:
+  dentro de capacidad) o, si no hay, el de menor slot legado absorbe a los demás; el slot liberado
+  queda libre. Equipo con instancia no se fusiona (sólo cambia el id). No fusiona entre listas ni
+  dos stacks ya canónicos. Los totales por id canónico se verifican; una suma insegura o
+  inconsistente aborta ese personaje sin escribir.
+- Idempotente: sin ids legados el personaje queda `unchanged` y un segundo `--apply` no escribe
+  ni cambia `revision`. Cada escritura es un `$set` + `$inc revision` guardado por revision
+  (hasta 3 reintentos ante conflicto).
+- Salida: una línea JSON por personaje (`status`, `changes`, `lists` con totales antes/después) y un
+  summary `dryRun,scanned,planned,migrated,unchanged,skipped,aborted,conflicts,exitCode`. Exit 0:
+  éxito; 1: aborto/error de base; 2: argumentos inválidos (`--dry-run` explícito está permitido,
+  no combinable con `--apply`).
+
 ### Alineación de precios con Unity
 
 `shop.catalog.parity.test.js` compara todos los LootDefinitions (precio/eligibilidad), e

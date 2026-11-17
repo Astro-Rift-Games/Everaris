@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const Character = require('../models/Character');
 const env = require('../config/env');
 const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
-const { normalizeItems } = require('./InventoryLootIdNormalizer');
+const { normalizeItems, normalizeLootId } = require('./InventoryLootIdNormalizer');
 const { inventoryVersion, requireMigratedInventory, serializeItems, copyEntry } = require('./InventoryEntries');
 const { validatePreparedAbilities } = require('./PreparedAbilityValidation');
 
@@ -15,7 +15,7 @@ const RAID_TICKET_TTL_SECONDS = 600;  // 10 minutes
 function admissionEquipment(item) {
   if (!item) return null;
   const { lootId, instance } = copyEntry(item);
-  return { lootId, ...(instance?.modifiers ? { modifiers: instance.modifiers } : {}) };
+  return { lootId: normalizeLootId(lootId), ...(instance?.modifiers ? { modifiers: instance.modifiers } : {}) };
 }
 
 class SessionTicketService {
