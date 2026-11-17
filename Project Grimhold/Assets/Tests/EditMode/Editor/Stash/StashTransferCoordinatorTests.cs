@@ -1201,6 +1201,125 @@ namespace Tests.EditMode.Stash
             Assert.That(_store.GetStash(), Is.EqualTo(new[] { new StashItem(Bone, 13, 9) }));
         }
 
+        private static IEnumerable<TestCaseData> SplitInvalidInputCases()
+        {
+            foreach (InventoryList list in new[] { InventoryList.Stash, InventoryList.Loadout })
+            foreach (string invalid in new[] { "zero", "negative", "excess", "same", "occupied", "missing", "mismatch", "capacity" })
+                yield return new TestCaseData(list, invalid);
+        }
+
+        [TestCaseSource(nameof(SplitInvalidInputCases))]
+        public async Task Split_InvalidInput_EvaluationMatchesRejectionWithoutRemoteOrMutation(InventoryList list, string invalid)
+        {
+            int capacity = list == InventoryList.Stash ? 60 : 30;
+            var coordinator = Create(snapshot =>
+            {
+                var items = list == InventoryList.Stash ? snapshot.Stash : snapshot.Loadout;
+                items.Add(new StashItem(Bone, 13, 9));
+                items.Add(new StashItem(Sword, 2, 17));
+            });
+            int amount = invalid switch { "zero" => 0, "negative" => -1, "excess" => 14, _ => 8 };
+            int destination = invalid switch { "same" => 9, "occupied" => 17, "capacity" => capacity, _ => 5 };
+            int source = invalid == "missing" ? 8 : 9;
+            LootId guard = invalid == "mismatch" ? Sword : Bone;
+            StashOperationResult expected = invalid == "capacity"
+                ? StashOperationResult.InventoryFull
+                : StashOperationResult.InvalidInventory;
+
+            await AssertSplitRejectedUnchangedAsync(coordinator, list, source, amount, destination, guard, expected);
+        }
+
+        [TestCase(InventoryList.Stash)]
+        [TestCase(InventoryList.Loadout)]
+        public async Task Split_ReservationPending_IsRejectedBeforeRemoteWithoutMutation(InventoryList list)
+        {
+            var coordinator = Create(snapshot =>
+            {
+                (list == InventoryList.Stash ? snapshot.Stash : snapshot.Loadout).Add(new StashItem(Bone, 13, 9));
+                snapshot.PendingReservation = new PendingLoadoutReservation("split-reserved", Array.Empty<StashItem>());
+            });
+
+            await AssertSplitRejectedUnchangedAsync(coordinator, list, 9, 8, 5, Bone, StashOperationResult.ReservationPending);
+            Assert.That(_store.PendingReservation.ReservationId, Is.EqualTo("split-reserved"));
+        }
+
+        [TestCase(InventoryList.Stash)]
+        [TestCase(InventoryList.Loadout)]
+        public async Task Split_SmallestStack_LeavesOneUnitInEachSlot(InventoryList list)
+        {
+            var coordinator = Create(snapshot =>
+                (list == InventoryList.Stash ? snapshot.Stash : snapshot.Loadout).Add(new StashItem(Bone, 2, 9)));
+
+            var outcome = await coordinator.SplitAsync(list, 9, 1, 5, Bone);
+
+            Assert.That(outcome.Status, Is.EqualTo(StashTransferStatus.Success));
+            Assert.That(_remote.Calls, Is.EqualTo(new[] { $"split:{list}:9:1:5:bone" }));
+            Assert.That(list == InventoryList.Stash ? _store.GetStash() : _store.GetLoadout(),
+                Is.EqualTo(new[] { new StashItem(Bone, 1, 5), new StashItem(Bone, 1, 9) }));
+            Assert.That(_reconciliation.Calls, Is.Zero);
+        }
+
+        [Test]
+        public async Task Split_SchemaThree_IsAcceptedRemoteFirst()
+        {
+            var coordinator = Create(snapshot => snapshot.Stash.Add(new StashItem(Bone, 13, 9)), schemaVersion: 3);
+            _remote.OnCall = _ => Assert.That(_store.GetStash(), Is.EqualTo(new[] { new StashItem(Bone, 13, 9) }));
+
+            Assert.That(coordinator.EvaluateSplit(InventoryList.Stash, 9, 8, 5, Bone), Is.EqualTo(StashOperationResult.Success));
+            var outcome = await coordinator.SplitAsync(InventoryList.Stash, 9, 8, 5, Bone);
+
+            Assert.That(outcome.Status, Is.EqualTo(StashTransferStatus.Success));
+            Assert.That(_remote.Calls, Is.EqualTo(new[] { "split:Stash:9:8:5:bone" }));
+            Assert.That(_store.GetStash(), Is.EqualTo(new[] { new StashItem(Bone, 8, 5), new StashItem(Bone, 5, 9) }));
+            Assert.That(_store.InventorySchemaVersion, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void EvaluateSplit_ValidRequest_IsSuccessAndReadOnly()
+        {
+            var coordinator = Create(snapshot => snapshot.Stash.Add(new StashItem(Bone, 13, 9)));
+            int commits = 0;
+            _store.ProfileCommitted += _ => commits++;
+
+            Assert.That(coordinator.EvaluateSplit(InventoryList.Stash, 9, 8, 5, Bone), Is.EqualTo(StashOperationResult.Success));
+
+            Assert.That(_store.GetStash(), Is.EqualTo(new[] { new StashItem(Bone, 13, 9) }));
+            Assert.That(_remote.Calls, Is.Empty);
+            Assert.That(_reconciliation.Calls, Is.Zero);
+            Assert.That(commits, Is.Zero);
+        }
+
+        [TestCase(1, true)]
+        [TestCase(2, false)]
+        public void EvaluateSplit_WithoutSlotSupport_IsInvalidInventory(int schemaVersion, bool withRemote)
+        {
+            var coordinator = Create(snapshot => snapshot.Stash.Add(new StashItem(Bone, 13, 9)), withRemote, schemaVersion: schemaVersion);
+
+            Assert.That(coordinator.EvaluateSplit(InventoryList.Stash, 9, 8, 5, Bone), Is.EqualTo(StashOperationResult.InvalidInventory));
+            Assert.That(_store.GetStash(), Is.EqualTo(new[] { new StashItem(Bone, 13, 9) }));
+            Assert.That(_remote.Calls, Is.Empty);
+        }
+
+        private async Task AssertSplitRejectedUnchangedAsync(StashTransferCoordinator coordinator, InventoryList list, int source,
+            int amount, int destination, LootId guard, StashOperationResult expected)
+        {
+            var stashBefore = _store.GetStash().ToArray();
+            var loadoutBefore = _store.GetLoadout().ToArray();
+            int commits = 0;
+            _store.ProfileCommitted += _ => commits++;
+
+            Assert.That(coordinator.EvaluateSplit(list, source, amount, destination, guard), Is.EqualTo(expected));
+            var outcome = await coordinator.SplitAsync(list, source, amount, destination, guard);
+
+            Assert.That(outcome.Status, Is.EqualTo(StashTransferStatus.Rejected));
+            Assert.That(outcome.Rule, Is.EqualTo(expected));
+            Assert.That(_remote.Calls, Is.Empty);
+            Assert.That(_reconciliation.Calls, Is.Zero);
+            Assert.That(_store.GetStash(), Is.EqualTo(stashBefore));
+            Assert.That(_store.GetLoadout(), Is.EqualTo(loadoutBefore));
+            Assert.That(commits, Is.Zero);
+        }
+
         [TestCase(2)]
         [TestCase(3)]
         public async Task SupportedSchema_MoveSwapOrderAndTransfer_PreserveInstancesRemoteFirst(int schema)

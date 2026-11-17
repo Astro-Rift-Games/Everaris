@@ -837,7 +837,7 @@ namespace Tests.PlayMode.Loot
         }
 
         [UnityTest]
-        public IEnumerator SplitStack_ThirteenIntoFiveAndEight_ConservesTotalsAndOriginsAtomically()
+        public IEnumerator SplitStack_TenIntoFiveAndFive_ConservesTotalsAndOriginsAtomically()
         {
             yield return Execute(() =>
             {

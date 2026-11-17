@@ -713,6 +713,50 @@ namespace Tests.PlayMode.Presentation
             Assert.That(_remote.Calls.Count, Is.EqualTo(2));
         }
 
+        // Town lists do not enforce StackMax, so a single 13-unit stack is a valid Town state (TASK-296 S2).
+        // The dialog amount (5) is the quantity moved to the first free slot (0); the source keeps the remaining 8.
+        [UnityTest]
+        public IEnumerator TownSplit_ThirteenIntoFiveAndEight_ConservesTotalInEachListRemoteFirst()
+        {
+            CreateScreen(snapshot =>
+            {
+                snapshot.Stash.Add(new StashItem(Bone, 13, 2));
+                snapshot.Loadout.Add(new StashItem(Bone, 13, 3));
+            });
+            yield return null;
+            foreach (var list in new[] { InventoryList.Stash, InventoryList.Loadout })
+            {
+                bool isStash = list == InventoryList.Stash;
+                var panel = isStash ? StashPanel() : LoadoutPanel();
+                int source = isStash ? 2 : 3;
+                var action = SplitAction(panel);
+                Assert.That(action.IsInteractable(), Is.True);
+                action.onClick.Invoke();
+                var dialog = _canvasObject.GetComponentInChildren<QuantitySelectorDialogView>(true);
+                Assert.That(dialog, Is.Not.Null);
+                Assert.That(dialog.IsOpen, Is.True);
+                DialogField<TMPro.TMP_InputField>(dialog, "_input").text = "5";
+                var gate = new TaskCompletionSource<bool>();
+                _remote.Gates.Enqueue(gate.Task);
+                DialogField<Button>(dialog, "_confirmButton").onClick.Invoke();
+                yield return null;
+                Assert.That(_remote.Calls.Last(), Is.EqualTo($"split:{list}:{source}:5:0:bone"));
+                Assert.That(isStash ? _store.GetStash() : _store.GetLoadout(),
+                    Is.EqualTo(new[] { new StashItem(Bone, 13, source) }),
+                    "The remote call must be issued before any local mutation.");
+                gate.SetResult(true);
+                for (int frame = 0; frame < 5; frame++) yield return null;
+                var split = isStash ? _store.GetStash() : _store.GetLoadout();
+                Assert.That(split, Is.EqualTo(new[] { new StashItem(Bone, 5, 0), new StashItem(Bone, 8, source) }));
+                Assert.That(split.Sum(item => item.Amount), Is.EqualTo(13));
+                Assert.That(dialog.IsOpen, Is.False);
+                Assert.That(isStash ? _store.GetLoadout() : _store.GetStash(),
+                    isStash ? Is.EqualTo(new[] { new StashItem(Bone, 13, 3) }) : Is.EqualTo(new[] { new StashItem(Bone, 5, 0), new StashItem(Bone, 8, 2) }),
+                    "Splitting one list must not touch the other.");
+            }
+            Assert.That(_remote.Calls, Is.EqualTo(new[] { "split:Stash:2:5:0:bone", "split:Loadout:3:5:0:bone" }));
+        }
+
         [UnityTest]
         public IEnumerator TownSplit_CancelAndRemoteFailureNeverMutate()
         {
