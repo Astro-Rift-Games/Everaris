@@ -236,7 +236,11 @@ namespace Tests.PlayMode.Abilities
             yield return Begin("empower");
             var target = SpawnAvatar("empower", Vector3.right * 10f, false).GetComponent<PlayerCharacter>();
             var combat = Character.GetComponent<PlayerCombatNetworkController>();
-            var recorder = new DamageProbe { Target = target, Inner = Character.GetComponent<DamageResolver>() };
+            var resolver = Character.GetComponent<DamageResolver>();
+            // Commit 5013e60e9: unresolved initial affiliation fails protective (ally, friendly fire off => blocked).
+            // This fixture has no raid roster, so declare the target explicitly hostile (PvP) through the resolver seam.
+            resolver.AreInitialTeammates = (_, _) => false;
+            var recorder = new DamageProbe { Target = target, Inner = resolver };
             var melee = Character.GetComponent<MeleeAttack>();
             var config = UnityEditor.AssetDatabase.LoadAssetAtPath<MeleeAttackConfig>(
                 "Assets/Scriptable Objects/PlayerMeleeAttackConfig.asset");
