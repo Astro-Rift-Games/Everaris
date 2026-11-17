@@ -96,6 +96,16 @@ public sealed class RaidLootTestSpawner : MonoBehaviour
 
     public void EnsureDependencies()
     {
+        if (_spawnConsumablesHotkey == KeyCode.None)
+        {
+            _spawnConsumablesHotkey = KeyCode.F6;
+        }
+
+        if (_spawnAllHotkey == KeyCode.None)
+        {
+            _spawnAllHotkey = KeyCode.F8;
+        }
+
         if (_lootCatalog == null)
         {
             _lootCatalog = Resources.Load<LootDefinitionCatalog>("Loot/Catalogs/LootDefinitionCatalog");
@@ -140,6 +150,34 @@ public sealed class RaidLootTestSpawner : MonoBehaviour
             if (_famineIdol == null) _lootCatalog.TryGet("TRE_FAMINE_IDOL", out _famineIdol);
             if (_wandererEye == null) _lootCatalog.TryGet("TRE_WANDERER_EYE", out _wandererEye);
         }
+
+#if UNITY_EDITOR
+        if (_selfRevive == null)
+        {
+            _selfRevive = UnityEditor.AssetDatabase.LoadAssetAtPath<LootDefinition>(
+                "Assets/Scriptable Objects/Loot/Definitions/CON_SELF_REVIVE.asset");
+        }
+        if (_lockpick == null)
+        {
+            _lockpick = UnityEditor.AssetDatabase.LoadAssetAtPath<LootDefinition>(
+                "Assets/Scriptable Objects/Loot/Definitions/CON_LOCKPICK.asset");
+        }
+        if (_explosiveBomb == null)
+        {
+            _explosiveBomb = UnityEditor.AssetDatabase.LoadAssetAtPath<LootDefinition>(
+                "Assets/Scriptable Objects/Loot/Definitions/CON_EXPLOSIVE_BOMB.asset");
+        }
+        if (_smokeBomb == null)
+        {
+            _smokeBomb = UnityEditor.AssetDatabase.LoadAssetAtPath<LootDefinition>(
+                "Assets/Scriptable Objects/Loot/Definitions/CON_SMOKE_BOMB.asset");
+        }
+        if (_throwingDagger == null)
+        {
+            _throwingDagger = UnityEditor.AssetDatabase.LoadAssetAtPath<LootDefinition>(
+                "Assets/Scriptable Objects/Loot/Definitions/CON_THROWING_DAGGER.asset");
+        }
+#endif
     }
 
     private void Update()
@@ -223,6 +261,10 @@ public sealed class RaidLootTestSpawner : MonoBehaviour
             }
         }
 
+        // Si el jugador local está actualmente Abatido, otorgar 1 Auto-reanimador directamente a su inventario
+        // para que pueda probar la canalización de auto-reanimación de inmediato con [F] sin necesidad de recogerlo del piso.
+        TryGrantSelfReviverIfDowned(runner);
+
         Debug.Log($"[LootTestSpawner] Spawned {count} consumables at position {origin}.");
     }
 
@@ -294,6 +336,76 @@ public sealed class RaidLootTestSpawner : MonoBehaviour
         if (runner == null || !runner.IsServer) return;
         Vector3 origin = GetPlayerSpawnAnchor();
         if (_healthPotion != null) SpawnLootAt(runner, _healthPotion, 2, origin + new Vector3(0f, -1f, 0f));
+    }
+
+    [ContextMenu("Spawn Self-Revive At Player")]
+    public void SpawnSelfRevive()
+    {
+        EnsureDependencies();
+        var runner = FindActiveRunner();
+        if (runner == null || !runner.IsServer)
+        {
+            var context = FindAnyObjectByType<ApplicationStashContext>();
+            var store = context != null ? context.Store : null;
+            if (store != null && store.IsAvailable && _selfRevive != null && _selfRevive.LootId.IsValid)
+            {
+                store.TryImportItems(new[] { new StashItem(_selfRevive.LootId, 1) });
+                Debug.Log("[LootTestSpawner] Imported 1x Auto-reanimador to Town Stash.");
+                return;
+            }
+            return;
+        }
+
+        TryGrantSelfReviverIfDowned(runner);
+        Vector3 origin = GetPlayerSpawnAnchor();
+        if (_selfRevive != null)
+        {
+            SpawnLootAt(runner, _selfRevive, 1, origin + new Vector3(0f, -1f, 0f));
+        }
+    }
+
+    [ContextMenu("Spawn Lockpick At Player")]
+    public void SpawnLockpick()
+    {
+        EnsureDependencies();
+        var runner = FindActiveRunner();
+        if (runner == null || !runner.IsServer) return;
+        Vector3 origin = GetPlayerSpawnAnchor();
+        if (_lockpick != null)
+        {
+            SpawnLootAt(runner, _lockpick, 5, origin + new Vector3(0f, -1f, 0f));
+        }
+    }
+
+    private void TryGrantSelfReviverIfDowned(NetworkRunner runner)
+    {
+        if (_selfRevive == null || runner == null || !runner.IsServer) return;
+
+        var characters = FindObjectsByType<PlayerCharacter>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        foreach (var pc in characters)
+        {
+            if (pc != null && pc.Object != null && pc.Object.IsValid && pc.IsDowned)
+            {
+                if (pc.TryGetComponent(out PlayerDownedRecoveryNetworkController recovery) &&
+                    pc.TryGetComponent(out PlayerLootReceiver lootReceiver) &&
+                    !recovery.CarriesSelfReviver && !recovery.SelfReviveUsed)
+                {
+                    var grantReq = new LootTransferRequest(pc.Id, pc.Id, _selfRevive.LootId, 1, runner.Tick);
+                    if (lootReceiver.ValidateReceive(grantReq) == LootTransferFailureReason.None)
+                    {
+                        if (lootReceiver.IsRaidLootOriginAware)
+                        {
+                            lootReceiver.CommitRaidLootReceive(grantReq, RaidLootOriginTransfer.Dungeon(1));
+                        }
+                        else
+                        {
+                            lootReceiver.CommitReceive(grantReq);
+                        }
+                        Debug.Log($"[LootTestSpawner] Granted 1x Auto-reanimador directly to Downed player {pc.Id}.");
+                    }
+                }
+            }
+        }
     }
 
     public void SpawnTreasures()

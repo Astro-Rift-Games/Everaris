@@ -44,6 +44,18 @@ public sealed class RaidLootTestSpawnerEditor : Editor
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.Space(4);
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Spawn Self-Reviver (1x)", GUILayout.Height(28)))
+        {
+            spawner.SpawnSelfRevive();
+        }
+        if (GUILayout.Button("Spawn Lockpick (5x)", GUILayout.Height(28)))
+        {
+            spawner.SpawnLockpick();
+        }
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.Space(4);
         if (GUILayout.Button("Spawn All 6 MVP Treasures", GUILayout.Height(28)))
         {
             spawner.SpawnTreasures();
