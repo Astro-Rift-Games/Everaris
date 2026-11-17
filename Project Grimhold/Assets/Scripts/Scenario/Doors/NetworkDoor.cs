@@ -4,8 +4,13 @@ using UnityEngine;
 
 /// <summary>
 /// Runner-local interactable whose lifecycle is written only by State Authority.
-/// The same blocker supplies movement, projectile and vision occlusion.
+/// The same blocker supplies movement, projectile and vision occlusion. Every peer applies the
+/// blocker from the replicated state on simulation ticks only, so 2D physics matches the tick
+/// being simulated, including client resimulation; presentation never touches it.
+/// Runs before all player simulation (mana -12 .. movement -10) so movement collides with
+/// the blocker of the tick being simulated, not the one left by the previous tick.
 /// </summary>
+[DefaultExecutionOrder(-20)]
 [DisallowMultipleComponent]
 [RequireComponent(typeof(NetworkObject))]
 public sealed class NetworkDoor : NetworkBehaviour, IInteractable
@@ -31,6 +36,8 @@ public sealed class NetworkDoor : NetworkBehaviour, IInteractable
     [Networked] public DungeonDoorOpenDirection OpenDirection { get; private set; }
     [Networked] public TickTimer TransitionTimer { get; private set; }
 
+    [Networked] private NetworkBool DoorwayOccupiedVerdict { get; set; }
+
     // Keep all hits: a boundary contact must not hide another body inside the doorway.
     private readonly List<Collider2D> _occupants = new List<Collider2D>(8);
     private ContactFilter2D _occupantFilter;
@@ -46,6 +53,10 @@ public sealed class NetworkDoor : NetworkBehaviour, IInteractable
         : default;
 
     public string PromptText => DungeonDoorStateRules.ResolvePrompt(State);
+
+    /// <summary>Host verdict on doorway occupancy, so remote peers advertise closing only when the host accepts it.</summary>
+    public bool IsDoorwayOccupied => DoorwayOccupiedVerdict;
+
     public bool IsReady => _isRegistered && Object != null && Object.IsValid;
 
     /// <summary>Presentation reads the replicated deadline; it never advances the lifecycle.</summary>
@@ -76,11 +87,19 @@ public sealed class NetworkDoor : NetworkBehaviour, IInteractable
         _occupantFilter = new ContactFilter2D { useTriggers = false };
         _occupantFilter.SetLayerMask(_occupantMask);
 
+        // Fusion 2 does not run FixedUpdateNetwork on proxies by default. Remote clients must
+        // simulate the door so their predicted movement collides with the blocker of each tick.
+        if (!HasStateAuthority && Runner.GameMode == GameMode.Client)
+        {
+            Runner.SetIsSimulated(Object, true);
+        }
+
         if (HasStateAuthority && !HostMigrationRestoreUtility.IsRestoreSpawn(this))
         {
             State = DungeonDoorState.Closed;
             OpenDirection = DungeonDoorOpenDirection.North;
             TransitionTimer = TickTimer.None;
+            DoorwayOccupiedVerdict = false;
         }
 
         // Disabled colliders report empty bounds. Cache the fixed doorway footprint before
@@ -123,23 +142,27 @@ public sealed class NetworkDoor : NetworkBehaviour, IInteractable
 
     public override void FixedUpdateNetwork()
     {
-        if (!IsReady || !HasStateAuthority || DungeonDoorStateRules.IsStable(State) ||
-            !TransitionTimer.Expired(Runner))
+        if (!IsReady)
         {
             return;
         }
 
-        State = DungeonDoorStateRules.CompleteTransition(State);
-        TransitionTimer = TickTimer.None;
+        // Runs on every simulated peer and resimulated tick: the blocker follows this tick's state.
         ApplyBlockerState();
-    }
-
-    public override void Render()
-    {
-        if (IsReady)
+        if (!HasStateAuthority)
         {
+            return;
+        }
+
+        if (!DungeonDoorStateRules.IsStable(State) && TransitionTimer.Expired(Runner))
+        {
+            State = DungeonDoorStateRules.CompleteTransition(State);
+            TransitionTimer = TickTimer.None;
             ApplyBlockerState();
         }
+
+        // Publish the authoritative closing verdict so remote prompts match what Interact accepts.
+        DoorwayOccupiedVerdict = State == DungeonDoorState.Open && ProbeDoorwayOccupancy();
     }
 
     public override void Despawned(NetworkRunner runner, bool hasState) => Unregister();
@@ -154,12 +177,14 @@ public sealed class NetworkDoor : NetworkBehaviour, IInteractable
             return false;
         }
 
-        // Selection and execution share availability; the HUD must not advertise blocked closing.
-        bool occupied = State == DungeonDoorState.Open && IsDoorwayOccupied();
+        // The authority probes its own physics world for selection and execution alike. Remote peers
+        // read the replicated host verdict: their interpolated bodies cannot predict host rejection.
+        bool occupied = State == DungeonDoorState.Open &&
+            (HasStateAuthority ? ProbeDoorwayOccupancy() : IsDoorwayOccupied);
         return DungeonDoorStateRules.TryBeginToggle(State, occupied, out next);
     }
 
-    private bool IsDoorwayOccupied()
+    private bool ProbeDoorwayOccupancy()
     {
         int count = Physics2D.OverlapBox(
             _blockerBounds.center, _blockerBounds.size, 0f, _occupantFilter, _occupants);

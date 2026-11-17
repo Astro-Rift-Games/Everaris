@@ -199,8 +199,15 @@ always opens north, independently of the interactor's side.
 
 The `LocalInteractionCandidateSource` selects eligible doors through `NetworkDoor.CanInteract`
 and reads `NetworkDoor.PromptText` during `Render`, producing `[F] Abrir puerta` when closed
-and `[F] Cerrar puerta` only when open and the doorway is clear. Selection and authoritative
-execution share the same availability check; clearing the body restores the prompt on the
+and `[F] Cerrar puerta` only when open and the doorway is clear. State Authority evaluates
+live doorway occupancy (`ProbeDoorwayOccupancy`: `OverlapBox` over the blocker bounds with
+positive penetration) for both selection (`CanInteract`) and execution (`Interact`), and
+replicates its verdict every tick in a private networked flag exposed as
+`NetworkDoor.IsDoorwayOccupied` (true only while `Open` and occupied). Non-authority peers select the `Cerrar puerta` prompt from that
+replicated verdict instead of their local physics world, so the prompt does not depend only on
+local occupancy when the host would reject the close. The host still validates live on
+`Interact`; a verdict up to about one tick stale can at most show a prompt the host rejects
+with `TargetUnavailable` without mutation. Clearing the body restores the prompt on the
 next presentation update without an additional distance requirement. Transitioning doors
 and open doors with an occupied doorway are not eligible candidates and have no HUD prompt.
 The label itself remains contextual by state; eligibility controls prompt visibility. Only the dedicated
@@ -213,8 +220,17 @@ base +1.0 unit, matching adjacent horizontal wall colliders. A player approachin
 the north stops at that north face rather than walking into the drawn door. Occupancy,
 pathfinding refresh and vision all use this same blocker, not a separate footprint.
 It stays enabled until opening completes and becomes enabled as soon as closing begins;
-only `Open` disables it. Every peer applies the blocker from replicated state. On State
-Authority, applying a changed blocker state calls `PathfindingGrid.RefreshRegion` over the
+only `Open` disables it. Every simulated peer applies the blocker from replicated
+`DungeonDoorState` only in `FixedUpdateNetwork`, on every (re)simulated tick and before the
+State Authority transition logic, so 2D physics matches the tick being simulated, including
+client resimulation. `NetworkDoor` uses `[DefaultExecutionOrder(-20)]` so it simulates before
+all player simulation (mana `-12` through movement `-10`); movement casts therefore hit the
+blocker of the tick being simulated, not the one left by the previous tick. `Render()` never reads or mutates the blocker. `Spawned` performs the
+one-time initialization of the blocker from replicated state. Fusion 2 does not run
+`FixedUpdateNetwork` on proxies by default, so remote clients (`GameMode.Client`, no State
+Authority) call `Runner.SetIsSimulated(Object, true)` in `Spawned`; their predicted movement
+then collides with the blocker of each tick. Pathfinding refresh stays State Authority only:
+applying a changed blocker state there calls `PathfindingGrid.RefreshRegion` over the
 doorway bounds when the grid is built, updating local walkability without rebuilding the
 whole grid. Vision already queries live colliders (see [Local vision](VisibilityArchitecture.md)).
 For Host Migration, `Spawned` initializes `Closed` and clears the timer only under State
@@ -265,7 +281,12 @@ Level Design. Required validation is EditMode `DungeonDoorStateRulesTests`,
 `DungeonDoorPlayModeTests` and `VisionOcclusionPlayModeTests` for passage, north-side body
 stopping depth, projectile/vision occlusion, the same north Animator states and sprites from either side,
 direction retention, presentation re-adoption/drift correction and rejection without
-mutation for an unresolved opening interactor. Manual Host/Client validation of state, collision,
+mutation for an unresolved opening interactor. TASK-292 adds PlayMode
+`Render_NeverMutatesBlocker_NextSimulationTickReappliesReplicatedState` and
+`DoorwayOccupancy_IsReplicatedFromAuthoritativeTicks_OnlyWhileOpen` in
+`Assets/Tests/PlayMode/DungeonDoorPlayModeTests.cs`. Remote-client simulation of the door and
+the client `Cerrar puerta` prompt require a manual Host/Client (Multiplayer Play Mode) check.
+Manual Host/Client validation of state, collision,
 frames and prompts is still required; automated checks do not prove multiplayer behavior.
 
 ## TASK-220: timed consumable execution

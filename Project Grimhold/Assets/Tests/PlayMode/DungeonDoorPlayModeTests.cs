@@ -195,6 +195,72 @@ namespace Tests.PlayMode.Scenario
         }
 
         [UnityTest]
+        public IEnumerator Render_NeverMutatesBlocker_NextSimulationTickReappliesReplicatedState()
+        {
+            SpawnDoor();
+            yield return AssertBlockerFollowsTicksOnly(DungeonDoorState.Closed, blocksPassage: true, "Abrir puerta");
+
+            yield return OpenDoor();
+            yield return AssertBlockerFollowsTicksOnly(DungeonDoorState.Open, blocksPassage: false, "Cerrar puerta");
+        }
+
+        [UnityTest]
+        public IEnumerator MovementOrderSimulation_CollidesWithBlockerOfTheSameTick()
+        {
+            SpawnDoor();
+            yield return OpenDoor();
+            var probe = _runner.gameObject.AddComponent<DungeonDoorMovementOrderProbe>();
+            _runner.AddGlobal(probe);
+
+            // Stale physics, as left by a predicted tick before a resimulation rolls State back.
+            _blocker.enabled = true;
+            probe.Arm(_blocker);
+            float timeout = Time.realtimeSinceStartup + 10f;
+            while (!probe.HasObserved && Time.realtimeSinceStartup < timeout) yield return null;
+            _runner.RemoveGlobal(probe);
+
+            Assert.That(probe.HasObserved, Is.True, "No simulation tick reached the movement-order probe.");
+            Assert.That(probe.ObservedBlockerEnabled, Is.False,
+                "Player movement simulates after the door, so it must collide with this tick's blocker.");
+        }
+
+        [UnityTest]
+        public IEnumerator DoorwayOccupancy_IsReplicatedFromAuthoritativeTicks_OnlyWhileOpen()
+        {
+            SpawnDoor();
+            BoxCollider2D occupant = CreateCharacter("ReplicatedOccupant", _doorwayBounds.center);
+            Physics2D.SyncTransforms();
+            yield return WaitTwoTicks();
+            Assert.That(_door.IsDoorwayOccupied, Is.False, "A closed door publishes no occupancy verdict.");
+
+            occupant.transform.position = DoorPosition + Vector3.right * 5f;
+            Physics2D.SyncTransforms();
+            yield return OpenDoor();
+            yield return WaitTwoTicks();
+            Assert.That(_door.IsDoorwayOccupied, Is.False);
+            Assert.That(_interactable.CanInteract(Request()), Is.True);
+
+            occupant.transform.position = _doorwayBounds.center;
+            Physics2D.SyncTransforms();
+            yield return WaitTwoTicks();
+            Assert.That(_door.IsDoorwayOccupied, Is.True, "The host must replicate that it will reject closing.");
+            Assert.That(_interactable.CanInteract(Request()), Is.False);
+            AssertDoorState(DungeonDoorState.Open, blocksPassage: false, "Cerrar puerta");
+
+            occupant.transform.position = DoorPosition + Vector3.right * 5f;
+            Physics2D.SyncTransforms();
+            yield return WaitTwoTicks();
+            Assert.That(_door.IsDoorwayOccupied, Is.False, "Clearance must be replicated on the next host ticks.");
+            yield return Execute(() => AssertSucceeded(_interactable.Interact(Request())));
+
+            occupant.transform.position = _doorwayBounds.center;
+            Physics2D.SyncTransforms();
+            yield return WaitTwoTicks();
+            Assert.That(_door.State, Is.EqualTo(DungeonDoorState.Closing));
+            Assert.That(_door.IsDoorwayOccupied, Is.False, "Only an Open door can be rejected for occupancy.");
+        }
+
+        [UnityTest]
         public IEnumerator ClosingPrompt_FromSouth_HidesWhileOccupied_AndReturnsAtClearance()
         {
             yield return AssertClosingPromptAvailability(south: true);
@@ -486,6 +552,31 @@ namespace Tests.PlayMode.Scenario
             Assert.That(_door.TransitionTimer.IsRunning, Is.False);
         }
 
+        /// <summary>
+        /// Desynchronizes the physics blocker outside any tick, proves presentation leaves it untouched,
+        /// then proves the next simulation ticks restore it from the replicated state.
+        /// </summary>
+        private IEnumerator AssertBlockerFollowsTicksOnly(DungeonDoorState state, bool blocksPassage, string prompt)
+        {
+            Assert.That(_door.State, Is.EqualTo(state));
+            Assert.That(_blocker.enabled, Is.EqualTo(blocksPassage));
+            _blocker.enabled = !blocksPassage;
+
+            _door.Render();
+            Assert.That(_blocker.enabled, Is.EqualTo(!blocksPassage),
+                "Render is presentation: it must never toggle the physics blocker.");
+
+            yield return WaitTwoTicks();
+            AssertDoorState(state, blocksPassage, prompt);
+        }
+
+        private IEnumerator WaitTwoTicks()
+        {
+            // The reusable driver can run before NetworkDoor; the second tick guarantees the door ran.
+            yield return Execute(() => { });
+            yield return Execute(() => { });
+        }
+
         private void AssertRepeatedPressesIgnored(DungeonDoorState transition, TickTimer deadline)
         {
             for (int press = 0; press < 3; press++)
@@ -741,6 +832,29 @@ namespace Tests.PlayMode.Scenario
             FieldInfo field = target.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.That(field, Is.Not.Null, name);
             field.SetValue(target, value);
+        }
+    }
+
+    /// <summary>Observes the blocker at the same execution order as PlayerMovementNetworkController.</summary>
+    [DefaultExecutionOrder(-10)]
+    public sealed class DungeonDoorMovementOrderProbe : SimulationBehaviour
+    {
+        private Collider2D _blocker;
+
+        public bool HasObserved { get; private set; }
+        public bool ObservedBlockerEnabled { get; private set; }
+
+        public void Arm(Collider2D blocker)
+        {
+            _blocker = blocker;
+            HasObserved = false;
+        }
+
+        public override void FixedUpdateNetwork()
+        {
+            if (_blocker == null || HasObserved) return;
+            ObservedBlockerEnabled = _blocker.enabled;
+            HasObserved = true;
         }
     }
 
