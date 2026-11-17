@@ -4,32 +4,291 @@
 
 Release: Unreleased
 
-283 original commits; 283 canonical entries.
+287 original commits; 287 canonical entries.
 
 ## Canonical classification
 
-88 features; 93 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 19 tests; 11 maintenance; 19 other changes
+89 features; 95 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 20 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Abilities | 10 | 11 | 1 | 0 | 9 | 1 |
+| Abilities | 11 | 11 | 1 | 0 | 10 | 1 |
 | Art & Animation | 18 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 7 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 61 | 63 | 3 | 1 | 22 | 6 |
-| Combat | 42 | 16 | 2 | 0 | 12 | 1 |
+| Build & Tooling | 62 | 64 | 3 | 1 | 22 | 6 |
+| Combat | 43 | 17 | 2 | 0 | 12 | 1 |
 | Documentation | 33 | 41 | 0 | 0 | 13 | 0 |
 | Extraction | 17 | 21 | 2 | 0 | 9 | 5 |
 | Input | 1 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 63 | 53 | 3 | 1 | 25 | 5 |
+| Inventory & Loot | 63 | 55 | 3 | 1 | 25 | 5 |
 | Movement | 5 | 4 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 29 | 35 | 0 | 0 | 18 | 2 |
-| Persistence & Backend | 29 | 48 | 2 | 1 | 19 | 3 |
-| Tests | 84 | 87 | 3 | 1 | 29 | 4 |
+| Networking & Sessions | 29 | 37 | 0 | 0 | 18 | 2 |
+| Persistence & Backend | 29 | 50 | 2 | 1 | 19 | 3 |
+| Tests | 85 | 89 | 3 | 1 | 30 | 4 |
 | UI | 33 | 20 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
 | World & Visibility | 24 | 12 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### ad64356f1a51cb8772a1317a9bfaf9fb44711e8f
+
+[ad64356f1a51cb8772a1317a9bfaf9fb44711e8f](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ad64356f1a51cb8772a1317a9bfaf9fb44711e8f)
+
+Date: 2026-11-17T14:33:51-03:00 · Classification: Bug Fixes (explicit) · Systems: Inventory & Loot, Networking & Sessions, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend): canonicalize legacy item ids in v3 tickets and add migration
+```
+
+#### Original body
+
+```text
+v3 raid admission tickets now emit canonical item ids (items and
+prepared equipment) through the existing InventoryLootIdNormalizer
+alias table, matching v2. Stored documents are not rewritten on read;
+inventory reads keep returning stored ids, per the documented contract.
+
+Adds scripts/migrate_legacy_item_ids.js, a manual migration for every
+alias in the table. It is a dry run by default and writes only with
+--apply. It is idempotent and uses revision-guarded updates with
+retries. It merges legacy stacks into in-capacity stacks of the same
+list and checks per-item totals before writing. It is never invoked
+from request paths and has not been run against any database.
+
+Tests: inventory.legacy-ids (v3 ticket ids, no write-back) and
+migrate.legacy.item.ids (rename, merge, overflow, idempotency, dry run,
+unknown and case-variant ids, aborts, conflict retry, CLI flags).
+Docs: README section on legacy item ids; odd/tasks/raid-admission-legacy-item-ids.md
+```
+
+#### Changed paths
+
+```text
+backend/README.md
+backend/scripts/migrate_legacy_item_ids.js
+backend/src/services/SessionTicketService.js
+backend/tests/inventory.legacy-ids.test.js
+backend/tests/migrate.legacy.item.ids.test.js
+odd/tasks/raid-admission-legacy-item-ids.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Inventory &amp; Loot: backend/tests/inventory.legacy-ids.test.js
+- message-term → Inventory &amp; Loot: equipment
+- path → Networking &amp; Sessions: backend/src/services/SessionTicketService.js
+- path → Persistence &amp; Backend: backend/README.md
+- path → Persistence &amp; Backend: backend/scripts/migrate\_legacy\_item\_ids.js
+- path → Persistence &amp; Backend: backend/src/services/SessionTicketService.js
+- path → Persistence &amp; Backend: backend/tests/inventory.legacy-ids.test.js
+- path → Persistence &amp; Backend: backend/tests/migrate.legacy.item.ids.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/inventory.legacy-ids.test.js
+- path → Tests: backend/tests/migrate.legacy.item.ids.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### a76887d30b889c2a29296ca0eae37baebf2a1762
+
+[a76887d30b889c2a29296ca0eae37baebf2a1762](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a76887d30b889c2a29296ca0eae37baebf2a1762)
+
+Date: 2026-11-17T14:33:50-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Inventory & Loot, Networking & Sessions, Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(raid): admit reserved loadouts that carry legacy item ids
+```
+
+#### Original body
+
+```text
+Since healthpotion became an alias of CON_HEALTH_POTION, a reservation
+hydrated from the backend could keep the legacy id while the Host
+materializes the canonical one, so local raid admission failed with
+"did not complete with the exact reserved loadout".
+
+- RaidAdmissionLoadoutMatcher resolves reserved ids through the catalog
+  before comparing; quantities, modifiers, weapon units and equipment
+  slots stay exact, and unknown ids are still rejected.
+- Backend stash hydration stores the catalog's canonical id.
+
+Tests: legacy alias admitted for ticket and local branches; different
+quantity, different item and unknown id still rejected; hydration
+stores the canonical id.
+
+Player-Fixed: Raids can be started again when a health potion is in the inventory.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/RaidAdmissionLoadoutMatcher.cs
+Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionLoadoutMatcherTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ApplicationStashServiceBootstrapperItemIdTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ApplicationStashServiceBootstrapperItemIdTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Combat: weapon
+- message-term → Inventory &amp; Loot: equipment
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidAdmissionLoadoutMatcher.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionLoadoutMatcherTests.cs
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionLoadoutMatcherTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ApplicationStashServiceBootstrapperItemIdTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ApplicationStashServiceBootstrapperItemIdTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionLoadoutMatcherTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ApplicationStashServiceBootstrapperItemIdTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ApplicationStashServiceBootstrapperItemIdTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### e365d2e61f0158e19d7051404b6ee7efff59550c
+
+[e365d2e61f0158e19d7051404b6ee7efff59550c](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e365d2e61f0158e19d7051404b6ee7efff59550c)
+
+Date: 2026-11-17T14:33:50-03:00 · Classification: Tests (explicit) · Systems: Abilities, Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+test(abilities): declare a hostile target in the Empower melee test
+```
+
+#### Original body
+
+```text
+Since 5013e60e9 (FIX-79) an unresolved initial affiliation counts as
+ally, so with friendly fire off the melee hit was blocked and the test
+failed before reaching its AbilityImpact assertion. The fixture has no
+raid roster, so it now declares the target hostile through the
+DamageResolver.AreInitialTeammates seam, as PlayerDownedPlayModeTests
+already does. No assertion was weakened.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Tests/PlayMode/SupportAbilitiesPlayModeTests.cs
+```
+
+#### Classification evidence
+
+- type → Tests: test
+- path → Abilities: Project Grimhold/Assets/Tests/PlayMode/SupportAbilitiesPlayModeTests.cs
+- scope → Abilities: abilities
+- message-term → Abilities: abilities
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/SupportAbilitiesPlayModeTests.cs
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### c7898ced21756d3b780130fca7b220138851ff3d
+
+[c7898ced21756d3b780130fca7b220138851ff3d](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c7898ced21756d3b780130fca7b220138851ff3d)
+
+Date: 2026-11-17T14:33:50-03:00 · Classification: Features (explicit) · Systems: Combat, Abilities, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(abilities): stun on Charge only after effective damage
+```
+
+#### Original body
+
+```text
+Charge (Embestida) now applies its Stun only when the impact actually
+dealt damage: DamageResult.IsApplied && AppliedDamage > 0. A push-only
+hit (zero base damage with knockback), damage mitigated to zero, or any
+resolver rejection (friendly fire, immune target) no longer stuns.
+Implements TASK-294.
+
+- AbilityImpact.TryApply gains an overload with `out DamageResult`; the
+  existing signature delegates to it and keeps its semantics, so
+  Seismic Strike is unchanged.
+- The stun decision lives in the pure ChargeStunRules class.
+
+Tests:
+- ChargeStunRulesTests and AbilityImpactTests (EditMode), including
+  the legacy TryApply contract.
+- Charge PlayMode: zero-damage push and a Specter whose physical damage
+  is mitigated to zero do not stun.
+
+Docs: odd/tasks/task-294-charge-stun-effective-damage.md
+
+Player-Fixed: Charge no longer stuns enemies when the hit deals no damage.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Abilities/Behaviours/AbilityImpact.cs
+Project Grimhold/Assets/Scripts/Abilities/Behaviours/ChargeAbilityBehaviour.cs
+Project Grimhold/Assets/Scripts/Abilities/Behaviours/ChargeStunRules.cs
+Project Grimhold/Assets/Scripts/Abilities/Behaviours/ChargeStunRules.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs.meta
+Project Grimhold/Assets/Tests/PlayMode/ChargeAbilityPlayModeTests.cs
+odd/tasks/task-294-charge-stun-effective-damage.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: odd/tasks/task-294-charge-stun-effective-damage.md
+- message-term → Combat: damage
+- path → Abilities: Project Grimhold/Assets/Scripts/Abilities/Behaviours/AbilityImpact.cs
+- path → Abilities: Project Grimhold/Assets/Scripts/Abilities/Behaviours/ChargeAbilityBehaviour.cs
+- path → Abilities: Project Grimhold/Assets/Scripts/Abilities/Behaviours/ChargeStunRules.cs
+- path → Abilities: Project Grimhold/Assets/Scripts/Abilities/Behaviours/ChargeStunRules.cs.meta
+- path → Abilities: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs
+- path → Abilities: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs.meta
+- path → Abilities: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs
+- path → Abilities: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs.meta
+- path → Abilities: Project Grimhold/Assets/Tests/PlayMode/ChargeAbilityPlayModeTests.cs
+- scope → Abilities: abilities
+- message-term → Abilities: abilities
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/ChargeAbilityPlayModeTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 41b115da1222182ce4aa619306810489200e6df5
 

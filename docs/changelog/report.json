@@ -1,70 +1,70 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1160,
-  "canonicalEntries": 1157,
+  "rawCommits": 1164,
+  "canonicalEntries": 1161,
   "before": {
-    "Bug Fixes": 171,
-    "Features": 410,
+    "Bug Fixes": 173,
+    "Tests": 44,
+    "Features": 411,
     "Refactoring": 16,
     "Documentation": 123,
     "Other Changes": 373,
-    "Architecture & Infrastructure": 24,
-    "Tests": 43
+    "Architecture & Infrastructure": 24
   },
   "after": {
-    "Bug Fixes": 187,
-    "Features": 548,
+    "Bug Fixes": 189,
+    "Tests": 49,
+    "Features": 549,
     "Refactoring": 29,
     "Documentation": 139,
     "Other Changes": 181,
     "Maintenance": 22,
-    "Tests": 48,
     "Architecture & Infrastructure": 6
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Inventory & Loot": 468,
+    "Networking & Sessions": 342,
+    "Persistence & Backend": 289,
+    "Tests": 733,
+    "Combat": 391,
+    "Build & Tooling": 599,
+    "Abilities": 138,
     "World & Visibility": 161,
     "Art & Animation": 259,
-    "Build & Tooling": 597,
-    "Tests": 729,
-    "Combat": 389,
     "Movement": 100,
-    "Inventory & Loot": 466,
     "Extraction": 173,
-    "Persistence & Backend": 287,
     "UI": 338,
-    "Abilities": 136,
     "Documentation": 430,
-    "Networking & Sessions": 340,
     "Audio": 39,
     "Input": 31,
     "Unassigned": 42
   },
   "canonical": {
     "sections": {
-      "Bug Fixes": 186,
-      "Features": 547,
+      "Bug Fixes": 188,
+      "Tests": 49,
+      "Features": 548,
       "Refactoring": 29,
       "Documentation": 139,
       "Other Changes": 180,
       "Maintenance": 22,
-      "Tests": 48,
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Inventory & Loot": 468,
+      "Networking & Sessions": 342,
+      "Persistence & Backend": 289,
+      "Tests": 731,
+      "Combat": 389,
+      "Build & Tooling": 597,
+      "Abilities": 136,
       "World & Visibility": 159,
       "Art & Animation": 256,
-      "Build & Tooling": 595,
-      "Tests": 727,
-      "Combat": 387,
       "Movement": 100,
-      "Inventory & Loot": 466,
       "Extraction": 173,
-      "Persistence & Backend": 287,
       "UI": 337,
-      "Abilities": 134,
       "Documentation": 428,
-      "Networking & Sessions": 340,
       "Audio": 39,
       "Input": 31,
       "Unassigned": 42
@@ -74826,8 +74826,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 283,
-      "canonicalEntries": 283
+      "originalCommits": 287,
+      "canonicalEntries": 287
     },
     {
       "key": "v0.5.0",
@@ -74871,6 +74871,416 @@
     }
   ],
   "commits": [
+    {
+      "sha": "ad64356f1a51cb8772a1317a9bfaf9fb44711e8f",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ad64356f1a51cb8772a1317a9bfaf9fb44711e8f",
+      "subject": "fix(backend): canonicalize legacy item ids in v3 tickets and add migration",
+      "body": "v3 raid admission tickets now emit canonical item ids (items and\nprepared equipment) through the existing InventoryLootIdNormalizer\nalias table, matching v2. Stored documents are not rewritten on read;\ninventory reads keep returning stored ids, per the documented contract.\n\nAdds scripts/migrate_legacy_item_ids.js, a manual migration for every\nalias in the table. It is a dry run by default and writes only with\n--apply. It is idempotent and uses revision-guarded updates with\nretries. It merges legacy stacks into in-capacity stacks of the same\nlist and checks per-item totals before writing. It is never invoked\nfrom request paths and has not been run against any database.\n\nTests: inventory.legacy-ids (v3 ticket ids, no write-back) and\nmigrate.legacy.item.ids (rename, merge, overflow, idempotency, dry run,\nunknown and case-variant ids, aborts, conflict retry, CLI flags).\nDocs: README section on legacy item ids; odd/tasks/raid-admission-legacy-item-ids.md\n",
+      "date": "2026-11-17T14:33:51-03:00",
+      "files": [
+        "backend/README.md",
+        "backend/scripts/migrate_legacy_item_ids.js",
+        "backend/src/services/SessionTicketService.js",
+        "backend/tests/inventory.legacy-ids.test.js",
+        "backend/tests/migrate.legacy.item.ids.test.js",
+        "odd/tasks/raid-admission-legacy-item-ids.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "backend",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.legacy-ids.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/SessionTicketService.js",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "backend/README.md",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/scripts/migrate_legacy_item_ids.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/SessionTicketService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.legacy-ids.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/migrate.legacy.item.ids.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.legacy-ids.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/migrate.legacy.item.ids.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "a76887d30b889c2a29296ca0eae37baebf2a1762",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a76887d30b889c2a29296ca0eae37baebf2a1762",
+      "subject": "fix(raid): admit reserved loadouts that carry legacy item ids",
+      "body": "Since healthpotion became an alias of CON_HEALTH_POTION, a reservation\nhydrated from the backend could keep the legacy id while the Host\nmaterializes the canonical one, so local raid admission failed with\n\"did not complete with the exact reserved loadout\".\n\n- RaidAdmissionLoadoutMatcher resolves reserved ids through the catalog\n  before comparing; quantities, modifiers, weapon units and equipment\n  slots stay exact, and unknown ids are still rejected.\n- Backend stash hydration stores the catalog's canonical id.\n\nTests: legacy alias admitted for ticket and local branches; different\nquantity, different item and unknown id still rejected; hydration\nstores the canonical id.\n\nPlayer-Fixed: Raids can be started again when a health potion is in the inventory.\n",
+      "date": "2026-11-17T14:33:50-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionLoadoutMatcher.cs",
+        "Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionLoadoutMatcherTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ApplicationStashServiceBootstrapperItemIdTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ApplicationStashServiceBootstrapperItemIdTests.cs.meta"
+      ],
+      "originalType": "fix",
+      "originalScope": "raid",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionLoadoutMatcher.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionLoadoutMatcherTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionLoadoutMatcherTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ApplicationStashServiceBootstrapperItemIdTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ApplicationStashServiceBootstrapperItemIdTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionLoadoutMatcherTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ApplicationStashServiceBootstrapperItemIdTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ApplicationStashServiceBootstrapperItemIdTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "e365d2e61f0158e19d7051404b6ee7efff59550c",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e365d2e61f0158e19d7051404b6ee7efff59550c",
+      "subject": "test(abilities): declare a hostile target in the Empower melee test",
+      "body": "Since 5013e60e9 (FIX-79) an unresolved initial affiliation counts as\nally, so with friendly fire off the melee hit was blocked and the test\nfailed before reaching its AbilityImpact assertion. The fixture has no\nraid roster, so it now declares the target hostile through the\nDamageResolver.AreInitialTeammates seam, as PlayerDownedPlayModeTests\nalready does. No assertion was weakened.\n",
+      "date": "2026-11-17T14:33:50-03:00",
+      "files": [
+        "Project Grimhold/Assets/Tests/PlayMode/SupportAbilitiesPlayModeTests.cs"
+      ],
+      "originalType": "test",
+      "originalScope": "abilities",
+      "originalSection": "Tests",
+      "breaking": false,
+      "reverts": null,
+      "section": "Tests",
+      "confidence": "explicit",
+      "systems": [
+        "Abilities",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "test",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/SupportAbilitiesPlayModeTests.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "scope",
+          "value": "abilities",
+          "supports": "Abilities"
+        },
+        {
+          "source": "message-term",
+          "value": "abilities",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/SupportAbilitiesPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "c7898ced21756d3b780130fca7b220138851ff3d",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c7898ced21756d3b780130fca7b220138851ff3d",
+      "subject": "feat(abilities): stun on Charge only after effective damage",
+      "body": "Charge (Embestida) now applies its Stun only when the impact actually\ndealt damage: DamageResult.IsApplied && AppliedDamage > 0. A push-only\nhit (zero base damage with knockback), damage mitigated to zero, or any\nresolver rejection (friendly fire, immune target) no longer stuns.\nImplements TASK-294.\n\n- AbilityImpact.TryApply gains an overload with `out DamageResult`; the\n  existing signature delegates to it and keeps its semantics, so\n  Seismic Strike is unchanged.\n- The stun decision lives in the pure ChargeStunRules class.\n\nTests:\n- ChargeStunRulesTests and AbilityImpactTests (EditMode), including\n  the legacy TryApply contract.\n- Charge PlayMode: zero-damage push and a Specter whose physical damage\n  is mitigated to zero do not stun.\n\nDocs: odd/tasks/task-294-charge-stun-effective-damage.md\n\nPlayer-Fixed: Charge no longer stuns enemies when the hit deals no damage.\n",
+      "date": "2026-11-17T14:33:50-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Abilities/Behaviours/AbilityImpact.cs",
+        "Project Grimhold/Assets/Scripts/Abilities/Behaviours/ChargeAbilityBehaviour.cs",
+        "Project Grimhold/Assets/Scripts/Abilities/Behaviours/ChargeStunRules.cs",
+        "Project Grimhold/Assets/Scripts/Abilities/Behaviours/ChargeStunRules.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/ChargeAbilityPlayModeTests.cs",
+        "odd/tasks/task-294-charge-stun-effective-damage.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "abilities",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Abilities",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/task-294-charge-stun-effective-damage.md",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "damage",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Behaviours/AbilityImpact.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Behaviours/ChargeAbilityBehaviour.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Behaviours/ChargeStunRules.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Behaviours/ChargeStunRules.cs.meta",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs.meta",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs.meta",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/ChargeAbilityPlayModeTests.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "scope",
+          "value": "abilities",
+          "supports": "Abilities"
+        },
+        {
+          "source": "message-term",
+          "value": "abilities",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityImpactTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/ChargeStunRulesTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/ChargeAbilityPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "41b115da1222182ce4aa619306810489200e6df5",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/41b115da1222182ce4aa619306810489200e6df5",

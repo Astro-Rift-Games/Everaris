@@ -108,6 +108,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Protective Orbs now intercept enemy player shots and trap darts.
 - While walking or sprinting, hands and held weapons no longer slip behind or in front of the body at the wrong moments.
 - Torches no longer jump out of place when they go out.
+- Charge no longer stuns enemies when the hit deals no damage.
+- Raids can be started again when a health potion is in the inventory.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08
