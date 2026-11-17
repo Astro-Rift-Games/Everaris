@@ -69,7 +69,7 @@ test('atomic merchant trade HTTP contract', async t => {
     const res = await post(ticket({ sales: [], purchases: [purchase, { lootId: 'healthpotion', amount: 2 }] }));
     assert.equal(res.status, 200);
     assert.equal(res.body.currency, 15);
-    assert.deepEqual(res.body.loadout, [{ slot: 0, lootId: 'bone', amount: 1 }, { slot: 1, lootId: 'healthpotion', amount: 2 }]);
+    assert.deepEqual(res.body.loadout, [{ slot: 0, lootId: 'bone', amount: 1 }, { slot: 1, lootId: 'CON_HEALTH_POTION', amount: 2 }]);
   });
   await t.test('capacity is checked after removing sales', async () => {
     const full = Array.from({ length: 30 }, (_, slot) => ({ slot, lootId: slot === 0 ? 'placeholder_helmet' : `filler-${slot}`, amount: 1 }));

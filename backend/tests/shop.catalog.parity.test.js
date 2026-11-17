@@ -4,7 +4,14 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { BUY_CATALOG, SELL_CATALOG, BUYBACK_ELIGIBLE_IDS, isBuybackEligible } = require('../src/config/shopCatalog');
+const {
+  BUY_CATALOG,
+  SELL_CATALOG,
+  BUYBACK_ELIGIBLE_IDS,
+  getBuyOffer,
+  getSellOffer,
+  isBuybackEligible
+} = require('../src/config/shopCatalog');
 
 const definitions = path.resolve(__dirname, '../../Project Grimhold/Assets/Scriptable Objects/Loot/Definitions');
 
@@ -49,4 +56,11 @@ test('shop catalogs mirror every Unity LootDefinition price and eligibility', t 
   assert.deepEqual([...BUYBACK_ELIGIBLE_IDS].sort(), [...eligibleIds].sort());
   assert.ok(ids > 0, 'Expected at least one Unity loot id');
   assert.equal(mismatches.length, 0, `Catalog parity mismatches:\n${mismatches.join('\n')}`);
+});
+
+test('legacy healthpotion alias resolves merchant offers without duplicate catalog keys', () => {
+  assert.equal(Object.hasOwn(BUY_CATALOG, 'healthpotion'), false);
+  assert.equal(Object.hasOwn(SELL_CATALOG, 'healthpotion'), false);
+  assert.deepEqual(getBuyOffer('healthpotion'), { buyPrice: 40, isFree: false });
+  assert.deepEqual(getSellOffer('healthpotion'), { sellValue: 20 });
 });

@@ -8,7 +8,7 @@ using UnityEditor;
 public sealed class QuickSlotControllerTests
 {
     private static readonly ProfileId Profile = new ProfileId("21521521521521521521521521521521");
-    private static readonly LootId Potion = new LootId("healthpotion");
+    private static readonly LootId Potion = new LootId("CON_HEALTH_POTION");
     private static readonly LootId Rapier = new LootId("rapier");
     private static readonly LootId Compass = new LootId("UTL_RUNE_COMPASS");
 

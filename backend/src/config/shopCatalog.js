@@ -64,7 +64,6 @@ function isBuybackEligible(lootId, version = 3) {
  * Legitimate free items are explicitly marked with `isFree: true`.
  */
 const BUY_CATALOG = Object.freeze({
-  healthpotion: { buyPrice: 40, isFree: false },
   CON_EXPLOSIVE_BOMB: { buyPrice: 60, isFree: false },
   CON_HEALTH_POTION: { buyPrice: 40, isFree: false },
   CON_LOCKPICK: { buyPrice: 50, isFree: false },
@@ -120,7 +119,6 @@ const BUY_CATALOG = Object.freeze({
  * Backend-only ids use GD-14 values and have no Unity asset yet.
  */
 const SELL_CATALOG = Object.freeze({
-  healthpotion: { sellValue: 20 },
   CON_EXPLOSIVE_BOMB: { sellValue: 30 },
   CON_HEALTH_POTION: { sellValue: 20 },
   CON_LOCKPICK: { sellValue: 25 },

@@ -158,7 +158,7 @@ test('E2E Shop Authoritative Validation (US-57 / SEC-57.4)', async (t) => {
     // Server must deduct 200 gold, NOT 0 gold!
     assert.strictEqual(res.body.currency, 295, '495 - 200 = 295');
     assert.strictEqual(res.body.revision, 3);
-    const potionItem = res.body.loadout.find(i => i.lootId === 'healthpotion');
+    const potionItem = res.body.loadout.find(i => i.lootId === 'CON_HEALTH_POTION');
     assert.strictEqual(potionItem.amount, 5);
 
     currentRevision = res.body.revision;

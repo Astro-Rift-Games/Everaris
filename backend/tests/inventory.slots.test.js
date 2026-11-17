@@ -95,14 +95,14 @@ test('physical inventory public service contract', async t => {
   }
 
   await t.test('overflow is reducing-only: receive skips overflow matches and counts occupied slots', async () => {
-    character.inventory.loadout = [entry(30, 'healthpotion', 5)];
+    character.inventory.loadout = [entry(30, 'CON_HEALTH_POTION', 5)];
     const bought = await Inventory.shopBuy('account', 'healthpotion', 1, 0, 4, 'buy');
-    assert.deepEqual(bought.loadout, [entry(0, 'healthpotion'), entry(30, 'healthpotion', 5)]);
+    assert.deepEqual(bought.loadout, [entry(0, 'CON_HEALTH_POTION'), entry(30, 'CON_HEALTH_POTION', 5)]);
     character.inventory.loadout = full(30).map(i => ({ ...i, slot: i.slot + 1 }));
     await rejectsUnchanged(() => Inventory.shopBuy('account', 'healthpotion', 1, 0, 5, 'full'), 'INVENTORY_FULL');
-    character.inventory.loadout[0] = entry(1, 'healthpotion', 2);
+    character.inventory.loadout[0] = entry(1, 'CON_HEALTH_POTION', 2);
     const merged = await Inventory.shopBuy('account', 'healthpotion', 2, 0, 5, 'merge');
-    assert.deepEqual(merged.loadout[0], entry(1, 'healthpotion', 4));
+    assert.deepEqual(merged.loadout[0], entry(1, 'CON_HEALTH_POTION', 4));
   });
 
   await t.test('v2 order is a slot permutation, compacts only explicitly and never merges', async () => {
@@ -316,7 +316,7 @@ test('physical inventory public service contract', async t => {
     character.inventory.stash = [entry(10, 'bone', 3), entry(2, 'bone')];
     result.items = [{ lootId: 'bone', amount: 2 }, { lootId: 'healthpotion', amount: 1 }, { lootId: 'bone', amount: 4 }];
     const committed = await Extraction.commit('account', { raidId: 'raid', resultSequence: 1 });
-    assert.deepEqual(committed.loadout, [entry(0, 'bone', 6), entry(1, 'healthpotion')]);
+    assert.deepEqual(committed.loadout, [entry(0, 'bone', 6), entry(1, 'CON_HEALTH_POTION')]);
     assert.deepEqual((await snapshot()).stash, [entry(2, 'bone'), entry(10, 'bone', 3)]);
     assert.equal(committed.revision, 5); assert.equal(claims, 1); assert.equal(writes, 1);
     const replay = await Extraction.commit('account', { raidId: 'raid', resultSequence: 1 });

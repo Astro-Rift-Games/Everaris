@@ -1197,7 +1197,7 @@ namespace Tests.PlayMode.Presentation
         public IEnumerator PhysicalContextConsume_ClickedDungeonStillSpendsDefinitionPlayerFirst()
         {
             yield return BeginPhysicalUi();
-            var potion = new LootId("healthpotion");
+            var potion = new LootId("CON_HEALTH_POTION");
             PlayerCharacter player = _uiReceiver.GetComponent<PlayerCharacter>();
             yield return UiTick(() =>
             {
