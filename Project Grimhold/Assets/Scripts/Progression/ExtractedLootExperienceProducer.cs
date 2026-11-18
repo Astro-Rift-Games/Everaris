@@ -78,19 +78,34 @@ public sealed class ExtractedLootExperienceProducer : MonoBehaviour
                    out error);
     }
 
-    /// <summary>Builds the Lost-loot summary for Defeat or voluntary Abandon: everything carried.</summary>
+    /// <summary>
+    /// Builds the Lost-loot summary for Defeat or voluntary Abandon: everything carried except training
+    /// weapons, which return to the Trainer instead of being lost (Doc 09 §15.2).
+    /// </summary>
     public bool TryPrepareLostResultsSummary(
         PlayerExpeditionLootSnapshot lootSnapshot,
+        LootDefinitionCatalog catalog,
         out RaidResultsLootSummary summary,
         out string error)
     {
         summary = null;
-        error = "Expedition loot snapshot is required.";
-        return lootSnapshot != null &&
-               RaidResultsLootSummaryBuilder.TryBuildLost(
-                   lootSnapshot.Combined,
-                   out summary,
-                   out error);
+        if (lootSnapshot == null)
+        {
+            error = "Expedition loot snapshot is required.";
+            return false;
+        }
+
+        if (catalog == null)
+        {
+            error = "A loot catalog is required to exclude training weapons.";
+            return false;
+        }
+
+        return RaidResultsLootSummaryBuilder.TryBuildLost(
+            lootSnapshot.Combined,
+            lootId => CorpseLootProjection.IsTrainingWeapon(lootId, catalog),
+            out summary,
+            out error);
     }
 
     public ExtractedLootExperienceRegistrationStatus TryApplyConfirmed(

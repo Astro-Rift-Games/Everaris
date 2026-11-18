@@ -13,6 +13,7 @@ namespace Tests.PlayMode.Loot
     public sealed class PlayerCorpseGenerationPlayModeTests
     {
         private const string PlayerPrefabGuid = "fea3a7b256f965a4eb9b965832939741";
+        private const string ParticipantPrefabGuid = "c39d451563bae6e43934008a0dadc6d6";
         private NetworkRunner _runner;
         private NetworkObject _playerPrefab;
         private PlayerCorpseGenerationSimulationDriver _driver;
@@ -78,6 +79,54 @@ namespace Tests.PlayMode.Loot
             Assert.That(content, Is.EquivalentTo(new[] { bones }));
             Assert.That(receiver.TryGetLootContent(out IReadOnlyList<LootEntry> inventory), Is.True);
             Assert.That(inventory, Is.Empty);
+        }
+
+        [UnityTest]
+        public IEnumerator TrainingWeapon_IsNeverListedInTheLostResultsLootOfTheDefeatedParticipant()
+        {
+            yield return StartRunnerAndLoadPlayer();
+            NetworkObject playerObject = _runner.Spawn(_playerPrefab, Vector3.zero, Quaternion.identity);
+            ExtractionProgressTestAssertions.AssertRegistered(_runner, playerObject);
+            PlayerCharacter player = playerObject.GetComponent<PlayerCharacter>();
+            PlayerLootReceiver receiver = playerObject.GetComponent<PlayerLootReceiver>();
+            NetworkRaidParticipant participant = SpawnLinkedParticipant(playerObject);
+            var bones = new LootEntry(new LootId("bone"), 2);
+            var trainingDagger = new LootId("training_dagger");
+
+            _driver.Target = player;
+            _driver.Receiver = receiver;
+            _driver.SetEntries(new[] { new LootEntry(trainingDagger, 1, isEquipmentUnit: true), bones });
+            _driver.IsRequested = true;
+            yield return WaitForDefeat(player);
+
+            Assert.That(participant.ResultsLootKind, Is.EqualTo(RaidResultsLootKind.Lost));
+            Assert.That(participant.TryGetResultsLoot(receiver.LootCatalog, out RaidResultsLootSummary lost), Is.True);
+            Assert.That(lost.Kind, Is.EqualTo(RaidResultsLootKind.Lost));
+            Assert.That(lost.Entries, Is.EqualTo(new[] { new RaidResultsLootEntry(bones.LootId, bones.Amount) }));
+        }
+
+        private NetworkRaidParticipant SpawnLinkedParticipant(NetworkObject avatar)
+        {
+            NetworkPrefabId prefabId = _runner.Config.PrefabTable.GetId(NetworkObjectGuid.Parse(ParticipantPrefabGuid));
+            NetworkObject prefab = _runner.Config.PrefabTable.Load(prefabId, true);
+            Assert.That(RaidParticipantId.TryCreate(1, out RaidParticipantId participantId), Is.True);
+            NetworkObject participantObject = _runner.Spawn(
+                prefab,
+                Vector3.zero,
+                Quaternion.identity,
+                inputAuthority: null,
+                onBeforeSpawned: (_, instance) =>
+                    instance.GetComponent<NetworkRaidParticipant>().Initialize(
+                        "training-lost-results-profile",
+                        participantId,
+                        ProgressionBalanceDefaults.InitialCharacterAttributeState,
+                        ExperienceCurve.InitialLevel,
+                        0,
+                        "training-lost-results-generation"));
+            NetworkRaidParticipant participant = participantObject.GetComponent<NetworkRaidParticipant>();
+            Assert.That(participant.TrySetCurrentAvatar(avatar), Is.True);
+            avatar.GetComponent<RaidAvatarParticipantLink>().SetRestoredParticipant(participantObject.Id);
+            return participant;
         }
 
         [UnityTest]

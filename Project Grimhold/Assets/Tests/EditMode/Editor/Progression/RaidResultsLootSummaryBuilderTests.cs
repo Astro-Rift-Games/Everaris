@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEditor;
 
 namespace Tests.EditMode.Progression
 {
@@ -8,6 +9,7 @@ namespace Tests.EditMode.Progression
         private static readonly LootId Coin = new("coin");
         private static readonly LootId Sword = new("sword");
         private static readonly LootId Herb = new("herb");
+        private static readonly LootId TrainingDagger = new("training_dagger");
 
         [Test]
         public void TryBuildExtracted_KeepsOnlyEligibleQuantitiesAndSumsTheirValue()
@@ -47,6 +49,43 @@ namespace Tests.EditMode.Progression
         }
 
         [Test]
+        public void TryBuildExtracted_FromTheProductiveCatalogs_NeverListsATrainingWeaponTheExtractorBroughtFromTown()
+        {
+            var values = AssetDatabase.LoadAssetAtPath<RaidLootValueCatalog>(
+                "Assets/Scriptable Objects/RaidLootValueCatalog.asset");
+            Assert.That(values, Is.Not.Null);
+            var profile = new ProfileId("alpha");
+            RaidTeamId.TryCreate(1, out RaidTeamId team);
+            Assert.That(
+                RaidInitialAffiliationSnapshot.TryCreate(new[] { new RaidLaunchParticipant(profile, team) }, out var affiliations),
+                Is.True);
+            Assert.That(RaidParticipantIdAssignment.TryResolve(new[] { profile }, profile, out RaidParticipantId extractor), Is.True);
+            Assert.That(RaidLootOrigin.TryCreatePlayer(extractor, out RaidLootOrigin own), Is.True);
+            LootId arminSword = new("arming_sword");
+
+            // The Trainer-issued dagger is the extractor's own Town loadout; the sword was found in the Dungeon.
+            Assert.That(
+                RaidLootEligibilityResolver.TryResolve(
+                    extractor,
+                    new[] { new LootEntry(TrainingDagger, 1, isEquipmentUnit: true), new LootEntry(arminSword, 1, isEquipmentUnit: true) },
+                    new[] { new RaidLootOriginEntry(TrainingDagger, own, 1), new RaidLootOriginEntry(arminSword, RaidLootOrigin.Dungeon, 1) },
+                    affiliations,
+                    out RaidLootEligibilitySnapshot eligibility,
+                    out string error),
+                Is.True,
+                error);
+
+            Assert.That(
+                RaidResultsLootSummaryBuilder.TryBuildExtracted(eligibility, values, out RaidResultsLootSummary summary, out error),
+                Is.True,
+                error);
+
+            Assert.That(summary.Kind, Is.EqualTo(RaidResultsLootKind.Extracted));
+            Assert.That(summary.Entries, Is.EqualTo(new[] { new RaidResultsLootEntry(arminSword, 1) }));
+            Assert.That(summary.TotalValue, Is.EqualTo(100));
+        }
+
+        [Test]
         public void TryBuildExtracted_FailsWhenAnEligibleEntryHasNoValue()
         {
             var eligibility = CreateEligibility(new RaidLootEligibilityEntry(Coin, 2, 2));
@@ -74,6 +113,60 @@ namespace Tests.EditMode.Progression
             Assert.That(summary.Entries[0], Is.EqualTo(new RaidResultsLootEntry(Coin, 10)));
             Assert.That(summary.Entries[1], Is.EqualTo(new RaidResultsLootEntry(Sword, 1)));
             Assert.That(summary.TotalValue, Is.Zero);
+        }
+
+        [Test]
+        public void TryBuildLost_WithExclusion_OmitsExcludedLootAndKeepsTheRest()
+        {
+            LootEntry[] carried = { new(Coin, 10), new(TrainingDagger, 1, isEquipmentUnit: true), new(Sword, 1) };
+
+            Assert.That(
+                RaidResultsLootSummaryBuilder.TryBuildLost(
+                    carried, id => id == TrainingDagger, out RaidResultsLootSummary summary, out string error),
+                Is.True,
+                error);
+
+            Assert.That(summary.Kind, Is.EqualTo(RaidResultsLootKind.Lost));
+            Assert.That(summary.Entries, Is.EqualTo(new[]
+            {
+                new RaidResultsLootEntry(Coin, 10),
+                new RaidResultsLootEntry(Sword, 1)
+            }));
+            Assert.That(summary.TotalValue, Is.Zero);
+        }
+
+        [Test]
+        public void TryBuildLost_WithExclusion_ReturnsAnEmptyLostSummaryWhenOnlyExcludedLootWasCarried()
+        {
+            LootEntry[] carried = { new(TrainingDagger, 1, isEquipmentUnit: true) };
+
+            Assert.That(
+                RaidResultsLootSummaryBuilder.TryBuildLost(
+                    carried, id => id == TrainingDagger, out RaidResultsLootSummary summary, out string error),
+                Is.True,
+                error);
+
+            Assert.That(summary.Kind, Is.EqualTo(RaidResultsLootKind.Lost));
+            Assert.That(summary.Entries, Is.Empty);
+        }
+
+        [Test]
+        public void TryBuildLost_WithExclusion_StillRejectsInvalidOrDuplicateEntriesAndMissingPredicate()
+        {
+            Assert.That(
+                RaidResultsLootSummaryBuilder.TryBuildLost(
+                    new[] { new LootEntry(Coin, 1), new LootEntry(Coin, 2) }, id => false, out _, out string duplicateError),
+                Is.False);
+            Assert.That(duplicateError, Is.Not.Empty);
+            Assert.That(
+                RaidResultsLootSummaryBuilder.TryBuildLost(
+                    new[] { new LootEntry(Coin, 1) }, null, out RaidResultsLootSummary summary, out string missingError),
+                Is.False);
+            Assert.That(summary, Is.Null);
+            Assert.That(missingError, Is.Not.Empty);
+            Assert.That(
+                RaidResultsLootSummaryBuilder.TryBuildLost(null, id => false, out _, out _),
+                Is.False);
         }
 
         [Test]

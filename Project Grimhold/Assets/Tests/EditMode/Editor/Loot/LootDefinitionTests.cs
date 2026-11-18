@@ -507,6 +507,55 @@ namespace Tests.EditMode.Loot
         }
 
         [Test]
+        public void TrainingWeapon_WithoutOffensiveScaling_PassesValidation()
+        {
+            SetValidTrainingDefaults();
+            WeaponDefinition weapon = CloneWeaponWithScalingCoefficient(0f);
+            try
+            {
+                SetField("_weaponDefinition", weapon);
+
+                Assert.That(_loot.WeaponDefinition.OffensiveScaling.HasScaling, Is.False);
+                Assert.That(_loot.TryValidate(out string error), Is.True, error);
+            }
+            finally
+            {
+                Object.DestroyImmediate(weapon);
+            }
+        }
+
+        [Test]
+        public void TrainingWeapon_WithOffensiveScaling_FailsValidation()
+        {
+            SetValidTrainingDefaults();
+            WeaponDefinition weapon = CloneWeaponWithScalingCoefficient(0.5f);
+            try
+            {
+                SetField("_weaponDefinition", weapon);
+
+                Assert.That(_loot.WeaponDefinition.OffensiveScaling.HasScaling, Is.True);
+                Assert.That(_loot.TryValidate(out string error), Is.False);
+                Assert.That(error, Does.Contain("is a training weapon and must not have offensive scaling"));
+            }
+            finally
+            {
+                Object.DestroyImmediate(weapon);
+            }
+        }
+
+        // Clones the real training weapon so the shared asset is never mutated. The scaling attribute
+        // follows the weapon's natural attribute so only the training rule under test can reject it.
+        private WeaponDefinition CloneWeaponWithScalingCoefficient(float coefficient)
+        {
+            Assert.That(_loot.WeaponDefinition, Is.Not.Null);
+            WeaponDefinition clone = Object.Instantiate(_loot.WeaponDefinition);
+            FieldInfo field = typeof(WeaponDefinition).GetField("_offensiveScaling", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(field, Is.Not.Null, "Field _offensiveScaling not found on WeaponDefinition.");
+            field.SetValue(clone, new WeaponOffensiveScaling(clone.NaturalScalingAttribute, coefficient));
+            return clone;
+        }
+
+        [Test]
         public void TrainingWeapon_CannotBeDiscarded()
         {
             SetValidTrainingDefaults();

@@ -39,7 +39,7 @@ public static class CorpseLootProjection
         corpseWeaponUnits = keptUnits;
     }
 
-    private static bool IsTrainingWeapon(LootId lootId, LootDefinitionCatalog catalog) =>
+    public static bool IsTrainingWeapon(LootId lootId, LootDefinitionCatalog catalog) =>
         lootId.IsValid && catalog.TryGet(lootId.Value, out LootDefinition definition) &&
         definition != null && definition.IsTrainingWeapon;
 }

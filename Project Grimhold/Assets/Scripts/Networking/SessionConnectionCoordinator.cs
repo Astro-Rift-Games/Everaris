@@ -2271,8 +2271,11 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
 
         RaidLossNotice notice = null;
         string error = "No reservation snapshot.";
+        // The profile store owns the loot catalog; training weapons are excluded through it.
+        ApplicationStashContext context = ResolveRecoveryStashContext();
+        LootDefinitionCatalog catalog = context?.Store != null ? context.Store.LootCatalog : null;
         if (!_activeTicket.HasValue || !_activeTicket.Value.HasLoadoutReservation ||
-            !RaidLossNotice.TryCreate(reason, _activeTicket.Value.LoadoutReservation, out notice, out error))
+            !RaidLossNotice.TryCreate(reason, _activeTicket.Value.LoadoutReservation, catalog, out notice, out error))
         {
             Debug.LogWarning($"[FIX-53] Loss notice not captured. Reason={reason}, Error={error}", this);
             return;

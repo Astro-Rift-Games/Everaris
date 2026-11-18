@@ -41,16 +41,36 @@ public static class RaidResultsLootSummaryBuilder
     }
 
     /// <summary>
-    /// Lists everything carried. Design only asks to show what was lost, never its Value, so this
+    /// Lists everything carried, with no exclusion. Raid paths that must not report training weapons use
+    /// the overload that takes an exclusion rule. Design only asks to show what was lost, never its Value, so this
     /// path has no Value dependency and a catalog gap can never hide a defeat's lost loot.
     /// </summary>
     public static bool TryBuildLost(
         IReadOnlyList<LootEntry> carriedLoot,
         out RaidResultsLootSummary summary,
+        out string error) =>
+        TryBuildLost(carriedLoot, static _ => false, out summary, out error);
+
+    /// <summary>
+    /// Lists the carried loot that the Results screen reports as lost, leaving out what
+    /// <paramref name="isExcluded"/> selects (for example training weapons, which Doc 09 §15.2 returns
+    /// to the Trainer instead of losing). The whole snapshot is still validated, and a snapshot that
+    /// only carried excluded loot yields an empty Lost summary rather than an error.
+    /// </summary>
+    public static bool TryBuildLost(
+        IReadOnlyList<LootEntry> carriedLoot,
+        Func<LootId, bool> isExcluded,
+        out RaidResultsLootSummary summary,
         out string error)
     {
         summary = null;
         error = null;
+        if (isExcluded == null)
+        {
+            error = "A loot exclusion rule is required.";
+            return false;
+        }
+
         if (carriedLoot == null)
         {
             error = "Carried loot snapshot is required.";
@@ -58,7 +78,7 @@ public static class RaidResultsLootSummaryBuilder
         }
 
         var seen = new HashSet<LootId>();
-        var entries = new RaidResultsLootEntry[carriedLoot.Count];
+        var entries = new List<RaidResultsLootEntry>(carriedLoot.Count);
         for (int index = 0; index < carriedLoot.Count; index++)
         {
             LootEntry entry = carriedLoot[index];
@@ -68,10 +88,13 @@ public static class RaidResultsLootSummaryBuilder
                 return false;
             }
 
-            entries[index] = new RaidResultsLootEntry(entry.LootId, entry.Amount);
+            if (!isExcluded(entry.LootId))
+            {
+                entries.Add(new RaidResultsLootEntry(entry.LootId, entry.Amount));
+            }
         }
 
-        summary = new RaidResultsLootSummary(RaidResultsLootKind.Lost, entries, 0);
+        summary = new RaidResultsLootSummary(RaidResultsLootKind.Lost, entries.ToArray(), 0);
         return true;
     }
 

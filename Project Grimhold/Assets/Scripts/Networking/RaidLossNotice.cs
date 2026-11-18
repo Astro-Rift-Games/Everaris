@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 /// <summary>
@@ -16,12 +17,47 @@ public sealed class RaidLossNotice
     public RaidResultsLootSummary Lost { get; }
 
     /// <summary>
-    /// Describes everything the reservation carried into the Raid: reserved items plus prepared
-    /// Equipment. Returns false when nothing was carried or the snapshot is inconsistent.
+    /// Describes everything the reservation carried into the Raid, with no exclusion. Production capture
+    /// uses the catalog overload so training weapons are never reported as lost.
     /// </summary>
     public static bool TryCreate(
         RaidLossNoticeReason reason,
         PendingLoadoutReservation reservation,
+        out RaidLossNotice notice,
+        out string error) =>
+        TryCreate(reason, reservation, static _ => false, out notice, out error);
+
+    /// <summary>
+    /// Describes what the reservation carried into the Raid and the player lost: reserved items plus
+    /// prepared Equipment, without training weapons (Doc 09 §15.2: they return to the Trainer). Returns
+    /// false when nothing lost was carried or the snapshot is inconsistent.
+    /// </summary>
+    public static bool TryCreate(
+        RaidLossNoticeReason reason,
+        PendingLoadoutReservation reservation,
+        LootDefinitionCatalog catalog,
+        out RaidLossNotice notice,
+        out string error)
+    {
+        if (catalog == null)
+        {
+            notice = null;
+            error = "A loot catalog is required to exclude training weapons.";
+            return false;
+        }
+
+        return TryCreate(
+            reason,
+            reservation,
+            lootId => CorpseLootProjection.IsTrainingWeapon(lootId, catalog),
+            out notice,
+            out error);
+    }
+
+    private static bool TryCreate(
+        RaidLossNoticeReason reason,
+        PendingLoadoutReservation reservation,
+        Func<LootId, bool> isExcluded,
         out RaidLossNotice notice,
         out string error)
     {
@@ -41,14 +77,14 @@ public sealed class RaidLossNotice
         }
 
         List<LootEntry> folded = FoldByLootId(carried);
-        if (folded.Count == 0)
+        if (!RaidResultsLootSummaryBuilder.TryBuildLost(folded, isExcluded, out RaidResultsLootSummary lost, out error))
         {
-            error = "The reservation carried nothing.";
             return false;
         }
 
-        if (!RaidResultsLootSummaryBuilder.TryBuildLost(folded, out RaidResultsLootSummary lost, out error))
+        if (lost.Entries.Count == 0)
         {
+            error = "The reservation carried nothing that counts as lost.";
             return false;
         }
 

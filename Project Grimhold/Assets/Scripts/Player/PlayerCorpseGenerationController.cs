@@ -237,6 +237,7 @@ public sealed class PlayerCorpseGenerationController : NetworkBehaviour
         if (TryGetComponent(out ExtractedLootExperienceProducer producer) &&
             producer.TryPrepareLostResultsSummary(
                 ownershipSnapshot,
+                _lootReceiver.LootCatalog,
                 out RaidResultsLootSummary summary,
                 out error) &&
             participant.TryStoreResultsLoot(summary, _lootReceiver.LootCatalog))
