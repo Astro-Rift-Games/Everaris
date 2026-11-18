@@ -19,6 +19,7 @@ public sealed class TownMerchantNetworkController : NetworkBehaviour, IMerchantT
     public const int MaxTradeStockLines = 64;
 
     [SerializeField] private LootDefinitionCatalog _catalog;
+    [SerializeField] private TownMerchantType _merchantType = TownMerchantType.General;
     [SerializeField, Tooltip("Initial offering. Seeds the shared stock once; it is not runtime state.")]
     private List<MerchantStockItem> _stock;
 
@@ -28,6 +29,7 @@ public sealed class TownMerchantNetworkController : NetworkBehaviour, IMerchantT
     [Networked, Capacity(MaxTradeRecords)] private NetworkArray<MerchantTradeRecord> TradeRecords => default;
     [Networked, Capacity(MaxTradeStockLines)] private NetworkArray<MerchantTradeStockLine> TradeStockLines => default;
 
+    public TownMerchantType MerchantType => _merchantType;
     public IReadOnlyList<MerchantStockItem> Stock => _stock;
     public LootDefinitionCatalog Catalog => _catalog;
 

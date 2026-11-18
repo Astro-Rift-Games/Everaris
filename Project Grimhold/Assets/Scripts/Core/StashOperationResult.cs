@@ -41,5 +41,8 @@ public enum StashOperationResult
     ReservationPending,
 
     /// <summary>The destination Inventory has no free slot for the item.</summary>
-    InventoryFull
+    InventoryFull,
+
+    /// <summary>The weekly merchant rotation cycle has expired.</summary>
+    RotationExpired
 }

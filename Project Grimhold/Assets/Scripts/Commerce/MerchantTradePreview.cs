@@ -85,7 +85,9 @@ public sealed class MerchantTradePreview
         MerchantTradeDraft draft,
         Func<LootId, int> availableStock,
         LootDefinitionCatalog catalog,
-        BuybackLedger buybackLedger = null)
+        BuybackLedger buybackLedger = null,
+        TownMerchantType? merchantType = null,
+        Func<LootId, bool> isDemandItem = null)
     {
         if (confirmedInventory == null) throw new ArgumentNullException(nameof(confirmedInventory));
         if (draft == null) throw new ArgumentNullException(nameof(draft));
@@ -107,6 +109,12 @@ public sealed class MerchantTradePreview
         {
             if (!TryResolve(catalog, line.LootId, blocks, out LootDefinition definition)) continue;
 
+            if (!MerchantSpecializationPolicy.IsAllowedToSellToMerchant(merchantType, definition))
+            {
+                blocks.Add(new MerchantTradeBlock(MerchantTradeBlockReason.NotPurchasable, line.LootId));
+                continue;
+            }
+
             int saleIndex = ProfileInventoryRules.FindIndex(projected, line.LootId);
             if (saleIndex < 0 || line.Amount > projected[saleIndex].Amount)
             {
@@ -115,7 +123,9 @@ public sealed class MerchantTradePreview
             }
 
             ProfileInventoryRules.TryRemoveAt(projected, projected[saleIndex].Slot, line.LootId, line.Amount);
-            overflow |= !TryAdd(saleTotal, (long)definition.SellValuePerUnit * line.Amount, out saleTotal);
+            bool isDemand = isDemandItem != null && isDemandItem(line.LootId);
+            int unitSellPrice = isDemand ? (int)Math.Floor(definition.ObjectValue * 1.2f) : definition.SellValuePerUnit;
+            overflow |= !TryAdd(saleTotal, (long)unitSellPrice * line.Amount, out saleTotal);
         }
 
         long purchaseTotal = 0;
@@ -124,7 +134,7 @@ public sealed class MerchantTradePreview
         {
             if (!TryResolve(catalog, line.LootId, blocks, out LootDefinition definition)) continue;
 
-            if (definition.BuyValuePerUnit <= 0)
+            if (definition.BuyValuePerUnit <= 0 || !MerchantSpecializationPolicy.IsAllowedToBuyFromMerchant(merchantType, definition))
             {
                 blocks.Add(new MerchantTradeBlock(MerchantTradeBlockReason.NotPurchasable, line.LootId));
                 continue;
@@ -143,8 +153,6 @@ public sealed class MerchantTradePreview
         if (draft.Buyback.HasValue)
         {
             MerchantBuybackEntry entry = draft.Buyback.Value;
-            if (draft.Purchases.Count > 0 || draft.Sales.Count > 0)
-                blocks.Add(new MerchantTradeBlock(MerchantTradeBlockReason.BuybackMustBeAlone));
 
             bool available = false;
             if (buybackLedger != null)

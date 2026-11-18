@@ -20,6 +20,8 @@ public sealed class MerchantShopUI : MonoBehaviour
 {
     [Header("Header")]
     [SerializeField] private Button _closeButton;
+    [SerializeField] private TMP_Text _titleText;
+    [SerializeField] private TMP_Text _rotationCountdownText;
 
     [Header("Inventory and Merchant Stock Grids")]
     [SerializeField] private StoreItemUI _storeItemPrefab;
@@ -223,6 +225,12 @@ public sealed class MerchantShopUI : MonoBehaviour
     {
         MerchantShopViewModel viewModel = _interaction?.ViewModel ?? MerchantShopViewModel.Unavailable;
 
+        SetText(_titleText, viewModel.Title);
+        if (!string.IsNullOrEmpty(viewModel.RotationCountdown))
+        {
+            SetText(_rotationCountdownText, $"Rotación en: {viewModel.RotationCountdown}");
+        }
+
         SetText(_currencyText, viewModel.ConfirmedCurrency + Projection + viewModel.ProjectedCurrency);
         SetText(_purchaseTotalText, $"Compra: {viewModel.PurchaseTotal}");
         SetText(_saleTotalText, $"Venta: {viewModel.SaleTotal}");
@@ -265,8 +273,8 @@ public sealed class MerchantShopUI : MonoBehaviour
         EquipmentTooltipPresentation information = EquipmentTooltipPresentationBuilder.Build(definition);
 
         if (_detailIcon != null) _detailIcon.sprite = definition != null ? definition.Icon : null;
-        SetText(_detailName, (information.CanShow ? information.Title : row.LootId.Value) +
-            (row.IsBuyback ? " (Recompra)" : string.Empty));
+        string titleSuffix = row.IsBuyback ? " (Recompra)" : (row.IsDemand ? " [Demanda +20%]" : string.Empty);
+        SetText(_detailName, (information.CanShow ? information.Title : row.LootId.Value) + titleSuffix);
         SetText(_detailType, definition != null ? definition.Category.ToString() : string.Empty);
         SetText(_detailRarity, definition != null ? definition.Rarity.ToString() : string.Empty);
         SetText(_detailDescription, definition != null ? definition.Description : string.Empty);
@@ -284,7 +292,8 @@ public sealed class MerchantShopUI : MonoBehaviour
         if (_decreaseQtyButton != null) _decreaseQtyButton.interactable = _interaction.CanDecreaseQuantity;
         if (_increaseQtyButton != null) _increaseQtyButton.interactable = _interaction.CanIncreaseQuantity;
 
-        SetText(_unitPriceText, row.UnitPrice.ToString());
+        string unitPriceText = row.IsDemand ? $"{row.UnitPrice} (+20% Demanda)" : row.UnitPrice.ToString();
+        SetText(_unitPriceText, unitPriceText);
         SetText(_lineTotalText, _interaction.LineTotal.ToString());
         SetText(_lineStateText, DescribeLine(row));
         SetText(_actionButtonText, _interaction.LineAction == MerchantShopLineAction.Update ? "Actualizar" : "Agregar");

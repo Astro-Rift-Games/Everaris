@@ -27,6 +27,7 @@ const { TRAINING_WEAPONS, isTrainingWeapon } = require('./TrainingWeapons');
 const { validatePreparedAbilities } = require('./PreparedAbilityValidation');
 const { receiptPush, watermarkUpdate, assertWithinRetention } = require('./ShopReceiptRetention');
 const { pendingLootResultFilter } = require('./ResultReservationBinding');
+const { getWeeklyRotation, isAllowedByMerchant, getMerchantOffers } = require('./CommerceRotationService');
 
 const { INSTANCE_ID, invalidInventory, createEquipment, validateResultItems, resultEquipmentToInstances,
   equipmentToResult } = require('./ItemInstances');
@@ -238,21 +239,27 @@ function requirePreparedWeapon(equipment) {
 }
 
 // Plan a sale on an in-memory candidate. No persisted state changes until the caller commits.
-function applyShopSale(loadout, version, lootId, amount, sourceSlot) {
+function applyShopSale(loadout, version, lootId, amount, sourceSlot, weeklyDemandItems = []) {
   const sellOffer = isTrainingWeapon(lootId) ? null :
     version === 3 && getEquipmentTemplate(lootId) ? getEquipmentTemplate(lootId) : getSellOffer(lootId);
   if (!sellOffer) throw { statusCode: 404, errorCode: 'ITEM_NOT_SELLABLE', message: `Item '${lootId}' cannot be sold to the shop.` };
   const index = loadout.findIndex(i => matchesLootId(i, lootId) && (version === 1 || i.slot === sourceSlot));
   const source = loadout[index];
-  const unitSellValue = sellOffer.sellValue + (version === 3 ? (source?.instance?.modifiers?.gems || [])
+  if (!source || source.amount < amount) throw { statusCode: 409, errorCode: 'INSUFFICIENT_ITEMS', message: `Loadout does not hold ${amount} unit(s) of '${lootId}'.` };
+
+  const isDemand = (weeklyDemandItems || []).some(d => matchesLootId({ lootId: d.lootId || d }, lootId));
+  const baseSellValue = isDemand ? Math.floor(sellOffer.sellValue * 1.2) : sellOffer.sellValue;
+
+  const unitSellValue = baseSellValue + (version === 3 ? (source?.instance?.modifiers?.gems || [])
     .reduce((sum, gem) => sum + (gem ? GEM_CATALOG[gem].sellValue : 0), 0) : 0);
   const revenue = unitSellValue * amount;
   if (!Number.isSafeInteger(revenue)) throw { statusCode: 400, errorCode: 'INTEGER_OVERFLOW', message: 'Calculated transaction value causes integer overflow.' };
-  if (!source || source.amount < amount) throw { statusCode: 409, errorCode: 'INSUFFICIENT_ITEMS', message: `Loadout does not hold ${amount} unit(s) of '${lootId}'.` };
   if (source.amount === amount) loadout.splice(index, 1);
   else source.amount -= amount;
   return { revenue, buybackEntry: isBuybackEligible(lootId, version) ? {
-    entryId: randomUUID(), lootId, amount, unitPrice: Math.ceil(unitSellValue * BUYBACK_PRICE_MULTIPLIER), soldAt: new Date()
+    entryId: randomUUID(), lootId, amount, unitPrice: Math.ceil(unitSellValue * BUYBACK_PRICE_MULTIPLIER),
+    ...(version === 3 && source?.instance ? { instance: copyEntry(source.instance) } : {}),
+    soldAt: new Date()
   } : null };
 }
 
@@ -271,14 +278,28 @@ function safeTradeTotal(value) {
 
 class InventoryService {
   /** One ticket, one revision, one receipt. Sales free space and fund purchases before placement. */
-  static async shopTrade(accountId, { transactionId, expectedRevision, purchases, sales }) {
+  static async shopTrade(accountId, { transactionId, expectedRevision, purchases = [], sales = [], buybacks = [], weekId, merchant }) {
     const character = await Character.findOne({ accountId });
     if (!character) throw { statusCode: 404, errorCode: 'CHARACTER_NOT_FOUND', message: 'No character found for this account.' };
     requireMigratedInventory(character);
     const version = inventoryVersion(character);
+
+    // Rotation and weekId validation
+    const currentWeek = getWeeklyRotation();
+    if (weekId && weekId !== currentWeek.weekId) {
+      throw { statusCode: 409, errorCode: 'ROTATION_EXPIRED', message: 'The weekly shop rotation has changed. Please review current offers.' };
+    }
+
     const canonicalLine = line => ({ lootId: normalizeLootId(line.lootId.trim()), amount: line.amount,
       ...(version >= 2 && Object.hasOwn(line, 'sourceSlot') ? { sourceSlot: line.sourceSlot } : {}) });
-    const intent = { purchases: purchases.map(canonicalLine), sales: sales.map(canonicalLine) };
+    const canonicalBuyback = line => ({ entryId: String(line.entryId).trim(), amount: line.amount });
+
+    const intent = {
+      purchases: (purchases || []).map(canonicalLine),
+      sales: (sales || []).map(canonicalLine),
+      buybacks: (buybacks || []).map(canonicalBuyback),
+      ...(merchant ? { merchant: String(merchant).toLowerCase().trim() } : {})
+    };
     // Ordered, normalized lines are the fingerprint: JSON property insertion order is fixed here.
     const fingerprint = JSON.stringify(intent);
     const receipt = (character.appliedShopReceipts || []).find(r => r.transactionId === transactionId);
@@ -289,23 +310,102 @@ class InventoryService {
       return { ...shopSnapshot(character), alreadySecured: true };
     }
     assertWithinRetention(character, transactionId);
+
+    // Validate merchant specialization constraints according to Doc 23 §3
+    if (merchant) {
+      for (const line of intent.purchases) {
+        if (!isAllowedByMerchant(merchant, 'buy', line.lootId)) {
+          throw { statusCode: 422, errorCode: 'INVALID_MERCHANT_ITEM', message: `Merchant '${merchant}' does not offer '${line.lootId}'.` };
+        }
+      }
+      for (const line of intent.sales) {
+        if (!isAllowedByMerchant(merchant, 'sell', line.lootId)) {
+          throw { statusCode: 422, errorCode: 'INVALID_MERCHANT_ITEM', message: `Merchant '${merchant}' does not buy '${line.lootId}'.` };
+        }
+      }
+      for (const line of intent.buybacks) {
+        if (!isAllowedByMerchant(merchant, 'buyback', '')) {
+          throw { statusCode: 422, errorCode: 'INVALID_MERCHANT_ITEM', message: `Merchant '${merchant}' does not support buyback.` };
+        }
+      }
+    }
+
+    // Validate weekly stock limits for purchases (Doc 23 §5.2)
+    const stockLimits = new Map();
+    for (const w of currentWeek.normalWeapons) stockLimits.set(normalizeLootId(w.lootId), w.stock || 1);
+    if (currentWeek.specialWeapon) stockLimits.set(normalizeLootId(currentWeek.specialWeapon.lootId), currentWeek.specialWeapon.stock || 1);
+    for (const a of currentWeek.armors) stockLimits.set(normalizeLootId(a.lootId), a.stock || 1);
+    for (const u of currentWeek.utilities) stockLimits.set(normalizeLootId(u.lootId), u.stock || 1);
+
+    const isCurrentWeek = character.inventory.weeklyStock?.weekId === currentWeek.weekId;
+    const rawPurchased = isCurrentWeek && character.inventory.weeklyStock?.purchased;
+    const playerPurchased = new Map();
+    if (rawPurchased) {
+      if (rawPurchased instanceof Map) {
+        for (const [k, v] of rawPurchased.entries()) playerPurchased.set(k, v);
+      } else if (typeof rawPurchased === 'object') {
+        for (const [k, v] of Object.entries(rawPurchased)) playerPurchased.set(k, v);
+      }
+    }
+
+    const pendingPurchased = new Map(playerPurchased);
+    for (const line of intent.purchases) {
+      if (stockLimits.has(line.lootId)) {
+        const limit = stockLimits.get(line.lootId);
+        const already = pendingPurchased.get(line.lootId) || 0;
+        if (already + line.amount > limit) {
+          throw { statusCode: 409, errorCode: 'STOCK_EXHAUSTED', message: `Stock exhausted for '${line.lootId}'. Remaining available: ${Math.max(0, limit - already)}.` };
+        }
+        pendingPurchased.set(line.lootId, already + line.amount);
+      }
+    }
+
     for (const line of intent.sales) requireSourceSlot(character, line.sourceSlot);
     if (version === 1) assertUnambiguousItems(character.inventory.loadout,
       [...intent.sales, ...intent.purchases].map(line => line.lootId));
     if (character.inventory.pendingReservation) throw { statusCode: 409, errorCode: 'RESERVATION_PENDING', message: 'Cannot trade while a raid reservation is pending.' };
     if (character.revision !== expectedRevision) throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict.' };
+
     const loadout = inventoryItems(character, 'loadout');
-    const entries = [];
+    const newBuybackEntries = [];
     let revenue = 0; let cost = 0;
+
+    // Process sales (fund cart)
     for (const line of intent.sales) {
-      const sale = applyShopSale(loadout, version, line.lootId, line.amount, line.sourceSlot);
+      const sale = applyShopSale(loadout, version, line.lootId, line.amount, line.sourceSlot, currentWeek.demandItems);
       revenue = safeTradeTotal(revenue + sale.revenue);
-      if (sale.buybackEntry) entries.push(sale.buybackEntry);
+      if (sale.buybackEntry) newBuybackEntries.push(sale.buybackEntry);
     }
+
+    // Process purchases
     for (const line of intent.purchases) cost = safeTradeTotal(cost + shopPurchaseCost(line.lootId, line.amount));
+
+    // Process buybacks
+    const existingBuybacks = character.inventory.buyback?.entries ? [...character.inventory.buyback.entries] : [];
+    for (const line of intent.buybacks) {
+      const entryIndex = existingBuybacks.findIndex(e => e.entryId === line.entryId);
+      if (entryIndex === -1) throw { statusCode: 404, errorCode: 'BUYBACK_ENTRY_NOT_FOUND', message: 'Buyback entry not found in this Town session.' };
+      const entry = existingBuybacks[entryIndex];
+      if (isTrainingWeapon(entry.lootId) || (version >= 3 && (!isBuybackEligible(entry.lootId, version) || (getEquipmentTemplate(entry.lootId) && !entry.instance)))) {
+        throw { statusCode: 409, errorCode: 'BUYBACK_NOT_ELIGIBLE', message: 'This item cannot be bought back.' };
+      }
+      if (line.amount > entry.amount) throw { statusCode: 409, errorCode: 'INSUFFICIENT_BUYBACK_UNITS', message: 'Not enough units in this sale line.' };
+      const buybackCost = safeTradeTotal(entry.unitPrice * line.amount);
+      cost = safeTradeTotal(cost + buybackCost);
+
+      receiveItem(loadout, 'loadout', { lootId: entry.lootId, amount: line.amount, ...(entry.instance ? { instance: copyEntry(entry.instance) } : {}) }, version);
+
+      if (line.amount === entry.amount) {
+        existingBuybacks.splice(entryIndex, 1);
+      } else {
+        existingBuybacks[entryIndex] = { ...copyEntry(entry), amount: entry.amount - line.amount };
+      }
+    }
+
     const funded = safeTradeTotal((character.inventory.currency || 0) + revenue);
     const currency = safeTradeTotal(funded - cost);
     if (currency < 0) throw { statusCode: 409, errorCode: 'INSUFFICIENT_FUNDS', message: 'Not enough currency to complete trade.' };
+
     for (const line of intent.purchases) {
       // Reuse the single-buy receiver, including per-unit instance issuance for v3 equipment.
       if (version === 1) {
@@ -314,16 +414,25 @@ class InventoryService {
       }
       receiveItem(loadout, 'loadout', { lootId: line.lootId, amount: line.amount }, version);
     }
+
+    const combinedBuybackEntries = [...existingBuybacks, ...newBuybackEntries];
+    const finalBuybackEntries = combinedBuybackEntries.slice(-BUYBACK_MAX_ENTRIES);
+
     const updated = await Character.findOneAndUpdate({ accountId, revision: expectedRevision,
       'inventory.pendingReservation': null,
       'inventory.currency': { $gte: Math.max(0, cost - revenue) },
       'inventory.buyback.sessionEpoch': buybackEpochFilter(character.inventory)
     }, {
-      $set: { 'inventory.loadout': loadout, 'inventory.currency': currency },
+      $set: {
+        'inventory.loadout': loadout,
+        'inventory.currency': currency,
+        'inventory.buyback.entries': finalBuybackEntries,
+        'inventory.weeklyStock.weekId': currentWeek.weekId,
+        'inventory.weeklyStock.purchased': pendingPurchased
+      },
       $inc: { revision: 1 },
       ...watermarkUpdate(character),
       $push: {
-        ...(entries.length ? { 'inventory.buyback.entries': { $each: entries, $slice: -BUYBACK_MAX_ENTRIES } } : {}),
         appliedShopReceipts: receiptPush({ transactionId, type: 'trade', intent, totalAmount: cost - revenue, timestamp: new Date() })
       }
     }, { returnDocument: 'after' });
@@ -964,7 +1073,8 @@ class InventoryService {
           'inventory.stash': character.inventory.stash,
           'inventory.pendingReservation': pendingReservation,
           'inventory.loadout': [],
-          'inventory.preparedEquipment': version === 3 ? serializePreparedEquipment({}, version) : {}
+          'inventory.preparedEquipment': version === 3 ? serializePreparedEquipment({}, version) : {},
+          ...(character.inventory.buyback ? { 'inventory.buyback.entries': [] } : {})
         },
         $inc: { revision: 1 }
       },
@@ -1375,7 +1485,7 @@ class InventoryService {
     const entry = character.inventory.buyback?.entries?.find(e => e.entryId === entryId);
     if (!entry) throw { statusCode: 404, errorCode: 'BUYBACK_ENTRY_NOT_FOUND', message: 'Buyback entry not found in this Town session.' };
     // v3 disables equipment buy-back, including ledger entries sold before the instance migration.
-    if (isTrainingWeapon(entry.lootId) || (version >= 3 && !isBuybackEligible(entry.lootId, version))) {
+    if (isTrainingWeapon(entry.lootId) || (version >= 3 && (!isBuybackEligible(entry.lootId, version) || (getEquipmentTemplate(entry.lootId) && !entry.instance)))) {
       throw { statusCode: 409, errorCode: 'BUYBACK_NOT_ELIGIBLE', message: 'This item cannot be bought back.' };
     }
     if (amount > entry.amount) throw { statusCode: 409, errorCode: 'INSUFFICIENT_BUYBACK_UNITS', message: 'Not enough units in this sale line.' };
@@ -1384,7 +1494,7 @@ class InventoryService {
     if ((character.inventory.currency || 0) < cost) throw { statusCode: 409, errorCode: 'INSUFFICIENT_FUNDS', message: 'Not enough currency.' };
     if (version === 1) assertUnambiguousItems(character.inventory.loadout, [entry.lootId]);
     const loadout = inventoryItems(character, 'loadout');
-    receiveItem(loadout, 'loadout', { lootId: entry.lootId, amount }, version);
+    receiveItem(loadout, 'loadout', { lootId: entry.lootId, amount, ...(entry.instance ? { instance: copyEntry(entry.instance) } : {}) }, version);
     const entryUpdate = amount === entry.amount
       ? { $pull: { 'inventory.buyback.entries': { entryId } } }
       : {};
@@ -1409,6 +1519,80 @@ class InventoryService {
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict during buyback.' };
     }
     return shopSnapshot(updated);
+  }
+
+  /**
+   * Returns commercial state for a merchant or all merchants including rotation, offers,
+   * active demand, remaining player personal stock, and shared buyback ledger.
+   */
+  static async getCommercialState(accountId, merchantType = '') {
+    const character = await Character.findOne({ accountId });
+    if (!character) throw { statusCode: 404, errorCode: 'CHARACTER_NOT_FOUND', message: 'No character found for this account.' };
+    requireMigratedInventory(character);
+
+    const currentWeek = getWeeklyRotation();
+    const isCurrentWeek = character.inventory.weeklyStock?.weekId === currentWeek.weekId;
+    const rawPurchased = isCurrentWeek && character.inventory.weeklyStock?.purchased;
+    const playerPurchased = new Map();
+    if (rawPurchased) {
+      if (rawPurchased instanceof Map) {
+        for (const [k, v] of rawPurchased.entries()) playerPurchased.set(k, v);
+      } else if (typeof rawPurchased === 'object') {
+        for (const [k, v] of Object.entries(rawPurchased)) playerPurchased.set(k, v);
+      }
+    }
+
+    const type = (merchantType || '').toLowerCase().trim();
+    const offers = getMerchantOffers(type);
+
+    const attachRemainingStock = (item) => {
+      if (item.stock === 'unlimited') return { ...item, remainingStock: 'unlimited' };
+      const normalized = normalizeLootId(item.lootId);
+      const purchasedCount = playerPurchased.get(normalized) || 0;
+      return {
+        ...item,
+        remainingStock: Math.max(0, (item.stock || 1) - purchasedCount)
+      };
+    };
+
+    let decoratedOffers = {};
+    if (type === 'general') {
+      decoratedOffers = {
+        permanent: (offers.permanent || []).map(attachRemainingStock),
+        rotating: (offers.rotating || []).map(attachRemainingStock),
+        demand: offers.demand || []
+      };
+    } else if (type === 'blacksmith') {
+      decoratedOffers = {
+        weapons: (offers.weapons || []).map(attachRemainingStock),
+        specialWeapon: offers.specialWeapon ? attachRemainingStock(offers.specialWeapon) : null,
+        armors: (offers.armors || []).map(attachRemainingStock)
+      };
+    } else if (type === 'arcanist') {
+      decoratedOffers = {
+        weapons: (offers.weapons || []).map(attachRemainingStock),
+        specialWeapon: offers.specialWeapon ? attachRemainingStock(offers.specialWeapon) : null
+      };
+    } else {
+      decoratedOffers = {
+        normalWeapons: (currentWeek.normalWeapons || []).map(attachRemainingStock),
+        specialWeapon: currentWeek.specialWeapon ? attachRemainingStock(currentWeek.specialWeapon) : null,
+        armors: (currentWeek.armors || []).map(attachRemainingStock),
+        utilities: (currentWeek.utilities || []).map(attachRemainingStock),
+        demandItems: currentWeek.demandItems || [],
+        permanentOffers: (currentWeek.permanentOffers || []).map(attachRemainingStock)
+      };
+    }
+
+    return {
+      merchant: type || 'all',
+      weekId: currentWeek.weekId,
+      nextRotationTimestamp: currentWeek.nextRotationTimestamp,
+      currency: character.inventory.currency || 0,
+      revision: character.revision,
+      offers: decoratedOffers,
+      buyback: serializeBuyback(character.inventory)
+    };
   }
 }
 

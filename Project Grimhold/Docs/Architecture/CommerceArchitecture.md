@@ -2,24 +2,54 @@
 
 ## Scope
 
-This document owns the Unity-side technical contract for Town Merchant commerce: pending trade
-state, presentation, Fusion authority over shared merchant stock, request identity and the
-persistence boundary. `LocalPlayerPersistenceArchitecture.md` owns the character aggregate and
-its transactions; this document only defines what Commerce submits to it.
+This document owns the technical contract for Town Merchant commerce across Unity and the Node.js backend:
+pending trade state, presentation, merchant specialization, authoritative individual stock, weekly rotation,
+shared buyback (FIFO 16), request identity and the persistence boundary. `LocalPlayerPersistenceArchitecture.md`
+owns the character aggregate and its transactions; this document defines what Commerce submits to it.
 
-Intended gameplay behavior lives in the live Game Design ("UI - Auditoría Funcional de Interfaces
-MVP", section UI.1.4 Comercio).
+Intended gameplay behavior is authored authoritatively in:
+- **Doc 23 — Sistema de Comercio y Mercaderes del Pueblo** (`1Bn10tvbGTYuD2lCcDK_8No9nvRrdSOMTCyQ3c_J-3qY`).
+- **Doc 22 — Macroeconomía de Extracción** (`1xlZtvaIDDOvXez2MgqmFpjmSyExGTvBWwGjztEpBoLw`).
 
-### Backend Authoritative Contract (US-57 / SEC-57.1)
+### Three Specialized Town Merchants (Doc 23 §3)
 
-The backend is the sole authority for economic mutations:
-- `POST /character/me/inventory/shop/buy` and `POST /character/me/inventory/shop/sell` accept pure transaction intentions (`transactionId`, `lootId`, `amount`, `expectedRevision`).
-- `POST /character/me/inventory/shop/trade` accepts one complete ticket (`transactionId`, `expectedRevision`, `purchases: [{ lootId, amount }]`, `sales: [{ lootId, amount, sourceSlot }]`). It applies all sales, then all purchases in ticket order, validates funds and capacity on the final state, and persists the whole ticket in one revision-guarded write with one `trade` receipt bound to the canonical ordered lines; any failing line rejects the ticket without mutation. Replaying the same `transactionId` and lines returns `alreadySecured`; different lines return `TRANSACTION_ID_REUSED`. See `backend/README.md` for limits and error codes.
-- Client-declared prices (`declaredPrice`, `declaredSellValue`) are strictly untrusted and ignored for authoritative economic balance calculations.
-- Authoritative buy and sell values are resolved on the server via `shopCatalog.js` (derived from `GD-14` / `LootDefinitionCatalog`).
-- Receipt retention: `appliedShopReceipts` keeps the newest 64 receipts of every writer (buy, sell, buyback, trade, install-gem, ability purchase). Each write that evicts receipts advances `Character.shopReceiptWatermark` (`$max` of the evicted id timestamps, capped by each receipt's server time) in the same atomic update. A timestamped `transactionId` without receipt and at or below the watermark is rejected with `409 TRANSACTION_RETENTION_EXCEEDED` before any mutation; legacy ids (bare GUID) have no timestamp and keep the window-only behavior. Unity sends `ShopTransactionId.ToString()` for trade, buyback and ability purchase. See `backend/README.md`.
-- The backend validates positive integer quantities (`1 <= amount <= MAX_TRANSACTION_AMOUNT`), checks funds/items atomically against MongoDB, and binds receipts strictly to `{ transactionId, type, lootId, amount, totalAmount }` to prevent replay and fraud.
-- Unity client preview (`MerchantTradePreview`) remains purely advisory; persistent confirmation reconciles local state from the backend's authoritative response.
+Town commerce is distributed across three specialized merchants and one combat trainer:
+1. **Mercader General:**
+   - **Vende:** Oferta permanente ilimitada (3 consumibles básicos) + 2 utilidades rotativas semanales con cupo personal.
+   - **Compra:** Todos los objetos comerciables (consumibles especiales comerciables, tesoros, recursos, etc.).
+   - **Servicios:** Comercio regular, demanda semanal bonificada (+20%) y acceso a la recompra compartida.
+2. **Herrero:**
+   - **Vende:** Armas físicas rotativas (del pool de 7 armas físicas), armaduras rotativas (del pool de 24 piezas) y arma especial física semanal (con 1 modificación inicial).
+   - **Compra:** Armas físicas y todas las armaduras.
+   - **Servicios:** Comercio y acceso a la recompra compartida (servicios de mejora de armas y armaduras en US-84).
+3. **Arcanista:**
+   - **Vende:** Armas mágicas rotativas (del pool de 5 armas mágicas) y arma especial mágica semanal (con 1 modificación inicial).
+   - **Compra:** Armas mágicas.
+   - **Servicios:** Comercio y acceso a la recompra compartida (servicios de mejora arcana en US-84).
+4. **Entrenador:**
+   - No compra ni vende objetos. Provee armas de entrenamiento gratuitas (`Tradable = false`, `ObjectValue = 0`).
+
+### Commercial Pricing Formulas (Doc 23 §7 & §10)
+
+Prices are calculated per single unit before multiplying by stack quantity, with a minimum price of 1 Gold for eligible tradable items:
+- **Compra de NPC:** `ceil(ObjectValue * 2.0)`
+- **Venta regular a NPC:** `floor(ObjectValue * 1.0)`
+- **Venta con Demanda semanal bonificada (+20%):** `floor(ObjectValue * 1.2)`
+- **Recompra compartida (FIFO 16):** `ceil(1.5 * Oro efectivamente recibido por el jugador)`
+
+Training items (`Tradable = false`, `ObjectValue = 0`) are completely excluded from buy, sell, and buyback.
+Consumables especiales (Bomba explosiva, Bomba de humo, Daga arrojadiza, Auto-reanimador), tesoros y recursos no forman parte de la venta regular de NPC en el MVP (solo se pueden vender al NPC o recomprar si fueron vendidos).
+
+### Backend Authoritative Contract (US-83 / Docs 22 y 23)
+
+The backend is the sole authority for commerce catalog generation, individual stock, weekly rotation, and economic mutations:
+- **Global Weekly Rotation (Doc 23 §5):** Rotates every Monday at 00:00 UTC based on server UTC time using a deterministic seed per Unix week.
+  - Generates: 3 distinct normal weapons (from pool of 12), 1 special weapon (from remaining 9) with exactly 1 initial modifier (Scaling E 30% / +20 OV, Scaling D 25% / +35 OV, Scaling C 15% / +50 OV, or 1 empty socket 30% / +60 OV), 3 distinct armor pieces (from pool of 24), 2 distinct utilities (from the 3 available: Lockpick stock 3, Rune Compass stock 1, Arcane Detector stock 1), and 3 distinct eligible resources/treasures with weekly demand bonus (+20%).
+- **Individual Player Stock (Doc 23 §5.2 & §8.2):** Stock is tracked and consumed individually per player per weekly cycle in the backend (resetting automatically at Monday 00:00 UTC), not shared in a competitive pool across players in the Town instance.
+- **Atomic Mixed Cart Transaction:** `POST /character/me/inventory/shop/trade` (and `/api/commerce/transaction`) accepts a unified cart containing purchases, sales (with demand awareness) and buybacks. Validates final Gold >= 0, final slot capacity (accounting for sold and bought items), current player stock, and catalog freshness (rejecting with `ROTATION_EXPIRED` if the weekly cycle rotated while the cart was open, requiring client re-confirmation).
+- **Shared Buyback (FIFO 16, Doc 23 §8.3):** A single 16-entry FIFO list per player shared between General Merchant, Blacksmith, and Arcanist. Retains exact instance attributes (InstanceID, scalings, sockets, gems, armor level) and special consumable stacks. Cleared on raid start (`TownRaidQueue`) or logout.
+- **MaxTransportable = 1 Enforcement (Doc 23 §8.2):** The player is allowed to store multiple units of restricted utilities (Rune Compass, Arcane Detector, Self-Revive) in their Town Stash. The raid admission system (`TownRaidQueue` / `RaidAdmissionValidator`) strictly blocks entry if the outbound inventory exceeds `MaxTransportable = 1`.
+- **Supersedes FIX-24 (#694):** The legacy universal BUY_CATALOG and Fusion-replicated stock reservation are replaced by authoritative backend individual weekly stock and weekly rotation.
 
 ## Decision
 
@@ -265,49 +295,29 @@ of the same loot stay independent, matching `MerchantTradePreview`. Content vali
 return `InvalidInventory`; reservation rejection returns `ReservationPending`. Neither mutates the
 profile nor publishes `ProfileCommitted`.
 
-### Buy-back
+### Buy-back (Doc 23 §8.3)
 
-**Equipment buy-back is disabled until Game Design redefines it.** Equipment sales push no
-ledger entry, backend `isBuybackEligible` returns false for equipment, and the UI hides equipment
-buy-back rows ([Item Instances §§1, 4.3](ItemInstanceArchitecture.md#43-operations)). The approved
-TASK-283 rule supersedes the equipment eligibility in live Game Design **GD UI.1.4 §7.1**; correcting
-that Game Design is a separate final step, not completed by this document. On inventory schema v3
-every equipment instance is sellable, even for 0 gold; the provisional instance sell price is the
-template sell value plus the sell value of every installed gem (Item Instances §4.3), independent
-of the inactive buy-back pricing below.
+Shared buyback is active across all three Town merchants (Mercader General, Herrero, Arcanista) backed by a
+single authoritative 16-entry FIFO list per player:
 
-The existing ledger infrastructure below is retained for context, not as an active equipment
-buy-back path. It is account-local, never an extension of the shared merchant offering.
-
-- **Ownership:** the backend owns the per-account ledger and validates
-  `POST /character/me/inventory/shop/buyback` (`transactionId`, `entryId`, `amount`,
-  `expectedRevision`). Unity's application-owned `BuybackLedger` is a memory-only read model,
-  replaced by hydration, reconciliation and shop acknowledgements; it is never persisted locally
-  or replicated through Fusion.
-- **Eligibility:** backend `isBuybackEligible` returns false for Weapon, Helmet, Armor, Gloves,
-  Boots and Shield. Unity `IBuybackEligibilityPolicy` is presentation-only, not authorization.
-  No future eligibility rule is defined here.
-- **Price:** `ceil(sellValue * BUYBACK_PRICE_MULTIPLIER)`, currently **1.5**, frozen per unit at
-  sale time. The ledger's unit price, not the catalog's normal purchase price, drives the preview;
-  the backend resolves the entry again on confirmation.
-- **Capacity:** at most **16 entries**, FIFO eviction of the oldest sale entry. Partial buy-back
-  consumes units of the selected entry; buying all units removes it.
-- **Lifetime:** a Town session is a Town session ticket epoch. Login issues a new ticket; Town
-  join renews an expired **30-minute** ticket. Issuing a new ticket clears the backend epoch and
-  the local ledger. Returning from a Raid within the ticket TTL retains entries.
-- **Flow:** `TownMerchantTradeSession` receives the ledger and `IBuybackService` explicitly
-  through `TownInventoryBinder` / `TownMerchantProfileSource`. Confirmation awaits
-  `ExecuteBuybackAsync(profileId, request)` remote-first. There is no Fusion RPC, authority ticket,
-  reservation or shared stock mutation for buy-back. Confirm and all edits remain locked until
-  completion, including across the normal trade timeout or merchant authority changes. Success
-  clears the draft; rejection or exception keeps it and presents the real persistence outcome.
-- **Separate operation:** only one buy-back entry is confirmed at a time. A draft containing
-  buy-back together with any normal purchase/sale is blocked by `BuybackMustBeAlone` and the
-  feedback "La recompra se confirma por separado". Buy-back is not part of the atomic
-  `/shop/trade` endpoint.
-- **Presentation:** authored offering rows keep their existing behavior. Ledger rows follow them
-  in the same merchant grid, keyed by entry id (several sales can contain the same loot), showing
-  ledger amount and "Recompra" beside the frozen unit price. The selected item's name also has
+- **Ownership:** The backend owns the per-player buyback history and validates buybacks as part of the atomic cart
+  endpoint `POST /character/me/inventory/shop/trade` (as well as dedicated `POST /character/me/inventory/shop/buyback`).
+  Unity's application-owned `BuybackLedger` is a memory read model hydrated from backend state.
+- **Eligibility:** Normal equipment (weapons and armor, including upgraded instances with modifiers, gem slots,
+  installed gems, and armor defense levels) and special tradable consumables (e.g. explosive/smoke bombs, throwing daggers,
+  self-revive) sold to the General Merchant enter the shared buyback list.
+  Sold equipment and items do NOT enter regular NPC stock or weekly rotation.
+- **Price:** `ceil(1.5 * goldReceived)`, frozen per unit at sale time based on the gold actually paid to the player.
+  The frozen unit price drives both preview and backend execution.
+- **Capacity:** At most **16 entries**, FIFO eviction (the 17th entry displaces the oldest). Partial buyback
+  consumes units of the selected entry; purchasing all units removes the entry.
+- **Lifetime:** The buyback history persists between opening and closing the merchant UI. It is explicitly cleared
+  upon launching an expedition into a Dungeon (`TownRaidQueue`) or upon logging out / session termination.
+- **Unified Mixed Cart Integration:** Buyback lines can be submitted alongside normal purchases and sales in a
+  single atomic transaction. Sales within the cart generate gold that immediately funds purchases or buybacks in the
+  same ticket, provided final gold >= 0 and final slot capacity is sufficient.
+- **Presentation:** Rendered in a dedicated "Recompra" section or ledger rows accessible across all three merchants,
+  showing the frozen buyback unit price and original instance details.
   a "(Recompra)" suffix. The existing row/center text fields are reused, without prefab changes.
   The session refreshes on `BuybackLedger.Changed` and matching confirmed profile commits.
   The coherent `MerchantTradePreview` projects buy-back cost and Inventory capacity through the

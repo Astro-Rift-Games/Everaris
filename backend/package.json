@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "dev:mem": "node scripts/dev-memory-server.js",
     "test": "node --require ./tests/setup.js --test tests/*.test.js",
     "test:concurrency": "node --require ./tests/setup.js --test tests/concurrency/*.test.js",
     "test:integration": "node --require ./tests/setup.js --test tests/integration/*.test.js",

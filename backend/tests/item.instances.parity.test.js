@@ -42,7 +42,7 @@ test('instance templates and gem catalog mirror Unity categories, natural scalin
   assert.deepEqual(catalog.EQUIPMENT_TEMPLATES, expectedEquipment);
   assert.deepEqual(catalog.GEM_CATALOG, expectedGems);
   for (const lootId of Object.keys(expectedEquipment)) {
-    assert.equal(catalog.isBuybackEligible(lootId), false, `${lootId} v3 buyback disabled`);
+    assert.equal(catalog.isBuybackEligible(lootId), (expectedEquipment[lootId].sellValue > 0), `${lootId} v3 buyback enabled`);
     assert.equal(catalog.isBuybackEligible(lootId, 2), true, `${lootId} v2 buyback preserved`);
   }
 });

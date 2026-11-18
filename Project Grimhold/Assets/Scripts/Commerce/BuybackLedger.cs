@@ -18,4 +18,10 @@ public sealed class BuybackLedger
         _entries = rows.AsReadOnly();
         Changed?.Invoke();
     }
+
+    public void Clear()
+    {
+        _entries = Array.Empty<MerchantBuybackEntry>();
+        Changed?.Invoke();
+    }
 }

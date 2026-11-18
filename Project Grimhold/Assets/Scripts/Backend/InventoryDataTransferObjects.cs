@@ -199,6 +199,16 @@ namespace Grimhold.Backend
         public int expectedRevision;
         public ShopTradePurchaseLine[] purchases;
         public ShopTradeSaleLine[] sales;
+        public ShopTradeBuybackLine[] buybacks;
+        public string weekId;
+        public string merchantId;
+    }
+
+    [Serializable]
+    public struct ShopTradeBuybackLine
+    {
+        public string entryId;
+        public int amount;
     }
 
     [Serializable]

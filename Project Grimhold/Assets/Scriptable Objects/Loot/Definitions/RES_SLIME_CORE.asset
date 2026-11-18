@@ -36,7 +36,7 @@ MonoBehaviour:
   _useMode: 0
   _extractionValuePerUnit: 24
   _sellValuePerUnit: 24
-  _buyValuePerUnit: 48
+  _buyValuePerUnit: 0
   _defaultPickupQuantity: 1
   _consumableDefinition: {fileID: 0}
   _weaponDefinition: {fileID: 0}

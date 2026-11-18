@@ -24,6 +24,8 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
     private readonly Action<MerchantShopViewModel> _present;
     private readonly Func<double> _clock;
     private readonly double _submissionTimeoutSeconds;
+    private readonly Func<LootId, bool> _isDemandItem;
+    private readonly Func<DateTime> _utcNow;
     private readonly MerchantTradeDraft _draft;
     private Guid? _unansweredRequestId;
     private double _submittedAt;
@@ -47,7 +49,9 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
         double submissionTimeoutSeconds,
         Func<Guid> requestIdProvider = null,
         BuybackLedger buybackLedger = null,
-        IBuybackService buybackService = null)
+        IBuybackService buybackService = null,
+        Func<LootId, bool> isDemandItem = null,
+        Func<DateTime> utcNow = null)
     {
         if (!profileId.IsValid)
         {
@@ -61,6 +65,8 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
 
         _buybackLedger = buybackLedger;
         _buybackService = buybackService;
+        _isDemandItem = isDemandItem;
+        _utcNow = utcNow ?? (() => DateTime.UtcNow);
         _profileId = profileId;
         _endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
         _shopService = shopService ?? throw new ArgumentNullException(nameof(shopService));
@@ -119,15 +125,27 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
             return false;
         }
 
-        if (_draft.Buyback.HasValue)
+        if (_draft.Buyback.HasValue && _draft.Purchases.Count == 0 && _draft.Sales.Count == 0)
         {
             _persisting = true;
             Refresh();
             MerchantBuybackEntry entry = _draft.Buyback.Value;
             if (_buybackTransaction.Value != requestId)
                 _buybackTransaction = new ShopTransactionId(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), requestId);
-            _ = PersistBuybackAsync(new MerchantBuybackRequest(_buybackTransaction,
-                entry.EntryId, entry.LootId, _draft.BuybackAmount, entry.UnitPrice));
+
+            if (_buybackService != null)
+            {
+                _ = PersistBuybackAsync(new MerchantBuybackRequest(_buybackTransaction,
+                    entry.EntryId, entry.LootId, _draft.BuybackAmount, entry.UnitPrice));
+            }
+            else
+            {
+                var ticket = new MerchantTradeTicket(_buybackTransaction,
+                    Array.Empty<MerchantPricedTradeLine>(),
+                    Array.Empty<MerchantPricedTradeLine>(),
+                    new[] { new MerchantPricedBuybackLine(entry.EntryId, entry.LootId, _draft.BuybackAmount, entry.UnitPrice) });
+                _ = PersistAndReportAsync(MerchantTradeResponse.Approved(requestId, ticket));
+            }
             return true;
         }
 
@@ -221,8 +239,23 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
         StashOperationResult result;
         try
         {
+            MerchantTradeTicket ticketToPersist = response.Ticket;
+            if (_draft.Buyback.HasValue)
+            {
+                var entry = _draft.Buyback.Value;
+                var buybackLines = new[]
+                {
+                    new MerchantPricedBuybackLine(entry.EntryId, entry.LootId, _draft.BuybackAmount, entry.UnitPrice)
+                };
+                ticketToPersist = new MerchantTradeTicket(
+                    response.Ticket.TransactionId,
+                    response.Ticket.Purchases,
+                    response.Ticket.Sales,
+                    buybackLines);
+            }
+
             // Keep Unity's SynchronizationContext: endpoint and presentation are main-thread only.
-            result = await _shopService.ExecuteTradeAsync(_profileId, response.Ticket);
+            result = await _shopService.ExecuteTradeAsync(_profileId, ticketToPersist);
         }
         catch (Exception exception)
         {
@@ -334,7 +367,8 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
         try
         {
             preview = MerchantTradePreview.Calculate(
-                inventory, _inventory.SlotCapacity, currency, _draft, _endpoint.GetAvailableStock, _endpoint.Catalog, _buybackLedger);
+                inventory, _inventory.SlotCapacity, currency, _draft, _endpoint.GetAvailableStock, _endpoint.Catalog, _buybackLedger,
+                _endpoint.MerchantType, _isDemandItem);
             return true;
         }
         catch (ArgumentException)
@@ -352,6 +386,10 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
         }
 
         bool canEdit = !_draft.IsInFlight;
+        DateTime nextRotationUtc = GetNextWeeklyRotationUtc(_utcNow());
+        TimeSpan remaining = nextRotationUtc - _utcNow();
+        string countdownStr = remaining.TotalSeconds > 0 ? $"{remaining.Days}d {remaining.Hours}h {remaining.Minutes}m" : "Rotando...";
+
         return new MerchantShopViewModel(
             isAvailable: true,
             currency,
@@ -367,7 +405,20 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
             preview.CanConfirm,
             preview.Blocks,
             BuildMerchantRows(canEdit),
-            BuildInventoryRows(inventory, canEdit));
+            BuildInventoryRows(inventory, canEdit),
+            _endpoint.MerchantType,
+            rotationCountdown: countdownStr);
+    }
+
+    public static DateTime GetNextWeeklyRotationUtc(DateTime utcNow)
+    {
+        int daysUntilMonday = ((int)DayOfWeek.Monday - (int)utcNow.DayOfWeek + 7) % 7;
+        if (daysUntilMonday == 0)
+        {
+            daysUntilMonday = 7;
+        }
+        DateTime nextMonday = utcNow.Date.AddDays(daysUntilMonday);
+        return new DateTime(nextMonday.Year, nextMonday.Month, nextMonday.Day, 0, 0, 0, DateTimeKind.Utc);
     }
 
     private IReadOnlyList<MerchantShopRowViewModel> BuildMerchantRows(bool canEdit)
@@ -378,6 +429,11 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
         {
             LootDefinition definition = stock[i].Item;
             if (definition == null || string.IsNullOrWhiteSpace(definition.Id))
+            {
+                continue;
+            }
+
+            if (!MerchantSpecializationPolicy.IsAllowedToBuyFromMerchant(_endpoint.MerchantType, definition))
             {
                 continue;
             }
@@ -407,7 +463,7 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
                 int draftAmount = _draft.Buyback?.EntryId == entry.EntryId ? _draft.BuybackAmount : 0;
                 rows.Add(new MerchantShopRowViewModel(definition, entry.LootId, true,
                     entry.UnitPrice, entry.Amount, draftAmount, entry.UnitPrice * draftAmount,
-                    canEdit && _buybackService != null && (!_draft.Buyback.HasValue || draftAmount > 0),
+                    canEdit && (_buybackService != null || _shopService != null) && (!_draft.Buyback.HasValue || draftAmount > 0),
                     Math.Max(entry.Amount, draftAmount), entry.EntryId));
             }
         }
@@ -442,16 +498,22 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
         }
 
         int draftAmount = FindAmount(_draft.Sales, lootId);
+        bool isAllowedToSell = MerchantSpecializationPolicy.IsAllowedToSellToMerchant(_endpoint.MerchantType, definition);
+        bool isDemand = _isDemandItem != null && _isDemandItem(lootId);
+        int unitSellPrice = isDemand ? (int)Math.Floor(definition.ObjectValue * 1.2f) : definition.SellValuePerUnit;
+
         rows.Add(new MerchantShopRowViewModel(
             definition,
             lootId,
             isMerchantStock: false,
-            definition.SellValuePerUnit,
+            unitSellPrice,
             owned,
             draftAmount,
-            (long)definition.SellValuePerUnit * draftAmount,
-            canAdd: canEdit && draftAmount < owned,
-            maxDraftAmount: Math.Max(owned, draftAmount)));
+            (long)unitSellPrice * draftAmount,
+            canAdd: canEdit && isAllowedToSell && unitSellPrice > 0 && draftAmount < owned,
+            maxDraftAmount: Math.Max(owned, draftAmount),
+            buybackEntryId: null,
+            isDemand: isDemand));
     }
 
     private static int FindRow(List<MerchantShopRowViewModel> rows, LootId lootId)

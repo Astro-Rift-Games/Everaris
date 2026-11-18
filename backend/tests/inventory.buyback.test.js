@@ -9,9 +9,12 @@ test('buyback classification normalizes aliases and excludes resources', () => {
   assert.equal(catalog.BUYBACK_PRICE_MULTIPLIER, 1.5);
   assert.equal(catalog.BUYBACK_MAX_ENTRIES, 16);
   for (const lootId of ['placeholder_helmet', 'training_sword', 'heavy_armor_legplate']) {
-    assert.equal(catalog.isBuybackEligible(lootId), false);
+    assert.equal(catalog.isBuybackEligible(lootId), true);
     assert.equal(catalog.isBuybackEligible(lootId, 2), true);
   }
+  // Training items have ObjectValue 0 and are excluded from buyback in v3
+  assert.equal(catalog.isBuybackEligible('training_short_sword'), false);
+  assert.equal(catalog.isBuybackEligible('training_short_sword', 2), true);
   for (const id of ['coins', 'bone', 'healthpotion', '', null]) assert.equal(catalog.isBuybackEligible(id), false);
 });
 

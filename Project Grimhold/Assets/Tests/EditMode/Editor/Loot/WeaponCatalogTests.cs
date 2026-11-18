@@ -79,6 +79,25 @@ namespace Tests.EditMode.Loot
             "training_shield"
         };
 
+        private static readonly Dictionary<string, int> ExpectedObjectValues = new Dictionary<string, int>
+        {
+            ["arming_sword"] = 60,
+            ["long_sword"] = 100,
+            ["great_hammer"] = 110,
+            ["rondel_dagger"] = 45,
+            ["compound_bow"] = 80,
+            ["light_crossbow"] = 100,
+            ["rapier"] = 85,
+            ["magic_wand"] = 70,
+            ["spell_book"] = 95,
+            ["magic_staff"] = 110,
+            ["magic_sword"] = 125,
+            ["magic_cinquedea"] = 90,
+            ["long_bow"] = 0,
+            ["zweihander"] = 0,
+            ["shield"] = 0
+        };
+
         private LootDefinitionCatalog _catalog;
 
         [SetUp]
@@ -111,7 +130,10 @@ namespace Tests.EditMode.Loot
                 Assert.That(definition, Is.Not.Null, id);
                 Assert.That(definition.TryValidate(out error), Is.True, $"{id}: {error}");
                 Assert.That(definition.ExtractionValuePerUnit, Is.EqualTo(10), id);
-                Assert.That(definition.SellValuePerUnit, Is.Zero, id);
+                int expectedOv = ExpectedObjectValues.TryGetValue(id, out int ov) ? ov : 0;
+                Assert.That(definition.ObjectValue, Is.EqualTo(expectedOv), id);
+                Assert.That(definition.SellValuePerUnit, Is.EqualTo(expectedOv), id);
+                Assert.That(definition.BuyValuePerUnit, Is.EqualTo(expectedOv * 2), id);
                 Assert.That(definition.DefaultPickupQuantity, Is.EqualTo(1), id);
                 Assert.That(definition.Rarity, Is.EqualTo(LootRarity.Common), id);
                 Assert.That(AssetDatabase.GetAssetPath(definition.Icon), Does.StartWith(WeaponArtRoot), id);

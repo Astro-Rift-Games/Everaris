@@ -27,21 +27,55 @@ const BUYBACK_ELIGIBLE_IDS = Object.freeze([
 ]);
 
 // Unity LootDefinitions are the source; parity tests check both references and values.
-const weapon = naturalAttribute => Object.freeze({ category: 'Weapon', naturalAttribute, legacyCoefficient: 0, sellValue: 0 });
-const armor = category => Object.freeze({ category, sellValue: 5 });
+const weapon = (naturalAttribute, sellValue = 0) => Object.freeze({
+  category: 'Weapon', naturalAttribute, legacyCoefficient: 0, sellValue
+});
+const armor = (category, sellValue = 5) => Object.freeze({
+  category, sellValue
+});
 const EQUIPMENT_TEMPLATES = Object.freeze({
-  arming_sword: weapon('strength'), great_hammer: weapon('strength'), compound_bow: weapon('dexterity'),
-  light_crossbow: weapon('dexterity'), long_bow: weapon('dexterity'), long_sword: weapon('strength'),
-  magic_cinquedea: weapon('dexterity'), magic_staff: weapon('intelligence'), magic_sword: weapon('strength'),
-  magic_wand: weapon('intelligence'), rapier: weapon('strength'), rondel_dagger: weapon('dexterity'),
-  spell_book: weapon('intelligence'), zweihander: weapon('strength'), shield: Object.freeze({ category: 'Shield', sellValue: 0 }),
-  training_short_sword: weapon('strength'), training_dagger: weapon('dexterity'), training_wand: weapon('intelligence'),
-  placeholder_helmet: armor('Helmet'), placeholder_armor: armor('Armor'), placeholder_gloves: armor('Gloves'), placeholder_boots: armor('Boots'),
-  army_ranger_armor: armor('Armor'), army_ranger_gloves: armor('Gloves'), army_ranger_hat: armor('Helmet'), army_ranger_trousers: armor('Boots'),
-  fire_mage_garb: armor('Armor'), fire_mage_gloves: armor('Gloves'), fire_mage_hood: armor('Helmet'), fire_mage_trousers: armor('Boots'),
-  forest_ranger_gloves: armor('Gloves'), forest_ranger_hood: armor('Helmet'), forest_ranger_leather_armor: armor('Armor'), forest_ranger_trousers: armor('Boots'),
-  heavy_armor_breastplate: armor('Armor'), heavy_armor_gauntlets: armor('Gloves'), heavy_armor_helmet: armor('Helmet'), heavy_armor_leg_plate: armor('Boots'),
-  light_armor_chain_mail_armor: armor('Armor'), light_armor_chain_mail_trousers: armor('Boots'), light_armor_gloves: armor('Gloves'), light_armor_open_sallet: armor('Helmet')
+  arming_sword: weapon('strength', 60),
+  great_hammer: weapon('strength', 110),
+  compound_bow: weapon('dexterity', 80),
+  light_crossbow: weapon('dexterity', 100),
+  long_bow: weapon('dexterity', 0),
+  long_sword: weapon('strength', 100),
+  magic_cinquedea: weapon('dexterity', 90),
+  magic_staff: weapon('intelligence', 110),
+  magic_sword: weapon('strength', 125),
+  magic_wand: weapon('intelligence', 70),
+  rapier: weapon('strength', 85),
+  rondel_dagger: weapon('dexterity', 45),
+  spell_book: weapon('intelligence', 95),
+  zweihander: weapon('strength', 0),
+  shield: Object.freeze({ category: 'Shield', sellValue: 0 }),
+  training_short_sword: weapon('strength', 0),
+  training_dagger: weapon('dexterity', 0),
+  training_wand: weapon('intelligence', 0),
+  placeholder_helmet: armor('Helmet', 85),
+  placeholder_armor: armor('Armor', 145),
+  placeholder_gloves: armor('Gloves', 55),
+  placeholder_boots: armor('Boots', 70),
+  army_ranger_armor: armor('Armor', 110),
+  army_ranger_gloves: armor('Gloves', 45),
+  army_ranger_hat: armor('Helmet', 65),
+  army_ranger_trousers: armor('Boots', 60),
+  fire_mage_garb: armor('Armor', 100),
+  fire_mage_gloves: armor('Gloves', 40),
+  fire_mage_hood: armor('Helmet', 60),
+  fire_mage_trousers: armor('Boots', 55),
+  forest_ranger_gloves: armor('Gloves', 55),
+  forest_ranger_hood: armor('Helmet', 80),
+  forest_ranger_leather_armor: armor('Armor', 135),
+  forest_ranger_trousers: armor('Boots', 75),
+  heavy_armor_breastplate: armor('Armor', 160),
+  heavy_armor_gauntlets: armor('Gloves', 60),
+  heavy_armor_helmet: armor('Helmet', 90),
+  heavy_armor_leg_plate: armor('Boots', 80),
+  light_armor_chain_mail_armor: armor('Armor', 130),
+  light_armor_chain_mail_trousers: armor('Boots', 65),
+  light_armor_gloves: armor('Gloves', 50),
+  light_armor_open_sallet: armor('Helmet', 75)
 });
 const GEM_CATALOG = Object.freeze({
   RES_ATTUNEMENT_GEM: Object.freeze({ sellValue: 70 }),
@@ -51,65 +85,94 @@ const GEM_CATALOG = Object.freeze({
 function getEquipmentTemplate(lootId) {
   return Object.hasOwn(EQUIPMENT_TEMPLATES, normalizeLootId(lootId)) ? EQUIPMENT_TEMPLATES[normalizeLootId(lootId)] : null;
 }
+
+const SPECIAL_CONSUMABLE_BUYBACK_IDS = Object.freeze([
+  'CON_EXPLOSIVE_BOMB',
+  'CON_SMOKE_BOMB',
+  'CON_THROWING_DAGGER',
+  'CON_SELF_REVIVE'
+]);
+
 function isBuybackEligible(lootId, version = 3) {
-  // Older characters retain their existing ledger behavior until explicitly migrated.
-  return version < 3 && Boolean(getEquipmentTemplate(lootId));
+  if (!lootId || typeof lootId !== 'string') return false;
+  const normalized = normalizeLootId(lootId);
+  if (version < 3) {
+    return Boolean(getEquipmentTemplate(normalized));
+  }
+  if (SPECIAL_CONSUMABLE_BUYBACK_IDS.includes(lootId) || SPECIAL_CONSUMABLE_BUYBACK_IDS.includes(normalized)) {
+    return true;
+  }
+  const template = getEquipmentTemplate(normalized);
+  if (!template) return false;
+  // Exclude training items and non-tradable equipment (ObjectValue <= 0)
+  return (template.objectValue || template.sellValue || 0) > 0;
 }
 
 /**
- * Authoritative catalog of items offered for purchase by the Town Merchant.
- * Unity LootDefinition assets are the source of truth: mirror positive buy values only.
- * Backend-only ids use GD-14 values and have no Unity asset yet.
+ * Permanent buy offers available unconditionally in unlimited quantity (Doc 23 §5.1).
+ */
+const PERMANENT_BUY_CATALOG = Object.freeze({
+  CON_HEALTH_POTION: { buyPrice: 40, isFree: false },
+  CON_MANA_FRAGMENT: { buyPrice: 16, isFree: false },
+  CON_MANA_POTION: { buyPrice: 40, isFree: false }
+});
+
+/**
+ * Authoritative catalog of items offered for purchase by Town Merchants.
+ * Includes permanent consumables, rotating utilities, and rotating weapons & armors (Doc 23 §5-6).
+ * Special consumables, treasures, and resources are NOT buyable from regular NPC stock.
  * Prices are in gold (currency) units.
- * Legitimate free items are explicitly marked with `isFree: true`.
  */
 const BUY_CATALOG = Object.freeze({
-  CON_EXPLOSIVE_BOMB: { buyPrice: 60, isFree: false },
+  // Permanent offer (Doc 23 §5.1)
   CON_HEALTH_POTION: { buyPrice: 40, isFree: false },
-  CON_LOCKPICK: { buyPrice: 50, isFree: false },
   CON_MANA_FRAGMENT: { buyPrice: 16, isFree: false },
   CON_MANA_POTION: { buyPrice: 40, isFree: false },
-  CON_SELF_REVIVE: { buyPrice: 600, isFree: false },
-  CON_SMOKE_BOMB: { buyPrice: 90, isFree: false },
-  CON_THROWING_DAGGER: { buyPrice: 24, isFree: false },
-  RES_ANCIENT_ARMOR: { buyPrice: 60, isFree: false },
-  RES_ANCIENT_ROOT: { buyPrice: 24, isFree: false },
-  RES_ATTUNEMENT_GEM: { buyPrice: 140, isFree: false },
-  RES_BAT_FANG: { buyPrice: 44, isFree: false },
-  RES_BAT_WING: { buyPrice: 24, isFree: false },
-  RES_BLACK_IRON: { buyPrice: 30, isFree: false },
-  RES_CORRUPT_MARROW: { buyPrice: 56, isFree: false },
-  RES_CUSTODIAN_SEAL: { buyPrice: 90, isFree: false },
-  RES_ETHER_DUST: { buyPrice: 36, isFree: false },
-  RES_GOBLIN_ARROWHEAD: { buyPrice: 28, isFree: false },
-  RES_GOBLIN_INSIGNIA: { buyPrice: 64, isFree: false },
-  RES_GOBLIN_SCRAP: { buyPrice: 20, isFree: false },
-  RES_GOLEM_CORE: { buyPrice: 140, isFree: false },
-  RES_LOST_GRIMOIRE_PAGE: { buyPrice: 70, isFree: false },
-  RES_RUBY_GEM: { buyPrice: 140, isFree: false },
-  RES_RUNE_FRAGMENT: { buyPrice: 40, isFree: false },
-  RES_SAPPHIRE_GEM: { buyPrice: 140, isFree: false },
-  RES_SLIME_CORE: { buyPrice: 48, isFree: false },
-  RES_SLIME_GEL: { buyPrice: 16, isFree: false },
-  RES_SOUL_FRAGMENT: { buyPrice: 130, isFree: false },
-  RES_SPECTRAL_ESSENCE: { buyPrice: 76, isFree: false },
-  RES_TANNED_LEATHER: { buyPrice: 20, isFree: false },
-  RES_WITHERED_BONE: { buyPrice: 20, isFree: false },
-  TRE_CHALICE: { buyPrice: 400, isFree: false },
-  TRE_CHAOS_COIN: { buyPrice: 800, isFree: false },
-  TRE_CROWN: { buyPrice: 700, isFree: false },
-  TRE_FAMINE_IDOL: { buyPrice: 800, isFree: false },
-  TRE_PILGRIM_LIGHT: { buyPrice: 600, isFree: false },
-  TRE_SANCTUARY_HEART: { buyPrice: 700, isFree: false },
-  TRE_VOID_BELL: { buyPrice: 900, isFree: false },
-  TRE_WANDERER_EYE: { buyPrice: 900, isFree: false },
+
+  // Rotating Utilities (Doc 23 §5.5)
+  CON_LOCKPICK: { buyPrice: 50, isFree: false },
   UTL_ARCANE_DETECTOR: { buyPrice: 360, isFree: false },
   UTL_RUNE_COMPASS: { buyPrice: 280, isFree: false },
-  bone: { buyPrice: 5, isFree: false },
-  placeholder_helmet: { buyPrice: 10, isFree: false },
-  placeholder_armor: { buyPrice: 10, isFree: false },
-  placeholder_gloves: { buyPrice: 10, isFree: false },
-  placeholder_boots: { buyPrice: 10, isFree: false }
+
+  // 12 Normal Weapons (Doc 23 §6.1, buyPrice = ceil(ObjectValue * 2.0))
+  arming_sword: { buyPrice: 120, isFree: false },
+  compound_bow: { buyPrice: 160, isFree: false },
+  great_hammer: { buyPrice: 220, isFree: false },
+  light_crossbow: { buyPrice: 200, isFree: false },
+  long_sword: { buyPrice: 200, isFree: false },
+  magic_cinquedea: { buyPrice: 180, isFree: false },
+  magic_staff: { buyPrice: 220, isFree: false },
+  magic_sword: { buyPrice: 250, isFree: false },
+  magic_wand: { buyPrice: 140, isFree: false },
+  rapier: { buyPrice: 170, isFree: false },
+  rondel_dagger: { buyPrice: 90, isFree: false },
+  spell_book: { buyPrice: 190, isFree: false },
+
+  // 24 Normal Armors (Doc 23 §6.2, buyPrice = ceil(ObjectValue * 2.0))
+  heavy_armor_helmet: { buyPrice: 180, isFree: false },
+  heavy_armor_breastplate: { buyPrice: 320, isFree: false },
+  heavy_armor_gauntlets: { buyPrice: 120, isFree: false },
+  heavy_armor_leg_plate: { buyPrice: 160, isFree: false },
+  light_armor_open_sallet: { buyPrice: 150, isFree: false },
+  light_armor_chain_mail_armor: { buyPrice: 260, isFree: false },
+  light_armor_gloves: { buyPrice: 100, isFree: false },
+  light_armor_chain_mail_trousers: { buyPrice: 130, isFree: false },
+  army_ranger_hat: { buyPrice: 130, isFree: false },
+  army_ranger_armor: { buyPrice: 220, isFree: false },
+  army_ranger_gloves: { buyPrice: 90, isFree: false },
+  army_ranger_trousers: { buyPrice: 120, isFree: false },
+  forest_ranger_hood: { buyPrice: 160, isFree: false },
+  forest_ranger_leather_armor: { buyPrice: 270, isFree: false },
+  forest_ranger_gloves: { buyPrice: 110, isFree: false },
+  forest_ranger_trousers: { buyPrice: 150, isFree: false },
+  placeholder_helmet: { buyPrice: 170, isFree: false },
+  placeholder_armor: { buyPrice: 290, isFree: false },
+  placeholder_gloves: { buyPrice: 110, isFree: false },
+  placeholder_boots: { buyPrice: 140, isFree: false },
+  fire_mage_hood: { buyPrice: 120, isFree: false },
+  fire_mage_garb: { buyPrice: 200, isFree: false },
+  fire_mage_gloves: { buyPrice: 80, isFree: false },
+  fire_mage_trousers: { buyPrice: 110, isFree: false }
 });
 
 /**
@@ -141,7 +204,9 @@ const SELL_CATALOG = Object.freeze({
   RES_GOBLIN_SCRAP: { sellValue: 10 },
   RES_GOLEM_CORE: { sellValue: 70 },
   RES_LOST_GRIMOIRE_PAGE: { sellValue: 35 },
+  RES_RUBY_GEM: { sellValue: 70 },
   RES_RUNE_FRAGMENT: { sellValue: 20 },
+  RES_SAPPHIRE_GEM: { sellValue: 70 },
   RES_SLIME_CORE: { sellValue: 24 },
   RES_SLIME_GEL: { sellValue: 8 },
   RES_SOUL_FRAGMENT: { sellValue: 65 },
@@ -159,30 +224,46 @@ const SELL_CATALOG = Object.freeze({
   UTL_ARCANE_DETECTOR: { sellValue: 180 },
   UTL_RUNE_COMPASS: { sellValue: 140 },
   bone: { sellValue: 5 },
-  placeholder_helmet: { sellValue: 5 },
-  placeholder_armor: { sellValue: 5 },
-  placeholder_gloves: { sellValue: 5 },
-  placeholder_boots: { sellValue: 5 },
-  army_ranger_armor: { sellValue: 5 },
-  army_ranger_gloves: { sellValue: 5 },
-  army_ranger_hat: { sellValue: 5 },
-  army_ranger_trousers: { sellValue: 5 },
-  fire_mage_garb: { sellValue: 5 },
-  fire_mage_gloves: { sellValue: 5 },
-  fire_mage_hood: { sellValue: 5 },
-  fire_mage_trousers: { sellValue: 5 },
-  forest_ranger_gloves: { sellValue: 5 },
-  forest_ranger_hood: { sellValue: 5 },
-  forest_ranger_leather_armor: { sellValue: 5 },
-  forest_ranger_trousers: { sellValue: 5 },
-  heavy_armor_breastplate: { sellValue: 5 },
-  heavy_armor_gauntlets: { sellValue: 5 },
-  heavy_armor_helmet: { sellValue: 5 },
-  heavy_armor_leg_plate: { sellValue: 5 },
-  light_armor_chain_mail_armor: { sellValue: 5 },
-  light_armor_chain_mail_trousers: { sellValue: 5 },
-  light_armor_gloves: { sellValue: 5 },
-  light_armor_open_sallet: { sellValue: 5 },
+
+  // 12 Normal Weapons (Doc 23 §6.1, sellValue = floor(ObjectValue * 1.0))
+  arming_sword: { sellValue: 60 },
+  compound_bow: { sellValue: 80 },
+  great_hammer: { sellValue: 110 },
+  light_crossbow: { sellValue: 100 },
+  long_sword: { sellValue: 100 },
+  magic_cinquedea: { sellValue: 90 },
+  magic_staff: { sellValue: 110 },
+  magic_sword: { sellValue: 125 },
+  magic_wand: { sellValue: 70 },
+  rapier: { sellValue: 85 },
+  rondel_dagger: { sellValue: 45 },
+  spell_book: { sellValue: 95 },
+
+  // 24 Normal Armors (Doc 23 §6.2, sellValue = floor(ObjectValue * 1.0))
+  placeholder_helmet: { sellValue: 85 },
+  placeholder_armor: { sellValue: 145 },
+  placeholder_gloves: { sellValue: 55 },
+  placeholder_boots: { sellValue: 70 },
+  army_ranger_armor: { sellValue: 110 },
+  army_ranger_gloves: { sellValue: 45 },
+  army_ranger_hat: { sellValue: 65 },
+  army_ranger_trousers: { sellValue: 60 },
+  fire_mage_garb: { sellValue: 100 },
+  fire_mage_gloves: { sellValue: 40 },
+  fire_mage_hood: { sellValue: 60 },
+  fire_mage_trousers: { sellValue: 55 },
+  forest_ranger_gloves: { sellValue: 55 },
+  forest_ranger_hood: { sellValue: 80 },
+  forest_ranger_leather_armor: { sellValue: 135 },
+  forest_ranger_trousers: { sellValue: 75 },
+  heavy_armor_breastplate: { sellValue: 160 },
+  heavy_armor_gauntlets: { sellValue: 60 },
+  heavy_armor_helmet: { sellValue: 90 },
+  heavy_armor_leg_plate: { sellValue: 80 },
+  light_armor_chain_mail_armor: { sellValue: 130 },
+  light_armor_chain_mail_trousers: { sellValue: 65 },
+  light_armor_gloves: { sellValue: 50 },
+  light_armor_open_sallet: { sellValue: 75 },
   coins: { sellValue: 1 },
   gold_coin: { sellValue: 1 },
   // GD-14 master list resources
@@ -250,7 +331,8 @@ function isItemBuyable(lootId) {
  * @returns {boolean}
  */
 function isItemSellable(lootId) {
-  return getSellOffer(lootId) !== null;
+  const offer = getSellOffer(lootId);
+  return offer !== null && offer.sellValue > 0;
 }
 
 module.exports = {
@@ -260,10 +342,12 @@ module.exports = {
   BUYBACK_PRICE_MULTIPLIER,
   BUYBACK_MAX_ENTRIES,
   BUYBACK_ELIGIBLE_IDS,
+  SPECIAL_CONSUMABLE_BUYBACK_IDS,
   isBuybackEligible,
   MAX_TRANSACTION_AMOUNT,
   MAX_TRADE_SALE_LINES,
   MAX_TRADE_PURCHASE_LINES,
+  PERMANENT_BUY_CATALOG,
   BUY_CATALOG,
   SELL_CATALOG,
   getBuyOffer,

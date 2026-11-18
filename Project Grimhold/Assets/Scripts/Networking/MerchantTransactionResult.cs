@@ -22,5 +22,8 @@ public enum MerchantTransactionResult
     SubmissionFailed,
 
     /// <summary>No answer arrived in time or authority changed; the same request may be retried.</summary>
-    NoResponse
+    NoResponse,
+
+    /// <summary>The weekly merchant rotation changed; the trade must be re-confirmed.</summary>
+    RotationExpired
 }

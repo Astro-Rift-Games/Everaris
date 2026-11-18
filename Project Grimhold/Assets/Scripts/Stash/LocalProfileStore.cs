@@ -1333,13 +1333,24 @@ public sealed class LocalProfileStore : IMissionClaimService
             }
 
             long purchaseTotal = 0;
-            var purchased = new List<StashItem>(ticket.Purchases.Count);
+            var purchased = new List<StashItem>(ticket.Purchases.Count + (ticket.Buybacks?.Count ?? 0));
             foreach (MerchantPricedTradeLine purchase in ticket.Purchases)
             {
                 if (purchaseTotal > long.MaxValue - purchase.Total)
                     return StashOperationResult.InvalidInventory;
                 purchaseTotal += purchase.Total;
                 purchased.Add(new StashItem(purchase.LootId, purchase.Amount));
+            }
+
+            if (ticket.Buybacks != null)
+            {
+                foreach (MerchantPricedBuybackLine buyback in ticket.Buybacks)
+                {
+                    if (purchaseTotal > long.MaxValue - buyback.Total)
+                        return StashOperationResult.InvalidInventory;
+                    purchaseTotal += buyback.Total;
+                    purchased.Add(new StashItem(buyback.LootId, buyback.Amount));
+                }
             }
 
             if (next.Currency > long.MaxValue - saleTotal)
