@@ -24,6 +24,7 @@ public sealed class DialogueInteractable : NetworkBehaviour, IInteractable, IDia
 
     public DialogueSequence PrimarySequence => _primarySequence;
     public DialogueSequence SecondarySequence => _secondarySequence;
+    public DialogueSequence LockedSequence => null;
 
     public new EntityId Id => Object != null && Object.IsValid
         ? new EntityId(unchecked((int)Object.Id.Raw))

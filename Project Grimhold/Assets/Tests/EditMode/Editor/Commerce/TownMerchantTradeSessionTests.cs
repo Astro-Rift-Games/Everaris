@@ -552,6 +552,80 @@ public class TownMerchantTradeSessionTests
         Assert.That(View.IsInFlight, Is.False);
     }
 
+    // --- Ready build lock ---
+
+    private bool _buildUnlocked;
+
+    private void OpenBuildGatedSession(bool buildUnlocked, BuybackLedger ledger = null, IBuybackService buyback = null)
+    {
+        _session.Dispose();
+        _buildUnlocked = buildUnlocked;
+        _session = new TownMerchantTradeSession(Profile, _endpoint, _profile, _profile,
+            () => _profile.Currency, _presented.Add, () => _now, Timeout,
+            () => new Guid(++_requestIdCount, 0, 0, new byte[8]),
+            buybackLedger: ledger, buybackService: buyback,
+            canMutateBuild: () => _buildUnlocked);
+        _session.TradeCompleted += _results.Add;
+    }
+
+    [Test]
+    public void ReadyBuildLock_RejectsPurchaseAndSaleWithoutSubmittingOrPersisting()
+    {
+        OpenBuildGatedSession(buildUnlocked: false);
+        Assert.That(_session.AddPurchase(Potion, 1), Is.True, "Planning a draft is not a build mutation.");
+        Assert.That(_session.AddSale(Hat, 1), Is.True);
+
+        Assert.That(View.CanConfirm, Is.False, "A Ready player sees the trade as not confirmable.");
+        Assert.That(_session.ConfirmTrade(), Is.False);
+
+        Assert.That(_endpoint.Submissions, Is.Empty, "No trade request reaches State Authority while Ready.");
+        Assert.That(_endpoint.PendingResponses, Is.Empty);
+        Assert.That(_profile.ExecuteCalls, Is.EqualTo(0), "Nothing is persisted while Ready.");
+        Assert.That(_profile.Currency, Is.EqualTo(100));
+        Assert.That(_results, Is.Empty);
+        Assert.That(View.HasDraft, Is.True, "The draft is kept for when Ready is cancelled.");
+        Assert.That(View.IsInFlight, Is.False);
+    }
+
+    [Test]
+    public void ReadyBuildLock_RejectsBuybackPurchase()
+    {
+        var service = new FakeBuybackService();
+        var ledger = new BuybackLedger();
+        ledger.Replace(new Grimhold.Backend.BuybackData { entries = new[] {
+            new Grimhold.Backend.BuybackEntryData { entryId = "sale-1", lootId = Hat.Value, amount = 2, unitPrice = 8 }
+        }});
+        OpenBuildGatedSession(buildUnlocked: false, ledger, service);
+        Assert.That(_session.SetBuyback("sale-1", 1), Is.True);
+
+        Assert.That(View.CanConfirm, Is.False);
+        Assert.That(_session.ConfirmTrade(), Is.False);
+
+        Assert.That(service.Profile.IsValid, Is.False, "The buyback service is never called while Ready.");
+        Assert.That(View.IsInFlight, Is.False);
+        Assert.That(_results, Is.Empty);
+    }
+
+    [Test]
+    public void ReadyBuildLock_FollowsTheGateOnTickAndAllowsTradeOnceLifted()
+    {
+        OpenBuildGatedSession(buildUnlocked: true);
+        _session.AddPurchase(Potion, 1);
+        Assert.That(View.CanConfirm, Is.True);
+
+        _buildUnlocked = false;
+        _session.Tick();
+        Assert.That(View.CanConfirm, Is.False, "Becoming Ready re-presents the open shop as locked.");
+        Assert.That(_session.ConfirmTrade(), Is.False);
+        Assert.That(_endpoint.Submissions, Is.Empty);
+
+        _buildUnlocked = true;
+        _session.Tick();
+        Assert.That(View.CanConfirm, Is.True, "Cancelling Ready re-presents the shop as confirmable.");
+        Assert.That(_session.ConfirmTrade(), Is.True);
+        Assert.That(_endpoint.Submissions.Count, Is.EqualTo(1));
+    }
+
     // --- Lost answers ---
 
     [Test]

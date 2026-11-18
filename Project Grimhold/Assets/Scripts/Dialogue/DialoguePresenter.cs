@@ -36,6 +36,7 @@ public sealed class DialoguePresenter : NetworkBehaviour
     private IDisposable _inputSuppression;
     private PlayerInputReader _inputReader;
     private bool _isDialogueActive;
+    private Func<bool> _canMutateBuild;
 
     public bool IsDialogueActive => _isDialogueActive;
     public event Action<EntityId> DialogueCompletedNormally;
@@ -92,6 +93,14 @@ public sealed class DialoguePresenter : NetworkBehaviour
     private void OnDestroy()
     {
         Unbind();
+    }
+
+    /// <summary>
+    /// Supplies the Town build gate (false while the local player is Ready). Null means the build is never locked.
+    /// </summary>
+    public void SetBuildGate(Func<bool> canMutateBuild)
+    {
+        _canMutateBuild = canMutateBuild;
     }
 
     public void Initialize(IDialogueController controller, IDialogueView view)
@@ -241,9 +250,8 @@ public sealed class DialoguePresenter : NetworkBehaviour
         }
 
         bool alreadyInteracted = _interactedEntities.Contains(targetId);
-        DialogueSequence sequence = (alreadyInteracted && trigger.SecondarySequence != null)
-            ? trigger.SecondarySequence
-            : trigger.PrimarySequence;
+        bool buildLocked = _canMutateBuild != null && !_canMutateBuild();
+        DialogueSequence sequence = DialogueSequenceSelection.Select(trigger, alreadyInteracted, buildLocked);
 
         if (sequence == null || sequence.Lines == null || sequence.Lines.Length == 0)
         {

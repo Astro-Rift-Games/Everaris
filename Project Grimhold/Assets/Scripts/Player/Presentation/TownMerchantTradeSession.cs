@@ -25,6 +25,8 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
     private readonly Func<double> _clock;
     private readonly double _submissionTimeoutSeconds;
     private readonly MerchantTradeDraft _draft;
+    private readonly Func<bool> _canMutateBuild;
+    private bool _presentedBuildLocked;
     private Guid? _unansweredRequestId;
     private double _submittedAt;
     private bool _disposed;
@@ -47,7 +49,8 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
         double submissionTimeoutSeconds,
         Func<Guid> requestIdProvider = null,
         BuybackLedger buybackLedger = null,
-        IBuybackService buybackService = null)
+        IBuybackService buybackService = null,
+        Func<bool> canMutateBuild = null)
     {
         if (!profileId.IsValid)
         {
@@ -70,6 +73,7 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
         _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         _submissionTimeoutSeconds = submissionTimeoutSeconds;
         _draft = new MerchantTradeDraft(requestIdProvider);
+        _canMutateBuild = canMutateBuild;
 
         if (_buybackLedger != null) _buybackLedger.Changed += Refresh;
         _endpoint.StockChanged += Refresh;
@@ -108,7 +112,9 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
     /// </summary>
     public bool ConfirmTrade()
     {
-        if (_disposed || _draft.IsInFlight)
+        // Ready locks the Town build (TownRaidPreparationRules.CanMutateTownBuild): no purchase,
+        // sale or buyback may be sent; the draft itself stays editable for when Ready is cancelled.
+        if (_disposed || _draft.IsInFlight || IsBuildLocked)
         {
             return false;
         }
@@ -154,7 +160,14 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
         {
             AbandonSubmission();
         }
+
+        if (!_disposed && IsBuildLocked != _presentedBuildLocked)
+        {
+            Refresh();
+        }
     }
+
+    private bool IsBuildLocked => _canMutateBuild != null && !_canMutateBuild();
 
     public void Dispose()
     {
@@ -311,6 +324,7 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
             return;
         }
 
+        _presentedBuildLocked = IsBuildLocked;
         Current = BuildViewModel();
         _present(Current);
     }
@@ -364,7 +378,7 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
             preview.SlotCapacity,
             hasDraft: !_draft.IsEmpty,
             _draft.IsInFlight,
-            preview.CanConfirm,
+            preview.CanConfirm && !_presentedBuildLocked,
             preview.Blocks,
             BuildMerchantRows(canEdit),
             BuildInventoryRows(inventory, canEdit));

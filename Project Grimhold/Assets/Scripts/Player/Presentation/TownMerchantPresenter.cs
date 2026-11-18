@@ -35,12 +35,23 @@ public sealed class TownMerchantPresenter : NetworkBehaviour
     {
         ClosePanel();
         _profile = profile ?? throw new ArgumentNullException(nameof(profile));
+        // The same Ready gate selects the Ready-lock dialogue instead of the shop greeting.
+        SetDialogueBuildGate(profile.CanMutateBuild);
     }
 
     public void UnbindProfile()
     {
         ClosePanel();
         _profile = null;
+        SetDialogueBuildGate(null);
+    }
+
+    private void SetDialogueBuildGate(Func<bool> canMutateBuild)
+    {
+        if (_dialoguePresenter != null)
+        {
+            _dialoguePresenter.SetBuildGate(canMutateBuild);
+        }
     }
 
     private void Awake()
@@ -162,7 +173,9 @@ public sealed class TownMerchantPresenter : NetworkBehaviour
             return;
         }
 
-        if (_view != null)
+        // A Ready player was told why the shop is closed; the dialogue ended instead of opening it.
+        bool buildLocked = _profile?.CanMutateBuild != null && !_profile.CanMutateBuild();
+        if (_view != null && !buildLocked)
         {
             OpenForTarget(target);
             if (_view.IsOpen)
@@ -206,7 +219,8 @@ public sealed class TownMerchantPresenter : NetworkBehaviour
             () => Time.unscaledTimeAsDouble,
             SubmissionTimeoutSeconds,
             buybackLedger: profile.BuybackLedger,
-            buybackService: profile.BuybackService);
+            buybackService: profile.BuybackService,
+            canMutateBuild: profile.CanMutateBuild);
         _session.TradeCompleted += shopUI.PresentResult;
         shopUI.Bind(_session);
         shopUI.OnCloseRequested.AddListener(ClosePanelFromUI);

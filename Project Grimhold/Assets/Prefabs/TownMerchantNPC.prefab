@@ -959,6 +959,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TownNpcDialogueTrigger
   _primarySequence: {fileID: 11400000, guid: 3363b80511e8bd547a4f4c78e89e8fa2, type: 2}
   _secondarySequence: {fileID: 0}
+  _lockedSequence: {fileID: 11400000, guid: 5cd61fe213ece1647b02b0f5b133eea7, type: 2}
 --- !u!114 &5390424021586029504
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -143,7 +143,8 @@ public sealed class TownInventoryBinder : NetworkBehaviour
             _profileContext.CurrencyService,
             _profileContext.ShopTransactionService,
             _profileContext.BuybackLedger,
-            _profileContext.BuybackService));
+            _profileContext.BuybackService,
+            CanMutateEquipment));
     }
 
     private void BindAbilityVendorProfile()
