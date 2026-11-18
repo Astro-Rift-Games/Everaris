@@ -4,32 +4,283 @@
 
 Release: Unreleased
 
-297 original commits; 297 canonical entries.
+300 original commits; 300 canonical entries.
 
 ## Canonical classification
 
-93 features; 98 bug fixes; 3 refactoring; 1 architecture & infrastructure; 50 documentation; 22 tests; 11 maintenance; 19 other changes
+93 features; 101 bug fixes; 3 refactoring; 1 architecture & infrastructure; 50 documentation; 22 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 12 | 11 | 1 | 0 | 10 | 1 |
 | Art & Animation | 19 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 7 | 2 | 0 | 0 | 1 | 0 |
-| Build & Tooling | 66 | 65 | 3 | 1 | 25 | 6 |
-| Combat | 45 | 17 | 2 | 0 | 14 | 1 |
+| Build & Tooling | 66 | 67 | 3 | 1 | 25 | 6 |
+| Combat | 45 | 20 | 2 | 0 | 14 | 1 |
 | Documentation | 35 | 42 | 0 | 0 | 14 | 0 |
 | Extraction | 17 | 21 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 63 | 56 | 3 | 1 | 27 | 5 |
+| Inventory & Loot | 63 | 59 | 3 | 1 | 27 | 5 |
 | Movement | 6 | 5 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 30 | 37 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 31 | 50 | 2 | 1 | 19 | 3 |
-| Tests | 89 | 92 | 3 | 1 | 32 | 4 |
+| Networking & Sessions | 30 | 38 | 0 | 0 | 19 | 2 |
+| Persistence & Backend | 31 | 51 | 2 | 1 | 19 | 3 |
+| Tests | 89 | 95 | 3 | 1 | 32 | 4 |
 | UI | 36 | 22 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
 | World & Visibility | 26 | 13 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 95f9a9f47165bdae776fe7099a71326530fb5978
+
+[95f9a9f47165bdae776fe7099a71326530fb5978](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/95f9a9f47165bdae776fe7099a71326530fb5978)
+
+Date: 2026-11-18T17:45:47-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Inventory & Loot, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend): reject attribute scaling on training weapons
+```
+
+#### Original body
+
+```text
+Training weapons have fixed damage and no scaling (Doc 09 15), but
+validModifiers accepted a primary/secondary scaling modifier on the
+training ids, so a host-submitted raid result could store a scaled
+training weapon (TASK-295).
+
+- ItemInstances.validModifiers rejects primary and secondary on the
+  three training ids (400 INVALID_INVENTORY); gems and normal weapons
+  are unchanged. Shared by validInventory, createInstance and the
+  raid result validators.
+- README documents the rule.
+
+Per Doc 09 15.1 (owner decision over the TASK-295 criterion), a
+training weapon request is NOT rejected when the character owns a
+normal weapon; tests pin that it succeeds and keeps that weapon.
+
+Tests: item.instances.training-scaling.test.js (validators and
+extraction commit, rejected without writing; normal weapon scaling
+still accepted); inventory.training.test.js (+6: issued instances carry
+no scaling, request with a normal weapon in Stash/Loadout). npm test
+844/844, test:integration 245/245, test:concurrency 35/35.
+
+Also adds the ODD execution tracker odd/tasks/task-295-training-weapon.md.
+
+Refs: TASK-295
+```
+
+#### Changed paths
+
+```text
+backend/README.md
+backend/src/services/ItemInstances.js
+backend/tests/inventory.training.test.js
+backend/tests/item.instances.training-scaling.test.js
+odd/tasks/task-295-training-weapon.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Combat: odd/tasks/task-295-training-weapon.md
+- message-term → Combat: weapons
+- path → Inventory &amp; Loot: backend/tests/inventory.training.test.js
+- message-term → Inventory &amp; Loot: inventory
+- path → Persistence &amp; Backend: backend/README.md
+- path → Persistence &amp; Backend: backend/src/services/ItemInstances.js
+- path → Persistence &amp; Backend: backend/tests/inventory.training.test.js
+- path → Persistence &amp; Backend: backend/tests/item.instances.training-scaling.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/inventory.training.test.js
+- path → Tests: backend/tests/item.instances.training-scaling.test.js
+- message-term → Tests: tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### b52955ea719953a1069f13830afff6a9a0c55742
+
+[b52955ea719953a1069f13830afff6a9a0c55742](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/b52955ea719953a1069f13830afff6a9a0c55742)
+
+Date: 2026-11-18T17:45:47-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Inventory & Loot, Networking & Sessions, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(results): keep training weapons out of the lost loot list
+```
+
+#### Original body
+
+```text
+Training weapons return to the Trainer on Defeat or voluntary Abandon
+(Doc 09 15.2), but the Results Lost list and the Town raid-loss notice
+listed them as lost loot (TASK-295).
+
+- RaidResultsLootSummaryBuilder.TryBuildLost takes an exclusion
+  predicate; the whole snapshot is still validated and an all-excluded
+  snapshot yields an empty Lost summary.
+- ExtractedLootExperienceProducer requires the loot catalog and
+  excludes training weapons through CorpseLootProjection.IsTrainingWeapon,
+  now the single catalog rule; PlayerCorpseGenerationController passes
+  its receiver catalog.
+- RaidLossNotice.TryCreate excludes training weapons from reserved
+  items and prepared equipment; SessionConnectionCoordinator supplies
+  the profile store catalog. A missing catalog, or a reservation that
+  only carried training weapons, captures no notice (existing FIX-53
+  warning).
+- The non-excluding overloads remain only for existing test callers.
+
+Tests: RaidResultsLootSummaryBuilderTests (+4, including Extracted from
+the productive catalogs), RaidLossNoticeTests (+4),
+PlayerCorpseGenerationPlayModeTests (+1, defeated participant Results
+lists no training weapon; fails without the filter), LootDefinitionTests
+(+2 pins: a training weapon with offensive scaling fails validation).
+RaidLossNoticeSlotTests, TownRaidLossNoticePresentationTests,
+CorpseLootProjectionTests and RaidLootValueCatalogTests green.
+
+Refs: TASK-295
+Player-Fixed: After dying, abandoning or losing connection in a raid, your training weapon is no longer shown among the lost items.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/RaidLossNotice.cs
+Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+Project Grimhold/Assets/Scripts/Player/CorpseLootProjection.cs
+Project Grimhold/Assets/Scripts/Player/PlayerCorpseGenerationController.cs
+Project Grimhold/Assets/Scripts/Progression/ExtractedLootExperienceProducer.cs
+Project Grimhold/Assets/Scripts/Progression/RaidResultsLootSummaryBuilder.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidLossNoticeTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RaidResultsLootSummaryBuilderTests.cs
+Project Grimhold/Assets/Tests/PlayMode/PlayerCorpseGenerationPlayModeTests.cs
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Combat: weapons
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/CorpseLootProjection.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Progression/ExtractedLootExperienceProducer.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Progression/RaidResultsLootSummaryBuilder.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RaidResultsLootSummaryBuilderTests.cs
+- message-term → Inventory &amp; Loot: loot
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidLossNotice.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidLossNoticeTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidLossNoticeTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RaidResultsLootSummaryBuilderTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidLossNoticeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RaidResultsLootSummaryBuilderTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/PlayerCorpseGenerationPlayModeTests.cs
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 884331ab5c8f7507403197e967ff854cf5ee9017
+
+[884331ab5c8f7507403197e967ff854cf5ee9017](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/884331ab5c8f7507403197e967ff854cf5ee9017)
+
+Date: 2026-11-18T17:45:47-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Inventory & Loot, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(inventory): serialize training weapon requests with inventory saves
+```
+
+#### Original body
+
+```text
+Requesting a training weapon read the inventory revision and posted
+outside the lock that serializes the other remote inventory mutations,
+so a stash move, sort, transfer, gem install or equipment sync landing
+in between turned the request into REVISION_CONFLICT (TASK-295).
+
+- RemoteInventoryMutationGate: shared, non-reentrant gate that replaces
+  the private SemaphoreSlim of RemoteInventoryService and is exposed as
+  RemoteInventoryService.MutationGate.
+- TownEquipmentMutationEndpoint: the store checks, revision read, POST
+  and ApplyConfirmedTrainingWeapon run in one gate turn; reconciliation
+  and the mutation notification run after the gate is released, while
+  the request is still marked in flight. A missing gate fails with
+  PersistenceFailed instead of posting unserialized.
+- TownInventoryBinder passes the service gate to the endpoint.
+
+Known gaps, out of scope: shop, ability purchase and reconciliation
+writers do not take the gate yet.
+
+Tests: TownEquipmentMutationEndpointTests (+5: waits for an in-flight
+mutation and posts its revision, queued mutation reads the training
+revision, notify/reconcile after release, missing gate);
+RemoteInventoryMutationGateTests (3); RemoteCommitRetryTests (28),
+StashTransferCoordinatorTests (98), TrainingWeaponTownRequestTests (7)
+and TownTrainerRequestPlayModeTests (1) green. The pre-existing
+RejectedCodes_DoNotReconcile("RESERVATION_PENDING") failure is
+unrelated and unchanged.
+
+Refs: TASK-295
+Player-Fixed: Asking the Trainer for a training weapon while your inventory is still saving no longer fails with an error.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/Presentation/TownEquipmentMutationEndpoint.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteInventoryMutationGate.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteInventoryMutationGate.cs.meta
+Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs.meta
+Project Grimhold/Assets/Tests/PlayMode/Presentation/TownTrainerRequestPlayModeTests.cs
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Combat: weapon
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/TownEquipmentMutationEndpoint.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Stash/RemoteInventoryMutationGate.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Stash/RemoteInventoryMutationGate.cs.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs.meta
+- scope → Inventory &amp; Loot: inventory
+- message-term → Inventory &amp; Loot: inventory
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/TownTrainerRequestPlayModeTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 49f39148b342f820c8a86c8583c5eeceae2c68ec
 

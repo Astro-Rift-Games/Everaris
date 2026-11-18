@@ -120,6 +120,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Pressing Escape or Enter to close a notice on the sign-in screen no longer also closes or submits the sign-in form.
 - The Retry button for entering Town no longer stays visible after signing out.
 - In town, your character no longer moves or attacks while the lost-raid notice is on screen.
+- Asking the Trainer for a training weapon while your inventory is still saving no longer fails with an error.
+- After dying, abandoning or losing connection in a raid, your training weapon is no longer shown among the lost items.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08

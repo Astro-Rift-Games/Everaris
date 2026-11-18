@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1174,
-  "canonicalEntries": 1171,
+  "rawCommits": 1177,
+  "canonicalEntries": 1174,
   "before": {
+    "Bug Fixes": 179,
     "Documentation": 124,
-    "Bug Fixes": 176,
     "Features": 415,
     "Tests": 46,
     "Refactoring": 16,
@@ -12,8 +12,8 @@
     "Architecture & Infrastructure": 24
   },
   "after": {
+    "Bug Fixes": 195,
     "Documentation": 140,
-    "Bug Fixes": 192,
     "Features": 553,
     "Tests": 51,
     "Refactoring": 29,
@@ -23,27 +23,27 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Combat": 395,
+    "Combat": 398,
+    "Inventory & Loot": 474,
+    "Persistence & Backend": 292,
+    "Tests": 745,
+    "Networking & Sessions": 345,
+    "Build & Tooling": 609,
     "Extraction": 174,
     "Audio": 40,
-    "Build & Tooling": 607,
     "Documentation": 434,
     "UI": 343,
-    "Tests": 742,
     "Abilities": 139,
     "Movement": 102,
-    "Networking & Sessions": 344,
     "World & Visibility": 164,
     "Input": 32,
-    "Persistence & Backend": 291,
     "Art & Animation": 260,
-    "Inventory & Loot": 471,
     "Unassigned": 42
   },
   "canonical": {
     "sections": {
+      "Bug Fixes": 194,
       "Documentation": 140,
-      "Bug Fixes": 191,
       "Features": 552,
       "Tests": 51,
       "Refactoring": 29,
@@ -52,21 +52,21 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Combat": 393,
+      "Combat": 396,
+      "Inventory & Loot": 474,
+      "Persistence & Backend": 292,
+      "Tests": 743,
+      "Networking & Sessions": 345,
+      "Build & Tooling": 607,
       "Extraction": 174,
       "Audio": 40,
-      "Build & Tooling": 605,
       "Documentation": 432,
       "UI": 342,
-      "Tests": 740,
       "Abilities": 137,
       "Movement": 102,
-      "Networking & Sessions": 344,
       "World & Visibility": 162,
       "Input": 32,
-      "Persistence & Backend": 291,
       "Art & Animation": 257,
-      "Inventory & Loot": 471,
       "Unassigned": 42
     }
   },
@@ -74826,8 +74826,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 297,
-      "canonicalEntries": 297
+      "originalCommits": 300,
+      "canonicalEntries": 300
     },
     {
       "key": "v0.5.0",
@@ -74871,6 +74871,377 @@
     }
   ],
   "commits": [
+    {
+      "sha": "95f9a9f47165bdae776fe7099a71326530fb5978",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/95f9a9f47165bdae776fe7099a71326530fb5978",
+      "subject": "fix(backend): reject attribute scaling on training weapons",
+      "body": "Training weapons have fixed damage and no scaling (Doc 09 15), but\nvalidModifiers accepted a primary/secondary scaling modifier on the\ntraining ids, so a host-submitted raid result could store a scaled\ntraining weapon (TASK-295).\n\n- ItemInstances.validModifiers rejects primary and secondary on the\n  three training ids (400 INVALID_INVENTORY); gems and normal weapons\n  are unchanged. Shared by validInventory, createInstance and the\n  raid result validators.\n- README documents the rule.\n\nPer Doc 09 15.1 (owner decision over the TASK-295 criterion), a\ntraining weapon request is NOT rejected when the character owns a\nnormal weapon; tests pin that it succeeds and keeps that weapon.\n\nTests: item.instances.training-scaling.test.js (validators and\nextraction commit, rejected without writing; normal weapon scaling\nstill accepted); inventory.training.test.js (+6: issued instances carry\nno scaling, request with a normal weapon in Stash/Loadout). npm test\n844/844, test:integration 245/245, test:concurrency 35/35.\n\nAlso adds the ODD execution tracker odd/tasks/task-295-training-weapon.md.\n\nRefs: TASK-295\n",
+      "date": "2026-11-18T17:45:47-03:00",
+      "files": [
+        "backend/README.md",
+        "backend/src/services/ItemInstances.js",
+        "backend/tests/inventory.training.test.js",
+        "backend/tests/item.instances.training-scaling.test.js",
+        "odd/tasks/task-295-training-weapon.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "backend",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/task-295-training-weapon.md",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "weapons",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.training.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/README.md",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ItemInstances.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.training.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/item.instances.training-scaling.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.training.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/item.instances.training-scaling.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "b52955ea719953a1069f13830afff6a9a0c55742",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/b52955ea719953a1069f13830afff6a9a0c55742",
+      "subject": "fix(results): keep training weapons out of the lost loot list",
+      "body": "Training weapons return to the Trainer on Defeat or voluntary Abandon\n(Doc 09 15.2), but the Results Lost list and the Town raid-loss notice\nlisted them as lost loot (TASK-295).\n\n- RaidResultsLootSummaryBuilder.TryBuildLost takes an exclusion\n  predicate; the whole snapshot is still validated and an all-excluded\n  snapshot yields an empty Lost summary.\n- ExtractedLootExperienceProducer requires the loot catalog and\n  excludes training weapons through CorpseLootProjection.IsTrainingWeapon,\n  now the single catalog rule; PlayerCorpseGenerationController passes\n  its receiver catalog.\n- RaidLossNotice.TryCreate excludes training weapons from reserved\n  items and prepared equipment; SessionConnectionCoordinator supplies\n  the profile store catalog. A missing catalog, or a reservation that\n  only carried training weapons, captures no notice (existing FIX-53\n  warning).\n- The non-excluding overloads remain only for existing test callers.\n\nTests: RaidResultsLootSummaryBuilderTests (+4, including Extracted from\nthe productive catalogs), RaidLossNoticeTests (+4),\nPlayerCorpseGenerationPlayModeTests (+1, defeated participant Results\nlists no training weapon; fails without the filter), LootDefinitionTests\n(+2 pins: a training weapon with offensive scaling fails validation).\nRaidLossNoticeSlotTests, TownRaidLossNoticePresentationTests,\nCorpseLootProjectionTests and RaidLootValueCatalogTests green.\n\nRefs: TASK-295\nPlayer-Fixed: After dying, abandoning or losing connection in a raid, your training weapon is no longer shown among the lost items.\n",
+      "date": "2026-11-18T17:45:47-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Networking/RaidLossNotice.cs",
+        "Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs",
+        "Project Grimhold/Assets/Scripts/Player/CorpseLootProjection.cs",
+        "Project Grimhold/Assets/Scripts/Player/PlayerCorpseGenerationController.cs",
+        "Project Grimhold/Assets/Scripts/Progression/ExtractedLootExperienceProducer.cs",
+        "Project Grimhold/Assets/Scripts/Progression/RaidResultsLootSummaryBuilder.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidLossNoticeTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RaidResultsLootSummaryBuilderTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/PlayerCorpseGenerationPlayModeTests.cs"
+      ],
+      "originalType": "fix",
+      "originalScope": "results",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "message-term",
+          "value": "weapons",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/CorpseLootProjection.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Progression/ExtractedLootExperienceProducer.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Progression/RaidResultsLootSummaryBuilder.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RaidResultsLootSummaryBuilderTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "loot",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/RaidLossNotice.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidLossNoticeTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidLossNoticeTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RaidResultsLootSummaryBuilderTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidLossNoticeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RaidResultsLootSummaryBuilderTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/PlayerCorpseGenerationPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "884331ab5c8f7507403197e967ff854cf5ee9017",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/884331ab5c8f7507403197e967ff854cf5ee9017",
+      "subject": "fix(inventory): serialize training weapon requests with inventory saves",
+      "body": "Requesting a training weapon read the inventory revision and posted\noutside the lock that serializes the other remote inventory mutations,\nso a stash move, sort, transfer, gem install or equipment sync landing\nin between turned the request into REVISION_CONFLICT (TASK-295).\n\n- RemoteInventoryMutationGate: shared, non-reentrant gate that replaces\n  the private SemaphoreSlim of RemoteInventoryService and is exposed as\n  RemoteInventoryService.MutationGate.\n- TownEquipmentMutationEndpoint: the store checks, revision read, POST\n  and ApplyConfirmedTrainingWeapon run in one gate turn; reconciliation\n  and the mutation notification run after the gate is released, while\n  the request is still marked in flight. A missing gate fails with\n  PersistenceFailed instead of posting unserialized.\n- TownInventoryBinder passes the service gate to the endpoint.\n\nKnown gaps, out of scope: shop, ability purchase and reconciliation\nwriters do not take the gate yet.\n\nTests: TownEquipmentMutationEndpointTests (+5: waits for an in-flight\nmutation and posts its revision, queued mutation reads the training\nrevision, notify/reconcile after release, missing gate);\nRemoteInventoryMutationGateTests (3); RemoteCommitRetryTests (28),\nStashTransferCoordinatorTests (98), TrainingWeaponTownRequestTests (7)\nand TownTrainerRequestPlayModeTests (1) green. The pre-existing\nRejectedCodes_DoNotReconcile(\"RESERVATION_PENDING\") failure is\nunrelated and unchanged.\n\nRefs: TASK-295\nPlayer-Fixed: Asking the Trainer for a training weapon while your inventory is still saving no longer fails with an error.\n",
+      "date": "2026-11-18T17:45:47-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownEquipmentMutationEndpoint.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs",
+        "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryMutationGate.cs",
+        "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryMutationGate.cs.meta",
+        "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/TownTrainerRequestPlayModeTests.cs"
+      ],
+      "originalType": "fix",
+      "originalScope": "inventory",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Inventory & Loot",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownEquipmentMutationEndpoint.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryMutationGate.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryMutationGate.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "scope",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownEquipmentMutationEndpointTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/RemoteInventoryMutationGateTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/TownTrainerRequestPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "49f39148b342f820c8a86c8583c5eeceae2c68ec",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/49f39148b342f820c8a86c8583c5eeceae2c68ec",
