@@ -1,72 +1,72 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1170,
-  "canonicalEntries": 1167,
+  "rawCommits": 1174,
+  "canonicalEntries": 1171,
   "before": {
-    "Features": 413,
-    "Bug Fixes": 175,
+    "Documentation": 124,
+    "Bug Fixes": 176,
+    "Features": 415,
     "Tests": 46,
     "Refactoring": 16,
-    "Documentation": 123,
     "Other Changes": 373,
     "Architecture & Infrastructure": 24
   },
   "after": {
-    "Features": 551,
-    "Bug Fixes": 191,
+    "Documentation": 140,
+    "Bug Fixes": 192,
+    "Features": 553,
     "Tests": 51,
     "Refactoring": 29,
-    "Documentation": 139,
     "Other Changes": 181,
     "Maintenance": 22,
     "Architecture & Infrastructure": 6
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Combat": 394,
-    "World & Visibility": 163,
+    "Combat": 395,
+    "Extraction": 174,
+    "Audio": 40,
+    "Build & Tooling": 607,
+    "Documentation": 434,
+    "UI": 343,
+    "Tests": 742,
+    "Abilities": 139,
+    "Movement": 102,
+    "Networking & Sessions": 344,
+    "World & Visibility": 164,
+    "Input": 32,
     "Persistence & Backend": 291,
     "Art & Animation": 260,
-    "Build & Tooling": 604,
-    "Documentation": 432,
-    "Tests": 739,
-    "UI": 340,
-    "Movement": 101,
     "Inventory & Loot": 471,
-    "Networking & Sessions": 343,
-    "Abilities": 138,
-    "Extraction": 173,
-    "Audio": 39,
-    "Input": 31,
     "Unassigned": 42
   },
   "canonical": {
     "sections": {
-      "Features": 550,
-      "Bug Fixes": 190,
+      "Documentation": 140,
+      "Bug Fixes": 191,
+      "Features": 552,
       "Tests": 51,
       "Refactoring": 29,
-      "Documentation": 139,
       "Other Changes": 180,
       "Maintenance": 22,
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Combat": 392,
-      "World & Visibility": 161,
+      "Combat": 393,
+      "Extraction": 174,
+      "Audio": 40,
+      "Build & Tooling": 605,
+      "Documentation": 432,
+      "UI": 342,
+      "Tests": 740,
+      "Abilities": 137,
+      "Movement": 102,
+      "Networking & Sessions": 344,
+      "World & Visibility": 162,
+      "Input": 32,
       "Persistence & Backend": 291,
       "Art & Animation": 257,
-      "Build & Tooling": 602,
-      "Documentation": 430,
-      "Tests": 737,
-      "UI": 339,
-      "Movement": 101,
       "Inventory & Loot": 471,
-      "Networking & Sessions": 343,
-      "Abilities": 136,
-      "Extraction": 173,
-      "Audio": 39,
-      "Input": 31,
       "Unassigned": 42
     }
   },
@@ -74826,8 +74826,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 293,
-      "canonicalEntries": 293
+      "originalCommits": 297,
+      "canonicalEntries": 297
     },
     {
       "key": "v0.5.0",
@@ -74871,6 +74871,680 @@
     }
   ],
   "commits": [
+    {
+      "sha": "49f39148b342f820c8a86c8583c5eeceae2c68ec",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/49f39148b342f820c8a86c8583c5eeceae2c68ec",
+      "subject": "docs(sfx-guide): add Everaris SFX visual guide and Pages workflow",
+      "body": "Add the static SFX reference guide under docs/sfx-guide/ covering all 47 blocks for US-85 and US-86 with 16 preview GIFs, and configure a GitHub Actions workflow to deploy only docs/sfx-guide/ to GitHub Pages from New-Testing.\n",
+      "date": "2026-11-18T17:26:08-03:00",
+      "files": [
+        ".github/workflows/sfx-guide-pages.yml",
+        "docs/sfx-guide/app.js",
+        "docs/sfx-guide/data.js",
+        "docs/sfx-guide/gifs/README.md",
+        "docs/sfx-guide/gifs/sfx01-bow.gif",
+        "docs/sfx-guide/gifs/sfx01-crossbow.gif",
+        "docs/sfx-guide/gifs/sfx01-melee-hammer.gif",
+        "docs/sfx-guide/gifs/sfx01-melee-hybrid-magic.gif",
+        "docs/sfx-guide/gifs/sfx01-melee-light.gif",
+        "docs/sfx-guide/gifs/sfx01-melee-sword.gif",
+        "docs/sfx-guide/gifs/sfx01-player-damage-death.gif",
+        "docs/sfx-guide/gifs/sfx01-player-footsteps.gif",
+        "docs/sfx-guide/gifs/sfx01-shield-block.gif",
+        "docs/sfx-guide/gifs/sfx01-skeleton.gif",
+        "docs/sfx-guide/gifs/sfx01-slime.gif",
+        "docs/sfx-guide/gifs/sfx01-spellbook.gif",
+        "docs/sfx-guide/gifs/sfx01-wand-staff.gif",
+        "docs/sfx-guide/gifs/sfx03-collapse-pressure.gif",
+        "docs/sfx-guide/gifs/sfx03-doors-chests.gif",
+        "docs/sfx-guide/gifs/sfx03-extraction-sanctuary.gif",
+        "docs/sfx-guide/index.html",
+        "docs/sfx-guide/styles.css"
+      ],
+      "originalType": "docs",
+      "originalScope": "sfx-guide",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Extraction",
+        "Audio",
+        "Build & Tooling",
+        "Documentation"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-player-damage-death.gif",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx03-extraction-sanctuary.gif",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": ".github/workflows/sfx-guide-pages.yml",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/app.js",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/data.js",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/README.md",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-bow.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-crossbow.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-melee-hammer.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-melee-hybrid-magic.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-melee-light.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-melee-sword.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-player-damage-death.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-player-footsteps.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-shield-block.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-skeleton.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-slime.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-spellbook.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-wand-staff.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx03-collapse-pressure.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx03-doors-chests.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx03-extraction-sanctuary.gif",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/index.html",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/styles.css",
+          "supports": "Audio"
+        },
+        {
+          "source": "scope",
+          "value": "sfx-guide",
+          "supports": "Audio"
+        },
+        {
+          "source": "message-term",
+          "value": "sfx",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": ".github/workflows/sfx-guide-pages.yml",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/app.js",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/data.js",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/README.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-bow.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-crossbow.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-melee-hammer.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-melee-hybrid-magic.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-melee-light.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-melee-sword.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-player-damage-death.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-player-footsteps.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-shield-block.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-skeleton.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-slime.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-spellbook.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx01-wand-staff.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx03-collapse-pressure.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx03-doors-chests.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/gifs/sfx03-extraction-sanctuary.gif",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/index.html",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "docs/sfx-guide/styles.css",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "cbbe2038d3a80b46b2d638a7125aaa17cb361b78",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/cbbe2038d3a80b46b2d638a7125aaa17cb361b78",
+      "subject": "fix(ui): block gameplay input while the Town raid-loss notice is shown",
+      "body": "The raid-loss notice stays on screen until Continue but did not hold a\ngameplay-input suppression, so the character could still move and act\nand the camera kept leaning toward the cursor behind it. GD 16 6\nrequires gameplay input to be blocked while a UI is open (TASK-222).\n\n- TownRaidLossNoticePresenter acquires exactly one suppression when\n  the notice is shown and releases it on Continue, disable and\n  destroy; re-enabling while the notice is still open re-acquires it.\n  The reader comes from BindInputReader or the same scene lookup the\n  TownTrainerPresenter fallback uses, only when the notice is shown.\n  Without a reader the notice still opens and logs a warning.\n- MissionBoardUI was audited and left unchanged: it only lives in the\n  unreferenced MissionCanvas.prefab and cannot be opened in play.\n\nTests: TownRaidLossNoticePresenterPlayModeTests (9; show/continue,\nsingle token on repeated show, no leak over cycles, other owners'\ntokens untouched, disable/enable, destroy, missing reader);\nRaidLossNotice EditMode (25) and PlayMode (9) green.\n\nAlso adds the ODD execution tracker odd/tasks/gameplay-camera.md for\nTASK-222.\n\nPlayer-Fixed: In town, your character no longer moves or attacks while the lost-raid notice is on screen.\n",
+      "date": "2026-11-18T16:48:36-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidLossNoticePresenter.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/TownRaidLossNoticePresenterPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/TownRaidLossNoticePresenterPlayModeTests.cs.meta",
+        "odd/tasks/gameplay-camera.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "ui",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "UI",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "scope",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/TownRaidLossNoticePresenterPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/TownRaidLossNoticePresenterPlayModeTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "76bef12dde3e078c10fe9e65586d821ab8ce2481",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/76bef12dde3e078c10fe9e65586d821ab8ce2481",
+      "subject": "feat(ui): add camera calibration to the Settings panel",
+      "body": "Players can calibrate the gameplay camera to taste from Settings\n(TASK-222). The panel gains a second column with three sliders and a\nreset button; values are stored locally as GameplayCameraPreferences\noverrides and apply live.\n\n- CameraOptionsView: \"Intensidad del desplazamiento\", \"Suavizado\" and\n  \"Velocidad de seguimiento\" sliders whose ranges come from\n  GameplayCameraConfig, plus \"Restablecer\" to return to the config\n  defaults. Zoom is intentionally not exposed.\n- SettingsPanel.prefab: panel widened from 675 to 1250 to host the\n  \"Camera Rows\" column next to the existing volume rows (additions\n  only apart from the panel size and the volume column position; the\n  nested MainMenu, RaidMenuPanel and TownOptions instances are not\n  modified).\n\nTests: CameraOptionsViewTests (10; ranges from config, slider writes\nthe preference, reset restores defaults and slider values, no zoom\ncontrol); SettingsPanelViewTests (8), MainMenuComposition (11) and\nMainMenuControllerWiring (11) green.\n\nPlayer-Added: Settings now has camera options to adjust how far the camera leans toward the cursor, how smooth it feels and how fast it follows you.\n",
+      "date": "2026-11-18T16:48:25-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/UI/SettingsPanel.prefab",
+        "Project Grimhold/Assets/Scripts/UI/Settings/CameraOptionsView.cs",
+        "Project Grimhold/Assets/Scripts/UI/Settings/CameraOptionsView.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CameraOptionsViewTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CameraOptionsViewTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "ui",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "UI",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/UI/SettingsPanel.prefab",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Settings/CameraOptionsView.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Settings/CameraOptionsView.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "scope",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CameraOptionsViewTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CameraOptionsViewTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CameraOptionsViewTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CameraOptionsViewTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "3c8a14f40aee566282b3f1005cc4eeb45a236ab9",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3c8a14f40aee566282b3f1005cc4eeb45a236ab9",
+      "subject": "feat(camera): add cursor look-ahead, map bounds and live tuning",
+      "body": "The local gameplay camera now follows 03 - Player Design 8 and 11\n(TASK-222): it leans toward the cursor without losing the player,\nnever shows outside the map, and reads every design value live from\none ScriptableObject so QA can tune it in Play Mode.\n\n- GameplayCameraMath (pure): cursor offset from the pointer's viewport\n  position (camera-independent, so the camera never chases its own\n  projection), ramped across the whole screen with a central dead\n  zone, capped at the max distance and by a per-axis safe margin;\n  bounds clamp that centers on any axis where the map is smaller than\n  the view.\n- GameplayCameraConfig (Assets/Scriptable Objects): max offset, dead\n  zone, safe margin, follow speed, smoothing, orthographic size, fixed\n  offset, snap on target change, and the player preference ranges.\n- GameplayCameraPreferences: optional PlayerPrefs overrides for offset\n  intensity, smoothing and follow speed, clamped to the config ranges.\n  Orthographic size has no player override.\n- LocalCameraController: UpdateCamera(dt) seam, follow position kept\n  apart from the rendered one so camera shake is added on top and no\n  longer drifts the follow, follow-speed cap, snap clamped to bounds.\n  SetTarget(target, followCursor): the local player passes true; the\n  spectator keeps false and follows the teammate without cursor\n  offset. The cursor offset eases to zero while gameplay input is\n  suppressed by any open UI.\n- PlayerInputReader implements ICameraCursorSource.\n- CameraMapBounds per scene, wired in Lobby-Town (-18,-11,27,23) and\n  CatacombsMap (-137,-114,291,228) from the tilemap union; the scene\n  PlayerInputReader is wired as the cursor source in Lobby-Town,\n  CatacombsMap, Gameplay and AbilitySandbox.\n\nTests: GameplayCameraMathTests (19), LocalCameraControllerTests (27),\nGameplayCameraPreferencesTests (15), GameplayCameraSceneCompositionTests\n(4), PlayerInputReaderTests (18 incl. 3 new); CameraShake (20) and\nScreenDamage (31) unchanged and green.\n\nDocs: PlayerMovementArchitecture.md 17.1 describes the components,\nper-frame pipeline, cursor/UI/spectator rules and player preferences.\n\nPlayer-Added: The camera now leans toward your mouse cursor so you can see further ahead, and it stops at the edges of the map.\n",
+      "date": "2026-11-18T16:48:15-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/Gameplay Camera.prefab",
+        "Project Grimhold/Assets/Scenes/AbilitySandbox.unity",
+        "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+        "Project Grimhold/Assets/Scenes/Gameplay.unity",
+        "Project Grimhold/Assets/Scenes/Lobby-Town.unity",
+        "Project Grimhold/Assets/Scriptable Objects/GameplayCameraConfig.asset",
+        "Project Grimhold/Assets/Scriptable Objects/GameplayCameraConfig.asset.meta",
+        "Project Grimhold/Assets/Scripts/Player/PlayerInputReader.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/CameraMapBounds.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/CameraMapBounds.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/GameplayCameraConfig.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/GameplayCameraConfig.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/GameplayCameraMath.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/GameplayCameraMath.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/GameplayCameraPreferences.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/GameplayCameraPreferences.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/ICameraCursorSource.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/ICameraCursorSource.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/LocalCameraController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/LocalPlayerCameraBinder.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraMathTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraMathTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTestScope.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTestScope.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraSceneCompositionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraSceneCompositionTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocalCameraControllerTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocalCameraControllerTests.cs.meta",
+        "Project Grimhold/Docs/Architecture/PlayerMovementArchitecture.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "camera",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Abilities",
+        "Movement",
+        "Networking & Sessions",
+        "UI",
+        "World & Visibility",
+        "Input",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/AbilitySandbox.unity",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/PlayerMovementArchitecture.md",
+          "supports": "Movement"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/Lobby-Town.unity",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "message-term",
+          "value": "Lobby",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "message-term",
+          "value": "UI",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "tilemap",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/PlayerInputReader.cs",
+          "supports": "Input"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs",
+          "supports": "Input"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraMathTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraMathTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTestScope.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTestScope.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraSceneCompositionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraSceneCompositionTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocalCameraControllerTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocalCameraControllerTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/PlayerMovementArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraMathTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraMathTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTestScope.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTestScope.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraSceneCompositionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraSceneCompositionTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocalCameraControllerTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocalCameraControllerTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "c27aefd9c5536b74286b536a468e389844afcecd",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c27aefd9c5536b74286b536a468e389844afcecd",

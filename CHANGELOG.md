@@ -29,6 +29,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - The main menu has a new look with sign in, account creation, server status and exit confirmation.
 - You can choose to remember your username so you do not have to type it every time.
 - Arrows now stay stuck in walls, floors, crates and enemies for a few seconds after hitting them before fading away.
+- The camera now leans toward your mouse cursor so you can see further ahead, and it stops at the edges of the map.
+- Settings now has camera options to adjust how far the camera leans toward the cursor, how smooth it feels and how fast it follows you.
 
 ### Improved
 
@@ -117,6 +119,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Clients are no longer offered "Close door" while someone is standing in the doorway.
 - Pressing Escape or Enter to close a notice on the sign-in screen no longer also closes or submits the sign-in form.
 - The Retry button for entering Town no longer stays visible after signing out.
+- In town, your character no longer moves or attacks while the lost-raid notice is on screen.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08

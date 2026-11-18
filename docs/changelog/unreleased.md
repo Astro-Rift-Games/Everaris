@@ -4,32 +4,403 @@
 
 Release: Unreleased
 
-293 original commits; 293 canonical entries.
+297 original commits; 297 canonical entries.
 
 ## Canonical classification
 
-91 features; 97 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 22 tests; 11 maintenance; 19 other changes
+93 features; 98 bug fixes; 3 refactoring; 1 architecture & infrastructure; 50 documentation; 22 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Abilities | 11 | 11 | 1 | 0 | 10 | 1 |
+| Abilities | 12 | 11 | 1 | 0 | 10 | 1 |
 | Art & Animation | 19 | 12 | 3 | 0 | 9 | 7 |
-| Audio | 7 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 64 | 65 | 3 | 1 | 24 | 6 |
-| Combat | 45 | 17 | 2 | 0 | 13 | 1 |
-| Documentation | 34 | 42 | 0 | 0 | 13 | 0 |
-| Extraction | 17 | 21 | 2 | 0 | 9 | 5 |
-| Input | 1 | 1 | 0 | 0 | 1 | 0 |
+| Audio | 7 | 2 | 0 | 0 | 1 | 0 |
+| Build & Tooling | 66 | 65 | 3 | 1 | 25 | 6 |
+| Combat | 45 | 17 | 2 | 0 | 14 | 1 |
+| Documentation | 35 | 42 | 0 | 0 | 14 | 0 |
+| Extraction | 17 | 21 | 2 | 0 | 10 | 5 |
+| Input | 2 | 1 | 0 | 0 | 1 | 0 |
 | Inventory & Loot | 63 | 56 | 3 | 1 | 27 | 5 |
-| Movement | 5 | 5 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 29 | 37 | 0 | 0 | 19 | 2 |
+| Movement | 6 | 5 | 0 | 0 | 2 | 0 |
+| Networking & Sessions | 30 | 37 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 31 | 50 | 2 | 1 | 19 | 3 |
-| Tests | 87 | 91 | 3 | 1 | 32 | 4 |
-| UI | 34 | 21 | 1 | 0 | 12 | 3 |
+| Tests | 89 | 92 | 3 | 1 | 32 | 4 |
+| UI | 36 | 22 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
-| World & Visibility | 25 | 13 | 0 | 0 | 3 | 12 |
+| World & Visibility | 26 | 13 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 49f39148b342f820c8a86c8583c5eeceae2c68ec
+
+[49f39148b342f820c8a86c8583c5eeceae2c68ec](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/49f39148b342f820c8a86c8583c5eeceae2c68ec)
+
+Date: 2026-11-18T17:26:08-03:00 · Classification: Documentation (explicit) · Systems: Combat, Extraction, Audio, Build & Tooling, Documentation
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(sfx-guide): add Everaris SFX visual guide and Pages workflow
+```
+
+#### Original body
+
+```text
+Add the static SFX reference guide under docs/sfx-guide/ covering all 47 blocks for US-85 and US-86 with 16 preview GIFs, and configure a GitHub Actions workflow to deploy only docs/sfx-guide/ to GitHub Pages from New-Testing.
+```
+
+#### Changed paths
+
+```text
+.github/workflows/sfx-guide-pages.yml
+docs/sfx-guide/app.js
+docs/sfx-guide/data.js
+docs/sfx-guide/gifs/README.md
+docs/sfx-guide/gifs/sfx01-bow.gif
+docs/sfx-guide/gifs/sfx01-crossbow.gif
+docs/sfx-guide/gifs/sfx01-melee-hammer.gif
+docs/sfx-guide/gifs/sfx01-melee-hybrid-magic.gif
+docs/sfx-guide/gifs/sfx01-melee-light.gif
+docs/sfx-guide/gifs/sfx01-melee-sword.gif
+docs/sfx-guide/gifs/sfx01-player-damage-death.gif
+docs/sfx-guide/gifs/sfx01-player-footsteps.gif
+docs/sfx-guide/gifs/sfx01-shield-block.gif
+docs/sfx-guide/gifs/sfx01-skeleton.gif
+docs/sfx-guide/gifs/sfx01-slime.gif
+docs/sfx-guide/gifs/sfx01-spellbook.gif
+docs/sfx-guide/gifs/sfx01-wand-staff.gif
+docs/sfx-guide/gifs/sfx03-collapse-pressure.gif
+docs/sfx-guide/gifs/sfx03-doors-chests.gif
+docs/sfx-guide/gifs/sfx03-extraction-sanctuary.gif
+docs/sfx-guide/index.html
+docs/sfx-guide/styles.css
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Combat: docs/sfx-guide/gifs/sfx01-player-damage-death.gif
+- path → Extraction: docs/sfx-guide/gifs/sfx03-extraction-sanctuary.gif
+- path → Audio: .github/workflows/sfx-guide-pages.yml
+- path → Audio: docs/sfx-guide/app.js
+- path → Audio: docs/sfx-guide/data.js
+- path → Audio: docs/sfx-guide/gifs/README.md
+- path → Audio: docs/sfx-guide/gifs/sfx01-bow.gif
+- path → Audio: docs/sfx-guide/gifs/sfx01-crossbow.gif
+- path → Audio: docs/sfx-guide/gifs/sfx01-melee-hammer.gif
+- path → Audio: docs/sfx-guide/gifs/sfx01-melee-hybrid-magic.gif
+- path → Audio: docs/sfx-guide/gifs/sfx01-melee-light.gif
+- path → Audio: docs/sfx-guide/gifs/sfx01-melee-sword.gif
+- path → Audio: docs/sfx-guide/gifs/sfx01-player-damage-death.gif
+- path → Audio: docs/sfx-guide/gifs/sfx01-player-footsteps.gif
+- path → Audio: docs/sfx-guide/gifs/sfx01-shield-block.gif
+- path → Audio: docs/sfx-guide/gifs/sfx01-skeleton.gif
+- path → Audio: docs/sfx-guide/gifs/sfx01-slime.gif
+- path → Audio: docs/sfx-guide/gifs/sfx01-spellbook.gif
+- path → Audio: docs/sfx-guide/gifs/sfx01-wand-staff.gif
+- path → Audio: docs/sfx-guide/gifs/sfx03-collapse-pressure.gif
+- path → Audio: docs/sfx-guide/gifs/sfx03-doors-chests.gif
+- path → Audio: docs/sfx-guide/gifs/sfx03-extraction-sanctuary.gif
+- path → Audio: docs/sfx-guide/index.html
+- path → Audio: docs/sfx-guide/styles.css
+- scope → Audio: sfx-guide
+- message-term → Audio: sfx
+- path → Build &amp; Tooling: .github/workflows/sfx-guide-pages.yml
+- path → Documentation: docs/sfx-guide/app.js
+- path → Documentation: docs/sfx-guide/data.js
+- path → Documentation: docs/sfx-guide/gifs/README.md
+- path → Documentation: docs/sfx-guide/gifs/sfx01-bow.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx01-crossbow.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx01-melee-hammer.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx01-melee-hybrid-magic.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx01-melee-light.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx01-melee-sword.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx01-player-damage-death.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx01-player-footsteps.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx01-shield-block.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx01-skeleton.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx01-slime.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx01-spellbook.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx01-wand-staff.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx03-collapse-pressure.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx03-doors-chests.gif
+- path → Documentation: docs/sfx-guide/gifs/sfx03-extraction-sanctuary.gif
+- path → Documentation: docs/sfx-guide/index.html
+- path → Documentation: docs/sfx-guide/styles.css
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### cbbe2038d3a80b46b2d638a7125aaa17cb361b78
+
+[cbbe2038d3a80b46b2d638a7125aaa17cb361b78](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/cbbe2038d3a80b46b2d638a7125aaa17cb361b78)
+
+Date: 2026-11-18T16:48:36-03:00 · Classification: Bug Fixes (explicit) · Systems: UI, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(ui): block gameplay input while the Town raid-loss notice is shown
+```
+
+#### Original body
+
+```text
+The raid-loss notice stays on screen until Continue but did not hold a
+gameplay-input suppression, so the character could still move and act
+and the camera kept leaning toward the cursor behind it. GD 16 6
+requires gameplay input to be blocked while a UI is open (TASK-222).
+
+- TownRaidLossNoticePresenter acquires exactly one suppression when
+  the notice is shown and releases it on Continue, disable and
+  destroy; re-enabling while the notice is still open re-acquires it.
+  The reader comes from BindInputReader or the same scene lookup the
+  TownTrainerPresenter fallback uses, only when the notice is shown.
+  Without a reader the notice still opens and logs a warning.
+- MissionBoardUI was audited and left unchanged: it only lives in the
+  unreferenced MissionCanvas.prefab and cannot be opened in play.
+
+Tests: TownRaidLossNoticePresenterPlayModeTests (9; show/continue,
+single token on repeated show, no leak over cycles, other owners'
+tokens untouched, disable/enable, destroy, missing reader);
+RaidLossNotice EditMode (25) and PlayMode (9) green.
+
+Also adds the ODD execution tracker odd/tasks/gameplay-camera.md for
+TASK-222.
+
+Player-Fixed: In town, your character no longer moves or attacks while the lost-raid notice is on screen.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidLossNoticePresenter.cs
+Project Grimhold/Assets/Tests/PlayMode/Presentation/TownRaidLossNoticePresenterPlayModeTests.cs
+Project Grimhold/Assets/Tests/PlayMode/Presentation/TownRaidLossNoticePresenterPlayModeTests.cs.meta
+odd/tasks/gameplay-camera.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- scope → UI: ui
+- message-term → UI: ui
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/TownRaidLossNoticePresenterPlayModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/TownRaidLossNoticePresenterPlayModeTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 76bef12dde3e078c10fe9e65586d821ab8ce2481
+
+[76bef12dde3e078c10fe9e65586d821ab8ce2481](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/76bef12dde3e078c10fe9e65586d821ab8ce2481)
+
+Date: 2026-11-18T16:48:25-03:00 · Classification: Features (explicit) · Systems: UI, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(ui): add camera calibration to the Settings panel
+```
+
+#### Original body
+
+```text
+Players can calibrate the gameplay camera to taste from Settings
+(TASK-222). The panel gains a second column with three sliders and a
+reset button; values are stored locally as GameplayCameraPreferences
+overrides and apply live.
+
+- CameraOptionsView: "Intensidad del desplazamiento", "Suavizado" and
+  "Velocidad de seguimiento" sliders whose ranges come from
+  GameplayCameraConfig, plus "Restablecer" to return to the config
+  defaults. Zoom is intentionally not exposed.
+- SettingsPanel.prefab: panel widened from 675 to 1250 to host the
+  "Camera Rows" column next to the existing volume rows (additions
+  only apart from the panel size and the volume column position; the
+  nested MainMenu, RaidMenuPanel and TownOptions instances are not
+  modified).
+
+Tests: CameraOptionsViewTests (10; ranges from config, slider writes
+the preference, reset restores defaults and slider values, no zoom
+control); SettingsPanelViewTests (8), MainMenuComposition (11) and
+MainMenuControllerWiring (11) green.
+
+Player-Added: Settings now has camera options to adjust how far the camera leans toward the cursor, how smooth it feels and how fast it follows you.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/UI/SettingsPanel.prefab
+Project Grimhold/Assets/Scripts/UI/Settings/CameraOptionsView.cs
+Project Grimhold/Assets/Scripts/UI/Settings/CameraOptionsView.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CameraOptionsViewTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CameraOptionsViewTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → UI: Project Grimhold/Assets/Prefabs/UI/SettingsPanel.prefab
+- path → UI: Project Grimhold/Assets/Scripts/UI/Settings/CameraOptionsView.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/Settings/CameraOptionsView.cs.meta
+- scope → UI: ui
+- message-term → UI: ui
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CameraOptionsViewTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CameraOptionsViewTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CameraOptionsViewTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CameraOptionsViewTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 3c8a14f40aee566282b3f1005cc4eeb45a236ab9
+
+[3c8a14f40aee566282b3f1005cc4eeb45a236ab9](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3c8a14f40aee566282b3f1005cc4eeb45a236ab9)
+
+Date: 2026-11-18T16:48:15-03:00 · Classification: Features (explicit) · Systems: Abilities, Movement, Networking & Sessions, UI, World & Visibility, Input, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(camera): add cursor look-ahead, map bounds and live tuning
+```
+
+#### Original body
+
+```text
+The local gameplay camera now follows 03 - Player Design 8 and 11
+(TASK-222): it leans toward the cursor without losing the player,
+never shows outside the map, and reads every design value live from
+one ScriptableObject so QA can tune it in Play Mode.
+
+- GameplayCameraMath (pure): cursor offset from the pointer's viewport
+  position (camera-independent, so the camera never chases its own
+  projection), ramped across the whole screen with a central dead
+  zone, capped at the max distance and by a per-axis safe margin;
+  bounds clamp that centers on any axis where the map is smaller than
+  the view.
+- GameplayCameraConfig (Assets/Scriptable Objects): max offset, dead
+  zone, safe margin, follow speed, smoothing, orthographic size, fixed
+  offset, snap on target change, and the player preference ranges.
+- GameplayCameraPreferences: optional PlayerPrefs overrides for offset
+  intensity, smoothing and follow speed, clamped to the config ranges.
+  Orthographic size has no player override.
+- LocalCameraController: UpdateCamera(dt) seam, follow position kept
+  apart from the rendered one so camera shake is added on top and no
+  longer drifts the follow, follow-speed cap, snap clamped to bounds.
+  SetTarget(target, followCursor): the local player passes true; the
+  spectator keeps false and follows the teammate without cursor
+  offset. The cursor offset eases to zero while gameplay input is
+  suppressed by any open UI.
+- PlayerInputReader implements ICameraCursorSource.
+- CameraMapBounds per scene, wired in Lobby-Town (-18,-11,27,23) and
+  CatacombsMap (-137,-114,291,228) from the tilemap union; the scene
+  PlayerInputReader is wired as the cursor source in Lobby-Town,
+  CatacombsMap, Gameplay and AbilitySandbox.
+
+Tests: GameplayCameraMathTests (19), LocalCameraControllerTests (27),
+GameplayCameraPreferencesTests (15), GameplayCameraSceneCompositionTests
+(4), PlayerInputReaderTests (18 incl. 3 new); CameraShake (20) and
+ScreenDamage (31) unchanged and green.
+
+Docs: PlayerMovementArchitecture.md 17.1 describes the components,
+per-frame pipeline, cursor/UI/spectator rules and player preferences.
+
+Player-Added: The camera now leans toward your mouse cursor so you can see further ahead, and it stops at the edges of the map.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/Gameplay Camera.prefab
+Project Grimhold/Assets/Scenes/AbilitySandbox.unity
+Project Grimhold/Assets/Scenes/CatacombsMap.unity
+Project Grimhold/Assets/Scenes/Gameplay.unity
+Project Grimhold/Assets/Scenes/Lobby-Town.unity
+Project Grimhold/Assets/Scriptable Objects/GameplayCameraConfig.asset
+Project Grimhold/Assets/Scriptable Objects/GameplayCameraConfig.asset.meta
+Project Grimhold/Assets/Scripts/Player/PlayerInputReader.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/CameraMapBounds.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/CameraMapBounds.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/GameplayCameraConfig.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/GameplayCameraConfig.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/GameplayCameraMath.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/GameplayCameraMath.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/GameplayCameraPreferences.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/GameplayCameraPreferences.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/ICameraCursorSource.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/ICameraCursorSource.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/LocalCameraController.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/LocalPlayerCameraBinder.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraMathTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraMathTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTestScope.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTestScope.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraSceneCompositionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraSceneCompositionTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocalCameraControllerTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocalCameraControllerTests.cs.meta
+Project Grimhold/Docs/Architecture/PlayerMovementArchitecture.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Abilities: Project Grimhold/Assets/Scenes/AbilitySandbox.unity
+- path → Movement: Project Grimhold/Docs/Architecture/PlayerMovementArchitecture.md
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scenes/Lobby-Town.unity
+- message-term → Networking &amp; Sessions: Lobby
+- message-term → UI: UI
+- path → World &amp; Visibility: Project Grimhold/Assets/Scenes/CatacombsMap.unity
+- message-term → World &amp; Visibility: tilemap
+- path → Input: Project Grimhold/Assets/Scripts/Player/PlayerInputReader.cs
+- path → Input: Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraMathTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraMathTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTestScope.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTestScope.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraSceneCompositionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraSceneCompositionTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocalCameraControllerTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocalCameraControllerTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/PlayerMovementArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/PlayerInputReaderTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraMathTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraMathTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTestScope.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTestScope.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraPreferencesTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraSceneCompositionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/GameplayCameraSceneCompositionTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocalCameraControllerTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/LocalCameraControllerTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### c27aefd9c5536b74286b536a468e389844afcecd
 
