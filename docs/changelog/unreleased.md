@@ -4,32 +4,135 @@
 
 Release: Unreleased
 
-292 original commits; 292 canonical entries.
+293 original commits; 293 canonical entries.
 
 ## Canonical classification
 
-90 features; 97 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 22 tests; 11 maintenance; 19 other changes
+91 features; 97 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 22 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 11 | 11 | 1 | 0 | 10 | 1 |
-| Art & Animation | 18 | 12 | 3 | 0 | 9 | 7 |
+| Art & Animation | 19 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 7 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 63 | 65 | 3 | 1 | 24 | 6 |
-| Combat | 44 | 17 | 2 | 0 | 13 | 1 |
-| Documentation | 33 | 42 | 0 | 0 | 13 | 0 |
+| Build & Tooling | 64 | 65 | 3 | 1 | 24 | 6 |
+| Combat | 45 | 17 | 2 | 0 | 13 | 1 |
+| Documentation | 34 | 42 | 0 | 0 | 13 | 0 |
 | Extraction | 17 | 21 | 2 | 0 | 9 | 5 |
 | Input | 1 | 1 | 0 | 0 | 1 | 0 |
 | Inventory & Loot | 63 | 56 | 3 | 1 | 27 | 5 |
 | Movement | 5 | 5 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 29 | 37 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 30 | 50 | 2 | 1 | 19 | 3 |
-| Tests | 86 | 91 | 3 | 1 | 32 | 4 |
+| Persistence & Backend | 31 | 50 | 2 | 1 | 19 | 3 |
+| Tests | 87 | 91 | 3 | 1 | 32 | 4 |
 | UI | 34 | 21 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
-| World & Visibility | 24 | 13 | 0 | 0 | 3 | 12 |
+| World & Visibility | 25 | 13 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### c27aefd9c5536b74286b536a468e389844afcecd
+
+[c27aefd9c5536b74286b536a468e389844afcecd](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c27aefd9c5536b74286b536a468e389844afcecd)
+
+Date: 2026-11-18T14:52:25-03:00 · Classification: Features (explicit) · Systems: Combat, World & Visibility, Persistence & Backend, Art & Animation, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(combat): leave arrows stuck in walls, floors and bodies on impact
+```
+
+#### Original body
+
+```text
+Arrows now stay embedded where they hit for a moment, then fade out,
+instead of vanishing on impact. The effect is local presentation only
+and is opt-in per ProjectileVisualProfile (enabled for LongBow and
+CompoundBow; magic projectiles are unchanged).
+
+- StuckProjectileVisual keeps a cropped copy of the flight sprite: only
+  the trailing StickVisibleFraction (0.5) stays visible, with the cut
+  edge on the contact surface point. Oblique hits sink the edge by
+  (w/2)*|p.n|/max(|f.n|, 0.35), clamped to StickEdgeWidth (3 px), so
+  both ends reach the surface without shortening the visible part.
+- Holds StickHoldSeconds (4.5) and fades over StickFadeSeconds (0.5).
+- Body hits follow the body, draw on StickBodySortingLayer (VFX),
+  mirror the body's vision opacity and end with the body.
+- The visual anchors to the collider under the stuck point and ends
+  when it is disabled, deactivated or destroyed (broken breakables).
+- Orb interceptions leave nothing.
+- NetworkProjectile records presentation-only networked terminal
+  metadata (surface point, target id, offset from the body root,
+  interception flag) so every peer places the arrow consistently.
+  EntityVisibilityPresenter exposes AppliedAlpha read-only.
+
+Tests: ProjectileStuckVisualTests (crop, pivot, flips, axis, oblique
+depth, anchor expiry and following, fade, body follow and visibility;
+92/92 Combat.Projectile EditMode green),
+ProjectilePresentationPlayModeTests GeometryImpact_ExposesNoTargetAndNoInterception
+and BodyImpact_ExposesHitBodyAndReplicatedOffset (13/13 PlayMode
+green before the oblique-depth change, which is presentation only).
+
+Docs: PlayerCombatArchitecture.md and GameFeelParticlesArchitecture.md
+describe the stick-on-impact presentation.
+
+Player-Added: Arrows now stay stuck in walls, floors, crates and enemies for a few seconds after hitting them before fading away.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset
+Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs
+Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs
+Project Grimhold/Assets/Scripts/Combat/Presentation/StuckProjectileVisual.cs
+Project Grimhold/Assets/Scripts/Combat/Presentation/StuckProjectileVisual.cs.meta
+Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/EntityVisibilityPresenter.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs.meta
+Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs
+Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md
+Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/StuckProjectileVisual.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/StuckProjectileVisual.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs.meta
+- path → Combat: Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs
+- path → Combat: Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md
+- scope → Combat: combat
+- message-term → Combat: combat
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/EntityVisibilityPresenter.cs
+- message-term → World &amp; Visibility: visibility
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs
+- message-term → Art &amp; Animation: sprite
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 7ba2cbf975c03d947a59c1f44c0b09db677f7b5e
 

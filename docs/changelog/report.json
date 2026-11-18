@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1169,
-  "canonicalEntries": 1166,
+  "rawCommits": 1170,
+  "canonicalEntries": 1167,
   "before": {
+    "Features": 413,
     "Bug Fixes": 175,
-    "Features": 412,
     "Tests": 46,
     "Refactoring": 16,
     "Documentation": 123,
@@ -12,8 +12,8 @@
     "Architecture & Infrastructure": 24
   },
   "after": {
+    "Features": 551,
     "Bug Fixes": 191,
-    "Features": 550,
     "Tests": 51,
     "Refactoring": 29,
     "Documentation": 139,
@@ -23,18 +23,18 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Combat": 394,
+    "World & Visibility": 163,
+    "Persistence & Backend": 291,
+    "Art & Animation": 260,
+    "Build & Tooling": 604,
+    "Documentation": 432,
+    "Tests": 739,
     "UI": 340,
-    "Build & Tooling": 603,
-    "Tests": 738,
-    "Combat": 393,
-    "Persistence & Backend": 290,
     "Movement": 101,
     "Inventory & Loot": 471,
-    "World & Visibility": 162,
-    "Documentation": 431,
     "Networking & Sessions": 343,
     "Abilities": 138,
-    "Art & Animation": 259,
     "Extraction": 173,
     "Audio": 39,
     "Input": 31,
@@ -42,8 +42,8 @@
   },
   "canonical": {
     "sections": {
+      "Features": 550,
       "Bug Fixes": 190,
-      "Features": 549,
       "Tests": 51,
       "Refactoring": 29,
       "Documentation": 139,
@@ -52,18 +52,18 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Combat": 392,
+      "World & Visibility": 161,
+      "Persistence & Backend": 291,
+      "Art & Animation": 257,
+      "Build & Tooling": 602,
+      "Documentation": 430,
+      "Tests": 737,
       "UI": 339,
-      "Build & Tooling": 601,
-      "Tests": 736,
-      "Combat": 391,
-      "Persistence & Backend": 290,
       "Movement": 101,
       "Inventory & Loot": 471,
-      "World & Visibility": 160,
-      "Documentation": 429,
       "Networking & Sessions": 343,
       "Abilities": 136,
-      "Art & Animation": 256,
       "Extraction": 173,
       "Audio": 39,
       "Input": 31,
@@ -74826,8 +74826,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 292,
-      "canonicalEntries": 292
+      "originalCommits": 293,
+      "canonicalEntries": 293
     },
     {
       "key": "v0.5.0",
@@ -74871,6 +74871,184 @@
     }
   ],
   "commits": [
+    {
+      "sha": "c27aefd9c5536b74286b536a468e389844afcecd",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c27aefd9c5536b74286b536a468e389844afcecd",
+      "subject": "feat(combat): leave arrows stuck in walls, floors and bodies on impact",
+      "body": "Arrows now stay embedded where they hit for a moment, then fade out,\ninstead of vanishing on impact. The effect is local presentation only\nand is opt-in per ProjectileVisualProfile (enabled for LongBow and\nCompoundBow; magic projectiles are unchanged).\n\n- StuckProjectileVisual keeps a cropped copy of the flight sprite: only\n  the trailing StickVisibleFraction (0.5) stays visible, with the cut\n  edge on the contact surface point. Oblique hits sink the edge by\n  (w/2)*|p.n|/max(|f.n|, 0.35), clamped to StickEdgeWidth (3 px), so\n  both ends reach the surface without shortening the visible part.\n- Holds StickHoldSeconds (4.5) and fades over StickFadeSeconds (0.5).\n- Body hits follow the body, draw on StickBodySortingLayer (VFX),\n  mirror the body's vision opacity and end with the body.\n- The visual anchors to the collider under the stuck point and ends\n  when it is disabled, deactivated or destroyed (broken breakables).\n- Orb interceptions leave nothing.\n- NetworkProjectile records presentation-only networked terminal\n  metadata (surface point, target id, offset from the body root,\n  interception flag) so every peer places the arrow consistently.\n  EntityVisibilityPresenter exposes AppliedAlpha read-only.\n\nTests: ProjectileStuckVisualTests (crop, pivot, flips, axis, oblique\ndepth, anchor expiry and following, fade, body follow and visibility;\n92/92 Combat.Projectile EditMode green),\nProjectilePresentationPlayModeTests GeometryImpact_ExposesNoTargetAndNoInterception\nand BodyImpact_ExposesHitBodyAndReplicatedOffset (13/13 PlayMode\ngreen before the oblique-depth change, which is presentation only).\n\nDocs: PlayerCombatArchitecture.md and GameFeelParticlesArchitecture.md\ndescribe the stick-on-impact presentation.\n\nPlayer-Added: Arrows now stay stuck in walls, floors, crates and enemies for a few seconds after hitting them before fading away.\n",
+      "date": "2026-11-18T14:52:25-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset",
+        "Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs",
+        "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs",
+        "Project Grimhold/Assets/Scripts/Combat/Presentation/StuckProjectileVisual.cs",
+        "Project Grimhold/Assets/Scripts/Combat/Presentation/StuckProjectileVisual.cs.meta",
+        "Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/Visibility/EntityVisibilityPresenter.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs",
+        "Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md",
+        "Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "combat",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "World & Visibility",
+        "Persistence & Backend",
+        "Art & Animation",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/NetworkProjectile.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/StuckProjectileVisual.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/StuckProjectileVisual.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md",
+          "supports": "Combat"
+        },
+        {
+          "source": "scope",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/Visibility/EntityVisibilityPresenter.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "visibility",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/ProjectileVisualProfile.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "sprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/PlayerCombatArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Combat/ProjectilePresentationPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "7ba2cbf975c03d947a59c1f44c0b09db677f7b5e",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7ba2cbf975c03d947a59c1f44c0b09db677f7b5e",

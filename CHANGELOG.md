@@ -28,6 +28,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Treasures, remaining consumables, and utilities can now drop from dungeon chests.
 - The main menu has a new look with sign in, account creation, server status and exit confirmation.
 - You can choose to remember your username so you do not have to type it every time.
+- Arrows now stay stuck in walls, floors, crates and enemies for a few seconds after hitting them before fading away.
 
 ### Improved
 
