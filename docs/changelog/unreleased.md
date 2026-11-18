@@ -4,32 +4,308 @@
 
 Release: Unreleased
 
-290 original commits; 290 canonical entries.
+292 original commits; 292 canonical entries.
 
 ## Canonical classification
 
-89 features; 96 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 22 tests; 11 maintenance; 19 other changes
+90 features; 97 bug fixes; 3 refactoring; 1 architecture & infrastructure; 49 documentation; 22 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 11 | 11 | 1 | 0 | 10 | 1 |
 | Art & Animation | 18 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 7 | 2 | 0 | 0 | 0 | 0 |
-| Build & Tooling | 62 | 64 | 3 | 1 | 24 | 6 |
-| Combat | 43 | 17 | 2 | 0 | 13 | 1 |
+| Build & Tooling | 63 | 65 | 3 | 1 | 24 | 6 |
+| Combat | 44 | 17 | 2 | 0 | 13 | 1 |
 | Documentation | 33 | 42 | 0 | 0 | 13 | 0 |
 | Extraction | 17 | 21 | 2 | 0 | 9 | 5 |
 | Input | 1 | 1 | 0 | 0 | 1 | 0 |
 | Inventory & Loot | 63 | 56 | 3 | 1 | 27 | 5 |
 | Movement | 5 | 5 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 29 | 37 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 29 | 50 | 2 | 1 | 19 | 3 |
-| Tests | 85 | 90 | 3 | 1 | 32 | 4 |
-| UI | 33 | 20 | 1 | 0 | 12 | 3 |
+| Persistence & Backend | 30 | 50 | 2 | 1 | 19 | 3 |
+| Tests | 86 | 91 | 3 | 1 | 32 | 4 |
+| UI | 34 | 21 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
 | World & Visibility | 24 | 13 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 7ba2cbf975c03d947a59c1f44c0b09db677f7b5e
+
+[7ba2cbf975c03d947a59c1f44c0b09db677f7b5e](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7ba2cbf975c03d947a59c1f44c0b09db677f7b5e)
+
+Date: 2026-11-17T22:02:52-03:00 · Classification: Bug Fixes (explicit) · Systems: UI, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(ui): harden main menu dialog input, retry and health state
+```
+
+#### Original body
+
+```text
+- The login form ignores the key press that re-enabled it, so the
+  Escape or Enter that closes the forgot-password notice no longer also
+  closes or submits the login form.
+- Town Retry is cleared on sign-out, when the session ends and when a
+  new Town attempt starts.
+- A /health result that finishes after a backend-answered login no
+  longer marks the server unreachable again.
+- MainMenuController.UsernameStore lets tests inject the remembered-
+  username store instead of writing the real PlayerPrefs (default
+  unchanged: username-only PlayerPrefs store).
+- The menu composition removes unused prefab overrides, dropping the
+  legacy layout overrides left in MainMenu.unity.
+
+Tests: KeyPressThatReenablesTheForm_IsNotHandledAgainInTheSameFrame,
+TownRetry_IsClearedBySignOutSessionEndAndNewAttempt,
+HealthCheckFinishingAfterSuccessfulLogin_DoesNotMarkServerUnreachable,
+FailedLogin_KeepsUnreachableHealth (AuthFailed, NetworkError),
+LoginPanelUsesTheInjectedUsernameStore,
+SceneKeepsNoOrphanedPrefabOverrides (109/109 EditMode green).
+
+Player-Fixed: Pressing Escape or Enter to close a notice on the sign-in screen no longer also closes or submits the sign-in form.
+Player-Fixed: The Retry button for entering Town no longer stays visible after signing out.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Editor/MainMenuComposition.cs
+Project Grimhold/Assets/Prefabs/UI/MainMenu Canvas.prefab
+Project Grimhold/Assets/Scenes/MainMenu.unity
+Project Grimhold/Assets/Scripts/MainMenuController.cs
+Project Grimhold/Assets/Scripts/UI/LoginPanelView.cs
+Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuFlow.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs
+odd/tasks/main-menu-redesign.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → UI: Project Grimhold/Assets/Editor/MainMenuComposition.cs
+- path → UI: Project Grimhold/Assets/Prefabs/UI/MainMenu Canvas.prefab
+- path → UI: Project Grimhold/Assets/Scenes/MainMenu.unity
+- path → UI: Project Grimhold/Assets/Scripts/MainMenuController.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/LoginPanelView.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuFlow.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs
+- path → UI: odd/tasks/main-menu-redesign.md
+- scope → UI: ui
+- message-term → UI: ui
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/MainMenuComposition.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs
+- message-term → Tests: tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 72505847d98fe49e0fe9d6cde68137d17ceea121
+
+[72505847d98fe49e0fe9d6cde68137d17ceea121](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/72505847d98fe49e0fe9d6cde68137d17ceea121)
+
+Date: 2026-11-17T21:53:52-03:00 · Classification: Features (explicit) · Systems: Combat, UI, Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(ui): redesign main menu with account, server and login flows
+```
+
+#### Original body
+
+```text
+Replace the placeholder main menu with the centered layout chosen in
+design/main-menu/01-centered-modal.html, skinned with the existing
+Charcoal UI atlas and Alagard font, in Spanish.
+
+- Login dialog with Sign in / Create account tabs, confirm password,
+  show/hide password, Caps Lock warning, per-field validation that
+  mirrors backend register rules, and distinct messages for wrong
+  credentials, unreachable server and rate limiting (with countdown).
+- "Remember username" stores only the trimmed username in PlayerPrefs
+  when checked; passwords and tokens are never persisted.
+- Account chip with sign in / confirmed sign out, server status chip
+  backed by GET /health (Play disabled while unreachable), exit
+  confirmation, Town retry, session-ended notice, character step
+  "Paso 2 de 2" with "finish later" sign out, forgot-password notice.
+- Successful login or character creation still enters Town
+  automatically; a backend-answered login clears stale /health state.
+- BackendError gains optional validation details (additive);
+  LoginFlowResult carries the structured BackendError.
+
+The UI is authored in MainMenu Canvas.prefab by the re-runnable
+Editor composition Grimhold > Author main menu; MainMenu.unity only
+keeps scene-service overrides. SettingsPanel (shared with Town and
+Raid) and CreditsPanel stay nested prefabs; the leftover
+StashInventory instance and its toggle are removed from the menu.
+
+Tests: LoginFormStateTests, LoginPanelViewTests, MainMenuFlowTests,
+MainMenuControllerWiringTests, MainMenuCompositionTests,
+BackendHealthClientTests, plus new cases in BackendHttpErrorTests and
+LoginFlowControllerTownTicketTests (103/103 EditMode green).
+Docs: Scripts/UI/MainMenu/README.md, odd/tasks/main-menu-redesign.md.
+
+Player-Added: The main menu has a new look with sign in, account creation, server status and exit confirmation.
+Player-Added: You can choose to remember your username so you do not have to type it every time.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Editor/MainMenuComposition.cs
+Project Grimhold/Assets/Editor/MainMenuComposition.cs.meta
+Project Grimhold/Assets/Prefabs/UI/MainMenu Canvas.prefab
+Project Grimhold/Assets/Scenes/MainMenu.unity
+Project Grimhold/Assets/Scripts/Backend/BackendError.cs
+Project Grimhold/Assets/Scripts/Backend/BackendHealthClient.cs
+Project Grimhold/Assets/Scripts/Backend/BackendHealthClient.cs.meta
+Project Grimhold/Assets/Scripts/Backend/DataTransferObjects.cs
+Project Grimhold/Assets/Scripts/Backend/IBackendHealthClient.cs
+Project Grimhold/Assets/Scripts/Backend/IBackendHealthClient.cs.meta
+Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs
+Project Grimhold/Assets/Scripts/MainMenuController.cs
+Project Grimhold/Assets/Scripts/UI/CharacterCreationPanelView.cs
+Project Grimhold/Assets/Scripts/UI/Login.meta
+Project Grimhold/Assets/Scripts/UI/Login/IRememberedUsernameStore.cs
+Project Grimhold/Assets/Scripts/UI/Login/IRememberedUsernameStore.cs.meta
+Project Grimhold/Assets/Scripts/UI/Login/LoginFormMode.cs
+Project Grimhold/Assets/Scripts/UI/Login/LoginFormMode.cs.meta
+Project Grimhold/Assets/Scripts/UI/Login/LoginFormState.cs
+Project Grimhold/Assets/Scripts/UI/Login/LoginFormState.cs.meta
+Project Grimhold/Assets/Scripts/UI/Login/PlayerPrefsRememberedUsernameStore.cs
+Project Grimhold/Assets/Scripts/UI/Login/PlayerPrefsRememberedUsernameStore.cs.meta
+Project Grimhold/Assets/Scripts/UI/LoginPanelView.cs
+Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuDialogView.cs
+Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuDialogView.cs.meta
+Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuFlow.cs
+Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuFlow.cs.meta
+Project Grimhold/Assets/Scripts/UI/MainMenu/README.md
+Project Grimhold/Assets/Scripts/UI/MainMenu/README.md.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/LoginFlowControllerTownTicketTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginFormStateTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginFormStateTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs.meta
+odd/tasks/main-menu-redesign.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Scripts/Backend/BackendHealthClient.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Backend/BackendHealthClient.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Backend/IBackendHealthClient.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Backend/IBackendHealthClient.cs.meta
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs.meta
+- path → UI: Project Grimhold/Assets/Editor/MainMenuComposition.cs
+- path → UI: Project Grimhold/Assets/Editor/MainMenuComposition.cs.meta
+- path → UI: Project Grimhold/Assets/Prefabs/UI/MainMenu Canvas.prefab
+- path → UI: Project Grimhold/Assets/Scenes/MainMenu.unity
+- path → UI: Project Grimhold/Assets/Scripts/MainMenuController.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/CharacterCreationPanelView.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/Login.meta
+- path → UI: Project Grimhold/Assets/Scripts/UI/Login/IRememberedUsernameStore.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/Login/IRememberedUsernameStore.cs.meta
+- path → UI: Project Grimhold/Assets/Scripts/UI/Login/LoginFormMode.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/Login/LoginFormMode.cs.meta
+- path → UI: Project Grimhold/Assets/Scripts/UI/Login/LoginFormState.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/Login/LoginFormState.cs.meta
+- path → UI: Project Grimhold/Assets/Scripts/UI/Login/PlayerPrefsRememberedUsernameStore.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/Login/PlayerPrefsRememberedUsernameStore.cs.meta
+- path → UI: Project Grimhold/Assets/Scripts/UI/LoginPanelView.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuDialogView.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuDialogView.cs.meta
+- path → UI: Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuFlow.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuFlow.cs.meta
+- path → UI: Project Grimhold/Assets/Scripts/UI/MainMenu/README.md
+- path → UI: Project Grimhold/Assets/Scripts/UI/MainMenu/README.md.meta
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs.meta
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs.meta
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs.meta
+- path → UI: odd/tasks/main-menu-redesign.md
+- scope → UI: ui
+- message-term → UI: ui
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendError.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendHealthClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendHealthClient.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/DataTransferObjects.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/IBackendHealthClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/IBackendHealthClient.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/LoginFlowControllerTownTicketTests.cs
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/MainMenuComposition.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/MainMenuComposition.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/LoginFlowControllerTownTicketTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginFormStateTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginFormStateTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/LoginFlowControllerTownTicketTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginFormStateTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginFormStateTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 3baf1be161b33ee84d79764c5dde5e98f68307ab
 

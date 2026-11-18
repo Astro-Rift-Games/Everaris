@@ -26,6 +26,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Raids now take place in the new Catacombs map, with eight extraction sanctuaries and many more enemies, chests and breakables to find.
 - Sprinting now has its own running animation instead of a sped-up walk.
 - Treasures, remaining consumables, and utilities can now drop from dungeon chests.
+- The main menu has a new look with sign in, account creation, server status and exit confirmation.
+- You can choose to remember your username so you do not have to type it every time.
 
 ### Improved
 
@@ -112,6 +114,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Raids can be started again when a health potion is in the inventory.
 - Doors no longer stutter or let players clip through them in online raids when they open or close.
 - Clients are no longer offered "Close door" while someone is standing in the doorway.
+- Pressing Escape or Enter to close a notice on the sign-in screen no longer also closes or submits the sign-in form.
+- The Retry button for entering Town no longer stays visible after signing out.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08

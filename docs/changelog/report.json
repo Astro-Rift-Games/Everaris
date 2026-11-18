@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1167,
-  "canonicalEntries": 1164,
+  "rawCommits": 1169,
+  "canonicalEntries": 1166,
   "before": {
-    "Bug Fixes": 174,
+    "Bug Fixes": 175,
+    "Features": 412,
     "Tests": 46,
-    "Features": 411,
     "Refactoring": 16,
     "Documentation": 123,
     "Other Changes": 373,
     "Architecture & Infrastructure": 24
   },
   "after": {
-    "Bug Fixes": 190,
+    "Bug Fixes": 191,
+    "Features": 550,
     "Tests": 51,
-    "Features": 549,
     "Refactoring": 29,
     "Documentation": 139,
     "Other Changes": 181,
@@ -23,28 +23,28 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "UI": 340,
+    "Build & Tooling": 603,
+    "Tests": 738,
+    "Combat": 393,
+    "Persistence & Backend": 290,
     "Movement": 101,
     "Inventory & Loot": 471,
     "World & Visibility": 162,
     "Documentation": 431,
-    "Tests": 736,
-    "Combat": 392,
-    "Build & Tooling": 601,
     "Networking & Sessions": 343,
-    "Persistence & Backend": 289,
     "Abilities": 138,
     "Art & Animation": 259,
     "Extraction": 173,
-    "UI": 338,
     "Audio": 39,
     "Input": 31,
     "Unassigned": 42
   },
   "canonical": {
     "sections": {
-      "Bug Fixes": 189,
+      "Bug Fixes": 190,
+      "Features": 549,
       "Tests": 51,
-      "Features": 548,
       "Refactoring": 29,
       "Documentation": 139,
       "Other Changes": 180,
@@ -52,19 +52,19 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "UI": 339,
+      "Build & Tooling": 601,
+      "Tests": 736,
+      "Combat": 391,
+      "Persistence & Backend": 290,
       "Movement": 101,
       "Inventory & Loot": 471,
       "World & Visibility": 160,
       "Documentation": 429,
-      "Tests": 734,
-      "Combat": 390,
-      "Build & Tooling": 599,
       "Networking & Sessions": 343,
-      "Persistence & Backend": 289,
       "Abilities": 136,
       "Art & Animation": 256,
       "Extraction": 173,
-      "UI": 337,
       "Audio": 39,
       "Input": 31,
       "Unassigned": 42
@@ -74826,8 +74826,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 290,
-      "canonicalEntries": 290
+      "originalCommits": 292,
+      "canonicalEntries": 292
     },
     {
       "key": "v0.5.0",
@@ -74871,6 +74871,635 @@
     }
   ],
   "commits": [
+    {
+      "sha": "7ba2cbf975c03d947a59c1f44c0b09db677f7b5e",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7ba2cbf975c03d947a59c1f44c0b09db677f7b5e",
+      "subject": "fix(ui): harden main menu dialog input, retry and health state",
+      "body": "- The login form ignores the key press that re-enabled it, so the\n  Escape or Enter that closes the forgot-password notice no longer also\n  closes or submits the login form.\n- Town Retry is cleared on sign-out, when the session ends and when a\n  new Town attempt starts.\n- A /health result that finishes after a backend-answered login no\n  longer marks the server unreachable again.\n- MainMenuController.UsernameStore lets tests inject the remembered-\n  username store instead of writing the real PlayerPrefs (default\n  unchanged: username-only PlayerPrefs store).\n- The menu composition removes unused prefab overrides, dropping the\n  legacy layout overrides left in MainMenu.unity.\n\nTests: KeyPressThatReenablesTheForm_IsNotHandledAgainInTheSameFrame,\nTownRetry_IsClearedBySignOutSessionEndAndNewAttempt,\nHealthCheckFinishingAfterSuccessfulLogin_DoesNotMarkServerUnreachable,\nFailedLogin_KeepsUnreachableHealth (AuthFailed, NetworkError),\nLoginPanelUsesTheInjectedUsernameStore,\nSceneKeepsNoOrphanedPrefabOverrides (109/109 EditMode green).\n\nPlayer-Fixed: Pressing Escape or Enter to close a notice on the sign-in screen no longer also closes or submits the sign-in form.\nPlayer-Fixed: The Retry button for entering Town no longer stays visible after signing out.\n",
+      "date": "2026-11-17T22:02:52-03:00",
+      "files": [
+        "Project Grimhold/Assets/Editor/MainMenuComposition.cs",
+        "Project Grimhold/Assets/Prefabs/UI/MainMenu Canvas.prefab",
+        "Project Grimhold/Assets/Scenes/MainMenu.unity",
+        "Project Grimhold/Assets/Scripts/MainMenuController.cs",
+        "Project Grimhold/Assets/Scripts/UI/LoginPanelView.cs",
+        "Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuFlow.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs",
+        "odd/tasks/main-menu-redesign.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "ui",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "UI",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/MainMenuComposition.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/UI/MainMenu Canvas.prefab",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/MainMenu.unity",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/MainMenuController.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/LoginPanelView.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuFlow.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/main-menu-redesign.md",
+          "supports": "UI"
+        },
+        {
+          "source": "scope",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/MainMenuComposition.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "72505847d98fe49e0fe9d6cde68137d17ceea121",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/72505847d98fe49e0fe9d6cde68137d17ceea121",
+      "subject": "feat(ui): redesign main menu with account, server and login flows",
+      "body": "Replace the placeholder main menu with the centered layout chosen in\ndesign/main-menu/01-centered-modal.html, skinned with the existing\nCharcoal UI atlas and Alagard font, in Spanish.\n\n- Login dialog with Sign in / Create account tabs, confirm password,\n  show/hide password, Caps Lock warning, per-field validation that\n  mirrors backend register rules, and distinct messages for wrong\n  credentials, unreachable server and rate limiting (with countdown).\n- \"Remember username\" stores only the trimmed username in PlayerPrefs\n  when checked; passwords and tokens are never persisted.\n- Account chip with sign in / confirmed sign out, server status chip\n  backed by GET /health (Play disabled while unreachable), exit\n  confirmation, Town retry, session-ended notice, character step\n  \"Paso 2 de 2\" with \"finish later\" sign out, forgot-password notice.\n- Successful login or character creation still enters Town\n  automatically; a backend-answered login clears stale /health state.\n- BackendError gains optional validation details (additive);\n  LoginFlowResult carries the structured BackendError.\n\nThe UI is authored in MainMenu Canvas.prefab by the re-runnable\nEditor composition Grimhold > Author main menu; MainMenu.unity only\nkeeps scene-service overrides. SettingsPanel (shared with Town and\nRaid) and CreditsPanel stay nested prefabs; the leftover\nStashInventory instance and its toggle are removed from the menu.\n\nTests: LoginFormStateTests, LoginPanelViewTests, MainMenuFlowTests,\nMainMenuControllerWiringTests, MainMenuCompositionTests,\nBackendHealthClientTests, plus new cases in BackendHttpErrorTests and\nLoginFlowControllerTownTicketTests (103/103 EditMode green).\nDocs: Scripts/UI/MainMenu/README.md, odd/tasks/main-menu-redesign.md.\n\nPlayer-Added: The main menu has a new look with sign in, account creation, server status and exit confirmation.\nPlayer-Added: You can choose to remember your username so you do not have to type it every time.\n",
+      "date": "2026-11-17T21:53:52-03:00",
+      "files": [
+        "Project Grimhold/Assets/Editor/MainMenuComposition.cs",
+        "Project Grimhold/Assets/Editor/MainMenuComposition.cs.meta",
+        "Project Grimhold/Assets/Prefabs/UI/MainMenu Canvas.prefab",
+        "Project Grimhold/Assets/Scenes/MainMenu.unity",
+        "Project Grimhold/Assets/Scripts/Backend/BackendError.cs",
+        "Project Grimhold/Assets/Scripts/Backend/BackendHealthClient.cs",
+        "Project Grimhold/Assets/Scripts/Backend/BackendHealthClient.cs.meta",
+        "Project Grimhold/Assets/Scripts/Backend/DataTransferObjects.cs",
+        "Project Grimhold/Assets/Scripts/Backend/IBackendHealthClient.cs",
+        "Project Grimhold/Assets/Scripts/Backend/IBackendHealthClient.cs.meta",
+        "Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs",
+        "Project Grimhold/Assets/Scripts/MainMenuController.cs",
+        "Project Grimhold/Assets/Scripts/UI/CharacterCreationPanelView.cs",
+        "Project Grimhold/Assets/Scripts/UI/Login.meta",
+        "Project Grimhold/Assets/Scripts/UI/Login/IRememberedUsernameStore.cs",
+        "Project Grimhold/Assets/Scripts/UI/Login/IRememberedUsernameStore.cs.meta",
+        "Project Grimhold/Assets/Scripts/UI/Login/LoginFormMode.cs",
+        "Project Grimhold/Assets/Scripts/UI/Login/LoginFormMode.cs.meta",
+        "Project Grimhold/Assets/Scripts/UI/Login/LoginFormState.cs",
+        "Project Grimhold/Assets/Scripts/UI/Login/LoginFormState.cs.meta",
+        "Project Grimhold/Assets/Scripts/UI/Login/PlayerPrefsRememberedUsernameStore.cs",
+        "Project Grimhold/Assets/Scripts/UI/Login/PlayerPrefsRememberedUsernameStore.cs.meta",
+        "Project Grimhold/Assets/Scripts/UI/LoginPanelView.cs",
+        "Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuDialogView.cs",
+        "Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuDialogView.cs.meta",
+        "Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuFlow.cs",
+        "Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuFlow.cs.meta",
+        "Project Grimhold/Assets/Scripts/UI/MainMenu/README.md",
+        "Project Grimhold/Assets/Scripts/UI/MainMenu/README.md.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/LoginFlowControllerTownTicketTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginFormStateTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginFormStateTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs.meta",
+        "odd/tasks/main-menu-redesign.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "ui",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "UI",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/BackendHealthClient.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/BackendHealthClient.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/IBackendHealthClient.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/IBackendHealthClient.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/MainMenuComposition.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/MainMenuComposition.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/UI/MainMenu Canvas.prefab",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/MainMenu.unity",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/MainMenuController.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/CharacterCreationPanelView.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Login.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Login/IRememberedUsernameStore.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Login/IRememberedUsernameStore.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Login/LoginFormMode.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Login/LoginFormMode.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Login/LoginFormState.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Login/LoginFormState.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Login/PlayerPrefsRememberedUsernameStore.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Login/PlayerPrefsRememberedUsernameStore.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/LoginPanelView.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuDialogView.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuDialogView.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuFlow.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/MainMenu/MainMenuFlow.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/MainMenu/README.md",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/MainMenu/README.md.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/main-menu-redesign.md",
+          "supports": "UI"
+        },
+        {
+          "source": "scope",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/BackendError.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/BackendHealthClient.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/BackendHealthClient.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/DataTransferObjects.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/IBackendHealthClient.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/IBackendHealthClient.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/LoginFlowControllerTownTicketTests.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/MainMenuComposition.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/MainMenuComposition.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/LoginFlowControllerTownTicketTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginFormStateTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginFormStateTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHealthClientTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendHttpErrorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/LoginFlowControllerTownTicketTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginFormStateTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginFormStateTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/LoginPanelViewTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuCompositionTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuControllerWiringTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/MainMenuFlowTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "3baf1be161b33ee84d79764c5dde5e98f68307ab",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3baf1be161b33ee84d79764c5dde5e98f68307ab",
