@@ -160,7 +160,8 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
     private RpcInvokeInfo RPC_RequestCreate(RpcInfo info = default)
     {
         if (!CanMutate || !_preparationPrefab.IsValid || !TryResolveSender(info.Source, out ProfileId creator) ||
-            _cache.TryResolve(creator, out _) || !TryGenerateUniqueRaidCode(out RaidCode code)) return default;
+            _cache.TryResolve(creator, out _) || IsAwaitingPartyCompletion(info.Source) ||
+            !TryGenerateUniqueRaidCode(out RaidCode code)) return default;
 
         TownPartyDirectory partyDirectory = Runner.GetComponent<TownPartyDirectoryContext>()?.Directory;
         if (partyDirectory == null || !partyDirectory.TryGetParty(creator, out TownPartySnapshot party) ||
