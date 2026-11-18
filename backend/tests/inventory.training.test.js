@@ -121,6 +121,19 @@ test('InventoryService.requestTrainingWeapon - validations and limits', async (t
     assert.equal(result.loadout[0].instance.instanceId, '111111111111111111111111');
   });
 
+  for (const weaponId of ['training_short_sword', 'training_dagger', 'training_wand']) {
+    await t.test(`issues ${weaponId} without attribute scaling (Doc 09 §15, TASK-295 S3)`, async () => {
+      const result = await InventoryService.requestTrainingWeapon('acc123', weaponId, 'weaponSlot1', 1);
+
+      const issued = result.preparedEquipment.weaponSlot1;
+      assert.equal(issued.lootId, weaponId);
+      assert.equal(issued.instance.modifiers.primary, undefined);
+      assert.equal(issued.instance.modifiers.secondary, undefined);
+      assert.deepEqual(issued.instance.modifiers, { gemSocketCount: 0, gems: [] });
+      assert.deepEqual(mockChar.inventory.preparedEquipment.weaponSlot1.instance.modifiers, { gemSocketCount: 0, gems: [] });
+    });
+  }
+
   await t.test('strictly replaces any previously owned training weapon without duplication', async () => {
     mockChar.inventory.stash = [{ slot: 0, lootId: 'training_dagger', amount: 1, instance: makeInstance('training_dagger', '222222222222222222222222') }];
     mockChar.inventory.loadout = [{ slot: 0, lootId: 'training_wand', amount: 1, instance: makeInstance('training_wand', '333333333333333333333333') }];
@@ -290,6 +303,49 @@ test('POST /character/me/inventory/training-weapon HTTP integration', async (t) 
       }
     });
   }
+  // TASK-295 S4 / Doc 09 §15.1: the Trainer delivers on request even if a normal weapon is already owned.
+  await t.test('request succeeds and keeps a normal weapon already in the Stash', async () => {
+    const sword = { slot: 3, lootId: 'arming_sword', amount: 1, instance: makeInstance('arming_sword', '444444444444444444444444') };
+    storedChar.inventory.stash = [sword];
+    const stashBefore = JSON.stringify(storedChar.inventory.stash);
+
+    const res = await post({ weaponId: 'training_dagger', destinationSlot: 'weaponSlot1', expectedRevision: 2 });
+
+    assert.equal(res.status, 200);
+    assert.equal(res.body.revision, 3);
+    assert.equal(res.body.preparedEquipment.weaponSlot1.lootId, 'training_dagger');
+    assert.equal(JSON.stringify(res.body.stash), stashBefore);
+    assert.deepEqual(res.body.loadout, []);
+    assert.equal(JSON.stringify(storedChar.inventory.stash), stashBefore);
+  });
+
+  await t.test('request succeeds and keeps a normal weapon already in the Loadout', async () => {
+    const sword = { slot: 0, lootId: 'arming_sword', amount: 1, instance: makeInstance('arming_sword', '555555555555555555555555') };
+    storedChar.inventory.loadout = [sword];
+
+    const res = await post({ weaponId: 'training_wand', destinationSlot: 'weaponSlot1', expectedRevision: 2 });
+
+    assert.equal(res.status, 200);
+    assert.equal(res.body.revision, 3);
+    assert.equal(res.body.preparedEquipment.weaponSlot1.lootId, 'training_wand');
+    assert.deepEqual(res.body.stash, []);
+    assert.deepEqual(res.body.loadout.map(item => [item.slot, item.lootId, item.instance.instanceId]),
+      [[0, 'arming_sword', '555555555555555555555555']]);
+  });
+
+  await t.test('request into the Loadout succeeds next to a normal weapon in Stash and Loadout', async () => {
+    storedChar.inventory.stash = [{ slot: 1, lootId: 'rapier', amount: 1, instance: makeInstance('rapier', '666666666666666666666666') }];
+    storedChar.inventory.loadout = [{ slot: 0, lootId: 'arming_sword', amount: 1, instance: makeInstance('arming_sword', '555555555555555555555555') }];
+
+    const res = await post({ weaponId: 'training_short_sword', expectedRevision: 2 });
+
+    assert.equal(res.status, 200);
+    assert.deepEqual(res.body.stash.map(item => [item.slot, item.lootId, item.instance.instanceId]),
+      [[1, 'rapier', '666666666666666666666666']]);
+    assert.deepEqual(res.body.loadout.map(item => item.lootId).sort(), ['arming_sword', 'training_short_sword']);
+    assert.equal(res.body.loadout.find(item => item.lootId === 'arming_sword').instance.instanceId, '555555555555555555555555');
+  });
+
   await t.test('POST /character/me/inventory/training-weapon returns 200 and equips training dagger', async () => {
     const res = await request(app)
       .post('/character/me/inventory/training-weapon')

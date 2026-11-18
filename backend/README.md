@@ -463,6 +463,9 @@ los precios comunes se alinean con Unity (tabla abajo). El gate de instancias **
 - Weapon puede llevar `{primary?, secondary?, gemSocketCount, gems}`. Atributos:
   `vitality`, `resistance`, `strength`, `dexterity`, `intelligence`, `luck`; grados: `E`–`S`.
   Primary coincide con el atributo natural; secondary requiere primary y otro atributo.
+  Las armas de entrenamiento no poseen escalado (Doc 09 §15): `primary`/`secondary` se rechazan
+  con `400 INVALID_INVENTORY` (resultados de raid, extracción, creación y validación de inventario);
+  sólo se admiten `gemSocketCount`/`gems`.
   `gemSocketCount` es 0–2 y `gems` tiene esa longitud, con `null` por socket vacío o uno de
   `RES_ATTUNEMENT_GEM`, `RES_RUBY_GEM`, `RES_SAPPHIRE_GEM`. Escudos/armaduras no llevan modifiers.
   Formas inconsistentes, IDs repetidos entre ubicaciones o modifiers ilegales: `400 INVALID_INVENTORY`.

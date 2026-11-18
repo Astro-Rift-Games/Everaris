@@ -4,6 +4,7 @@ const { Types } = require('mongoose');
 const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
 const { getEquipmentTemplate, GEM_CATALOG } = require('../config/shopCatalog');
 const { normalizeLootId } = require('./InventoryLootIdNormalizer');
+const { isTrainingWeapon } = require('./TrainingWeapons');
 
 const ATTRIBUTES = Object.freeze(['vitality', 'resistance', 'strength', 'dexterity', 'intelligence', 'luck']);
 const GRADE_COEFFICIENTS = Object.freeze({ E: 0.25, D: 0.40, C: 0.55, B: 0.70, A: 0.85, S: 1 });
@@ -25,6 +26,8 @@ function validModifiers(lootId, modifiers) {
   const template = getEquipmentTemplate(lootId);
   if (modifiers === undefined) return true;
   if (template?.category !== 'Weapon' || !onlyKeys(modifiers, ['primary', 'secondary', 'gemSocketCount', 'gems'])) return false;
+  // Doc 09 §15: training weapons have fixed damage and never carry attribute scaling.
+  if (isTrainingWeapon(lootId) && (modifiers.primary !== undefined || modifiers.secondary !== undefined)) return false;
   if (modifiers.primary !== undefined && (!validScaling(modifiers.primary) || modifiers.primary.attribute !== template.naturalAttribute)) return false;
   if (modifiers.secondary !== undefined && (!modifiers.primary || !validScaling(modifiers.secondary) || modifiers.secondary.attribute === modifiers.primary.attribute)) return false;
   const count = modifiers.gemSocketCount;
