@@ -19,15 +19,18 @@ public readonly struct LoginFlowResult
     public LoginFlowStatus Status { get; }
     public bool IsSuccess => Status == LoginFlowStatus.Success;
     public string ErrorMessage { get; }
+    public BackendError BackendError { get; }
 
-    private LoginFlowResult(LoginFlowStatus status, string errorMessage)
+    private LoginFlowResult(LoginFlowStatus status, string errorMessage, BackendError backendError = default)
     {
         Status = status;
         ErrorMessage = errorMessage;
+        BackendError = backendError;
     }
 
     public static LoginFlowResult Success() => new(LoginFlowStatus.Success, null);
     public static LoginFlowResult Failure(LoginFlowStatus status, string message) => new(status, message);
+    public static LoginFlowResult Failure(LoginFlowStatus status, string message, BackendError error) => new(status, message, error);
 }
 
 /// <summary>
@@ -114,13 +117,13 @@ public sealed class LoginFlowController : MonoBehaviour
         {
             if (BackendErrorUtility.IsTransportFailure(loginError.error))
             {
-                return LoginFlowResult.Failure(LoginFlowStatus.NetworkError, "Cannot reach the server. Check your connection.");
+                return LoginFlowResult.Failure(LoginFlowStatus.NetworkError, "Cannot reach the server. Check your connection.", loginError);
             }
             if (loginError.error == BackendErrorUtility.TooManyRequests)
             {
-                return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, BackendErrorMessages.ForError(loginError));
+                return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, BackendErrorMessages.ForError(loginError), loginError);
             }
-            return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, "Invalid username or password.");
+            return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, "Invalid username or password.", loginError);
         }
 
         return await CompleteAuthenticationAndInjectIdentity(loginResult.token, username);
@@ -135,7 +138,7 @@ public sealed class LoginFlowController : MonoBehaviour
         {
             if (BackendErrorUtility.IsTransportFailure(registerError.error))
             {
-                return LoginFlowResult.Failure(LoginFlowStatus.NetworkError, "Cannot reach the server. Check your connection.");
+                return LoginFlowResult.Failure(LoginFlowStatus.NetworkError, "Cannot reach the server. Check your connection.", registerError);
             }
 
             string message = "Failed to register account.";
@@ -152,7 +155,7 @@ public sealed class LoginFlowController : MonoBehaviour
                 message = "Invalid username or password format (e.g. no special characters like '_', minimum 6 chars for password).";
             }
 
-            return LoginFlowResult.Failure(LoginFlowStatus.RegistrationFailed, message);
+            return LoginFlowResult.Failure(LoginFlowStatus.RegistrationFailed, message, registerError);
         }
 
         return await CompleteAuthenticationAndInjectIdentity(loginResult.token, username);

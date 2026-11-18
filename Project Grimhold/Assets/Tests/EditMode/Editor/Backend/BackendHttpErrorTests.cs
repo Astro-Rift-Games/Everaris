@@ -44,6 +44,37 @@ public sealed class BackendHttpErrorTests
         finally { Object.DestroyImmediate(config); }
     }
 
+    [TestCase("login")]
+    [TestCase("register")]
+    public async Task AuthValidationFailure_PreservesAllFieldDetails(string client)
+    {
+        var probe = new TcpListener(IPAddress.Loopback, 0);
+        probe.Start();
+        int port = ((IPEndPoint)probe.LocalEndpoint).Port;
+        probe.Stop();
+        using var listener = new HttpListener();
+        string url = $"http://localhost:{port}";
+        listener.Prefixes.Add(url + "/");
+        listener.Start();
+        var config = ScriptableObject.CreateInstance<BackendConfiguration>();
+        config.BaseUrl = url;
+        try
+        {
+            var request = Request(client, config);
+            var context = await listener.GetContextAsync();
+            await Respond(context, 400, "{\"error\":\"VALIDATION_FAILED\",\"message\":\"diagnostic\",\"details\":[{\"field\":\"username\",\"msg\":\"username diagnostic\"},{\"field\":\"password\",\"msg\":\"password diagnostic\"}]}");
+            var error = await request;
+            Assert.That(error.error, Is.EqualTo("VALIDATION_FAILED"));
+            Assert.That(error.message, Is.EqualTo("diagnostic"));
+            Assert.That(error.details.Length, Is.EqualTo(2));
+            Assert.That(error.details[0].field, Is.EqualTo("username"));
+            Assert.That(error.details[0].msg, Is.EqualTo("username diagnostic"));
+            Assert.That(error.details[1].field, Is.EqualTo("password"));
+            Assert.That(error.retryAfter, Is.Zero);
+        }
+        finally { Object.DestroyImmediate(config); }
+    }
+
     [TestCase("extraction", "raid-test", 1, true, 17)]
     [TestCase("legacy", "raid-test", 1, true, 0)]
     [TestCase("extraction", null, 0, false, 0)]

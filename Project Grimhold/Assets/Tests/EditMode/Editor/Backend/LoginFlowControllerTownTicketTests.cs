@@ -56,6 +56,21 @@ namespace Grimhold.Tests.Backend
             AssertNoPartialIdentity();
         }
 
+        [Test]
+        public async Task LoginFailure_PreservesStructuredErrorForForm()
+        {
+            _backend.LoginError = new BackendError
+            {
+                error = "VALIDATION_FAILED", retryAfter = 7,
+                details = new[] { new BackendValidationDetail { field = "username", msg = "diagnostic" } }
+            };
+            var result = await _controller.ExecuteLoginAsync(Username, "pw");
+            Assert.That(result.BackendError.error, Is.EqualTo("VALIDATION_FAILED"));
+            Assert.That(result.BackendError.retryAfter, Is.EqualTo(7));
+            Assert.That(result.BackendError.details[0].field, Is.EqualTo("username"));
+            AssertNoPartialIdentity();
+        }
+
         [TestCase(BackendErrorUtility.NetworkError, LoginFlowStatus.NetworkError)]
         [TestCase(BackendErrorUtility.Timeout, LoginFlowStatus.NetworkError)]
         [TestCase("INTERNAL_SERVER_ERROR", LoginFlowStatus.HydrationFailed)]

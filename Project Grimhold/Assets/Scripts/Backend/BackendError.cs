@@ -9,5 +9,7 @@ namespace Grimhold.Backend
         public string message;
         // Optional seconds supplied by the server; zero means no wait hint.
         public float retryAfter;
+        // Optional field validation failures; absent in legacy/non-validation responses.
+        public BackendValidationDetail[] details;
     }
 }

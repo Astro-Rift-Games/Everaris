@@ -3,6 +3,13 @@ using System;
 namespace Grimhold.Backend
 {
     [Serializable]
+    public struct BackendValidationDetail
+    {
+        public string field;
+        public string msg;
+    }
+
+    [Serializable]
     public struct LoginRequest
     {
         public string username;
