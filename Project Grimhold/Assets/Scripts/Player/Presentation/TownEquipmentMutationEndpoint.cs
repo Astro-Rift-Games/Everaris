@@ -38,11 +38,17 @@ public sealed class TownEquipmentMutationEndpoint : ITownEquipmentMutationEndpoi
     private TrainingWeaponBackend _trainingBackend;
     private LocalProfileStore _trainingStore;
     private Func<Task<bool>> _reconcile;
+    private RemoteInventoryMutationGate _mutationGate;
     public bool IsTrainingWeaponRequestInFlight { get; private set; }
 
-    public void BindTrainingBackend(LocalProfileStore store, TrainingWeaponBackend backend, Func<Task<bool>> reconcile = null)
+    public void BindTrainingBackend(
+        LocalProfileStore store,
+        RemoteInventoryMutationGate mutationGate,
+        TrainingWeaponBackend backend,
+        Func<Task<bool>> reconcile = null)
     {
         _trainingStore = store;
+        _mutationGate = mutationGate;
         _trainingBackend = backend;
         _reconcile = reconcile;
     }
@@ -104,43 +110,18 @@ public sealed class TownEquipmentMutationEndpoint : ITownEquipmentMutationEndpoi
         if (!CanMutate || !TryResolveDefinition(trainingWeaponId, out var definition) || !definition.IsTrainingWeapon ||
             (targetSlot != EquipmentSlot.None && targetSlot != EquipmentSlot.WeaponSetAMainHand && targetSlot != EquipmentSlot.WeaponSetBMainHand))
             return StashOperationResult.InvalidInventory;
-        if (_trainingStore == null || _trainingBackend == null || !_trainingStore.IsAvailable)
+        if (_trainingStore == null || _trainingBackend == null || _mutationGate == null)
             return StashOperationResult.PersistenceFailed;
-        if (_trainingStore.ProfileId != _profileId || _trainingStore.RequiresEquipmentHydration)
-            return StashOperationResult.InvalidInventory;
-        if (_trainingStore.PendingReservation != null) return StashOperationResult.ReservationPending;
 
         IsTrainingWeaponRequestInFlight = true;
         try
         {
-            int revision = _trainingStore.RemoteRevision;
-            var response = await _trainingBackend(new TrainingWeaponRequest
-            {
-                weaponId = trainingWeaponId.Value, expectedRevision = revision,
-                destinationSlot = targetSlot == EquipmentSlot.WeaponSetAMainHand ? "weaponSlot1" :
-                    targetSlot == EquipmentSlot.WeaponSetBMainHand ? "weaponSlot2" : ""
-            });
-            if (!response.success)
-            {
-                // A stale revision or unknown outcome needs authoritative reconciliation, not a POST replay.
-                // Keep the busy gate held until the refresh finishes.
-                if (response.error.error == "REVISION_CONFLICT" || BackendErrorUtility.IsTransportFailure(response.error.error) ||
-                    string.IsNullOrEmpty(response.error.error) || response.error.error == "INVALID_INVENTORY" ||
-                    (response.error.error == "RESERVATION_PENDING" && _trainingStore.PendingReservation == null))
-                    await ReconcileSafelyAsync();
-                if (response.error.error == BackendErrorUtility.Unauthorized)
-                    ApplicationAuthContext.Instance?.HandleUnauthorizedSession();
-                return response.error.error switch
-                {
-                    "RESERVATION_PENDING" => StashOperationResult.ReservationPending,
-                    "INVENTORY_FULL" => StashOperationResult.InventoryFull,
-                    "REVISION_CONFLICT" or "VALIDATION_FAILED" or "INVENTORY_MIGRATION_REQUIRED" => StashOperationResult.InvalidInventory,
-                    _ => StashOperationResult.PersistenceFailed
-                };
-            }
-            var result = _trainingStore.ApplyConfirmedTrainingWeapon(response.data, revision);
+            // Revision read, POST and local apply share one gate turn with every other inventory mutation.
+            // Reconciliation and notification re-enter gated sync, so they run once the gate is released.
+            var (result, needsReconciliation) = await _mutationGate.RunExclusiveAsync(
+                () => RunTrainingWeaponTurnAsync(trainingWeaponId, targetSlot));
+            if (needsReconciliation) await ReconcileSafelyAsync();
             if (result == StashOperationResult.Success) _onMutated?.Invoke();
-            else await ReconcileSafelyAsync();
             return result;
         }
         catch (Exception exception)
@@ -150,6 +131,44 @@ public sealed class TownEquipmentMutationEndpoint : ITownEquipmentMutationEndpoi
             return StashOperationResult.PersistenceFailed;
         }
         finally { IsTrainingWeaponRequestInFlight = false; }
+    }
+
+    private async Task<(StashOperationResult result, bool needsReconciliation)> RunTrainingWeaponTurnAsync(
+        LootId trainingWeaponId, EquipmentSlot targetSlot)
+    {
+        if (!_trainingStore.IsAvailable) return (StashOperationResult.PersistenceFailed, false);
+        if (_trainingStore.ProfileId != _profileId || _trainingStore.RequiresEquipmentHydration)
+            return (StashOperationResult.InvalidInventory, false);
+        if (_trainingStore.PendingReservation != null) return (StashOperationResult.ReservationPending, false);
+
+        int revision = _trainingStore.RemoteRevision;
+        var response = await _trainingBackend(new TrainingWeaponRequest
+        {
+            weaponId = trainingWeaponId.Value, expectedRevision = revision,
+            destinationSlot = targetSlot == EquipmentSlot.WeaponSetAMainHand ? "weaponSlot1" :
+                targetSlot == EquipmentSlot.WeaponSetBMainHand ? "weaponSlot2" : ""
+        });
+        if (!response.success)
+        {
+            // A stale revision or unknown outcome needs authoritative reconciliation, not a POST replay.
+            // The busy flag stays set until the refresh finishes.
+            bool needsReconciliation = response.error.error == "REVISION_CONFLICT" ||
+                BackendErrorUtility.IsTransportFailure(response.error.error) ||
+                string.IsNullOrEmpty(response.error.error) || response.error.error == "INVALID_INVENTORY" ||
+                (response.error.error == "RESERVATION_PENDING" && _trainingStore.PendingReservation == null);
+            if (response.error.error == BackendErrorUtility.Unauthorized)
+                ApplicationAuthContext.Instance?.HandleUnauthorizedSession();
+            return (response.error.error switch
+            {
+                "RESERVATION_PENDING" => StashOperationResult.ReservationPending,
+                "INVENTORY_FULL" => StashOperationResult.InventoryFull,
+                "REVISION_CONFLICT" or "VALIDATION_FAILED" or "INVENTORY_MIGRATION_REQUIRED" => StashOperationResult.InvalidInventory,
+                _ => StashOperationResult.PersistenceFailed
+            }, needsReconciliation);
+        }
+
+        var result = _trainingStore.ApplyConfirmedTrainingWeapon(response.data, revision);
+        return (result, result != StashOperationResult.Success);
     }
 
     private async Task ReconcileSafelyAsync()

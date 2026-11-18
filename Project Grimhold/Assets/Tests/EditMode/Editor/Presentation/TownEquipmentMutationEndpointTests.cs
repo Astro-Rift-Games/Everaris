@@ -102,7 +102,7 @@ namespace Tests.EditMode.Presentation
             var store = new LocalProfileStore(repository, Profile, _catalog);
             int notifications = 0;
             var endpoint = new TownEquipmentMutationEndpoint(_service, Profile, _catalog, () => true, () => notifications++);
-            endpoint.BindTrainingBackend(store, request =>
+            endpoint.BindTrainingBackend(store, new RemoteInventoryMutationGate(), request =>
             {
                 Assert.That(request.expectedRevision, Is.Zero);
                 Assert.That(request.weaponId, Is.EqualTo("training_dagger"));
@@ -146,7 +146,7 @@ namespace Tests.EditMode.Presentation
             int notifications = 0;
             store.ProfileCommitted += _ => commits++;
             var endpoint = new TownEquipmentMutationEndpoint(_service, Profile, _catalog, () => true, () => notifications++);
-            endpoint.BindTrainingBackend(store, request =>
+            endpoint.BindTrainingBackend(store, new RemoteInventoryMutationGate(), request =>
             {
                 calls++;
                 Assert.That(request.expectedRevision, Is.EqualTo(7));
@@ -182,6 +182,7 @@ namespace Tests.EditMode.Presentation
             var endpoint = new TownEquipmentMutationEndpoint(_service, Profile, _catalog, () => true);
             endpoint.BindTrainingBackend(
                 store,
+                new RemoteInventoryMutationGate(),
                 _ => System.Threading.Tasks.Task.FromResult((
                     false,
                     default(Grimhold.Backend.TrainingWeaponResult),
@@ -212,7 +213,7 @@ namespace Tests.EditMode.Presentation
             int calls = 0;
             int commits = 0;
             store.ProfileCommitted += _ => commits++;
-            _endpoint.BindTrainingBackend(store, request =>
+            _endpoint.BindTrainingBackend(store, new RemoteInventoryMutationGate(), request =>
             {
                 calls++;
                 return System.Threading.Tasks.Task.FromResult((false, default(Grimhold.Backend.TrainingWeaponResult), default(Grimhold.Backend.BackendError)));
@@ -244,7 +245,7 @@ namespace Tests.EditMode.Presentation
             var pending = new System.Threading.Tasks.TaskCompletionSource<bool>();
             var endpoint = new TownEquipmentMutationEndpoint(_service, Profile, _catalog, () => true, () => notifications++);
             store.ProfileCommitted += _ => commits++;
-            endpoint.BindTrainingBackend(store, request =>
+            endpoint.BindTrainingBackend(store, new RemoteInventoryMutationGate(), request =>
             {
                 posts++;
                 if (failure == "exception") throw new TimeoutException("Lost response.");
@@ -285,7 +286,7 @@ namespace Tests.EditMode.Presentation
             Assert.That(endpoint.IsTrainingWeaponRequestInFlight, Is.False);
             if (failure == "REVISION_CONFLICT")
             {
-                endpoint.BindTrainingBackend(store, request =>
+                endpoint.BindTrainingBackend(store, new RemoteInventoryMutationGate(), request =>
                 {
                     posts++;
                     Assert.That(request.expectedRevision, Is.EqualTo(1), "A new request must use the reconciled revision.");
@@ -326,7 +327,7 @@ namespace Tests.EditMode.Presentation
             int posts = 0, refreshes = 0, notifications = 0, commits = 0;
             store.ProfileCommitted += _ => commits++;
             var endpoint = new TownEquipmentMutationEndpoint(_service, Profile, _catalog, () => true, () => notifications++);
-            endpoint.BindTrainingBackend(store, request =>
+            endpoint.BindTrainingBackend(store, new RemoteInventoryMutationGate(), request =>
             {
                 posts++;
                 Assert.That(request.expectedRevision, Is.EqualTo(7));
@@ -346,6 +347,141 @@ namespace Tests.EditMode.Presentation
             Assert.That(store.GetStash(), Is.Empty);
             Assert.That(store.PendingReservation, Is.Null);
             Assert.That(endpoint.IsTrainingWeaponRequestInFlight, Is.False);
+        }
+
+        [Test]
+        public async System.Threading.Tasks.Task TrainingRequest_WaitsForAnInFlightInventoryMutation_AndPostsItsCommittedRevision()
+        {
+            var store = CreateStoreAtRevision(4);
+            var gate = new RemoteInventoryMutationGate();
+            int serverRevision = 4, posts = 0, reconciliations = 0, postedRevision = -1;
+            var releaseOther = new System.Threading.Tasks.TaskCompletionSource<bool>();
+            var otherMutation = gate.RunExclusiveAsync(async () =>
+            {
+                await releaseOther.Task;
+                serverRevision = 5;
+                store.SetRemoteRevision(5);
+                return true;
+            });
+            var endpoint = new TownEquipmentMutationEndpoint(_service, Profile, _catalog, () => true);
+            endpoint.BindTrainingBackend(store, gate, request =>
+            {
+                posts++;
+                postedRevision = request.expectedRevision;
+                if (request.expectedRevision != serverRevision)
+                    return System.Threading.Tasks.Task.FromResult((false, default(Grimhold.Backend.TrainingWeaponResult),
+                        new Grimhold.Backend.BackendError { error = "REVISION_CONFLICT" }));
+                return System.Threading.Tasks.Task.FromResult((true, TrainingAck(serverRevision + 1), default(Grimhold.Backend.BackendError)));
+            }, () => { reconciliations++; return System.Threading.Tasks.Task.FromResult(true); });
+
+            var requestTask = endpoint.RequestTrainingWeaponAsync(new LootId("training_dagger"), EquipmentSlot.WeaponSetAMainHand);
+
+            Assert.That(posts, Is.Zero, "The request must not read the revision or POST while another inventory mutation is in flight.");
+            Assert.That(requestTask.IsCompleted, Is.False);
+            Assert.That(endpoint.IsTrainingWeaponRequestInFlight, Is.True);
+
+            releaseOther.SetResult(true);
+            await otherMutation;
+            Assert.That(await requestTask, Is.EqualTo(StashOperationResult.Success));
+            Assert.That(posts, Is.EqualTo(1));
+            Assert.That(postedRevision, Is.EqualTo(5));
+            Assert.That(reconciliations, Is.Zero);
+            Assert.That(store.RemoteRevision, Is.EqualTo(6));
+            Assert.That(store.GetPreparedEquipment().WeaponSetAMainHand, Is.EqualTo(new LootId("training_dagger")));
+            Assert.That(endpoint.IsTrainingWeaponRequestInFlight, Is.False);
+        }
+
+        [Test]
+        public async System.Threading.Tasks.Task InventoryMutationQueuedDuringTrainingRequest_ReadsTheTrainingRevision()
+        {
+            var store = CreateStoreAtRevision(4);
+            var gate = new RemoteInventoryMutationGate();
+            var pendingPost = new System.Threading.Tasks.TaskCompletionSource<(bool, Grimhold.Backend.TrainingWeaponResult, Grimhold.Backend.BackendError)>();
+            var endpoint = new TownEquipmentMutationEndpoint(_service, Profile, _catalog, () => true);
+            endpoint.BindTrainingBackend(store, gate, _ => pendingPost.Task);
+
+            var requestTask = endpoint.RequestTrainingWeaponAsync(new LootId("training_dagger"), EquipmentSlot.WeaponSetAMainHand);
+            int observedRevision = -1;
+            var queued = gate.RunExclusiveAsync(() =>
+            {
+                observedRevision = store.RemoteRevision;
+                return System.Threading.Tasks.Task.FromResult(true);
+            });
+
+            Assert.That(queued.IsCompleted, Is.False, "A mutation queued behind the training POST must wait for it.");
+            pendingPost.SetResult((true, TrainingAck(5), default(Grimhold.Backend.BackendError)));
+            Assert.That(await requestTask, Is.EqualTo(StashOperationResult.Success));
+            await queued;
+            Assert.That(observedRevision, Is.EqualTo(5));
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public async System.Threading.Tasks.Task TrainingRequest_NotifiesAndReconcilesOnlyAfterReleasingTheGate(bool success)
+        {
+            var store = CreateStoreAtRevision(4);
+            var gate = new RemoteInventoryMutationGate();
+            bool? gateFreeAtCallback = null;
+            bool GateIsFree() => gate.RunExclusiveAsync(() => System.Threading.Tasks.Task.FromResult(true)).IsCompleted;
+            var endpoint = new TownEquipmentMutationEndpoint(_service, Profile, _catalog, () => true,
+                () => gateFreeAtCallback = GateIsFree());
+            endpoint.BindTrainingBackend(store, gate, _ => System.Threading.Tasks.Task.FromResult(success
+                ? (true, TrainingAck(5), default(Grimhold.Backend.BackendError))
+                : (false, default(Grimhold.Backend.TrainingWeaponResult), new Grimhold.Backend.BackendError { error = "REVISION_CONFLICT" })),
+                () =>
+                {
+                    gateFreeAtCallback = GateIsFree();
+                    return System.Threading.Tasks.Task.FromResult(true);
+                });
+
+            var result = await endpoint.RequestTrainingWeaponAsync(new LootId("training_dagger"), EquipmentSlot.WeaponSetAMainHand);
+
+            Assert.That(result, Is.EqualTo(success ? StashOperationResult.Success : StashOperationResult.InvalidInventory));
+            Assert.That(gateFreeAtCallback, Is.True,
+                "The notification (success) and the reconciliation (conflict) re-enter gated sync, so they must run after the gate is released.");
+        }
+
+        [Test]
+        public async System.Threading.Tasks.Task TrainingRequest_WithoutMutationGate_FailsWithoutPosting()
+        {
+            var store = CreateStoreAtRevision(4);
+            int posts = 0;
+            var endpoint = new TownEquipmentMutationEndpoint(_service, Profile, _catalog, () => true);
+            endpoint.BindTrainingBackend(store, null, _ =>
+            {
+                posts++;
+                return System.Threading.Tasks.Task.FromResult((true, TrainingAck(5), default(Grimhold.Backend.BackendError)));
+            });
+
+            Assert.That(await endpoint.RequestTrainingWeaponAsync(new LootId("training_dagger"), EquipmentSlot.WeaponSetAMainHand),
+                Is.EqualTo(StashOperationResult.PersistenceFailed));
+            Assert.That(posts, Is.Zero);
+            Assert.That(store.RemoteRevision, Is.EqualTo(4));
+            Assert.That(endpoint.IsTrainingWeaponRequestInFlight, Is.False);
+        }
+
+        private LocalProfileStore CreateStoreAtRevision(int revision)
+        {
+            var repository = new InMemoryLocalProfileRepository();
+            Assert.That(repository.Initialize(Profile, _catalog), Is.True);
+            var snapshot = repository.Snapshot.Clone();
+            snapshot.InventorySchemaVersion = 3;
+            snapshot.RemoteRevision = revision;
+            Assert.That(repository.TrySave(snapshot, out _), Is.True);
+            return new LocalProfileStore(repository, Profile, _catalog);
+        }
+
+        private Grimhold.Backend.TrainingWeaponResult TrainingAck(int revision)
+        {
+            var equipment = default(PreparedEquipmentLoadout).With(EquipmentSlot.WeaponSetAMainHand,
+                new LootId("training_dagger"), new EquipmentInstance("111111111111111111111111",
+                    EquipmentInstance.PlainCache(GetDefinition("training_dagger")).Modifiers));
+            return new Grimhold.Backend.TrainingWeaponResult
+            {
+                stash = Array.Empty<Grimhold.Backend.InventoryItemData>(),
+                loadout = Array.Empty<Grimhold.Backend.InventoryItemData>(), revision = revision,
+                preparedEquipment = Grimhold.Backend.PreparedEquipmentData.FromLoadout(equipment)
+            };
         }
 
         private LootDefinition GetDefinition(string id)

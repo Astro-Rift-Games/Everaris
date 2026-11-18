@@ -138,7 +138,10 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
 
     private BackendConfiguration _backendConfig;
     private LocalProfileStore _store;
-    private readonly System.Threading.SemaphoreSlim _mutationLock = new System.Threading.SemaphoreSlim(1, 1);
+    private readonly RemoteInventoryMutationGate _mutationLock = new RemoteInventoryMutationGate();
+
+    /// <summary>Shared with Town writers outside this service (training weapon) so their revision reads serialize too.</summary>
+    public RemoteInventoryMutationGate MutationGate => _mutationLock;
 
     // Use property getter for token to avoid caching it when not authenticated
     private string AuthToken => ApplicationAuthContext.Instance?.Token;

@@ -33,7 +33,7 @@ namespace Tests.PlayMode.Presentation
                 () => true, () => mutations++);
             TaskCompletionSource<(bool success, TrainingWeaponResult data, BackendError error)> pending = null;
             TrainingWeaponRequest intent = default;
-            endpoint.BindTrainingBackend(store, request =>
+            endpoint.BindTrainingBackend(store, new RemoteInventoryMutationGate(), request =>
             {
                 intent = request;
                 pending = new();

@@ -320,10 +320,10 @@ public sealed class TownInventoryBinder : NetworkBehaviour
         var config = LoginFlowController.Instance != null
             ? LoginFlowController.Instance.Config : null;
         if (config == null) config = Resources.Load<Grimhold.Backend.BackendConfiguration>("BackendConfiguration");
-        if (config != null && _profileContext.TryGetComponent<RemoteInventoryService>(out _))
+        if (config != null && _profileContext.TryGetComponent<RemoteInventoryService>(out var remoteInventory))
         {
             _profileContext.TryGetComponent<ProfileReconciliationService>(out var reconciliation);
-            _equipmentEndpoint.BindTrainingBackend(_profileContext.Store, request =>
+            _equipmentEndpoint.BindTrainingBackend(_profileContext.Store, remoteInventory.MutationGate, request =>
                 Grimhold.Backend.InventoryClient.RequestTrainingWeaponAsync(config,
                     ApplicationAuthContext.Instance?.Token, request),
                 async () => reconciliation != null && await reconciliation.ReconcileAsync());
