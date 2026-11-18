@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Grimhold.Backend;
 using NUnit.Framework;
@@ -22,13 +23,57 @@ public sealed class MainMenuFlowTests
         if (status == LoginFlowStatus.Success) Assert.That(menu.RequestPlay(), Is.EqualTo(MenuPlayRoute.Town));
     }
 
-    [Test]
-    public void TransportFailedLogin_KeepsUnreachableHealth()
+    [TestCase(LoginFlowStatus.AuthFailed)]
+    [TestCase(LoginFlowStatus.NetworkError)]
+    public void FailedLogin_KeepsUnreachableHealth(LoginFlowStatus status)
     {
         var menu = new MainMenuFlow();
         menu.CheckHealthAsync(new UnreachableHealth(), null).GetAwaiter().GetResult();
-        menu.ApplyLoginResult(LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, ""));
+        menu.ApplyLoginResult(LoginFlowResult.Failure(status, ""));
         Assert.That(menu.PlayEnabled, Is.False);
+    }
+
+    [Test]
+    public void TownRetry_IsClearedBySignOutSessionEndAndNewAttempt()
+    {
+        var menu = new MainMenuFlow();
+        menu.SetAccount(true, "Maren");
+        menu.TownFailed("x");
+        Assert.That(menu.CanRetryTown, Is.True);
+        menu.SetAccount(false, null);
+        Assert.That(menu.CanRetryTown, Is.False, "signed out");
+        menu.SetAccount(true, "Maren"); menu.TownFailed("x");
+        menu.SessionInvalidated();
+        Assert.That(menu.CanRetryTown, Is.False, "session ended");
+        menu.SetAccount(true, "Maren"); menu.TownFailed("x");
+        menu.TownStarting();
+        Assert.That(menu.CanRetryTown, Is.False, "a new Town attempt is in progress");
+    }
+
+    [Test]
+    public void HealthCheckFinishingAfterSuccessfulLogin_DoesNotMarkServerUnreachable()
+    {
+        var previous = SynchronizationContext.Current;
+        SynchronizationContext.SetSynchronizationContext(null); // run the await continuation inline
+        try
+        {
+            var menu = new MainMenuFlow();
+            var pending = new PendingHealth();
+            var check = menu.CheckHealthAsync(pending, null);
+            menu.ApplyLoginResult(LoginFlowResult.Success());
+            pending.Complete(false);
+            check.GetAwaiter().GetResult();
+            Assert.That(menu.PlayEnabled, Is.True);
+            Assert.That(menu.ServerText, Is.EqualTo("Servidor en línea"));
+        }
+        finally { SynchronizationContext.SetSynchronizationContext(previous); }
+    }
+
+    private sealed class PendingHealth : IBackendHealthClient
+    {
+        private readonly TaskCompletionSource<bool> _result = new TaskCompletionSource<bool>();
+        public Task<bool> CheckAsync(BackendConfiguration config) => _result.Task;
+        public void Complete(bool reachable) => _result.SetResult(reachable);
     }
 
     private sealed class UnreachableHealth : IBackendHealthClient

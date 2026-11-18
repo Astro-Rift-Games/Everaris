@@ -11,7 +11,7 @@ using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 /// <summary>
-/// Explicit, repeatable production authoring of the main menu (artboard design/main-menu/01-centered-modal.html).
+/// Explicit, repeatable production authoring of the main menu (chosen design: centered stack + auth dialog).
 /// The UI is authored inside MainMenu Canvas.prefab; MainMenu.unity only instances it and keeps scene-service references.
 /// SettingsPanel stays a nested prefab instance because Town and Raid menus share it.
 /// </summary>
@@ -132,6 +132,8 @@ public static class MainMenuComposition
         foreach (var component in instanceRoot.GetComponentsInChildren<Component>(true).Where(c => c is RectTransform || c is TMP_Text))
             if (PrefabUtility.IsPartOfPrefabInstance(component) && !PrefabUtility.IsAddedComponentOverride(component))
                 PrefabUtility.RevertObjectOverride(component, InteractionMode.AutomatedAction);
+        // Overrides whose prefab targets no longer exist (old layout objects) are dead weight in the scene file.
+        PrefabUtility.RemoveUnusedOverrides(new[] { instanceRoot }, InteractionMode.AutomatedAction);
         var loginFlow = All<LoginFlowController>(scene).Single();
         Set(controller, "_loginFlowController", loginFlow);
         Set(controller, "_connectionCoordinator", All<SessionConnectionCoordinator>(scene).Single());

@@ -152,7 +152,7 @@ public sealed class MainMenuController : MonoBehaviour
             _loginPanel.AddLoginListener(OnLoginButtonClicked);
             _loginPanel.AddRegisterListener(OnRegisterButtonClicked);
             _loginPanel.AddBackListener(OnLoginBackButtonClicked);
-            _loginPanel.Initialize(new PlayerPrefsRememberedUsernameStore(), () => Time.realtimeSinceStartupAsDouble);
+            _loginPanel.Initialize(UsernameStore ?? new PlayerPrefsRememberedUsernameStore(), () => Time.realtimeSinceStartupAsDouble);
             _loginPanel.AddForgotPasswordListener(ShowPasswordRecovery);
         }
         else
@@ -459,6 +459,7 @@ public sealed class MainMenuController : MonoBehaviour
         var route = _flow.RequestPlay();
         if (route == MenuPlayRoute.None) return;
         if (route == MenuPlayRoute.SignIn) { ShowLoginPanel(); return; }
+        _flow.TownStarting();
 
         SetUIInteractable(false);
         SetStatus("Entrando al Town…");
@@ -541,6 +542,9 @@ public sealed class MainMenuController : MonoBehaviour
         if (ApplicationAuthContext.Instance?.IsAuthenticated == true) OnLogoutButtonClicked();
         else ShowLoginPanel();
     }
+
+    /// <summary>Optional override (tests); defaults to the PlayerPrefs username-only store.</summary>
+    public IRememberedUsernameStore UsernameStore { get; set; }
 
     public void RetryTown()
     {

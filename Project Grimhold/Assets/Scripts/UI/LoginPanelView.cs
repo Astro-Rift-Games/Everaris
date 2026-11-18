@@ -41,6 +41,7 @@ public sealed class LoginPanelView : MonoBehaviour
     private readonly UnityEvent _loginRequested = new();
     private readonly UnityEvent _registerRequested = new();
     private readonly UnityEvent _backRequested = new();
+    private int _interactableFrame = -1;
     private readonly UnityEvent _forgotRequested = new();
     private LoginFormState _state;
     private bool _interactable = true;
@@ -132,6 +133,8 @@ public sealed class LoginPanelView : MonoBehaviour
 
     public void SetInteractable(bool interactable)
     {
+        // The key press that re-enabled the form (e.g. closing a dialog on top) must not act on it too.
+        if (interactable && !_interactable) _interactableFrame = Time.frameCount;
         _interactable = interactable;
         State.SetBusy(!interactable);
         Refresh();
@@ -175,6 +178,12 @@ public sealed class LoginPanelView : MonoBehaviour
     public void RequestPasswordRecovery() { if (_interactable && Mode == LoginFormMode.SignIn) _forgotRequested.Invoke(); }
 
     /// <summary>Single keyboard dispatch path: Escape takes precedence over Enter.</summary>
+    public void HandleKeyboardFrame(int frame, bool enterPressed, bool escapePressed)
+    {
+        if (frame == _interactableFrame) return;
+        HandleKeyboard(enterPressed, escapePressed);
+    }
+
     public void HandleKeyboard(bool enterPressed, bool escapePressed)
     {
         if (escapePressed) RequestBack();
@@ -185,7 +194,7 @@ public sealed class LoginPanelView : MonoBehaviour
     {
         var keyboard = Keyboard.current;
         if (keyboard != null)
-            HandleKeyboard(keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame,
+            HandleKeyboardFrame(Time.frameCount, keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame,
                 keyboard.escapeKey.wasPressedThisFrame);
         Refresh();
     }

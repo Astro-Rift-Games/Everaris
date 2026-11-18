@@ -14,6 +14,8 @@ public sealed class MainMenuFlow
     private bool _checking;
     private bool _unreachable;
     private bool _healthKnown;
+    // Bumped when a backend-answered login proves reachability; an older /health result must not undo it.
+    private int _reachabilityProof;
     public event Action Changed;
     public static string RecoveryMessage => "La recuperación de contraseña aún no está disponible. Las cuentas no tienen correo electrónico para verificar su titularidad.";
     public string AccountText => _authenticated ? $"Sesión iniciada: {_name}" : "Sin sesión iniciada";
@@ -27,7 +29,12 @@ public sealed class MainMenuFlow
     public bool CanRetryTown { get; private set; }
     public bool CharacterStep { get; private set; }
     public MenuConfirmation PendingConfirmation { get; private set; }
-    public void SetAccount(bool authenticated, string name) { _authenticated = authenticated; _name = name; Changed?.Invoke(); }
+    public void SetAccount(bool authenticated, string name)
+    {
+        _authenticated = authenticated; _name = name;
+        if (!authenticated) CanRetryTown = false;
+        Changed?.Invoke();
+    }
     public void SetBusy(bool busy) { _busy = busy; Changed?.Invoke(); }
     public MenuPlayRoute RequestPlay() => !PlayEnabled ? MenuPlayRoute.None : _authenticated ? MenuPlayRoute.Town : MenuPlayRoute.SignIn;
     public void RequestConfirmation(MenuConfirmation action)
@@ -44,6 +51,7 @@ public sealed class MainMenuFlow
         return action;
     }
     public void TownFailed(string message) { Status = message; CanRetryTown = true; Changed?.Invoke(); }
+    public void TownStarting() { CanRetryTown = false; Changed?.Invoke(); }
     public MenuPlayRoute RetryTown()
     {
         if (!CanRetryTown || !PlayEnabled) return MenuPlayRoute.None;
@@ -55,6 +63,7 @@ public sealed class MainMenuFlow
     {
         _authenticated = false;
         _name = null;
+        CanRetryTown = false;
         PendingConfirmation = MenuConfirmation.None;
         Status = "Tu sesión ha terminado. Inicia sesión de nuevo.";
         Changed?.Invoke();
@@ -64,8 +73,11 @@ public sealed class MainMenuFlow
         if (_checking) return;
         _checking = true;
         Changed?.Invoke();
-        try { _unreachable = !await health.CheckAsync(config); }
-        catch (Exception) { _unreachable = true; }
+        var proof = _reachabilityProof;
+        bool reachable;
+        try { reachable = await health.CheckAsync(config); }
+        catch (Exception) { reachable = false; }
+        if (reachable || proof == _reachabilityProof) _unreachable = !reachable;
         _healthKnown = true;
         _checking = false;
         Changed?.Invoke();
@@ -75,7 +87,7 @@ public sealed class MainMenuFlow
     {
         CharacterStep = result.Status == LoginFlowStatus.NeedsCharacterCreation;
         // A login the backend answered proves it is reachable; a stale /health failure must not block Town entry.
-        if (result.IsSuccess || CharacterStep) { _unreachable = false; _healthKnown = true; }
+        if (result.IsSuccess || CharacterStep) { _unreachable = false; _healthKnown = true; _reachabilityProof++; }
         Changed?.Invoke();
         return result.IsSuccess ? MenuPlayRoute.Town : MenuPlayRoute.None;
     }

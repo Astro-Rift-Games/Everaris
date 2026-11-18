@@ -84,6 +84,14 @@ public sealed class MainMenuCompositionTests
         Assert.That(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(credits.gameObject), Is.EqualTo("Assets/Prefabs/UI/CreditsPanel.prefab"),
             "Credits content is out of scope and stays editable in its own prefab.");
     }
+    [Test] public void SceneKeepsNoOrphanedPrefabOverrides()
+    {
+        var root = PrefabUtility.GetOutermostPrefabInstanceRoot(_menu.gameObject);
+        // An unused override still names a prefab object that no longer exists, so its target resolves to null.
+        var orphaned = PrefabUtility.GetPropertyModifications(root).Count(m => m.target == null);
+        Assert.That(orphaned, Is.Zero,
+            "Legacy layout overrides targeting objects that no longer exist must be removed from MainMenu.unity.");
+    }
     [Test] public void MainMenuHasNoLeftoverStash()
     {
         var root = _menu.GetComponentInParent<Canvas>(true).transform;

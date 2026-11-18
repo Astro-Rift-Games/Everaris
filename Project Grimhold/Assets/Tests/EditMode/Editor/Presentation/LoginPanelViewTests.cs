@@ -37,6 +37,26 @@ public sealed class LoginPanelViewTests
     [TearDown] public void TearDown() => UnityEngine.Object.DestroyImmediate(_owner);
 
     [Test]
+    public void KeyPressThatReenablesTheForm_IsNotHandledAgainInTheSameFrame()
+    {
+        int back = 0, login = 0;
+        _view.AddBackListener(() => back++); _view.AddLoginListener(() => login++);
+        Call("Initialize", _store, (Func<double>)(() => 0));
+        Call("Open");
+        _password.text = "p";
+        // e.g. the forgot-password info dialog closed by this frame's Escape or Enter.
+        _view.SetInteractable(false);
+        _view.SetInteractable(true);
+        int frame = Time.frameCount;
+        Call("HandleKeyboardFrame", frame, false, true);
+        Call("HandleKeyboardFrame", frame, true, false);
+        Assert.That(back, Is.Zero, "Escape that closed the dialog must not also close the login form");
+        Assert.That(login, Is.Zero, "Enter that closed the dialog must not also submit the login form");
+        Call("HandleKeyboardFrame", frame + 1, false, true);
+        Assert.That(back, Is.EqualTo(1));
+    }
+
+    [Test]
     public void TabsAndEnterSubmitOnlySelectedMode_ValidateBeforeDispatch()
     {
         int login = 0, register = 0;

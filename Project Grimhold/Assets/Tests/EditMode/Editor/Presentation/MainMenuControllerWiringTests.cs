@@ -23,6 +23,23 @@ public sealed class MainMenuControllerWiringTests
     private TextMeshProUGUI _subtitle;
     private HealthFake _health;
     private BackendConfiguration _config;
+    private RecordingUsernames _usernames;
+
+    private sealed class RecordingUsernames : IRememberedUsernameStore
+    {
+        public int Loads;
+        public string Load() { Loads++; return ""; }
+        public void Save(string username) { }
+        public void Clear() { }
+    }
+
+    [Test]
+    public void LoginPanelUsesTheInjectedUsernameStore()
+    {
+        _menu.CreateRoom(); // signed out: opens the sign-in dialog
+        Assert.That(_login.gameObject.activeSelf, Is.True);
+        Assert.That(_usernames.Loads, Is.GreaterThan(0), "the remembered username must come from the injected store");
+    }
 
     [SetUp]
     public void SetUp()
@@ -68,6 +85,8 @@ public sealed class MainMenuControllerWiringTests
         Set(_menu, "_infoDialog", _info);
         _health = new HealthFake();
         _menu.InitializeHealth(_health);
+        _usernames = new RecordingUsernames();
+        _menu.UsernameStore = _usernames; // never touch the developer's real PlayerPrefs
         _root.SetActive(true);
         Lifecycle(_auth, "Awake");
         Lifecycle(_menu, "OnEnable");
