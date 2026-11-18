@@ -920,8 +920,14 @@ No se sincronizan clips ni variables visuales directamente; la animación se der
 El sistema de cámara sigue exclusivamente al jugador local que posee `Input Authority`. Al pertenecer enteramente a la presentación, la cámara no participa de la simulación de red ni sincroniza datos en red.
 
 #### Componentes
-- `LocalCameraController` (MonoBehaviour): Adjunto a la cámara principal de la escena. Maneja el seguimiento suave, el offset y la profundidad absoluta del eje Z.
+- `LocalCameraController` (MonoBehaviour): Adjunto a la cámara principal de la escena. Maneja el seguimiento suave, el offset fijo, el offset dinámico por cursor, el clamp a los límites del mapa, el tamaño ortográfico y la profundidad absoluta del eje Z. Expone `UpdateCamera(deltaTime)`, invocado desde `LateUpdate`.
 - `LocalPlayerCameraBinder` (NetworkBehaviour): Adjunto al prefab del jugador. Actúa como adaptador local del ciclo de vida de red de Fusion.
+- `GameplayCameraConfig` (ScriptableObject, `Assets/Scriptable Objects/GameplayCameraConfig.asset`): parámetros de 03 §11 (distancia máxima del offset, velocidad de seguimiento, tiempo de suavizado, tamaño ortográfico) más el offset fijo de encuadre (`_offset`), el snap inicial al asignar objetivo (`_snapOnTargetAssigned`), la zona muerta del cursor, el margen seguro y los rangos que puede elegir el jugador (distancia máxima, suavizado, velocidad de seguimiento). Todos son editables en el asset y se leen en cada frame (el snap, en cada asignación de objetivo), por lo que los cambios en Play Mode se aplican sin recompilar. El tamaño ortográfico es solo del diseñador: el jugador no tiene override de zoom. Sobre el componente `LocalCameraController` solo queda la profundidad Z (`_zDepth`) y las referencias de escena.
+- `GameplayCameraPreferences` (estática, C#): overrides locales del jugador sobre el config, guardados en `PlayerPrefs` (`Grimhold.Presentation.Camera.<Setting>`) con caché en memoria, siguiendo el precedente de `ScreenDamageAccessibility`. Ver *Preferencias del jugador*.
+- `CameraOptionsView` (MonoBehaviour, `UI/Settings`): sección de Settings con 3 sliders y un botón Restablecer, dentro del prefab `SettingsPanel` (compartido por menú principal, Pueblo y Raid).
+- `CameraMapBounds` (MonoBehaviour, uno por escena con mapa): rectángulo en coordenadas de mundo que la vista no debe exceder. Se referencia por campo serializado desde el `LocalCameraController` de la misma escena (Pueblo y Catacumbas). Sin referencia, la cámara no aplica límites.
+- `GameplayCameraMath` (estática, C# puro): curva del offset por cursor (zona muerta + rampa proporcional) y clamp a límites; cubierta por `GameplayCameraMathTests`.
+- `ICameraCursorSource`: frontera de presentación para leer el puntero en espacio viewport. La implementa `PlayerInputReader` (objeto de escena), referenciado por `LocalCameraController._cursorInput`.
 
 #### Registro e Inicialización
 Se utiliza un mecanismo de registro estático para desacoplar el orden de inicialización:
@@ -932,7 +938,24 @@ Se utiliza un mecanismo de registro estático para desacoplar el orden de inicia
 - **Despawn/Destrucción**: El binder centraliza su limpieza de forma idempotente en un método privado. Al destruirse o despawnearse el jugador, se llama a `ClearTarget(transform)` pasándose a sí mismo como argumento.
 - **Identidad en Limpieza**: `LocalCameraController.ClearTarget` solo borra el objetivo si coincide exactamente con el transform provisto. Esto asegura que si el jugador anterior es destruido *después* de que el nuevo jugador ya haya hecho respawn y se haya registrado, el OnDestroy tardío del anterior no limpie el nuevo objetivo.
 - **Reset de Velocidad**: `SmoothDamp` requiere reiniciar su velocidad interna (`_followVelocity`) a cero al cambiar o limpiar el objetivo para evitar aceleraciones residuales.
-- **Snapping Inicial**: La opción configurable `_snapOnTargetAssigned` permite que al recibir un objetivo por primera vez, la cámara se posicione instantáneamente sin suavizado inicial.
+- **Snapping Inicial**: La opción `_snapOnTargetAssigned` de `GameplayCameraConfig` permite que al recibir un objetivo por primera vez, la cámara se posicione instantáneamente sin suavizado inicial. El snap también respeta los límites del mapa.
+
+#### Seguimiento por frame
+1. Se aplica el tamaño ortográfico configurado.
+2. Centro deseado = objetivo + `_offset` (de `GameplayCameraConfig`) + offset por cursor. El offset por cursor se calcula desde la posición del puntero relativa al centro de la pantalla (viewport), no desde su posición de mundo, para que la cámara no persiga su propia proyección. Curva: el cursor se normaliza por eje (borde de pantalla = 1) y su magnitud se limita a 1; el radio hasta la zona muerta central (`_cursorDeadZone`, fracción 0–0.9 de ese radio normalizado, por defecto 0.1) da offset cero y el resto se remapea linealmente de 0 a 1, de modo que el offset crece proporcionalmente por toda la pantalla y llega a la distancia máxima con el cursor en el borde (`offset = dirección × remapeo × distanciaMáxima`). Luego se limita, por eje, al margen seguro, de modo que el objetivo nunca sale del área visible segura.
+3. El centro deseado se ajusta a `CameraMapBounds`; si el mapa es más chico que la vista en un eje, se centra en ese eje.
+4. `SmoothDamp` con tiempo de suavizado y velocidad máxima (velocidad de seguimiento) sobre una posición de seguimiento propia, que se vuelve a ajustar a los límites.
+5. La posición renderizada = posición de seguimiento + `CameraShakeController.ShakeOffset`. El shake nunca realimenta el seguimiento.
+
+#### Preferencias del jugador
+- Se exponen en Settings solo la intensidad del desplazamiento (distancia máxima), el suavizado y la velocidad de seguimiento. El tamaño ortográfico (zoom) no es ajustable por el jugador (03 §8.1 excluye el zoom manual del MVP).
+- `GameplayCameraPreferences.Get(setting, config)` devuelve el override del jugador limitado al rango del config, o el valor del config si no hay override; por lo tanto un cambio del asset sigue aplicándose en vivo mientras el jugador no haya ajustado ese parámetro. `Set` limita al rango del config al escribir y `Get` vuelve a limitar al leer, de modo que un cambio de rango en el asset se aplica a valores ya guardados. `ResetAll` borra los overrides.
+- `LocalCameraController` lee los valores efectivos en cada frame desde la caché en memoria (nunca consulta `PlayerPrefs` por frame), por lo que mover un slider se aplica en vivo.
+- `CameraOptionsView` toma el rango de cada slider del config, escribe vía `Set` en `onValueChanged` y sincroniza los valores al habilitarse y al restablecer.
+
+#### Offset por cursor, UI y espectador
+- `SetTarget(target, followCursor)`: el binder del jugador local pasa `followCursor: true`; el espectador (`LocalRaidSpectatorController`) usa el valor por defecto `false`, por lo que sigue al compañero con el mismo suavizado y límites pero sin offset por cursor.
+- Mientras `PlayerInputReader.IsGameplayInputSuppressed` es verdadero (inventario, comercio, stash, menús, diálogo), el puntero no está disponible y el offset vuelve suavemente a cero.
 
 #### Limitaciones conocidas y Validaciones Manuales
 - **Limitación**: Solo debe haber un `LocalCameraController` activo en la escena. Si se detectan múltiples instancias, se reportará una advertencia en la consola.

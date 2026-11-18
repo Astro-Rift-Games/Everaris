@@ -252501,6 +252501,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1105751624855696643, guid: c550b29e2e95a244583c5428df44c9c5, type: 3}
+      propertyPath: _mapBounds
+      value: 
+      objectReference: {fileID: 452671848}
+    - target: {fileID: 1105751624855696643, guid: c550b29e2e95a244583c5428df44c9c5, type: 3}
+      propertyPath: _cursorInput
+      value: 
+      objectReference: {fileID: 414796634}
     - target: {fileID: 4811493984849234019, guid: c550b29e2e95a244583c5428df44c9c5, type: 3}
       propertyPath: m_Name
       value: Gameplay Camera
@@ -389593,6 +389601,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1952319761}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &452671847
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 452671849}
+  - component: {fileID: 452671848}
+  m_Layer: 0
+  m_Name: Camera Map Bounds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &452671848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 452671847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2186ce20d99a91049a68c872f18c6fb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraMapBounds
+  _worldBounds:
+    serializedVersion: 2
+    x: -137
+    y: -114
+    width: 291
+    height: 228
+--- !u!4 &452671849
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 452671847}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -389617,3 +389675,4 @@ SceneRoots:
   - {fileID: 832834444}
   - {fileID: 2009809606}
   - {fileID: 10764341}
+  - {fileID: 452671849}

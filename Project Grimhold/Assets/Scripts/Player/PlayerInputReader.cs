@@ -12,7 +12,7 @@ using UnityEngine.InputSystem.Controls;
 /// <see cref="ConsumeNetworkInput"/>.
 /// </summary>
 [DisallowMultipleComponent]
-public sealed class PlayerInputReader : MonoBehaviour
+public sealed class PlayerInputReader : MonoBehaviour, ICameraCursorSource
 {
     [Header("Aim")]
     [SerializeField]
@@ -403,6 +403,25 @@ public sealed class PlayerInputReader : MonoBehaviour
         return new Vector2(
             worldPosition.x - shakeOffset.x,
             worldPosition.y - shakeOffset.y);
+    }
+
+    /// <summary>
+    /// Reads the pointer in viewport space for the local camera's cursor offset.
+    /// Unavailable while gameplay input is suppressed so pointer motion over UI never moves the camera.
+    /// </summary>
+    public bool TryGetCursorViewport(Camera camera, out Vector2 viewport)
+    {
+        viewport = new Vector2(0.5f, 0.5f);
+
+        if (camera == null || IsGameplayInputSuppressed)
+        {
+            return false;
+        }
+
+        Vector2 screenPosition = _inputActions.Gameplay.AimPosition.ReadValue<Vector2>();
+        Vector3 viewportPoint = camera.ScreenToViewportPoint(screenPosition);
+        viewport = new Vector2(viewportPoint.x, viewportPoint.y);
+        return true;
     }
 
     private void ReadAimWorldPosition()

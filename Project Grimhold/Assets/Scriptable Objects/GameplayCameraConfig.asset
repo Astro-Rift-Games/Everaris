@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8422c9e701270c749ad08953ed2a66d1, type: 3}
+  m_Name: GameplayCameraConfig
+  m_EditorClassIdentifier: Assembly-CSharp::GameplayCameraConfig
+  _maxOffsetDistance: 3
+  _cursorDeadZone: 0.1
+  _safeMargin: 0.25
+  _offset: {x: 0, y: 0}
+  _followSpeed: 50
+  _smoothTime: 0.1
+  _snapOnTargetAssigned: 1
+  _orthographicSize: 10
+  _maxOffsetDistanceRange: {x: 0, y: 6}
+  _smoothTimeRange: {x: 0, y: 0.5}
+  _followSpeedRange: {x: 5, y: 100}

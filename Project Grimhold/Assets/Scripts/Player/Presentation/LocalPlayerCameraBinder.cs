@@ -38,7 +38,7 @@ public sealed class LocalPlayerCameraBinder : NetworkBehaviour
 
         if (LocalCameraController.Instance != null)
         {
-            LocalCameraController.Instance.SetTarget(transform);
+            LocalCameraController.Instance.SetTarget(transform, followCursor: true);
         }
     }
 

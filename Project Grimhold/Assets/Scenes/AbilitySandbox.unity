@@ -2489,6 +2489,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1105751624855696643, guid: c550b29e2e95a244583c5428df44c9c5, type: 3}
+      propertyPath: _cursorInput
+      value: 
+      objectReference: {fileID: 1092232368}
     - target: {fileID: 4811493984849234019, guid: c550b29e2e95a244583c5428df44c9c5, type: 3}
       propertyPath: m_Name
       value: Gameplay Camera

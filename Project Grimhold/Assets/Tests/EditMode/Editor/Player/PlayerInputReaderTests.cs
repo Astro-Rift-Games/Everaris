@@ -211,5 +211,49 @@ namespace Tests.EditMode.Player
                 UnityEngine.Object.DestroyImmediate(config);
             }
         }
+
+        [Test]
+        public void TryGetCursorViewport_WithCameraAndNoSuppression_ReportsPointerViewport()
+        {
+            var cameraGo = new GameObject("CursorCam");
+            var camera = cameraGo.AddComponent<Camera>();
+
+            try
+            {
+                Assert.That(_reader.TryGetCursorViewport(camera, out Vector2 viewport), Is.True);
+                Vector3 expected = camera.ScreenToViewportPoint(Vector3.zero);
+                Assert.That(viewport.x, Is.EqualTo(expected.x).Within(0.0001f));
+                Assert.That(viewport.y, Is.EqualTo(expected.y).Within(0.0001f));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(cameraGo);
+            }
+        }
+
+        [Test]
+        public void TryGetCursorViewport_WhileGameplayInputSuppressed_IsUnavailable()
+        {
+            var cameraGo = new GameObject("CursorCam");
+            var camera = cameraGo.AddComponent<Camera>();
+
+            try
+            {
+                using IDisposable suppression = _reader.AcquireGameplayInputSuppression();
+
+                Assert.That(_reader.TryGetCursorViewport(camera, out Vector2 viewport), Is.False);
+                Assert.That(viewport, Is.EqualTo(new Vector2(0.5f, 0.5f)));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(cameraGo);
+            }
+        }
+
+        [Test]
+        public void TryGetCursorViewport_WithoutCamera_IsUnavailable()
+        {
+            Assert.That(_reader.TryGetCursorViewport(null, out _), Is.False);
+        }
     }
 }
