@@ -20,3 +20,10 @@ MonoBehaviour:
   _trailPrefab: {fileID: 0}
   _fizzleParticles: {fileID: 0}
   _impactParticles: {fileID: 0}
+  _stickOnImpact: 1
+  _stickPenetration: 0
+  _stickEdgeWidth: 0.1875
+  _stickVisibleFraction: 0.5
+  _stickHoldSeconds: 4.5
+  _stickFadeSeconds: 0.5
+  _stickBodySortingLayer: VFX

@@ -1243,6 +1243,39 @@ A controller override enables the assigned Animator; a sprite-only profile disab
 so it cannot overwrite the sprite. Damage-type tint, when enabled and resolvable from the optional
 palette, wins over explicit profile tint and uses the projectile's networked `DamageType`.
 
+A profile with `StickOnImpact` leaves a local `StuckProjectileVisual`: a world-rooted copy of the
+current flight sprite with its tip cropped away so only the trailing `StickVisibleFraction` of the
+sprite length shows outside the surface (the arrow reads as embedded). The crop runs along the sprite
+axis that follows the flight direction (seen through the renderer rotation and flips), keeps at least
+one pixel, and places the sprite pivot on the cut edge, which sits `StickPenetration` (default 0) plus the
+oblique-hit sinking below past the contact surface point along the flight direction. The visual owns the cropped `Sprite` and destroys it;
+Tight-packed sprites fall back to the uncropped sprite. The copy is held `StickHoldSeconds`,
+faded over `StickFadeSeconds` and destroyed. It is presentation only and never extends flight
+gameplay. For every terminal impact the authority records the presentation-only `[Networked]`
+`ImpactSurfacePoint` (the contact surface point of the terminal contact, not the projectile center,
+which stops a collider radius short; exposed by `TryGetImpactSurfacePoint`, reset in
+`InitializeNetworkState`). The cut edge is placed there (falling back to the event position). For a
+body impact it also records `ImpactTargetIdValue` and `ImpactTargetOffset` (`surface point - body root`)
+so every peer places the copy on the body via `EntityRegistry.TryGetTransform`, follows it, mirrors its
+`EntityVisibilityPresenter` opacity, uses `StickBodySortingLayer` and ends when the body is destroyed.
+The cut edge is perpendicular to the flight, so on an oblique hit one of its ends would hang off the
+surface (about 1 px at 45 degrees). Each peer therefore computes the surface normal locally, with no new
+networked state: a short `Physics2D.Raycast` along the flight across the contact point (same impact mask,
+triggers included, skipping the projectile's own colliders and protective orbs, preferring the anchor
+collider; it works on composite and tilemap walls). The cut edge sinks an extra
+`s = (StickEdgeWidth / 2) * |p.n| / max(|f.n|, 0.35)` along the flight, clamped to `[0, StickEdgeWidth]`
+(`f` flight, `p` its perpendicular, `n` the normal), and the crop keeps `s` more sprite length so the
+visible length outside the surface is unchanged. `StickEdgeWidth` is the projectile's visible width at the
+cut in world units (0 disables); with no surface found the hit counts as head-on (no extra depth).
+Each peer also resolves, once per impact, an anchor `Collider2D` under the stuck point
+(`Physics2D.OverlapPoint` on `NetworkProjectile.ImpactLayerMask`, triggers included, skipping the
+projectile's own colliders and `ProtectiveOrbCollider`; inside the body hierarchy for body impacts). The
+visual expires immediately when the anchor is destroyed, disabled or deactivated (for example a broken
+`BreakableObject`, which only disables its colliders and renderers) and, with no body, follows the
+anchor's transform. No resolvable collider (e.g. composite/tilemap walls) leaves it unanchored.
+Interceptor (orb) terminations (`WasImpactIntercepted`) leave nothing; geometry impacts stay fixed in
+the world.
+
 Non-null profile impact/fizzle independently supersede the corresponding default presenter (not the
 attacker-only weapon particle layer). Profile clones are one-shot; default impact clones preserve
 authored looping/stop action. `ProjectileImpactParticlePresenter` now emits on character as well as

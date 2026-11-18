@@ -74,6 +74,76 @@ namespace Tests.PlayMode.Combat
             Assert.That(expired, Is.Zero);
         }
 
+        [UnityTest]
+        public IEnumerator GeometryImpact_ExposesNoTargetAndNoInterception()
+        {
+            yield return Begin();
+            GameObject wall = Own(new GameObject("ProjectilePresentationWall"));
+            wall.layer = LayerMask.NameToLayer("WorldCollision");
+            wall.transform.position = Vector3.right;
+            wall.AddComponent<BoxCollider2D>();
+            NetworkProjectile projectile = Spawn(10f, 10f);
+            int impacts = 0;
+            bool hasTarget = true, intercepted = true, hasSurface = false;
+            Vector2 surface = default;
+            projectile.ImpactResolved += (_, _) =>
+            {
+                impacts++;
+                hasTarget = projectile.TryGetImpactTarget(out _, out _);
+                intercepted = projectile.WasImpactIntercepted;
+                hasSurface = projectile.TryGetImpactSurfacePoint(out surface);
+            };
+            yield return Until(() => impacts != 0);
+            Assert.That(hasTarget, Is.False);
+            Assert.That(intercepted, Is.False);
+            Assert.That(hasSurface, Is.True);
+            Assert.That(surface.x, Is.EqualTo(0.5f).Within(0.005f), "The surface point is the wall face, not the projectile center.");
+        }
+
+        [UnityTest]
+        public IEnumerator BodyImpact_ExposesHitBodyAndReplicatedOffset()
+        {
+            yield return Begin();
+            GameObject body = Own(new GameObject("ProjectilePresentationBody"));
+            body.layer = LayerMask.NameToLayer("WorldCollision");
+            body.transform.position = new Vector3(1f, 0f, 0f);
+            var collider = body.AddComponent<BoxCollider2D>();
+            var damageable = body.AddComponent<StuckTargetDamageable>();
+            damageable.Id = new EntityId(7);
+            Assert.That(_runner.GetComponent<EntityRegistry>().TryRegister(damageable.Id, damageable, new[] { collider }), Is.True);
+            Physics2D.SyncTransforms();
+            NetworkProjectile projectile = Spawn(10f, 10f);
+            int impacts = 0;
+            bool geometryImpact = true, hasTarget = false, intercepted = true;
+            Transform target = null;
+            Vector2 offset = default, surface = default;
+            bool hasSurface = false;
+            projectile.ImpactResolved += (_, geometry) =>
+            {
+                impacts++;
+                geometryImpact = geometry;
+                hasTarget = projectile.TryGetImpactTarget(out target, out offset);
+                intercepted = projectile.WasImpactIntercepted;
+                hasSurface = projectile.TryGetImpactSurfacePoint(out surface);
+            };
+            yield return Until(() => impacts != 0);
+            Assert.That(geometryImpact, Is.False);
+            Assert.That(intercepted, Is.False);
+            Assert.That(hasTarget, Is.True);
+            Assert.That(target, Is.SameAs(body.transform));
+            Assert.That(hasSurface, Is.True);
+            Assert.That(surface.x, Is.EqualTo(0.5f).Within(0.005f));
+            Assert.That(Vector2.Distance(offset, surface - new Vector2(1f, 0f)), Is.LessThan(0.0001f),
+                "The body offset is taken from the contact surface point, not the projectile center.");
+        }
+
+        private sealed class StuckTargetDamageable : MonoBehaviour, IDamageable
+        {
+            public EntityId Id { get; set; }
+            public bool CanReceiveDamage => true;
+            public DamageResult ApplyDamage(in DamageRequest request) => default;
+        }
+
         [UnityTest] public IEnumerator Shutdown_RaisesNeitherEvent() => AssertShutdown(ShutdownReason.Ok);
         [UnityTest] public IEnumerator MigrationShutdown_RaisesNeitherEvent() => AssertShutdown(ShutdownReason.HostMigration);
         private IEnumerator AssertShutdown(ShutdownReason reason)

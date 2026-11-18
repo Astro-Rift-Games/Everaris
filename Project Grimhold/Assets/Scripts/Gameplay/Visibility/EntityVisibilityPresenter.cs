@@ -36,6 +36,9 @@ namespace ProjectGrimhold.Gameplay.Visibility
 
         public Transform VisibilityRoot => transform;
 
+        /// <summary>Last opacity applied by the visibility system, for local visuals attached to this entity.</summary>
+        public float AppliedAlpha => _appliedAlpha;
+
         /// <inheritdoc />
         public bool IsVisible(in VisionQuery query)
         {

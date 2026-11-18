@@ -110,8 +110,46 @@ public sealed class NetworkProjectile : NetworkBehaviour
     [Networked, Capacity(ProjectileImpactLedger.Capacity)]
     private NetworkArray<int> LedgerContactTicks { get; }
 
+    // Presentation-only terminal contact metadata so every peer can embed impact visuals in the hit body.
+    // The offset is taken on the authority at the impact tick, independent of each peer's interpolation.
+    [Networked] private NetworkBool ImpactWasIntercepted { get; set; }
+    [Networked] private int ImpactTargetIdValue { get; set; }
+    [Networked] private Vector2 ImpactTargetOffset { get; set; }
+    // Terminal contact surface point (not the projectile center), so embedded visuals touch the surface.
+    [Networked] private Vector2 ImpactSurfacePoint { get; set; }
+
+    /// <summary>Layers this flight collides with; lets presentation resolve what it struck.</summary>
+    public int ImpactLayerMask => ImpactLayerMaskValue;
+
     public bool IsImpactConsumed => ImpactConsumed;
     public bool IsImpactGeometryOnly => ImpactWasGeometryOnly;
+
+    /// <summary>True when a defensive interceptor (not a surface or body) terminated the flight.</summary>
+    public bool WasImpactIntercepted => ImpactConsumed && ImpactWasIntercepted;
+
+    /// <summary>
+    /// Resolves the body that terminated the flight and the impact offset from its root, on any peer.
+    /// Valid while the terminal impact is presented; false for geometry, interception or unknown bodies.
+    /// </summary>
+    public bool TryGetImpactTarget(out Transform target, out Vector2 offset)
+    {
+        target = null;
+        offset = default;
+        if (!ImpactConsumed || ImpactWasGeometryOnly || ImpactTargetIdValue == 0 || _registry == null) return false;
+        if (!_registry.TryGetTransform(new EntityId(ImpactTargetIdValue), out target)) return false;
+        offset = ImpactTargetOffset;
+        return true;
+    }
+
+    /// <summary>
+    /// Resolves the contact surface point recorded by the authority for the terminal impact, on any peer.
+    /// False before an impact is consumed.
+    /// </summary>
+    public bool TryGetImpactSurfacePoint(out Vector2 point)
+    {
+        point = ImpactSurfacePoint;
+        return ImpactConsumed;
+    }
 
     public event System.Action<Vector2, bool> ImpactResolved;
 
@@ -295,6 +333,10 @@ public sealed class NetworkProjectile : NetworkBehaviour
         ImpactConsumed = false;
         ExpiryConsumed = false;
         ImpactWasGeometryOnly = false;
+        ImpactWasIntercepted = false;
+        ImpactTargetIdValue = 0;
+        ImpactTargetOffset = default;
+        ImpactSurfacePoint = default;
         SpawnSimulationTick = request.SimulationTick;
         KnockbackForce = request.KnockbackForce;
         AppliedImpactCount = 0;
@@ -398,6 +440,7 @@ public sealed class NetworkProjectile : NetworkBehaviour
             Vector2 impactPosition = currentPosition + Direction * terminal.Distance;
             _rigidbody.position = impactPosition;
             transform.position = impactPosition;
+            RecordImpactTarget(in terminal);
 
             Runner.Despawn(Object);
             return;
@@ -413,6 +456,18 @@ public sealed class NetworkProjectile : NetworkBehaviour
             ExpiryConsumed = true;
             Runner.Despawn(Object);
         }
+    }
+
+    private void RecordImpactTarget(in ProjectileContact terminal)
+    {
+        ImpactWasIntercepted = terminal.Kind == ProjectileContactKind.Interceptor;
+        ImpactSurfacePoint = terminal.Point;
+        ImpactTargetIdValue = 0;
+        ImpactTargetOffset = default;
+        if (terminal.Kind != ProjectileContactKind.Target || _registry == null ||
+            !_registry.TryGetTransform(new EntityId(terminal.EntityIdValue), out Transform target)) return;
+        ImpactTargetIdValue = terminal.EntityIdValue;
+        ImpactTargetOffset = terminal.Point - (Vector2)target.position;
     }
 
     private int GatherContacts(Vector2 currentPosition, float travelDistance)
