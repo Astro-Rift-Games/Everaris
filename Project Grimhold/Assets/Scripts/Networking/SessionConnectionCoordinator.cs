@@ -2188,7 +2188,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
 
     private async Task MarkReservationAdmittedAsync(RemoteInventoryService service, string reservationId)
     {
-        var (success, error) = await service.MarkPendingReservationAdmittedAsync(reservationId);
+        var (success, error) = await service.EnsureReservationAdmittedAsync(reservationId);
         if (!success)
         {
             Debug.LogWarning($"[{nameof(SessionConnectionCoordinator)}] Reservation admission failed: {error.error} - {error.message}");

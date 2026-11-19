@@ -339,6 +339,59 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
         }, retryRevisionConflict: true);
     }
 
+    /// <summary>Outer rounds of the admission confirmation; each round is the 3-attempt idempotent policy.</summary>
+    public const int AdmissionRetryRounds = 4;
+    internal const int AdmissionRoundBaseMs = 2000;
+    /// <summary>Pause between admission rounds; replaceable so tests need not wait.</summary>
+    internal static System.Func<int, Task> AdmissionRoundDelayAsync = Task.Delay;
+
+    /// <summary>
+    /// Confirms the reservation admission on the backend with bounded rounds and progressive pauses.
+    /// The local admission mark is cleared only on backend proof: the admit succeeded, or the backend no
+    /// longer holds the reservation (NO_ACTIVE_RESERVATION). Any other failure keeps the mark so the next
+    /// login retries; the reservation is never rolled back meanwhile.
+    /// </summary>
+    public async Task<(bool success, BackendError error)> EnsureReservationAdmittedAsync(string reservationId)
+    {
+        BackendError error = default;
+        for (int round = 1; round <= AdmissionRetryRounds; round++)
+        {
+            bool success;
+            (success, error) = await MarkPendingReservationAdmittedAsync(reservationId);
+            if (success)
+            {
+                ClearAdmissionMark(reservationId);
+                return (true, default);
+            }
+
+            if (error.error == "NO_ACTIVE_RESERVATION")
+            {
+                ClearAdmissionMark(reservationId);
+                return (false, error);
+            }
+
+            if (!IsTransientAdmissionError(error) || BackendRetrySchedule.ExceedsWaitBudget(error))
+                return (false, error);
+            if (round == AdmissionRetryRounds) break;
+
+            await AdmissionRoundDelayAsync(BackendRetrySchedule.DelayMilliseconds(error, round, AdmissionRoundBaseMs));
+        }
+
+        Debug.LogWarning($"[{nameof(RemoteInventoryService)}] Reservation admission not confirmed after {AdmissionRetryRounds} rounds: {error.error}. The local mark stays; login retries.");
+        return (false, error);
+    }
+
+    private static bool IsTransientAdmissionError(BackendError error) =>
+        BackendErrorClassifier.Classify(error.error) == BackendErrorClass.Retryable ||
+        BackendErrorUtility.IsTransportFailure(error.error) ||
+        error.error == "REVISION_CONFLICT";
+
+    private void ClearAdmissionMark(string reservationId)
+    {
+        if (_store != null && _store.AdmissionPendingReservationId == reservationId)
+            _store.TryClearReservationAdmission(reservationId);
+    }
+
     /// <summary>
     /// Consumes the active raid reservation as a loss, without rollback.
     /// The expected id is captured across retries so a newer reservation cannot be cleared.
@@ -387,6 +440,18 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
     /// </param>
     public Task<(bool success, BackendError error)> RollbackPendingReservationAsync(string expectedReservationId = null)
     {
+        // A reservation confirmed locally for a raid was used: its items are gone from the profile, so a
+        // backend rollback would duplicate them. Exact id only; a stale mark never blocks unrelated cleanup.
+        if (!string.IsNullOrEmpty(expectedReservationId) && _store != null &&
+            _store.AdmissionPendingReservationId == expectedReservationId)
+        {
+            return Task.FromResult((false, new BackendError
+            {
+                error = "RESERVATION_ADMITTED",
+                message = "Reservation was used in a raid; it cannot be rolled back."
+            }));
+        }
+
         if (string.IsNullOrEmpty(AuthToken))
         {
             Debug.LogError($"[{nameof(RemoteInventoryService)}] RollbackPendingReservationAsync: Not authenticated.");

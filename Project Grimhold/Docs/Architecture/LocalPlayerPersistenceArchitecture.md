@@ -630,6 +630,25 @@ a pending extraction commit keeps its retry path. Previously admission deleted t
 reservation, which made every player-hosted extraction publish fail with `NO_ACTIVE_RESERVATION`
 and left the backend Loadout empty for the next Raid.
 
+**Admission pending proof (FIX-56).** Local raid admission
+(`IPlayerLoadoutService.TryConfirmLoadoutReservation` -> `LocalProfileStore.TryAdmitLoadoutReservation`)
+discards the reservation and, in the same local write, stores its id as
+`AdmissionPendingReservationId` (local profile schema 14; older caches decode with no mark). The mark
+is the local proof that the items were used in a Raid even while the backend still lacks
+`admittedAt`:
+
+- `RemoteInventoryService.EnsureReservationAdmittedAsync` retries the idempotent admit in bounded
+  rounds with progressive pauses on top of the per-request retry policy. Only backend proof clears
+  the mark: a successful admit, or `NO_ACTIVE_RESERVATION` (the backend no longer holds that
+  reservation). Exhaustion, `401` or a terminal code keep the mark.
+- A reservation whose id is marked is never rolled back: the local store returns
+  `ReservationAdmitted` and `RollbackPendingReservationAsync` for that id sends no request.
+- On login, an un-admitted backend reservation whose id matches the mark is not an orphan to restore:
+  it is discarded locally as a loss, re-admitted and then cleared on the backend as a loss. If the
+  admit still fails, nothing is rolled back and the mark stays for the next login. A mark the backend
+  contradicts (no reservation, another id, or that id already admitted) is cleared, and the existing
+  admitted-loss path then applies.
+
 **Backend reservation ownership (FIX-19).** The backend enforces the same ownership as
 `LocalProfileStore`: while any reservation is pending, `POST .../stash/move-to-loadout`,
 `POST .../loadout/move-to-stash` and `PUT .../prepared-equipment` return `409 RESERVATION_PENDING`
