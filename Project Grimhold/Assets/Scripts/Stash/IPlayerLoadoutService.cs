@@ -95,7 +95,10 @@ public interface IPlayerLoadoutService
         string reservationId,
         out PendingLoadoutReservation reservation);
 
-    /// <summary>Confirms that the reserved loadout was admitted to the raid.</summary>
+    /// <summary>
+    /// Confirms that the reserved loadout was admitted to the raid and durably marks it as
+    /// awaiting backend admission until the backend proves it admitted.
+    /// </summary>
     StashOperationResult TryConfirmLoadoutReservation(ProfileId profileId, string reservationId);
 
     /// <summary>Restores a reservation that never reached raid admission.</summary>

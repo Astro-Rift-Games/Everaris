@@ -692,7 +692,7 @@ public sealed class LocalProfilePersistenceEditModeTests
             out _,
             out string error), Is.True, error);
 
-        Assert.That(LocalProfileSnapshot.CurrentSchemaVersion, Is.EqualTo(13));
+        Assert.That(LocalProfileSnapshot.CurrentSchemaVersion, Is.EqualTo(14));
         Assert.That(migrated.SchemaVersion, Is.EqualTo(LocalProfileSnapshot.CurrentSchemaVersion));
         Assert.That(migrated.PendingDefeatCommit, Is.Null);
         Assert.That(migrated.Stash.Count, Is.EqualTo(1));
