@@ -31,7 +31,7 @@ public class PlayerAnimationAudioListener : MonoBehaviour
     }
 
     /// <summary>
-    /// Llamado desde un AnimationEvent pasando la clave del sonido configurado en el PlayerAudioConfig (ej: "Movement", "Step").
+    /// Llamado desde un AnimationEvent pasando la clave del sonido configurado en el PlayerAudioConfig (ej: AudioKeys.Step, AudioKeys.TakeDamage).
     /// </summary>
     public void PlayAudioEvent(string soundKey)
     {
@@ -48,11 +48,11 @@ public class PlayerAnimationAudioListener : MonoBehaviour
 
     /// <summary>
     /// Método de conveniencia sin parámetros para AnimationEvents de pasos en animaciones de caminata/carrera.
-    /// Invoca la clave "Movement".
+    /// Invoca la clave "Step" (<see cref="AudioKeys.Step"/>).
     /// </summary>
     public void PlayFootstep()
     {
-        PlayAudioEvent("Step");
+        PlayAudioEvent(AudioKeys.Step);
     }
 
 #if UNITY_EDITOR

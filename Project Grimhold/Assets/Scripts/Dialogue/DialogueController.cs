@@ -106,9 +106,8 @@ public sealed class DialogueController : MonoBehaviour, IDialogueController
 
             if (_currentSequence.TypingSound.IsValid && AudioManager.Instance != null)
             {
-                // UI sounds are typically 2D, so Vector3.zero is fine here.
-                // The CustomClip SpatialBlend determines actual spatialization.
-                AudioManager.Instance.PlaySfx(_currentSequence.TypingSound, Vector3.zero);
+                // Dialogue typing is UI: always 2D, regardless of the authored SpatialBlend.
+                AudioManager.Instance.PlaySfx(_currentSequence.TypingSound, Vector3.zero, SfxSpatialMode.Flat2D);
             }
 
             yield return wait;

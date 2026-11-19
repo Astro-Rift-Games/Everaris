@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
@@ -39,6 +40,12 @@ public sealed class NetworkExplosiveBomb : NetworkBehaviour
     [SerializeField]
     private AudioClip _explosionSound;
 
+    [SerializeField, Min(0.1f)]
+    [Tooltip("Seconds the bomb object stays alive after detonating so every peer observes the replicated detonation marker before it is despawned.")]
+    private float _postDetonationSeconds = 1f;
+
+    private bool _detonationPresented;
+
     private IDamageResolver _damageResolver;
 
     [Networked]
@@ -56,10 +63,16 @@ public sealed class NetworkExplosiveBomb : NetworkBehaviour
     [Networked]
     private NetworkBool HasDetonated { get; set; }
 
+    [Networked]
+    private TickTimer DespawnTimer { get; set; }
+
     public float Damage { get => _damage; set => _damage = value; }
     public float Radius { get => _radius; set => _radius = value; }
     public float FuseSeconds { get => _fuseSeconds; set => _fuseSeconds = value; }
     public bool IsDetonated => HasDetonated;
+
+    /// <summary>Raised once per detonation on every peer when the replicated detonation marker is observed (position, radius).</summary>
+    public event Action<Vector2, float> DetonationPresented;
 
     public void InitializeNetworkState(EntityId ownerId, Vector2 start, Vector2 target, IDamageResolver resolver = null)
     {
@@ -80,6 +93,9 @@ public sealed class NetworkExplosiveBomb : NetworkBehaviour
 
     public override void Spawned()
     {
+        // A peer that receives the bomb already detonated (late join, resync) must not replay the explosion.
+        _detonationPresented = HasDetonated;
+
         if (_damageResolver == null)
         {
             _damageResolver = GetComponent<IDamageResolver>() ?? GetComponentInChildren<IDamageResolver>();
@@ -95,7 +111,14 @@ public sealed class NetworkExplosiveBomb : NetworkBehaviour
     {
         if (!HasStateAuthority || !Runner.IsForward) return;
 
-        if (HasDetonated) return;
+        if (HasDetonated)
+        {
+            if (DespawnTimer.ExpiredOrNotRunning(Runner))
+            {
+                Runner.Despawn(Object);
+            }
+            return;
+        }
 
         if (FuseTimer.Expired(Runner))
         {
@@ -114,13 +137,24 @@ public sealed class NetworkExplosiveBomb : NetworkBehaviour
 
     public override void Render()
     {
-        if (_visualRoot == null) return;
-
         if (HasDetonated)
         {
-            _visualRoot.localPosition = Vector3.zero;
+            // Presentation observes the replicated marker on every peer (State Authority included), once.
+            if (!_detonationPresented)
+            {
+                _detonationPresented = true;
+                PresentDetonation(TargetPosition, _radius);
+            }
+
+            if (_visualRoot != null)
+            {
+                _visualRoot.localPosition = Vector3.zero;
+                _visualRoot.gameObject.SetActive(false);
+            }
             return;
         }
+
+        if (_visualRoot == null) return;
 
         float remaining = FuseTimer.RemainingTime(Runner) ?? 0f;
         float elapsed = Mathf.Max(0f, _fuseSeconds - remaining);
@@ -195,20 +229,20 @@ public sealed class NetworkExplosiveBomb : NetworkBehaviour
             }
         }
 
-        RPC_PlayExplosionEffects(TargetPosition, _radius);
-
-        Runner.Despawn(Object);
+        // The object lingers so every peer can observe HasDetonated; FixedUpdateNetwork despawns it afterwards.
+        DespawnTimer = TickTimer.CreateFromSeconds(Runner, _postDetonationSeconds);
     }
 
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RPC_PlayExplosionEffects(Vector2 position, float radius)
+    private void PresentDetonation(Vector2 position, float radius)
     {
         PlayFireParticles(position, radius);
 
-        if (_explosionSound != null)
+        if (_explosionSound != null && AudioManager.Instance != null)
         {
-            AudioSource.PlayClipAtPoint(_explosionSound, position);
+            AudioManager.Instance.PlaySfx(_explosionSound, position, 1f, 1f, SfxSpatialMode.World3D);
         }
+
+        DetonationPresented?.Invoke(position, radius);
     }
 
     private void PlayFireParticles(Vector2 position, float radius)

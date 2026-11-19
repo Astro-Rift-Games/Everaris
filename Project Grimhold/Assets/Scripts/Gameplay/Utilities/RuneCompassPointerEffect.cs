@@ -251,10 +251,7 @@ public sealed class RuneCompassPointerEffect : MonoBehaviour
         if (audioManager != null)
         {
             audioManager.PlaySfx(clip, transform.position, 0.85f, 1.05f);
-            return;
         }
-
-        AudioSource.PlayClipAtPoint(clip, transform.position, 0.85f);
     }
 
     private static AudioClip GetOrCreateProvisionalChimeClip()

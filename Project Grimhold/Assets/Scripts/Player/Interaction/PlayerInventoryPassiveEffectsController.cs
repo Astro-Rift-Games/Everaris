@@ -389,25 +389,12 @@ public sealed class PlayerInventoryPassiveEffectsController : MonoBehaviour
         {
             if (_voidBellChimeSfx.IsValid)
             {
-                audioManager.PlaySfx(in _voidBellChimeSfx, transform.position);
+                audioManager.PlaySfx(in _voidBellChimeSfx, transform.position, SfxSpatialMode.World3D);
                 return;
             }
 
-            audioManager.PlaySfx(GetOrCreateProvisionalBellClip(), transform.position, volume, 1f);
-            return;
-        }
-
-        // Direct standalone playback when AudioManager is not initialized. PlayClipAtPoint destroys its
-        // temporary source with Destroy, which Unity rejects outside Play Mode.
-        if (!Application.isPlaying)
-        {
-            return;
-        }
-
-        AudioClip clip = _voidBellChimeSfx.IsValid ? _voidBellChimeSfx.GetRandomClip() : GetOrCreateProvisionalBellClip();
-        if (clip != null)
-        {
-            AudioSource.PlayClipAtPoint(clip, transform.position, volume);
+            // The provisional clip already encodes distance in its volume; 3D rolloff would attenuate it twice.
+            audioManager.PlaySfx(GetOrCreateProvisionalBellClip(), transform.position, volume, 1f, SfxSpatialMode.Flat2D);
         }
     }
 

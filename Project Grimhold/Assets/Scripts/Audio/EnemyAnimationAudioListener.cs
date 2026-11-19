@@ -48,11 +48,11 @@ public class EnemyAnimationAudioListener : MonoBehaviour
 
     /// <summary>
     /// Método de conveniencia sin parámetros para AnimationEvents de pasos en animaciones de enemigos.
-    /// Invoca la clave "Step".
+    /// Invoca la clave "Step" (<see cref="AudioKeys.Step"/>).
     /// </summary>
     public void PlayFootstep()
     {
-        PlayAudioEvent("Step");
+        PlayAudioEvent(AudioKeys.Step);
     }
 
 #if UNITY_EDITOR

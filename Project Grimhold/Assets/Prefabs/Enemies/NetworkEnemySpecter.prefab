@@ -301,6 +301,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4716473767476056966, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
+      propertyPath: _audioConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 0950ad46d3d21f741818606bca9286a8, type: 2}
     - target: {fileID: 4980760815071069997, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
       propertyPath: _maxHealth
       value: 60
@@ -338,6 +342,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4369124737019072436, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6989859694336078279}
+    - targetCorrespondingSourceObject: {fileID: 4369124737019072436, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7364810259137485201}
   m_SourcePrefab: {fileID: 100100000, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
 --- !u!212 &1163935701019551105 stripped
 SpriteRenderer:
@@ -404,6 +411,20 @@ MonoBehaviour:
   _detonationColor: {r: 1, g: 0.8, b: 0.2, a: 0.9}
   _telegraphSegments: 32
   _controller: {fileID: 8011096195516189262}
+--- !u!114 &7364810259137485201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2470469409222682095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5203e4a4b3603c946aa94872da32a4f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpecterAudioPresenter
+  _controller: {fileID: 8011096195516189262}
+  _audioConfig: {fileID: 11400000, guid: 0950ad46d3d21f741818606bca9286a8, type: 2}
 --- !u!4 &4328843115520209605 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2520259848855165086, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}

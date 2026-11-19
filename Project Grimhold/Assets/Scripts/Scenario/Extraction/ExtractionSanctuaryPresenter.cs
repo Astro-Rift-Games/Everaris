@@ -336,7 +336,7 @@ public sealed class ExtractionSanctuaryPresenter : MonoBehaviour
     {
         if (clip.IsValid && AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlaySfx(clip, transform.position);
+            AudioManager.Instance.PlaySfx(clip, transform.position, SfxSpatialMode.World3D);
         }
 
         GameObject effect = ParticleEffectPlayer.InstantiateAndPlay(particles, transform.position);

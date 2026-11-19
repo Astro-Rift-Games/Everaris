@@ -221,9 +221,9 @@ public sealed class NetworkSmokeZone : NetworkBehaviour, ISmokeZone
 
     private void PlayDetonationPop(Vector2 position)
     {
-        if (_detonationSound != null)
+        if (_detonationSound != null && AudioManager.Instance != null)
         {
-            AudioSource.PlayClipAtPoint(_detonationSound, position, 0.8f);
+            AudioManager.Instance.PlaySfx(_detonationSound, position, 0.8f, 1f, SfxSpatialMode.World3D);
         }
 
         GameObject puffGo = new GameObject("VFX_SmokeDetonationBurst");

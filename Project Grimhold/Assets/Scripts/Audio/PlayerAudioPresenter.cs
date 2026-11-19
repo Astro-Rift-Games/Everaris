@@ -2,7 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// Observa el estado del personaje jugador (PlayerCharacter) para reproducir efectos de sonido
-/// de daño (TakeDamage), muerte (Death) y locomoción (Movement) sin acoplarse a la simulación ni a la red.
+/// de daño (TakeDamage), muerte (Death) y locomoción (Step) sin acoplarse a la simulación ni a la red.
 /// </summary>
 [DisallowMultipleComponent]
 public class PlayerAudioPresenter : MonoBehaviour
@@ -28,9 +28,7 @@ public class PlayerAudioPresenter : MonoBehaviour
     private float _stepInterval = 0.35f;
 
     private IMovementState _movementState;
-    private float _lastObservedHealth;
-    private bool _isInitialized;
-    private bool _isDead;
+    private readonly HealthAudioObserver _healthObserver = new();
     private float _stepTimer;
 
     private void Awake()
@@ -47,12 +45,11 @@ public class PlayerAudioPresenter : MonoBehaviour
 
     private void OnDisable()
     {
-        _isInitialized = false;
-        _isDead = false;
+        _healthObserver.Reset();
     }
 
     /// <summary>
-    /// Reproduce cualquier sonido configurado en el PlayerAudioConfig mediante su clave (ej: "Movement", "TakeDamage").
+    /// Reproduce cualquier sonido configurado en el PlayerAudioConfig mediante su clave (ej: AudioKeys.Step, AudioKeys.TakeDamage).
     /// Útil para llamadas directas desde listeners de eventos de animación (AnimationEvents).
     /// </summary>
     public void PlayAudio(string soundKey)
@@ -88,65 +85,61 @@ public class PlayerAudioPresenter : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (_characterBase == null || _audioConfig == null || AudioManager.Instance == null) return;
+        if (_characterBase == null || _audioConfig == null) return;
 
-        if (!_isInitialized)
+        // La observación continúa aunque no exista AudioManager (PlayAudio lo omite) para no reproducir daño "atrasado".
+        HealthAudioCue cue = ObserveHealth();
+        if (cue != HealthAudioCue.None)
         {
-            if (_characterBase.Object != null && _characterBase.Object.IsValid)
-            {
-                _lastObservedHealth = _characterBase.Health;
-                _isInitialized = true;
-                _isDead = !_characterBase.IsAlive;
-            }
-            return;
+            PlayAudio(cue == HealthAudioCue.Death ? AudioKeys.Death : AudioKeys.TakeDamage);
         }
 
-        // 1. Verificación de muerte
-        if (!_characterBase.IsAlive)
-        {
-            if (!_isDead)
-            {
-                _isDead = true;
-                PlayAudio("Death");
-            }
-            return;
-        }
+        if (!IsHealthReadable() || _healthObserver.IsDead) return;
 
-        // 2. Verificación de recepción de daño (TakeDamage)
-        float currentHealth = _characterBase.Health;
-        if (currentHealth < _lastObservedHealth - 0.001f) // Health epsilon
+        // Verificación de locomoción por temporizador (opcional si se usan AnimationEvents)
+        string stepKey = PollTimerFootstep(_movementState != null && _movementState.IsMoving, Time.deltaTime);
+        if (stepKey != null)
         {
-            PlayAudio("TakeDamage");
+            PlayAudio(stepKey);
         }
-        _lastObservedHealth = currentHealth;
+    }
 
-        // 3. Verificación de locomoción por temporizador (opcional si se usan AnimationEvents)
-        if (_enableTimerFootsteps && _movementState != null && _movementState.IsMoving)
-        {
-            _stepTimer -= Time.deltaTime;
-            if (_stepTimer <= 0f)
-            {
-                _stepTimer = _stepInterval;
-                PlayAudio("Movement");
-            }
-        }
-        else
+    /// <summary>
+    /// Avanza el temporizador de pasos opcional (<c>_enableTimerFootsteps</c>) y devuelve la clave a reproducir,
+    /// o null si no toca sonar. Se reinicia cuando el jugador no se desplaza.
+    /// </summary>
+    public string PollTimerFootstep(bool isMoving, float deltaTime)
+    {
+        if (!_enableTimerFootsteps || !isMoving)
         {
             _stepTimer = 0f;
+            return null;
         }
+
+        _stepTimer -= deltaTime;
+        if (_stepTimer > 0f) return null;
+
+        _stepTimer = _stepInterval;
+        return AudioKeys.Step;
     }
 
     private void InitializeHealthTracking()
     {
-        if (_characterBase != null && _characterBase.Object != null && _characterBase.Object.IsValid)
-        {
-            _lastObservedHealth = _characterBase.Health;
-            _isInitialized = true;
-            _isDead = !_characterBase.IsAlive;
-        }
-        else
-        {
-            _isInitialized = false;
-        }
+        _healthObserver.Reset();
+        ObserveHealth();
+    }
+
+    private bool IsHealthReadable()
+    {
+        // CharacterBase.IsAlive devuelve true con un Object inválido, por eso no se lee salud/vida sin validar antes.
+        return _characterBase != null && _characterBase.Object != null && _characterBase.Object.IsValid;
+    }
+
+    private HealthAudioCue ObserveHealth()
+    {
+        bool isValid = IsHealthReadable();
+        return isValid
+            ? _healthObserver.Observe(true, _characterBase.IsAlive, _characterBase.Health)
+            : _healthObserver.Observe(false, false, 0f);
     }
 }

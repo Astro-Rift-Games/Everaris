@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Audio;
 
 /// <summary>
@@ -26,9 +26,15 @@ public sealed class AudioManager : MonoBehaviour, IAudioVolumeControl
 
     [Header("Pool Configuration")]
     [SerializeField, Min(1)] private int _sfxPoolSize = 16;
+
+    [Header("Spatial Configuration")]
+    [Tooltip("Rolloff and distance range of every 3D SFX source (pooled, created or owner-controlled).")]
+    [SerializeField] private AudioSpatialSettings _spatialSettings = new AudioSpatialSettings();
     
     private AudioSource[] _sfxSources;
-    private int _currentSfxIndex;
+    private bool[] _sfxPlaying;       // Scratch buffer: avoids allocating on every selection.
+    private long[] _sfxStartOrder;    // Monotonic start stamp per pooled source.
+    private long _sfxStartCounter;
 
     private AudioSource _musicSource;
 
@@ -68,6 +74,8 @@ public sealed class AudioManager : MonoBehaviour, IAudioVolumeControl
     private void InitializeSfxPool()
     {
         _sfxSources = new AudioSource[_sfxPoolSize];
+        _sfxPlaying = new bool[_sfxPoolSize];
+        _sfxStartOrder = new long[_sfxPoolSize];
         GameObject sfxParent = new GameObject("SFX_Pool");
         sfxParent.transform.SetParent(transform);
 
@@ -75,6 +83,15 @@ public sealed class AudioManager : MonoBehaviour, IAudioVolumeControl
         {
             _sfxSources[i] = CreateSfxSource(sfxParent.transform, $"SFX_Source_{i}");
         }
+    }
+
+    /// <summary>Central rolloff/min/max distance applied to every SFX source.</summary>
+    public AudioSpatialSettings SpatialSettings => _spatialSettings ?? (_spatialSettings = new AudioSpatialSettings());
+
+    /// <summary>Applies the central spatial settings to an owner-controlled SFX source.</summary>
+    public void ApplySpatialSettings(AudioSource source)
+    {
+        SpatialSettings.Apply(source);
     }
 
     /// <summary>Creates an owner-controlled SFX source with the same routing as pooled one-shots.</summary>
@@ -85,6 +102,7 @@ public sealed class AudioManager : MonoBehaviour, IAudioVolumeControl
         AudioSource source = go.AddComponent<AudioSource>();
         source.outputAudioMixerGroup = _sfxGroup;
         source.playOnAwake = false;
+        ApplySpatialSettings(source);
         return source;
     }
 
@@ -101,9 +119,9 @@ public sealed class AudioManager : MonoBehaviour, IAudioVolumeControl
 
     /// <summary>
     /// Reproduce un SFX utilizando un AudioSource del pool.
-    /// Soporta posicionamiento espacial (3D) si el config lo indica.
+    /// Soporta posicionamiento espacial (3D) si el config lo indica; <paramref name="spatial"/> lo fuerza a 2D o 3D.
     /// </summary>
-    public void PlaySfx(in CustomClip config, Vector3 worldPosition = default)
+    public void PlaySfx(in CustomClip config, Vector3 worldPosition = default, SfxSpatialMode spatial = SfxSpatialMode.Default)
     {
         if (!config.IsValid) return;
 
@@ -111,14 +129,17 @@ public sealed class AudioManager : MonoBehaviour, IAudioVolumeControl
         
         source.transform.position = worldPosition;
         ApplyConfigToSource(config, source);
-        
+        ApplySpatialMode(source, spatial);
+
         source.Play();
     }
 
     /// <summary>
     /// Reproduce un clip SFX individual utilizando un AudioSource del pool.
+    /// Sin <paramref name="spatial"/> el clip es 2D; usar <see cref="SfxSpatialMode.World3D"/> para eventos del mundo.
     /// </summary>
-    public void PlaySfx(AudioClip clip, Vector3 worldPosition = default, float volume = 1f, float pitch = 1f)
+    public void PlaySfx(AudioClip clip, Vector3 worldPosition = default, float volume = 1f, float pitch = 1f,
+        SfxSpatialMode spatial = SfxSpatialMode.Default)
     {
         if (clip == null) return;
 
@@ -127,7 +148,7 @@ public sealed class AudioManager : MonoBehaviour, IAudioVolumeControl
         source.clip = clip;
         source.volume = Mathf.Clamp01(volume);
         source.pitch = pitch;
-        source.spatialBlend = 0f;
+        source.spatialBlend = spatial == SfxSpatialMode.World3D ? 1f : 0f;
         source.loop = false;
         source.Play();
     }
@@ -146,19 +167,19 @@ public sealed class AudioManager : MonoBehaviour, IAudioVolumeControl
 
     private AudioSource GetNextSfxSource()
     {
-        // Primero intenta encontrar uno libre
+        // Una voz libre si existe; con el pool lleno, roba la que empezó a sonar antes.
         for (int i = 0; i < _sfxPoolSize; i++)
-        {
-            if (!_sfxSources[i].isPlaying)
-            {
-                return _sfxSources[i];
-            }
-        }
+            _sfxPlaying[i] = _sfxSources[i].isPlaying;
 
-        // Si están todos ocupados, "roba" el más antiguo rotando el índice
-        AudioSource stolenSource = _sfxSources[_currentSfxIndex];
-        _currentSfxIndex = (_currentSfxIndex + 1) % _sfxPoolSize;
-        return stolenSource;
+        int index = SfxVoiceSelector.Select(_sfxPlaying, _sfxStartOrder);
+        _sfxStartOrder[index] = ++_sfxStartCounter;
+        return _sfxSources[index];
+    }
+
+    private static void ApplySpatialMode(AudioSource source, SfxSpatialMode spatial)
+    {
+        if (spatial == SfxSpatialMode.Flat2D) source.spatialBlend = 0f;
+        else if (spatial == SfxSpatialMode.World3D) source.spatialBlend = 1f;
     }
 
     private void ApplyConfigToSource(in CustomClip config, AudioSource source)
@@ -186,9 +207,13 @@ public sealed class AudioManager : MonoBehaviour, IAudioVolumeControl
         }
     }
 
+    /// <summary>Track assigned to the music channel; null when none was requested or it was stopped.</summary>
+    public AudioClip CurrentMusicClip => _musicSource != null ? _musicSource.clip : null;
+
     public void StopMusic(float fadeDuration = 0f)
     {
         _musicSource.Stop();
+        _musicSource.clip = null;
     }
 
     // =========================================================================

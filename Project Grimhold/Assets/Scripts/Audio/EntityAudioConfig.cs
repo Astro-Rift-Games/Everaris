@@ -22,6 +22,15 @@ public abstract class EntityAudioConfig : ScriptableObject
         InitializeDictionary();
     }
 
+#if UNITY_EDITOR
+    // Editor-only: rebuild the lookup after serialized edits (Inspector, SerializedObject) so a config
+    // changed after its OnEnable never serves stale keys. Mirrors LootDefinitionCatalog.OnValidate.
+    private void OnValidate()
+    {
+        InitializeDictionary();
+    }
+#endif
+
     private void InitializeDictionary()
     {
         _clipDictionary = new Dictionary<string, CustomClip>(System.StringComparer.OrdinalIgnoreCase);

@@ -31,7 +31,7 @@ public sealed class AimStanceDrawPresenter : MonoBehaviour
     {
         if (!isActiveAndEnabled) return;
         if (_drawCompleteClip != null && AudioManager.Instance != null)
-            AudioManager.Instance.PlaySfx(_drawCompleteClip, transform.position);
+            AudioManager.Instance.PlaySfx(_drawCompleteClip, transform.position, 1f, 1f, SfxSpatialMode.World3D);
         if (_pulseRoot != null) _remaining = Mathf.Max(0.01f, _pulseDuration);
     }
 

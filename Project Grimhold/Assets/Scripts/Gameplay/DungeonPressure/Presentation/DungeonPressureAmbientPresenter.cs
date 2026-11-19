@@ -913,7 +913,7 @@ public sealed class DungeonPressureAmbientPresenter : MonoBehaviour
             if (settings.PeriodicShakeSfx.IsValid && AudioManager.Instance != null)
             {
                 Vector3 playPos = Camera.main != null ? Camera.main.transform.position : transform.position;
-                AudioManager.Instance.PlaySfx(settings.PeriodicShakeSfx, playPos);
+                AudioManager.Instance.PlaySfx(settings.PeriodicShakeSfx, playPos, SfxSpatialMode.Flat2D);
             }
         }
     }

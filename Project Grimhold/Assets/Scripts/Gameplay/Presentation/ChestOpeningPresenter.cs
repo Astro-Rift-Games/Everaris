@@ -114,7 +114,7 @@ public sealed class ChestOpeningPresenter : NetworkBehaviour
         ApplyFrame(0);
         if (_openingSound.IsValid && !_openingSound.Loop && AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlaySfx(_openingSound, transform.position);
+            AudioManager.Instance.PlaySfx(_openingSound, transform.position, SfxSpatialMode.World3D);
         }
         else if (!_reportedMissingAudio)
         {

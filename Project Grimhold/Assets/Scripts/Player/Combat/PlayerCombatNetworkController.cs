@@ -91,6 +91,7 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
     private int _targetFreezeTimeline = -1;
     private int _lastHitstopFeedbackSequence;
     private double _lastHitstopRenderTime;
+    private readonly ObservedImpactTracker _observedImpacts = new();
 
     [Networked]
     private NetworkButtons PreviousButtons { get; set; }
@@ -132,6 +133,10 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
     [Networked]
     private int CombatFeedbackSequence { get; set; }
 
+    // Latest confirmed impact for peers without Input Authority (they never receive the feedback RPC).
+    [Networked]
+    private ObservedImpactSnapshot LastObservedImpact { get; set; }
+
     /// <summary>
     /// Local event raised during Render for a confirmed attack acceptance (melee or ranged), before its release tick.
     /// </summary>
@@ -147,9 +152,18 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
     public event Action<CombatPresentationEvent> CombatFeedbackResolved;
 
     /// <summary>
+    /// Local event raised during Render for a confirmed weapon impact recorded by another peer's State Authority,
+    /// only on peers WITHOUT Input Authority for this avatar. Audio-only: never replaces <see cref="CombatFeedbackResolved"/>.
+    /// </summary>
+    public event Action<ObservedImpactSnapshot> ObservedImpactPresented;
+
+    /// <summary>
     /// Gets the latest authoritative feedback sequence for non-replaying presenter binding.
     /// </summary>
     public int CurrentCombatFeedbackSequence => CombatFeedbackSequence;
+
+    /// <summary>Latest replicated confirmed impact (sequence 0 when none).</summary>
+    public ObservedImpactSnapshot CurrentObservedImpact => LastObservedImpact;
 
     private void Awake()
     {
@@ -175,6 +189,8 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
         ClearHitstop(true);
         _hitstopRegistry = Runner.GetComponent<EntityRegistry>();
         _lastHitstopFeedbackSequence = CombatFeedbackSequence;
+        // A snapshot already replicated at spawn (late join, CopyStateFrom restore) was heard before: never replay it.
+        _observedImpacts.Seed(LastObservedImpact.Sequence);
         _lastHitstopRenderTime = AttackRenderTime;
         for (int i = 0; i < 4; i++)
         {
@@ -335,6 +351,13 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
                 if (resume) AttackPresentationResumed?.Invoke(performedEvent);
                 else AttackPerformed?.Invoke(performedEvent);
             }
+        }
+
+        // Render never runs during resimulation. Peers with Input Authority hear the impact through the feedback RPC.
+        ObservedImpactSnapshot observedImpact = LastObservedImpact;
+        if (_observedImpacts.TryAccept(HasInputAuthority, observedImpact.Sequence))
+        {
+            ObservedImpactPresented?.Invoke(observedImpact);
         }
 
         if (_character != null && !_character.IsAlive)
@@ -1158,6 +1181,17 @@ public sealed class PlayerCombatNetworkController : NetworkBehaviour,
         DamageType damageType = DamageType.Physical)
     {
         CombatFeedbackSequence++;
+        if (kind == CombatFeedbackKind.ConfirmedImpact && appliedDamage > 0f)
+        {
+            // One snapshot per avatar: impacts an observer has not yet received coalesce into the newest one.
+            LastObservedImpact = new ObservedImpactSnapshot
+            {
+                Sequence = CombatFeedbackSequence,
+                TargetIdValue = targetId.Value,
+                HitPoint = hitPoint,
+                WeaponCatalogIndexPlusOne = weaponTag.WeaponCatalogIndexPlusOne
+            };
+        }
         RPC_ReceiveCombatFeedback(
             CombatFeedbackSequence,
             (int)kind,

@@ -19,9 +19,9 @@ public sealed class WeaponAudioCue
 
     // Key presence, not weapon kind, selects optional aliases. Attack wins even if its entry is empty.
     public static string ImpactKey(bool characterVictim, bool hasAttack) =>
-        characterVictim ? (hasAttack ? "Attack" : "Hit") : "Block";
+        characterVictim ? (hasAttack ? AudioKeys.Attack : AudioKeys.Hit) : AudioKeys.Block;
     public static string ReleaseKey(AttackType type, bool hasCast) =>
-        type == AttackType.Melee ? "Swing" : (hasCast ? "Cast" : "Shoot");
+        type == AttackType.Melee ? AudioKeys.Swing : (hasCast ? AudioKeys.Cast : AudioKeys.Shoot);
 
     public bool Active { get; private set; }
     public AttackPerformedEvent Attack { get; private set; }

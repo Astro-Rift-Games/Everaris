@@ -91,9 +91,9 @@ public sealed class DungeonPressureAudioPresenter : NetworkBehaviour
 
         if (clipToPlay.IsValid)
         {
-            // Play at the camera's position to ensure the local player hears it clearly as a "global" event
+            // Global warning: always 2D so the local player hears it clearly wherever the camera is.
             Vector3 playPos = Camera.main != null ? Camera.main.transform.position : transform.position;
-            AudioManager.Instance.PlaySfx(clipToPlay, playPos);
+            AudioManager.Instance.PlaySfx(clipToPlay, playPos, SfxSpatialMode.Flat2D);
         }
     }
 }

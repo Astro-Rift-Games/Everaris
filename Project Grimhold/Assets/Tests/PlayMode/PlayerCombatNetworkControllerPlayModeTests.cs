@@ -133,14 +133,15 @@ namespace Tests.PlayMode.Combat
                         new() { Key = "Block", Clip = Clip(block) } });
                 typeof(EntityAudioConfig).GetField("_clipDictionary", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(audio, null);
                 typeof(WeaponAudioPresenter).GetField("_fallbackAudioConfig", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(presenter, audio);
-                var feedback = new CombatPresentationEvent(1, CombatFeedbackKind.ConfirmedImpact, victim.Id,
+                // Each delivery is a distinct feedback: the presenter ignores a repeated sequence.
+                CombatPresentationEvent Feedback(int sequence) => new(sequence, CombatFeedbackKind.ConfirmedImpact, victim.Id,
                     Vector2.zero, 1f, (int)_runner.Tick, AttackFailureReason.None);
                 Application.logMessageReceived += onFeedbackLog;
-                presenter.SendMessage("OnCombatFeedbackResolved", feedback);
+                presenter.SendMessage("OnCombatFeedbackResolved", Feedback(1));
                 Assert.That(Heard(block), Is.True, "Missing registry must degrade to non-character audio.");
                 Assert.That(Heard(attack), Is.False, "Never borrow a global registry containing the character.");
                 typeof(WeaponAudioPresenter).GetField("_entityRegistry", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(presenter, registry);
-                presenter.SendMessage("OnCombatFeedbackResolved", feedback);
+                presenter.SendMessage("OnCombatFeedbackResolved", Feedback(2));
                 Assert.That(Heard(attack), Is.True, "Explicit runner registry preserves character audio.");
                 Assert.That(Heard(hit), Is.False, "Attack takes precedence over Hit when both exist.");
                 foreach (var source in manager.GetComponentsInChildren<AudioSource>())
@@ -152,7 +153,7 @@ namespace Tests.PlayMode.Combat
                     new System.Collections.Generic.List<AudioEntry> {
                         new() { Key = "hIt", Clip = Clip(hit) }, new() { Key = "Block", Clip = Clip(block) } });
                 typeof(EntityAudioConfig).GetField("_clipDictionary", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(audio, null);
-                presenter.SendMessage("OnCombatFeedbackResolved", feedback);
+                presenter.SendMessage("OnCombatFeedbackResolved", Feedback(3));
                 Assert.That(Heard(hit), Is.True, "Character impacts fall back to Hit when Attack is absent.");
                 Assert.That(Heard(block), Is.False, "Character impacts must not become scenery audio.");
                 Assert.That(feedbackLogs, Is.Zero, "Feedback lookup must degrade without per-event logs.");
@@ -1328,6 +1329,178 @@ namespace Tests.PlayMode.Combat
             }
         }
 
+        // ---- Observer impact audio (T11): replicated snapshot + Render-only event on peers without Input Authority ----
+
+        private void RecordImpact(PlayerCombatNetworkController combat, EntityId attacker, EntityId target,
+            Vector2 hitPoint, int weaponIndexPlusOne, float damage = 7f)
+        {
+            var tag = new WeaponAttackTag(EquipmentSlot.WeaponSetAMainHand, 1, weaponIndexPlusOne, AttackType.Melee);
+            var request = new DamageRequest(attacker, target, damage, DamageType.Physical, Vector2.right, hitPoint,
+                _runner.Tick, weaponTag: tag);
+            combat.RecordResolvedDamage(new DamageResolvedEvent(request,
+                new DamageResult(request.TargetId, true, damage, 1f, false, default)));
+        }
+
+        private static void SetObservedImpact(PlayerCombatNetworkController combat, ObservedImpactSnapshot snapshot) =>
+            GetProperty("LastObservedImpact").SetValue(combat, snapshot);
+
+        [UnityTest]
+        public IEnumerator ObservedImpact_StateAuthorityWritesOneSnapshotPerConfirmedImpact()
+        {
+            yield return StartGameplayRunner();
+            NetworkObject player = SpawnPlayerWithParticipant();
+            var combat = player.GetComponent<PlayerCombatNetworkController>();
+            EntityId attacker = player.GetComponent<PlayerCharacter>().Id;
+            Assert.That(combat.CurrentObservedImpact.Sequence, Is.Zero, "No impact has been recorded yet.");
+            int resolved = 0;
+            combat.CombatFeedbackResolved += _ => resolved++;
+
+            RecordImpact(combat, attacker, new EntityId(9999), new Vector2(3f, 4f), 5);
+            yield return WaitUntil(() => resolved == 1, "First feedback did not reach Render.");
+            ObservedImpactSnapshot first = combat.CurrentObservedImpact;
+            Assert.That(first.Sequence, Is.EqualTo(1));
+            Assert.That(first.Sequence, Is.EqualTo(combat.CurrentCombatFeedbackSequence), "The snapshot reuses the feedback sequence.");
+            Assert.That(first.TargetId, Is.EqualTo(new EntityId(9999)));
+            Assert.That(first.HitPoint, Is.EqualTo(new Vector2(3f, 4f)));
+            Assert.That(first.WeaponCatalogIndexPlusOne, Is.EqualTo(5));
+
+            RecordImpact(combat, attacker, new EntityId(8888), new Vector2(-1f, 2f), 0);
+            yield return WaitUntil(() => resolved == 2, "Second feedback did not reach Render.");
+            ObservedImpactSnapshot second = combat.CurrentObservedImpact;
+            Assert.That(second.Sequence, Is.EqualTo(2), "The snapshot advances once per confirmed impact.");
+            Assert.That(second.TargetId, Is.EqualTo(new EntityId(8888)));
+            Assert.That(second.HitPoint, Is.EqualTo(new Vector2(-1f, 2f)));
+            Assert.That(second.WeaponCatalogIndexPlusOne, Is.Zero, "An untagged impact keeps the generic-fallback identity.");
+        }
+
+        [UnityTest]
+        public IEnumerator ObservedImpact_RejectedOrZeroDamageFeedbackDoesNotTouchTheSnapshot()
+        {
+            yield return StartGameplayRunner();
+            NetworkObject player = SpawnPlayerWithParticipant();
+            var combat = player.GetComponent<PlayerCombatNetworkController>();
+            EntityId attacker = player.GetComponent<PlayerCharacter>().Id;
+            RecordImpact(combat, attacker, new EntityId(9999), Vector2.one, 5);
+            ObservedImpactSnapshot before = combat.CurrentObservedImpact;
+            int sequenceBefore = combat.CurrentCombatFeedbackSequence;
+
+            // Zero damage is refused before it becomes feedback; a rejected attack is feedback that is not an impact.
+            RecordImpact(combat, attacker, new EntityId(9999), Vector2.zero, 5, damage: 0f);
+            GetMethod("RecordCombatFeedback").Invoke(combat, new object[]
+            {
+                CombatFeedbackKind.AttackRejected, default(EntityId), Vector2.zero, 0f, (int)_runner.Tick,
+                AttackFailureReason.CooldownActive, default(WeaponAttackTag), default(Vector2), false, DamageType.Physical
+            });
+            // A confirmed impact that reaches feedback with zero applied damage must not become an observed impact.
+            GetMethod("RecordCombatFeedback").Invoke(combat, new object[]
+            {
+                CombatFeedbackKind.ConfirmedImpact, new EntityId(9999), Vector2.one, 0f, (int)_runner.Tick,
+                AttackFailureReason.None, default(WeaponAttackTag), default(Vector2), false, DamageType.Physical
+            });
+
+            Assert.That(combat.CurrentCombatFeedbackSequence, Is.EqualTo(sequenceBefore + 2), "Precondition: rejection and zero-damage feedback advanced the shared counter.");
+            ObservedImpactSnapshot after = combat.CurrentObservedImpact;
+            Assert.That(after.Sequence, Is.EqualTo(before.Sequence));
+            Assert.That(after.TargetIdValue, Is.EqualTo(before.TargetIdValue));
+            Assert.That(after.HitPoint, Is.EqualTo(before.HitPoint));
+            Assert.That(after.WeaponCatalogIndexPlusOne, Is.EqualTo(before.WeaponCatalogIndexPlusOne));
+        }
+
+        [UnityTest]
+        public IEnumerator ObservedImpact_InputAuthorityPeerNeverRaisesIt_AndKeepsTheRpcFeedback()
+        {
+            yield return StartGameplayRunner();
+            NetworkObject player = SpawnPlayerWithParticipant();
+            var combat = player.GetComponent<PlayerCombatNetworkController>();
+            Assert.That(combat.HasInputAuthority, Is.True);
+            int observed = 0, resolved = 0;
+            combat.ObservedImpactPresented += _ => observed++;
+            combat.CombatFeedbackResolved += _ => resolved++;
+
+            RecordImpact(combat, player.GetComponent<PlayerCharacter>().Id, new EntityId(9999), Vector2.one, 5);
+            yield return WaitUntil(() => resolved == 1, "The attacker must still receive the feedback RPC.");
+            for (int i = 0; i < 20; i++) yield return null;
+
+            Assert.That(observed, Is.Zero, "The attacker hears the impact only through CombatFeedbackResolved.");
+            Assert.That(resolved, Is.EqualTo(1));
+        }
+
+        [UnityTest]
+        public IEnumerator ObservedImpact_PeerWithoutInputAuthorityRaisesOncePerNewSequence_AndNeverResolvesFeedback()
+        {
+            yield return StartGameplayRunner();
+            NetworkObject player = SpawnPlayerWithParticipant(withInputAuthority: false);
+            var combat = player.GetComponent<PlayerCombatNetworkController>();
+            EntityId attacker = player.GetComponent<PlayerCharacter>().Id;
+            var seen = new System.Collections.Generic.List<ObservedImpactSnapshot>();
+            int resolved = 0;
+            combat.ObservedImpactPresented += seen.Add;
+            combat.CombatFeedbackResolved += _ => resolved++;
+            for (int i = 0; i < 10; i++) yield return null;
+            Assert.That(seen, Is.Empty, "Nothing is presented before an impact exists.");
+
+            RecordImpact(combat, attacker, new EntityId(9999), new Vector2(3f, 4f), 5);
+            yield return WaitUntil(() => seen.Count == 1, "The observer did not present the impact.");
+            for (int i = 0; i < 20; i++) yield return null;
+            Assert.That(seen.Count, Is.EqualTo(1), "A snapshot is presented once, not every Render.");
+            Assert.That(seen[0].Sequence, Is.EqualTo(1));
+            Assert.That(seen[0].TargetId, Is.EqualTo(new EntityId(9999)));
+            Assert.That(seen[0].HitPoint, Is.EqualTo(new Vector2(3f, 4f)));
+            Assert.That(seen[0].WeaponCatalogIndexPlusOne, Is.EqualTo(5));
+
+            RecordImpact(combat, attacker, new EntityId(9999), new Vector2(5f, 6f), 5);
+            yield return WaitUntil(() => seen.Count == 2, "The next impact was not presented.");
+            Assert.That(seen[1].Sequence, Is.EqualTo(2));
+            Assert.That(resolved, Is.Zero, "Observers never receive or raise CombatFeedbackResolved.");
+        }
+
+        [UnityTest]
+        public IEnumerator ObservedImpact_ImpactsRecordedInTheSameTickCoalesceIntoTheNewestCue()
+        {
+            yield return StartGameplayRunner();
+            NetworkObject player = SpawnPlayerWithParticipant(withInputAuthority: false);
+            var combat = player.GetComponent<PlayerCombatNetworkController>();
+            EntityId attacker = player.GetComponent<PlayerCharacter>().Id;
+            var seen = new System.Collections.Generic.List<ObservedImpactSnapshot>();
+            combat.ObservedImpactPresented += seen.Add;
+            for (int i = 0; i < 5; i++) yield return null;
+
+            // Same frame, no Render in between: one snapshot per avatar keeps only the newest (accepted limitation).
+            RecordImpact(combat, attacker, new EntityId(9999), new Vector2(1f, 1f), 5);
+            RecordImpact(combat, attacker, new EntityId(8888), new Vector2(2f, 2f), 5);
+            yield return WaitUntil(() => seen.Count >= 1, "The observer did not present any impact.");
+            for (int i = 0; i < 20; i++) yield return null;
+
+            Assert.That(seen.Count, Is.EqualTo(1), "Two impacts in one tick are one observer cue.");
+            Assert.That(seen[0].Sequence, Is.EqualTo(2));
+            Assert.That(seen[0].HitPoint, Is.EqualTo(new Vector2(2f, 2f)));
+        }
+
+        [UnityTest]
+        public IEnumerator ObservedImpact_SnapshotExistingAtSpawnIsSeededAndNeverReplayed()
+        {
+            yield return StartGameplayRunner();
+            // Simulates a late join / host-migration restore: the state exists before Spawned runs.
+            NetworkObject player = SpawnPlayerWithParticipant(withInputAuthority: false,
+                beforeSpawned: restored => SetObservedImpact(restored, new ObservedImpactSnapshot
+                {
+                    Sequence = 7, TargetIdValue = 9999, HitPoint = new Vector2(1f, 1f), WeaponCatalogIndexPlusOne = 5
+                }));
+            var combat = player.GetComponent<PlayerCombatNetworkController>();
+            Assert.That(combat.CurrentObservedImpact.Sequence, Is.EqualTo(7), "Precondition: Spawned must not overwrite restored state.");
+            var seen = new System.Collections.Generic.List<ObservedImpactSnapshot>();
+            combat.ObservedImpactPresented += seen.Add;
+            for (int i = 0; i < 30; i++) yield return null;
+            Assert.That(seen, Is.Empty, "An impact that predates Spawned is never replayed.");
+
+            SetObservedImpact(combat, new ObservedImpactSnapshot
+            {
+                Sequence = 8, TargetIdValue = 9999, HitPoint = new Vector2(2f, 2f), WeaponCatalogIndexPlusOne = 5
+            });
+            yield return WaitUntil(() => seen.Count == 1, "The first new impact after the seed must be presented.");
+            Assert.That(seen[0].Sequence, Is.EqualTo(8));
+        }
+
         private IEnumerator CheckDamageTypeRpc(AttackType attackType, bool tagged)
         {
             yield return StartGameplayRunner();
@@ -1557,7 +1730,8 @@ namespace Tests.PlayMode.Combat
         }
 
         private NetworkObject SpawnPlayerWithParticipant(Vector3 position = default, int participantNumber = 1,
-            CharacterAttributeState? attributes = null)
+            CharacterAttributeState? attributes = null, bool withInputAuthority = true,
+            Action<PlayerCombatNetworkController> beforeSpawned = null)
         {
             Assert.That(RaidParticipantId.TryCreate(participantNumber, out RaidParticipantId participantId), Is.True);
             NetworkPrefabId participantPrefabId = _runner.Config.PrefabTable.GetId(NetworkObjectGuid.Parse(ParticipantPrefabGuid));
@@ -1571,8 +1745,15 @@ namespace Tests.PlayMode.Combat
             NetworkObject playerPrefab = _runner.Config.PrefabTable.Load(playerPrefabId, true);
             Assert.That(playerPrefab, Is.Not.Null);
             Assert.That(AssetDatabase.GetAssetPath(playerPrefab), Is.EqualTo("Assets/Prefabs/NetworkPlayer.prefab"));
-            NetworkObject player = _runner.Spawn(playerPrefab, position, Quaternion.identity, _runner.LocalPlayer,
-                onBeforeSpawned: (_, instance) => instance.GetComponent<RaidAvatarParticipantLink>().Initialize(participant));
+            // Without Input Authority the Single-mode runner is State Authority of an avatar it does not drive: the same
+            // role as a host that is not the attacker (or the replicated view a client has of another avatar).
+            NetworkObject player = _runner.Spawn(playerPrefab, position, Quaternion.identity,
+                withInputAuthority ? _runner.LocalPlayer : PlayerRef.None,
+                onBeforeSpawned: (_, instance) =>
+                {
+                    instance.GetComponent<RaidAvatarParticipantLink>().Initialize(participant);
+                    beforeSpawned?.Invoke(instance.GetComponent<PlayerCombatNetworkController>());
+                });
             ExtractionProgressTestAssertions.AssertRegistered(_runner, player);
             var link = player.GetComponent<RaidAvatarParticipantLink>();
             Assert.That(link.TryResolveParticipant(out NetworkRaidParticipant resolved), Is.True);
@@ -1582,8 +1763,8 @@ namespace Tests.PlayMode.Combat
                 "Equipment must observe a stable admitted attribute revision, not clear the strategy every tick.");
             var combat = player.GetComponent<PlayerCombatNetworkController>();
             Assert.That(combat.HasStateAuthority, Is.True);
-            Assert.That(combat.HasInputAuthority, Is.True);
-            Assert.That(player.InputAuthority, Is.EqualTo(_runner.LocalPlayer));
+            Assert.That(combat.HasInputAuthority, Is.EqualTo(withInputAuthority));
+            Assert.That(player.InputAuthority, Is.EqualTo(withInputAuthority ? _runner.LocalPlayer : PlayerRef.None));
             Assert.That(player.GetComponent<PlayerWeaponEquipmentNetworkController>().isActiveAndEnabled, Is.True);
             Assert.That(player.GetComponent<PlayerCharacter>().IsAlive, Is.True);
             NetworkMatchController match = _runner.GetComponent<NetworkSpawnManager>()?.MatchController;

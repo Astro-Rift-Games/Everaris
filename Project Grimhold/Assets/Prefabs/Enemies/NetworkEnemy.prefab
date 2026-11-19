@@ -5830,7 +5830,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAudioPresenter
   _characterBase: {fileID: 4980760815071069997}
   _combatControllerSource: {fileID: 3988879926097982634}
-  _audioConfig: {fileID: 0}
+  _audioConfig: {fileID: 11400000, guid: 69ffb3b7296bbaa468a40330a3b415fd, type: 2}
   _reloadDelaySeconds: 0.25
   _enableTimerFootsteps: 0
   _stepInterval: 0.35

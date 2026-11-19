@@ -161,6 +161,163 @@ namespace Tests.PlayMode.Consumables
         }
 
         [UnityTest]
+        public IEnumerator ExplosiveBomb_DetonationPresentation_RunsOnceFromReplicatedMarker_BeforeDespawn()
+        {
+            yield return Begin();
+            var player = SpawnAvatar(1, Vector3.zero);
+            var consume = player.GetComponent<PlayerConsumableNetworkController>();
+            var loot = player.GetComponent<PlayerLootReceiver>();
+            consume.ConfigureThrowables(
+                new NetworkPrefabRef(DaggerGuid),
+                new NetworkPrefabRef(BombGuid),
+                new NetworkPrefabRef(SmokeGuid));
+
+            yield return InSimulation(() => AddLoot(loot, BombId, 1));
+            Vector2 targetPos = new Vector2(2f, 0f);
+            Assert.That(consume.TryRequestConsume(BombId, targetPos), Is.True);
+
+            NetworkExplosiveBomb bomb = null;
+            yield return WaitFor(() =>
+            {
+                bomb = Object.FindFirstObjectByType<NetworkExplosiveBomb>();
+                return bomb != null;
+            });
+
+            int presentations = 0;
+            bool objectValidWhenPresented = false;
+            bool markerSetWhenPresented = false;
+            Vector2 presentedPosition = default;
+            float presentedRadius = 0f;
+            bomb.DetonationPresented += (position, radius) =>
+            {
+                presentations++;
+                objectValidWhenPresented = bomb.Object != null && bomb.Object.IsValid;
+                markerSetWhenPresented = bomb.IsDetonated;
+                presentedPosition = position;
+                presentedRadius = radius;
+            };
+
+            yield return WaitFor(() => presentations > 0);
+            yield return WaitFor(() => bomb == null || bomb.Object == null || !bomb.Object.IsValid);
+            yield return WaitSimulationSeconds(0.5f);
+
+            Assert.That(presentations, Is.EqualTo(1),
+                "Detonation presentation must run exactly once, even though Render runs every frame and the object lingers.");
+            Assert.That(markerSetWhenPresented, Is.True,
+                "Presentation must be driven by the replicated detonation marker.");
+            Assert.That(objectValidWhenPresented, Is.True,
+                "Presentation must run while the bomb still exists, not depend on state or RPCs sent in the Despawn tick.");
+            Assert.That(presentedPosition, Is.EqualTo(targetPos).Using(Vector2EqualityComparer.Instance));
+            Assert.That(presentedRadius, Is.EqualTo(2.5f).Within(0.01f));
+        }
+
+        [UnityTest]
+        public IEnumerator ExplosiveBomb_LingersAfterPresentation_DespawnNeverBeforeTheNetworkedTimer()
+        {
+            // The linger exists so every peer can read the replicated HasDetonated marker before the despawn.
+            // Contract: about one second (_postDetonationSeconds); one tick of slack covers the tick on which the timer is armed.
+            const float expectedLingerSeconds = 1f;
+
+            yield return Begin();
+            var player = SpawnAvatar(1, Vector3.zero);
+            var consume = player.GetComponent<PlayerConsumableNetworkController>();
+            var loot = player.GetComponent<PlayerLootReceiver>();
+            consume.ConfigureThrowables(
+                new NetworkPrefabRef(DaggerGuid),
+                new NetworkPrefabRef(BombGuid),
+                new NetworkPrefabRef(SmokeGuid));
+
+            yield return InSimulation(() => AddLoot(loot, BombId, 1));
+            Assert.That(consume.TryRequestConsume(BombId, new Vector2(2f, 0f)), Is.True);
+
+            NetworkExplosiveBomb bomb = null;
+            yield return WaitFor(() =>
+            {
+                bomb = Object.FindFirstObjectByType<NetworkExplosiveBomb>();
+                return bomb != null;
+            });
+
+            int presentedTick = -1;
+            bomb.DetonationPresented += (_, _) => presentedTick = _runner.Tick.Raw;
+
+            yield return WaitFor(() => presentedTick >= 0);
+
+            int removedTick = -1;
+            yield return WaitFor(() =>
+            {
+                if (bomb != null && bomb.Object != null && bomb.Object.IsValid) return false;
+                removedTick = _runner.Tick.Raw;
+                return true;
+            });
+
+            int minimumGapTicks = Mathf.CeilToInt(expectedLingerSeconds / _runner.DeltaTime) - 1;
+            Assert.That(removedTick - presentedTick, Is.GreaterThanOrEqualTo(minimumGapTicks),
+                "The bomb must stay alive for its post-detonation linger so the replicated marker reaches every peer before the despawn.");
+        }
+
+        [UnityTest]
+        public IEnumerator ExplosiveBomb_DespawnedWithoutDetonating_DoesNotPresentDetonation()
+        {
+            yield return Begin();
+            var player = SpawnAvatar(1, Vector3.zero);
+            var consume = player.GetComponent<PlayerConsumableNetworkController>();
+            var loot = player.GetComponent<PlayerLootReceiver>();
+            consume.ConfigureThrowables(
+                new NetworkPrefabRef(DaggerGuid),
+                new NetworkPrefabRef(BombGuid),
+                new NetworkPrefabRef(SmokeGuid));
+
+            yield return InSimulation(() => AddLoot(loot, BombId, 1));
+            Assert.That(consume.TryRequestConsume(BombId, new Vector2(2f, 0f)), Is.True);
+
+            NetworkExplosiveBomb bomb = null;
+            yield return WaitFor(() =>
+            {
+                bomb = Object.FindFirstObjectByType<NetworkExplosiveBomb>();
+                return bomb != null;
+            });
+
+            int presentations = 0;
+            bomb.DetonationPresented += (_, _) => presentations++;
+            NetworkObject bombObject = bomb.Object;
+            Assert.That(bomb.IsDetonated, Is.False, "Bomb must still be in flight/fuse.");
+
+            yield return InSimulation(() => _runner.Despawn(bombObject));
+            yield return WaitSimulationSeconds(2.0f);
+
+            Assert.That(presentations, Is.EqualTo(0),
+                "A bomb removed before detonating must not present an explosion.");
+        }
+
+        [UnityTest]
+        public IEnumerator SmokeBomb_Detonation_ZonePersistsAfterDetonationTick()
+        {
+            yield return Begin();
+            var player = SpawnAvatar(1, Vector3.zero);
+            var consume = player.GetComponent<PlayerConsumableNetworkController>();
+            var loot = player.GetComponent<PlayerLootReceiver>();
+            consume.ConfigureThrowables(
+                new NetworkPrefabRef(DaggerGuid),
+                new NetworkPrefabRef(BombGuid),
+                new NetworkPrefabRef(SmokeGuid));
+
+            yield return InSimulation(() => AddLoot(loot, SmokeId, 1));
+            Assert.That(consume.TryRequestConsume(SmokeId, new Vector2(2.5f, 0f)), Is.True);
+
+            NetworkSmokeZone zone = null;
+            yield return WaitFor(() =>
+            {
+                zone = Object.FindFirstObjectByType<NetworkSmokeZone>();
+                return zone != null && zone.IsActive;
+            });
+
+            Assert.That(zone.Object.IsValid, Is.True,
+                "The smoke zone persists after detonating: no RPC races a same-tick Despawn.");
+            yield return WaitSimulationSeconds(1.0f);
+            Assert.That(zone.IsActive, Is.True, "The zone keeps existing for its configured duration.");
+        }
+
+        [UnityTest]
         public IEnumerator SmokeBomb_Execution0_5s_Deploys3mZoneFor8s_BlocksEnemyLOS()
         {
             yield return Begin();
@@ -275,6 +432,13 @@ namespace Tests.PlayMode.Consumables
                 SmokeZoneRegistry.Clear(runnerB);
                 Object.Destroy(ownerB);
             }
+        }
+
+        private sealed class Vector2EqualityComparer : System.Collections.Generic.IEqualityComparer<Vector2>
+        {
+            public static readonly Vector2EqualityComparer Instance = new();
+            public bool Equals(Vector2 a, Vector2 b) => (a - b).sqrMagnitude < 1e-4f;
+            public int GetHashCode(Vector2 v) => v.GetHashCode();
         }
 
         private sealed class DummySmokeZone : ISmokeZone

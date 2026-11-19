@@ -28,6 +28,12 @@ public sealed class DungeonDoorPresenter : NetworkBehaviour
     public override void Spawned()
     {
         _hasAppliedPose = false;
+        // The door is a world sound source: it follows the same rolloff/min/max policy as pooled SFX.
+        if (_audioSource != null && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.ApplySpatialSettings(_audioSource);
+        }
+
         _dependenciesValid = _door != null && _door.Object == Object && _animator != null &&
             _animator.GetComponentInParent<NetworkObject>() == Object &&
             _animator.runtimeAnimatorController != null &&

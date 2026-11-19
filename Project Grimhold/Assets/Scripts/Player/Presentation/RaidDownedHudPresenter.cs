@@ -321,7 +321,7 @@ public sealed class RaidDownedHudPresenter : MonoBehaviour
     {
         if (clip.IsValid && AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlaySfx(clip);
+            AudioManager.Instance.PlaySfx(clip, default, SfxSpatialMode.Flat2D);
         }
     }
 }

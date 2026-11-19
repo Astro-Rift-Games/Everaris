@@ -56,6 +56,6 @@ public sealed class ConsumableParticlePresenter : MonoBehaviour
             ParticleEffectPlayer.InstantiateAndPlay(consumableDef.ConsumeParticles, transform.position);
         }
 
-        AudioManager.Instance?.PlaySfx(consumableDef.ConsumeSound, transform.position);
+        AudioManager.Instance?.PlaySfx(consumableDef.ConsumeSound, transform.position, 1f, 1f, SfxSpatialMode.World3D);
     }
 }

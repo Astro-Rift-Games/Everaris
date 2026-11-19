@@ -103,7 +103,7 @@ public sealed class LootHudPresenter : MonoBehaviour
         _toastRemaining = _toastDuration;
 
         Vector3 pickupPosition = _lootReceiver.transform.position;
-        AudioManager.Instance?.PlaySfx(_pickupSound, pickupPosition);
+        AudioManager.Instance?.PlaySfx(_pickupSound, pickupPosition, SfxSpatialMode.Flat2D);
         ParticleEffectPlayer.InstantiateAndPlay(_pickupParticles, pickupPosition);
     }
 

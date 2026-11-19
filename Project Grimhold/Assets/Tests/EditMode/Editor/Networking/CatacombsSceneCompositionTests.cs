@@ -183,9 +183,16 @@ namespace Tests.EditMode.Networking
             Assert.That(All<NetworkDoor>(_scene), Is.Empty);
             Assert.That(All<EnemyPatrolRoute>(_scene), Is.Empty);
             Assert.That(All<ParticleSystem>(_scene), Is.Empty);
-            Assert.That(All<SceneMusicPresenter>(_scene), Is.Empty);
             Assert.That(All<Transform>(_scene).Any(item => item.name.StartsWith("LootPickup_") ||
                 item.name.StartsWith("TestPickup_") || item.name == "[LootTestSpawner]" || item.name == "[MissionDebugger]"), Is.False);
+        }
+
+        [Test]
+        public void RaidScene_PlaysTheRaidMusicTrack()
+        {
+            SceneMusicPresenter[] presenters = All<SceneMusicPresenter>(_scene);
+            Assert.That(presenters, Has.Length.EqualTo(1), "The Raid scene owns exactly one scene music track.");
+            Assert.That(new SerializedObject(presenters[0]).FindProperty("_trackKey").stringValue, Is.EqualTo(AudioKeys.Raid));
         }
 
         [Test]

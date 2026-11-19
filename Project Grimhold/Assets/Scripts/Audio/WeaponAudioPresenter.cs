@@ -3,8 +3,10 @@ using UnityEngine;
 /// <summary>
 /// Presents confirmed weapon audio. Optional Charge uses a stoppable per-hand source, cut on
 /// cancellation, disable and release. Optional Cast replaces ranged Shoot; Attack precedes Hit
-/// for character impacts. Swing/Shoot/Cast use the shared release clock; Reload observes
-/// replicated hand reload starts. Impacts resolve only the event weapon, or the generic fallback.
+/// for character impacts; a repeated or older feedback sequence is ignored. Swing/Shoot/Cast use
+/// the shared release clock; Reload observes replicated hand reload starts. Impacts resolve only
+/// the event weapon, or the generic fallback. Peers without Input Authority hear another avatar's impact from the
+/// replicated snapshot (<c>ObservedImpactPresented</c>, 3D, own sequence history); the attacker never gets both.
 /// Missing optional clips and unavailable runner registries are quiet.
 /// </summary>
 [DisallowMultipleComponent]
@@ -29,6 +31,8 @@ public class WeaponAudioPresenter : MonoBehaviour
     private ICombatController _combatController;
     private PlayerCombatNetworkController _playerCombatController;
     private bool _isSubscribed;
+    private int _lastImpactSequence = int.MinValue;
+    private int _lastObservedImpactSequence = int.MinValue;
     private readonly AudioSource[] _chargeSources = new AudioSource[5];
     private readonly WeaponAudioCue[] _cues =
         { new(), new(), new(), new(), new() }; // Four independent hand slots + legacy strategy.
@@ -44,6 +48,8 @@ public class WeaponAudioPresenter : MonoBehaviour
     private void OnDisable()
     {
         Unsubscribe();
+        _lastImpactSequence = int.MinValue; // A re-used or re-spawned instance starts a fresh history.
+        _lastObservedImpactSequence = int.MinValue;
         for (int i = 0; i < _cues.Length; i++)
         {
             _cues[i].Suspend();
@@ -82,6 +88,7 @@ public class WeaponAudioPresenter : MonoBehaviour
         if (_playerCombatController != null)
         {
             _playerCombatController.CombatFeedbackResolved += OnCombatFeedbackResolved;
+            _playerCombatController.ObservedImpactPresented += OnObservedImpactPresented;
             _playerCombatController.AttackPresentationResumed += OnAttackPresentationResumed;
         }
         _isSubscribed = true;
@@ -94,6 +101,7 @@ public class WeaponAudioPresenter : MonoBehaviour
         if (_playerCombatController != null)
         {
             _playerCombatController.CombatFeedbackResolved -= OnCombatFeedbackResolved;
+            _playerCombatController.ObservedImpactPresented -= OnObservedImpactPresented;
             _playerCombatController.AttackPresentationResumed -= OnAttackPresentationResumed;
         }
         _isSubscribed = false;
@@ -117,7 +125,9 @@ public class WeaponAudioPresenter : MonoBehaviour
         if (!attack.HasReleaseTimeline && cue.TryRelease(0f)) PlayRelease(attack);
     }
 
-    private void OnAttackPresentationResumed(AttackPerformedEvent attack)
+    // Internal so PlayMode tests can deliver the controller's resume notification (an Action event only the
+    // PlayerCombatNetworkController can raise) without reflection or SendMessage.
+    internal void OnAttackPresentationResumed(AttackPerformedEvent attack)
     {
         int index = CueIndex(attack.SourceSlot);
         if (_cues[index].Accept(attack, resumed: true)) StopCharge(index);
@@ -146,7 +156,7 @@ public class WeaponAudioPresenter : MonoBehaviour
             }
             if (_playerCombatController.TryGetAttackReloadPresentation(attack, out WeaponReloadState reload) &&
                 cue.TryReload(reload))
-                Play(ResolveAudioConfig(attack.WeaponCatalogIndexPlusOne), "Reload", transform.position);
+                Play(ResolveAudioConfig(attack.WeaponCatalogIndexPlusOne), AudioKeys.Reload, transform.position);
         }
     }
 
@@ -155,7 +165,7 @@ public class WeaponAudioPresenter : MonoBehaviour
         if (!_cues[index].TryCharge(seconds)) return;
         WeaponAudioConfig config = ResolveAudioConfig(_cues[index].Attack.WeaponCatalogIndexPlusOne);
         AudioManager manager = AudioManager.Instance;
-        if (manager == null || config == null || !config.TryGetClip("Charge", out CustomClip clip) || !clip.IsValid) return;
+        if (manager == null || config == null || !config.TryGetClip(AudioKeys.Charge, out CustomClip clip) || !clip.IsValid) return;
         if (_chargeSources[index] == null)
             _chargeSources[index] = manager.CreateSfxSource(transform, $"WeaponCharge_{index}");
         manager.PlaySfxAttached(clip, _chargeSources[index]);
@@ -166,33 +176,55 @@ public class WeaponAudioPresenter : MonoBehaviour
         if (_chargeSources[index] != null) _chargeSources[index].Stop();
     }
 
-    private void PlayRelease(in AttackPerformedEvent attack)
+    // Internal for the same reason: release is normally driven by LateUpdate against the player combat controller.
+    internal void PlayRelease(in AttackPerformedEvent attack)
     {
         StopCharge(CueIndex(attack.SourceSlot));
         WeaponAudioConfig config = ResolveAudioConfig(attack.WeaponCatalogIndexPlusOne);
         Play(config, WeaponAudioCue.ReleaseKey(attack.AttackType,
-            config != null && config.TryGetClip("Cast", out _)), transform.position);
+            config != null && config.TryGetClip(AudioKeys.Cast, out _)), transform.position);
         if (attack.AttackType != AttackType.Melee || config == null || AudioManager.Instance == null) return;
         Vector2 origin = attack.Origin != Vector2.zero ? attack.Origin : (Vector2)transform.position;
         Vector2 checkPosition = origin + attack.Direction * (_sceneryCheckRadius * 0.7f);
         Collider2D obstacle = Physics2D.OverlapCircle(checkPosition, _sceneryCheckRadius, _obstacleLayers);
-        if (obstacle != null) Play(config, "Block", obstacle.transform.position);
+        if (obstacle != null) Play(config, AudioKeys.Block, obstacle.transform.position);
     }
 
-    private void OnCombatFeedbackResolved(CombatPresentationEvent feedback)
+    // Internal so PlayMode tests can deliver resolved feedback (an Action event only the
+    // PlayerCombatNetworkController can raise) without reflection or SendMessage.
+    internal void OnCombatFeedbackResolved(CombatPresentationEvent feedback)
     {
         if (feedback.Kind != CombatFeedbackKind.ConfirmedImpact || feedback.AppliedDamage <= 0f) return;
-        ResolveRunnerRegistry();
-        WeaponAudioConfig config = ResolveAudioConfig(feedback.WeaponCatalogIndexPlusOne);
-        Play(config, WeaponAudioCue.ImpactKey(IsCharacterEntity(feedback.TargetId),
-            config != null && config.TryGetClip("Attack", out _)),
-            new Vector3(feedback.HitPoint.x, feedback.HitPoint.y, transform.position.z));
+        // The controller raises this event again for a redelivered feedback; same or older sequence stays silent.
+        if (feedback.Sequence <= _lastImpactSequence) return;
+        _lastImpactSequence = feedback.Sequence;
+        PlayImpact(feedback.WeaponCatalogIndexPlusOne, feedback.TargetId, feedback.HitPoint, SfxSpatialMode.Default);
     }
 
-    private static void Play(WeaponAudioConfig config, string key, Vector3 position)
+    // Impact of another peer's weapon, presented from replicated state (never raised on the attacker, which hears
+    // it through CombatFeedbackResolved). It keeps its own sequence history and is always a world (3D) sound.
+    // Internal so tests deliver a snapshot without a second networked peer.
+    internal void OnObservedImpactPresented(ObservedImpactSnapshot impact)
+    {
+        if (impact.Sequence <= _lastObservedImpactSequence) return;
+        _lastObservedImpactSequence = impact.Sequence;
+        PlayImpact(impact.WeaponCatalogIndexPlusOne, impact.TargetId, impact.HitPoint, SfxSpatialMode.World3D);
+    }
+
+    private void PlayImpact(int weaponCatalogIndexPlusOne, EntityId targetId, Vector2 hitPoint, SfxSpatialMode spatial)
+    {
+        ResolveRunnerRegistry();
+        WeaponAudioConfig config = ResolveAudioConfig(weaponCatalogIndexPlusOne);
+        Play(config, WeaponAudioCue.ImpactKey(IsCharacterEntity(targetId),
+            config != null && config.TryGetClip(AudioKeys.Attack, out _)),
+            new Vector3(hitPoint.x, hitPoint.y, transform.position.z), spatial);
+    }
+
+    private static void Play(WeaponAudioConfig config, string key, Vector3 position,
+        SfxSpatialMode spatial = SfxSpatialMode.Default)
     {
         if (AudioManager.Instance != null && config != null && config.TryGetClip(key, out CustomClip clip))
-            AudioManager.Instance.PlaySfx(clip, position);
+            AudioManager.Instance.PlaySfx(clip, position, spatial);
     }
 
     private bool IsCharacterEntity(EntityId targetId) =>
