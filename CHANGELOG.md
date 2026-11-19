@@ -31,6 +31,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Arrows now stay stuck in walls, floors, crates and enemies for a few seconds after hitting them before fading away.
 - The camera now leans toward your mouse cursor so you can see further ahead, and it stops at the edges of the map.
 - Settings now has camera options to adjust how far the camera leans toward the cursor, how smooth it feels and how fast it follows you.
+- Other players' weapon hits and bomb explosions can now be heard by everyone nearby.
 
 ### Improved
 
@@ -57,6 +58,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Treasures now display distinct world sprites and inventory icons.
 - Dropped items now render above floor tiles on the character layer.
 - Health Potions across chests, enemies, and the Town Merchant now stack together with matching sprites.
+- Combat and world sounds now get quieter with distance.
 
 ### Fixed
 
@@ -122,6 +124,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - In town, your character no longer moves or attacks while the lost-raid notice is on screen.
 - Asking the Trainer for a training weapon while your inventory is still saving no longer fails with an error.
 - After dying, abandoning or losing connection in a raid, your training weapon is no longer shown among the lost items.
+- Sound effects now follow the master and effects volume sliders.
+- Town music no longer keeps playing on the loading screen and in the raid.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08

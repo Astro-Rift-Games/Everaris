@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1177,
-  "canonicalEntries": 1174,
+  "rawCommits": 1179,
+  "canonicalEntries": 1176,
   "before": {
+    "Documentation": 125,
+    "Features": 416,
     "Bug Fixes": 179,
-    "Documentation": 124,
-    "Features": 415,
     "Tests": 46,
     "Refactoring": 16,
     "Other Changes": 373,
     "Architecture & Infrastructure": 24
   },
   "after": {
+    "Documentation": 141,
+    "Features": 554,
     "Bug Fixes": 195,
-    "Documentation": 140,
-    "Features": 553,
     "Tests": 51,
     "Refactoring": 29,
     "Other Changes": 181,
@@ -23,28 +23,28 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Combat": 398,
-    "Inventory & Loot": 474,
+    "Combat": 400,
+    "Audio": 42,
+    "Documentation": 435,
+    "Extraction": 175,
+    "Inventory & Loot": 475,
+    "Networking & Sessions": 346,
+    "UI": 344,
+    "World & Visibility": 165,
+    "Art & Animation": 261,
+    "Build & Tooling": 610,
+    "Tests": 746,
     "Persistence & Backend": 292,
-    "Tests": 745,
-    "Networking & Sessions": 345,
-    "Build & Tooling": 609,
-    "Extraction": 174,
-    "Audio": 40,
-    "Documentation": 434,
-    "UI": 343,
     "Abilities": 139,
     "Movement": 102,
-    "World & Visibility": 164,
     "Input": 32,
-    "Art & Animation": 260,
     "Unassigned": 42
   },
   "canonical": {
     "sections": {
+      "Documentation": 141,
+      "Features": 553,
       "Bug Fixes": 194,
-      "Documentation": 140,
-      "Features": 552,
       "Tests": 51,
       "Refactoring": 29,
       "Other Changes": 180,
@@ -52,21 +52,21 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Combat": 396,
-      "Inventory & Loot": 474,
+      "Combat": 398,
+      "Audio": 42,
+      "Documentation": 433,
+      "Extraction": 175,
+      "Inventory & Loot": 475,
+      "Networking & Sessions": 346,
+      "UI": 343,
+      "World & Visibility": 163,
+      "Art & Animation": 258,
+      "Build & Tooling": 608,
+      "Tests": 744,
       "Persistence & Backend": 292,
-      "Tests": 743,
-      "Networking & Sessions": 345,
-      "Build & Tooling": 607,
-      "Extraction": 174,
-      "Audio": 40,
-      "Documentation": 432,
-      "UI": 342,
       "Abilities": 137,
       "Movement": 102,
-      "World & Visibility": 162,
       "Input": 32,
-      "Art & Animation": 257,
       "Unassigned": 42
     }
   },
@@ -74826,8 +74826,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 300,
-      "canonicalEntries": 300
+      "originalCommits": 302,
+      "canonicalEntries": 302
     },
     {
       "key": "v0.5.0",
@@ -74871,6 +74871,1231 @@
     }
   ],
   "commits": [
+    {
+      "sha": "8b809685b09b6de62b086f6eebcc2f7839acf882",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/8b809685b09b6de62b086f6eebcc2f7839acf882",
+      "subject": "docs(audio): document audio architecture and audit tracker",
+      "body": "Rewrite AudioArchitecture.md to match the implemented system: key specs,\nAudioManager per entry scene, mixer rule, 2D/3D policy with the planar\nlistener, scene music lifecycle, HealthAudioObserver, observer weapon\nimpacts and their coalescing limit, Specter cues and the bomb linger.\nAdd the ODD tracker for the audio audit follow-up with its evidence log.\n",
+      "date": "2026-11-19T18:46:14-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/AudioArchitecture.md",
+        "odd/tasks/audio-system-fixes.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "audio",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Audio",
+        "Documentation"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/AudioArchitecture.md",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/audio-system-fixes.md",
+          "supports": "Audio"
+        },
+        {
+          "source": "scope",
+          "value": "audio",
+          "supports": "Audio"
+        },
+        {
+          "source": "message-term",
+          "value": "audio",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/AudioArchitecture.md",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "aa57fbf991ab6843431c7b0de162de2fc70452e1",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/aa57fbf991ab6843431c7b0de162de2fc70452e1",
+      "subject": "feat(audio): make audio presentation consistent across peers and scenes",
+      "body": "Audit follow-up for the audio system. Audio stays a presentation layer\nthat observes replicated state; nothing here changes gameplay results.\n\n- Enemies: every presenter prefab references a config; the Specter\n  gets a SpecterAudioConfig with placeholder clips and state cues\n  (Channel, Detonate, Reappear). Enemy Reload cue removed (no reload\n  mechanic).\n- Health cues: shared pure HealthAudioObserver fixes silent second\n  deaths after revive, false TakeDamage on revive and catch-up cues\n  when the AudioManager appears late; invalid objects are not read.\n- Mixer: door and HUD sources use the SFX group and PlayClipAtPoint is\n  gone, so volume sliders control every sound.\n- Keys: AudioKeys constants plus per-config required/optional specs;\n  footstep timer uses Step.\n- AudioManager prefab in every build scene; oldest-voice pool stealing;\n  scene music stops when its scene unloads and CatacombsMap plays Raid.\n- Spatial policy: UI, music and global warnings 2D, world sounds 3D.\n  PlanarAudioListener keeps the listener on the gameplay plane and the\n  AudioManager owns rolloff (linear, 2-20 units). SfxSpatialMode\n  classifies PlaySfx callers.\n- Network: the explosive bomb presents its detonation from the\n  replicated HasDetonated marker and despawns 1 s later instead of an\n  RPC sent in the despawn tick. Observers hear other players' weapon\n  impacts through an additive [Networked] ObservedImpactSnapshot and\n  the ObservedImpactPresented render event; the attacker RPC path,\n  hitstop and camera shake are unchanged.\n\nReviewers: scenes and prefabs were edited as minimal text inserts to\navoid Unity 6000.6 re-serialization; NetworkEnemy.prefab keeps an\norphan _reloadDelaySeconds value that Unity ignores.\n\nTests: HealthAudioObserver, AudioKeys/config validation, mixer routing,\nprefab configs, scene AudioManager composition, SfxVoiceSelector,\nspatial settings, ObservedImpactTracker, Specter cue observer\n(EditMode); player/enemy/Specter presenters, animation listeners,\nplanar listener, spatial policy, door settings, observed impacts,\nscene music (PlayMode); bomb linger, combat snapshot and Catacombs\nmusic composition tests.\n\nPlayer-Fixed: Sound effects now follow the master and effects volume sliders.\nPlayer-Fixed: Town music no longer keeps playing on the loading screen and in the raid.\nPlayer-Added: Other players' weapon hits and bomb explosions can now be heard by everyone nearby.\nPlayer-Improved: Combat and world sounds now get quieter with distance.\n",
+      "date": "2026-11-19T18:42:07-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/Doors/DungeonDoor.prefab",
+        "Project Grimhold/Assets/Prefabs/Enemies/NetworkEnemy.prefab",
+        "Project Grimhold/Assets/Prefabs/Enemies/NetworkEnemySpecter.prefab",
+        "Project Grimhold/Assets/Prefabs/Gameplay Camera.prefab",
+        "Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab",
+        "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+        "Project Grimhold/Assets/Scenes/Gameplay.unity",
+        "Project Grimhold/Assets/Scenes/Lobby-Town.unity",
+        "Project Grimhold/Assets/Scriptable Objects/Audio/SkeletonAudioConfig.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Audio/SlimeAudioConfig.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Audio/SpecterAudioConfig.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Audio/SpecterAudioConfig.asset.meta",
+        "Project Grimhold/Assets/Scripts/Audio/AudioClipConfig.cs",
+        "Project Grimhold/Assets/Scripts/Audio/AudioClipConfig.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/AudioKeySpec.cs",
+        "Project Grimhold/Assets/Scripts/Audio/AudioKeySpec.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/AudioKeys.cs",
+        "Project Grimhold/Assets/Scripts/Audio/AudioKeys.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/AudioManager.cs",
+        "Project Grimhold/Assets/Scripts/Audio/AudioSpatialSettings.cs",
+        "Project Grimhold/Assets/Scripts/Audio/AudioSpatialSettings.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/EnemyAnimationAudioListener.cs",
+        "Project Grimhold/Assets/Scripts/Audio/EnemyAudioPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Audio/EntityAudioConfig.cs",
+        "Project Grimhold/Assets/Scripts/Audio/HealthAudioObserver.cs",
+        "Project Grimhold/Assets/Scripts/Audio/HealthAudioObserver.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/ObservedImpact.cs",
+        "Project Grimhold/Assets/Scripts/Audio/ObservedImpact.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/PlanarAudioListener.cs",
+        "Project Grimhold/Assets/Scripts/Audio/PlanarAudioListener.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/PlayerAnimationAudioListener.cs",
+        "Project Grimhold/Assets/Scripts/Audio/PlayerAudioPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Audio/SceneMusicPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Audio/SfxSpatialMode.cs",
+        "Project Grimhold/Assets/Scripts/Audio/SfxSpatialMode.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/SfxVoiceSelector.cs",
+        "Project Grimhold/Assets/Scripts/Audio/SfxVoiceSelector.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/SpecterAudioConfig.cs",
+        "Project Grimhold/Assets/Scripts/Audio/SpecterAudioConfig.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/SpecterAudioCue.cs",
+        "Project Grimhold/Assets/Scripts/Audio/SpecterAudioCue.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/SpecterAudioCueObserver.cs",
+        "Project Grimhold/Assets/Scripts/Audio/SpecterAudioCueObserver.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/SpecterAudioPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Audio/SpecterAudioPresenter.cs.meta",
+        "Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs",
+        "Project Grimhold/Assets/Scripts/Audio/WeaponAudioPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Dialogue/DialogueController.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/Consumables/NetworkExplosiveBomb.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/Consumables/NetworkSmokeZone.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureAudioPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/DungeonPressureAmbientPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/Presentation/ChestOpeningPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/Utilities/RuneCompassPointerEffect.cs",
+        "Project Grimhold/Assets/Scripts/Player/Combat/PlayerCombatNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Interaction/PlayerInventoryPassiveEffectsController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/AimStanceDrawPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/ConsumableParticlePresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/LootHudPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/RaidDownedHudPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Doors/DungeonDoorPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryPresenter.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioConfigKeyValidationTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioConfigKeyValidationTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioKeysTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioKeysTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioManagerSceneCompositionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioManagerSceneCompositionTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioMixerRoutingTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioMixerRoutingTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioPresenterPrefabConfigTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioPresenterPrefabConfigTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioSpatialSettingsTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioSpatialSettingsTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/HealthAudioObserverTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/HealthAudioObserverTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/ObservedImpactTrackerTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/ObservedImpactTrackerTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SfxVoiceSelectorTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SfxVoiceSelectorTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioConfigTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioConfigTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioCueObserverTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioCueObserverTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/AnimationAudioListenerTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/AnimationAudioListenerTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioManagerSingletonTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioManagerSingletonTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioSpatialPolicyTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioSpatialPolicyTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioTestKit.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioTestKit.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/DungeonDoorSpatialSettingsTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/DungeonDoorSpatialSettingsTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterHealthPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterHealthPlayModeTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/ObservedImpactAudioTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/ObservedImpactAudioTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/PlanarAudioListenerTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/PlanarAudioListenerTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/PlayerAudioPresenterPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/PlayerAudioPresenterPlayModeTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/SceneMusicPresenterTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/SceneMusicPresenterTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/SpecterAudioPresenterPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/SpecterAudioPresenterPlayModeTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/SpecterStateSimulationDriver.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/SpecterStateSimulationDriver.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/PlayerCombatNetworkControllerPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/ThrowableConsumablesPlayModeTests.cs"
+      ],
+      "originalType": "feat",
+      "originalScope": "audio",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Extraction",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "UI",
+        "World & Visibility",
+        "Audio",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/HealthAudioObserver.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/HealthAudioObserver.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/WeaponAudioPresenter.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Combat/PlayerCombatNetworkController.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/HealthAudioObserverTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/HealthAudioObserverTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterHealthPlayModeTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterHealthPlayModeTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/PlayerCombatNetworkControllerPlayModeTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryPresenter.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Interaction/PlayerInventoryPassiveEffectsController.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/LootHudPresenter.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/Lobby-Town.unity",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/LootHudPresenter.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/RaidDownedHudPresenter.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "HUD",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Doors/DungeonDoor.prefab",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureAudioPresenter.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/DungeonPressureAmbientPresenter.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Doors/DungeonDoorPresenter.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/DungeonDoorSpatialSettingsTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/DungeonDoorSpatialSettingsTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "Catacombs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Audio/SkeletonAudioConfig.asset",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Audio/SlimeAudioConfig.asset",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Audio/SpecterAudioConfig.asset",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Audio/SpecterAudioConfig.asset.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/AudioClipConfig.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/AudioClipConfig.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/AudioKeySpec.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/AudioKeySpec.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/AudioKeys.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/AudioKeys.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/AudioManager.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/AudioSpatialSettings.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/AudioSpatialSettings.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/EnemyAnimationAudioListener.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/EnemyAudioPresenter.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/EntityAudioConfig.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/HealthAudioObserver.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/HealthAudioObserver.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/ObservedImpact.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/ObservedImpact.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/PlanarAudioListener.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/PlanarAudioListener.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/PlayerAnimationAudioListener.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/PlayerAudioPresenter.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/SceneMusicPresenter.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/SfxSpatialMode.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/SfxSpatialMode.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/SfxVoiceSelector.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/SfxVoiceSelector.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/SpecterAudioConfig.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/SpecterAudioConfig.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/SpecterAudioCue.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/SpecterAudioCue.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/SpecterAudioCueObserver.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/SpecterAudioCueObserver.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/SpecterAudioPresenter.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/SpecterAudioPresenter.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/WeaponAudioCue.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/WeaponAudioPresenter.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureAudioPresenter.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioConfigKeyValidationTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioConfigKeyValidationTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioKeysTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioKeysTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioManagerSceneCompositionTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioManagerSceneCompositionTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioMixerRoutingTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioMixerRoutingTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioPresenterPrefabConfigTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioPresenterPrefabConfigTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioSpatialSettingsTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioSpatialSettingsTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/HealthAudioObserverTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/HealthAudioObserverTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/ObservedImpactTrackerTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/ObservedImpactTrackerTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SfxVoiceSelectorTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SfxVoiceSelectorTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioConfigTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioConfigTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioCueObserverTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioCueObserverTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AnimationAudioListenerTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AnimationAudioListenerTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioManagerSingletonTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioManagerSingletonTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioSpatialPolicyTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioSpatialPolicyTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioTestKit.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioTestKit.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/DungeonDoorSpatialSettingsTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/DungeonDoorSpatialSettingsTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterHealthPlayModeTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterHealthPlayModeTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/ObservedImpactAudioTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/ObservedImpactAudioTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/PlanarAudioListenerTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/PlanarAudioListenerTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/PlayerAudioPresenterPlayModeTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/PlayerAudioPresenterPlayModeTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/SceneMusicPresenterTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/SceneMusicPresenterTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/SpecterAudioPresenterPlayModeTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/SpecterAudioPresenterPlayModeTests.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/SpecterStateSimulationDriver.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/SpecterStateSimulationDriver.cs.meta",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "scope",
+          "value": "audio",
+          "supports": "Audio"
+        },
+        {
+          "source": "message-term",
+          "value": "audio",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/EnemyAnimationAudioListener.cs",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Audio/PlayerAnimationAudioListener.cs",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AnimationAudioListenerTests.cs",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AnimationAudioListenerTests.cs.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "animation",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioConfigKeyValidationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioConfigKeyValidationTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioKeysTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioKeysTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioManagerSceneCompositionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioManagerSceneCompositionTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioMixerRoutingTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioMixerRoutingTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioPresenterPrefabConfigTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioPresenterPrefabConfigTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioSpatialSettingsTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioSpatialSettingsTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/HealthAudioObserverTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/HealthAudioObserverTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/ObservedImpactTrackerTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/ObservedImpactTrackerTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SfxVoiceSelectorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SfxVoiceSelectorTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioConfigTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioConfigTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioCueObserverTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioCueObserverTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioConfigKeyValidationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioConfigKeyValidationTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioKeysTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioKeysTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioManagerSceneCompositionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioManagerSceneCompositionTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioMixerRoutingTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioMixerRoutingTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioPresenterPrefabConfigTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioPresenterPrefabConfigTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioSpatialSettingsTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/AudioSpatialSettingsTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/HealthAudioObserverTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/HealthAudioObserverTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/ObservedImpactTrackerTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/ObservedImpactTrackerTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SfxVoiceSelectorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SfxVoiceSelectorTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioConfigTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioConfigTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioCueObserverTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Audio/SpecterAudioCueObserverTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AnimationAudioListenerTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AnimationAudioListenerTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioManagerSingletonTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioManagerSingletonTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioSpatialPolicyTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioSpatialPolicyTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioTestKit.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/AudioTestKit.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/DungeonDoorSpatialSettingsTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/DungeonDoorSpatialSettingsTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterHealthPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterHealthPlayModeTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/EnemyAudioPresenterTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/ObservedImpactAudioTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/ObservedImpactAudioTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/PlanarAudioListenerTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/PlanarAudioListenerTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/PlayerAudioPresenterPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/PlayerAudioPresenterPlayModeTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/SceneMusicPresenterTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/SceneMusicPresenterTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/SpecterAudioPresenterPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/SpecterAudioPresenterPlayModeTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/SpecterStateSimulationDriver.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/SpecterStateSimulationDriver.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Audio/WeaponAudioPresenterTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/PlayerCombatNetworkControllerPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/ThrowableConsumablesPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "95f9a9f47165bdae776fe7099a71326530fb5978",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/95f9a9f47165bdae776fe7099a71326530fb5978",
