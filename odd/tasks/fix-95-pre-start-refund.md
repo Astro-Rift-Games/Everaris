@@ -43,6 +43,7 @@ Unity:
 | T3 | S1, S3, S4, S5, S8 | writer: Unity client + coordinator + EditMode tests | 8668765f |
 | T4 | S1-S8 | gentle-ai-verify (Risk items 1, 3, 4) | — |
 | T5 | S1, S4 | manual multi-process validation (owner) | — |
+| T6 | S1, S2, S5 | writer: verify findings A1 (late admit after start), A4 (no-op refund restores locally), A2 comment, commit probes | 7efba6d6 |
 
 ## Log
 
@@ -53,4 +54,6 @@ Unity:
 - **L5** (evidence): `raidId` bound to the reservation by `backend/src/services/SessionTicketService.js:244-247`; host-membership pattern in `RaidResultService.js:263-283`.
 - **L7** (evidence T2): parent rerun `npm test` 870/870, `npm run test:concurrency` 38/38; worker reported `test:integration` 245/245. `backend/.env.example` not updated (read blocked by safety policy).
 - **L8** (evidence T3, worker-run in Editor): FIX-95 suites 47/47, RaidStartPolicy 12/12, preserve suites green; full EditMode 7846/7857, 11 failures in unrelated prefab/scene/extraction tests, pre-existence not proven. Editor side effects left unstaged: two Minimap layout assets re-serialized, two ProjectSettings line-ending only.
+- **L9** (evidence T4, verifier mwof50cd-1-ps54): S1-S8 pass; Unity FIX-95 + preserve classes green in Editor; npm test 869/870 in scratch (prepush hook test needs .git), concurrency 38/38. Advisories: A1 medium late admission never marked started (refund 200 after start, modified client only); A2 comment at RemoteInventoryService.cs:459 wrong (marker bumps revision); A3 empty pending result does not block refund (unrealistic); A4 backend no-op 200 is treated by Unity as refund and restores locally; A5 transient exhaustion ends as loss at login recovery, loss notice discard async. Decision: fix A1, A4, A2 in T6; A3/A5 stay documented advisories. 11 unrelated EditMode failures not proven pre-existing (needs baseline Editor).
+- **L10** (evidence T6, worker mwofttf9-3-pqaj): RED 9/33 backend + Unity compile errors; GREEN npm test 877/877, test:concurrency 39/39, Unity EditMode PreStartRefund 51/51, RaidStartPolicyTests 12/12, RemoteCommitRetryTests 28/28, LocalProfilePersistenceEditModeTests 35/35, RaidReservationLifecycleTests 7/7. Residual: admit fix-up is a second write in the narrow marker race; refunded:false after a lost success response leaves local state for next sync.
 - **L6** (limitation): in Solo the Host is the player, so the start marker stays self-attested there; N bounds it. Removing it needs the dedicated server (ID 400, out of scope).
