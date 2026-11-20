@@ -32,6 +32,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - The camera now leans toward your mouse cursor so you can see further ahead, and it stops at the edges of the map.
 - Settings now has camera options to adjust how far the camera leans toward the cursor, how smooth it feels and how fast it follows you.
 - Other players' weapon hits and bomb explosions can now be heard by everyone nearby.
+- Town merchants now offer a weekly rotating stock, demand buy bonuses, and a shared buyback ledger.
+- Town now features Blacksmith and Arcanist merchants with specialized stocks alongside the General Merchant, plus a reset countdown timer in the shop.
 
 ### Improved
 

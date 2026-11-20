@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1189,
-  "canonicalEntries": 1186,
+  "rawCommits": 1191,
+  "canonicalEntries": 1188,
   "before": {
+    "Features": 420,
     "Bug Fixes": 184,
     "Documentation": 127,
     "Other Changes": 374,
-    "Features": 418,
     "Tests": 46,
     "Refactoring": 16,
     "Architecture & Infrastructure": 24
   },
   "after": {
+    "Features": 559,
     "Bug Fixes": 200,
     "Documentation": 143,
-    "Features": 557,
     "Tests": 51,
     "Refactoring": 29,
     "Other Changes": 181,
@@ -23,17 +23,17 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Networking & Sessions": 353,
+    "UI": 347,
+    "Persistence & Backend": 302,
+    "Build & Tooling": 617,
+    "Tests": 755,
+    "Combat": 401,
+    "Inventory & Loot": 481,
+    "Documentation": 439,
     "Extraction": 176,
-    "Inventory & Loot": 480,
-    "Networking & Sessions": 351,
-    "Persistence & Backend": 300,
-    "Build & Tooling": 615,
-    "Documentation": 438,
-    "Tests": 753,
     "Unassigned": 43,
-    "UI": 345,
     "World & Visibility": 167,
-    "Combat": 400,
     "Audio": 42,
     "Art & Animation": 261,
     "Abilities": 139,
@@ -42,9 +42,9 @@
   },
   "canonical": {
     "sections": {
+      "Features": 558,
       "Bug Fixes": 199,
       "Documentation": 143,
-      "Features": 556,
       "Tests": 51,
       "Refactoring": 29,
       "Other Changes": 180,
@@ -52,17 +52,17 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Networking & Sessions": 353,
+      "UI": 346,
+      "Persistence & Backend": 302,
+      "Build & Tooling": 615,
+      "Tests": 753,
+      "Combat": 399,
+      "Inventory & Loot": 481,
+      "Documentation": 437,
       "Extraction": 176,
-      "Inventory & Loot": 480,
-      "Networking & Sessions": 351,
-      "Persistence & Backend": 300,
-      "Build & Tooling": 613,
-      "Documentation": 436,
-      "Tests": 751,
       "Unassigned": 43,
-      "UI": 344,
       "World & Visibility": 165,
-      "Combat": 398,
       "Audio": 42,
       "Art & Animation": 258,
       "Abilities": 137,
@@ -74437,8 +74437,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 312,
-      "canonicalEntries": 312
+      "originalCommits": 314,
+      "canonicalEntries": 314
     },
     {
       "key": "v0.5.0",
@@ -74482,6 +74482,1001 @@
     }
   ],
   "commits": [
+    {
+      "sha": "a08d1f801acf2c35854c146649590a7da0e53168",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a08d1f801acf2c35854c146649590a7da0e53168",
+      "subject": "feat(commerce): add designer tooling and specialize town merchant npcs",
+      "body": "Add TownCommerceConfiguration ScriptableObject with custom inspector\nand JSON export button, configure the 3 specialized town merchants\n(General, Blacksmith, Arcanist) in Lobby-Town with matching dialogues\nand dynamic stock initialization, and render weekly rotation countdown.\n\nAuthoring & Parity:\n- TownCommerceConfiguration ScriptableObject with one-click export to\n  backend commerceConfig.json.\n- Backend shopCatalog and CommerceRotationService read exported config\n  with parity fallback.\n- Added TownCommerceConfigurationTests and commerce.config.parity.test.js.\n\nPresentation & Scene:\n- Lobby-Town.unity configured with 3 specialized NPCs and unique\n  dialogue assets.\n- TownMerchantNetworkController auto-populates specialized stock using\n  MerchantSpecializationPolicy.\n- MerchantShopUI displays merchant title and weekly countdown feedback.\n\nRefs: #820, #824, #825, #826, #827\n\nPlayer-Added: Town now features Blacksmith and Arcanist merchants with specialized stocks alongside the General Merchant, plus a reset countdown timer in the shop.\n",
+      "date": "2026-11-20T16:59:46-03:00",
+      "files": [
+        "Project Grimhold/Assets/Editor/Commerce.meta",
+        "Project Grimhold/Assets/Editor/Commerce/TownCommerceConfigurationEditor.cs",
+        "Project Grimhold/Assets/Editor/Commerce/TownCommerceConfigurationEditor.cs.meta",
+        "Project Grimhold/Assets/Prefabs/TownMerchantNPC.prefab",
+        "Project Grimhold/Assets/Prefabs/UI/MerchantShopUI.prefab",
+        "Project Grimhold/Assets/Scenes/Lobby-Town.unity",
+        "Project Grimhold/Assets/Scriptable Objects/Commerce.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Commerce/TownCommerceConfiguration.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Commerce/TownCommerceConfiguration.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownArcanistNpcDialogue.asset",
+        "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownArcanistNpcDialogue.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownBlacksmithNpcDialogue.asset",
+        "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownBlacksmithNpcDialogue.asset.meta",
+        "Project Grimhold/Assets/Scripts/Commerce/TownCommerceConfiguration.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/TownCommerceConfiguration.cs.meta",
+        "Project Grimhold/Assets/Scripts/Networking/TownMerchantNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopUI.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUIRenderTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownCommerceConfigurationTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownCommerceConfigurationTests.cs.meta",
+        "backend/src/config/commerceConfig.json",
+        "backend/src/config/shopCatalog.js",
+        "backend/src/services/CommerceRotationService.js",
+        "backend/tests/commerce.config.parity.test.js",
+        "odd/tasks/us-83-commerce-weekly-merchants.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "commerce",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Networking & Sessions",
+        "UI",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/Lobby-Town.unity",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownMerchantNetworkController.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "message-term",
+          "value": "Lobby",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/UI/MerchantShopUI.prefab",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopUI.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/commerceConfig.json",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/shopCatalog.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/CommerceRotationService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/commerce.config.parity.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/Commerce.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/Commerce/TownCommerceConfigurationEditor.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/Commerce/TownCommerceConfigurationEditor.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUIRenderTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownCommerceConfigurationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownCommerceConfigurationTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUIRenderTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownCommerceConfigurationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownCommerceConfigurationTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/commerce.config.parity.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "5b5770aca8879a014e09763b78068a4072938d57",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/5b5770aca8879a014e09763b78068a4072938d57",
+      "subject": "feat(commerce): implement weekly rotation, merchants and unified cart",
+      "body": "Implement weekly catalog rotation, demand pricing (+20%), shared FIFO\nbuyback ledger (16 slots), specialized town merchants, and an atomic\nmixed trade cart across backend and Unity client per Docs 22 and 23.\n\nBackend:\n- CommerceRotationService with deterministic Mulberry32 RNG seeded by\n  weekly Monday 00:00 UTC cycle.\n- InventoryService.shopTrade handles mixed purchases, sales, and buybacks\n  in a single atomic commit with ROTATION_EXPIRED validation, personal\n  stock quota enforcement, and demand pricing bonuses.\n- FIFO 16 buyback history shared between merchants and cleared on raid\n  reservation.\n- Added scripts/dev-memory-server.js (npm run dev:mem) for zero-config\n  in-memory dev testing.\n\nUnity:\n- MerchantSpecializationPolicy with General, Blacksmith, and Arcanist\n  contextual filtering for purchases and sales.\n- Updated MerchantTradePreview and MerchantTradeTicket to support\n  bidirectional cart balancing without legacy BuybackMustBeAlone block.\n- Updated MerchantShopUI and TownMerchantTradeSession with merchant title,\n  countdown to next weekly reset, and demand bonus tags.\n- Aligned 12 weapons, 24 armors, and Bone asset to Doc 23 ObjectValues\n  and buy/sell pricing parity.\n- Verified MaxTransportable=1 hoarding in stash vs raid exit block.\n\nRefs: #820, #824, #825, #826, #827\n\nPlayer-Added: Town merchants now offer a weekly rotating stock, demand buy bonuses, and a shared buyback ledger.\n",
+      "date": "2026-11-17T23:34:11-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageGarb.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageGloves.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageHat.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageTrousers.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmingSword.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerArmor.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerGloves.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerHat.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerTrousers.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Bone.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON_EXPLOSIVE_BOMB.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON_SELF_REVIVE.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON_SMOKE_BOMB.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON_THROWING_DAGGER.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CompoundBow.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageGarb.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageGloves.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageHood.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageTrousers.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerGloves.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerHood.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerLeatherArmor.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerTrousers.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/GreatHammer.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorBreastplate.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorGauntlets.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorHelmet.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorLegPlate.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorChainMailArmor.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorChainMailTrousers.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorGloves.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorOpenSallet.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightCrossbow.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LongSwordLoot.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicCinquedea.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaff.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicSword.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWand.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ANCIENT_ARMOR.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ANCIENT_ROOT.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ATTUNEMENT_GEM.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BAT_FANG.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BAT_WING.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BLACK_IRON.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_CORRUPT_MARROW.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_CUSTODIAN_SEAL.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ETHER_DUST.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_ARROWHEAD.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_INSIGNIA.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_SCRAP.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOLEM_CORE.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_LOST_GRIMOIRE_PAGE.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_RUBY_GEM.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_RUNE_FRAGMENT.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SAPPHIRE_GEM.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SLIME_CORE.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SLIME_GEL.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SOUL_FRAGMENT.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SPECTRAL_ESSENCE.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_TANNED_LEATHER.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_WITHERED_BONE.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Rapier.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RondelDagger.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Spellbook.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CHALICE.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CHAOS_COIN.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CROWN.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_FAMINE_IDOL.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_PILGRIM_LIGHT.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_SANCTUARY_HEART.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_VOID_BELL.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_WANDERER_EYE.asset",
+        "Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs",
+        "Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/BuybackLedger.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/EquipmentBuybackEligibilityPolicy.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/MerchantSpecializationPolicy.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/MerchantSpecializationPolicy.cs.meta",
+        "Project Grimhold/Assets/Scripts/Commerce/MerchantTradePreview.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/MerchantTradeTicket.cs",
+        "Project Grimhold/Assets/Scripts/Core/StashOperationResult.cs",
+        "Project Grimhold/Assets/Scripts/Networking/IMerchantTradeEndpoint.cs",
+        "Project Grimhold/Assets/Scripts/Networking/MerchantTransactionResult.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownMerchantNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopUI.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopViewModel.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantTradeFeedback.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantTradeSession.cs",
+        "Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs",
+        "Project Grimhold/Assets/Scripts/Stash/RemoteShopTransactionService.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/ArmorCommerceParityTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/ArmorCommerceParityTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MaxTransportableAdmissionAndStashTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MaxTransportableAdmissionAndStashTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownMerchantTradeSessionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/MerchantTestContent.cs",
+        "Project Grimhold/Docs/Architecture/CommerceArchitecture.md",
+        "backend/package.json",
+        "backend/scripts/dev-memory-server.js",
+        "backend/src/config/shopCatalog.js",
+        "backend/src/models/Character.js",
+        "backend/src/routes/inventory.routes.js",
+        "backend/src/services/CommerceRotationService.js",
+        "backend/src/services/InventoryService.js",
+        "backend/src/validators/inventory.validators.js",
+        "backend/tests/commerce.cart.test.js",
+        "backend/tests/commerce.catalog.doc23.test.js",
+        "backend/tests/commerce.rotation.test.js",
+        "backend/tests/inventory.buyback.test.js",
+        "backend/tests/inventory.instances.test.js",
+        "backend/tests/inventory.shop.test.js",
+        "backend/tests/item.instances.parity.test.js",
+        "backend/tests/shop.catalog.parity.test.js",
+        "backend/tests/shop.receipt-retention.test.js",
+        "odd/tasks/us-83-commerce-weekly-merchants.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "commerce",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "UI",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "weapons",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageGarb.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageGloves.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageHat.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageTrousers.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmingSword.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerArmor.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerGloves.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerHat.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerTrousers.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Bone.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON_EXPLOSIVE_BOMB.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON_SELF_REVIVE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON_SMOKE_BOMB.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON_THROWING_DAGGER.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CompoundBow.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageGarb.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageGloves.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageHood.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageTrousers.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerGloves.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerHood.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerLeatherArmor.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerTrousers.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/GreatHammer.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorBreastplate.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorGauntlets.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorHelmet.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorLegPlate.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorChainMailArmor.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorChainMailTrousers.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorGloves.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorOpenSallet.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightCrossbow.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LongSwordLoot.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicCinquedea.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaff.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicSword.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWand.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ANCIENT_ARMOR.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ANCIENT_ROOT.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ATTUNEMENT_GEM.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BAT_FANG.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BAT_WING.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BLACK_IRON.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_CORRUPT_MARROW.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_CUSTODIAN_SEAL.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ETHER_DUST.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_ARROWHEAD.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_INSIGNIA.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_SCRAP.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOLEM_CORE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_LOST_GRIMOIRE_PAGE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_RUBY_GEM.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_RUNE_FRAGMENT.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SAPPHIRE_GEM.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SLIME_CORE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SLIME_GEL.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SOUL_FRAGMENT.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SPECTRAL_ESSENCE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_TANNED_LEATHER.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_WITHERED_BONE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Rapier.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RondelDagger.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Spellbook.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CHALICE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CHAOS_COIN.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CROWN.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_FAMINE_IDOL.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_PILGRIM_LIGHT.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_SANCTUARY_HEART.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_VOID_BELL.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_WANDERER_EYE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Commerce/EquipmentBuybackEligibilityPolicy.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/routes/inventory.routes.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/validators/inventory.validators.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.buyback.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.instances.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.shop.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/IMerchantTradeEndpoint.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/MerchantTransactionResult.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownMerchantNetworkController.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantTradeSession.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownMerchantTradeSessionTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/MerchantTestContent.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopUI.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/package.json",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/scripts/dev-memory-server.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/shopCatalog.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/Character.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/routes/inventory.routes.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/CommerceRotationService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/validators/inventory.validators.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/commerce.cart.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/commerce.catalog.doc23.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/commerce.rotation.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.buyback.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.instances.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.shop.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/item.instances.parity.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/shop.catalog.parity.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/shop.receipt-retention.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/ArmorCommerceParityTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/ArmorCommerceParityTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MaxTransportableAdmissionAndStashTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MaxTransportableAdmissionAndStashTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownMerchantTradeSessionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/MerchantTestContent.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/CommerceArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/ArmorCommerceParityTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/ArmorCommerceParityTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MaxTransportableAdmissionAndStashTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MaxTransportableAdmissionAndStashTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownMerchantTradeSessionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/MerchantTestContent.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/commerce.cart.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/commerce.catalog.doc23.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/commerce.rotation.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.buyback.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.instances.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.shop.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/item.instances.parity.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/shop.catalog.parity.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/shop.receipt-retention.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "7a4f8c1077506eeac4397f7f9d24748ecaa20a77",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7a4f8c1077506eeac4397f7f9d24748ecaa20a77",

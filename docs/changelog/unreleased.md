@@ -4,32 +4,445 @@
 
 Release: Unreleased
 
-312 original commits; 312 canonical entries.
+314 original commits; 314 canonical entries.
 
 ## Canonical classification
 
-97 features; 106 bug fixes; 3 refactoring; 1 architecture & infrastructure; 53 documentation; 22 tests; 11 maintenance; 19 other changes
+99 features; 106 bug fixes; 3 refactoring; 1 architecture & infrastructure; 53 documentation; 22 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 12 | 11 | 1 | 0 | 10 | 1 |
 | Art & Animation | 20 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 68 | 71 | 3 | 1 | 25 | 6 |
-| Combat | 46 | 20 | 2 | 0 | 15 | 1 |
-| Documentation | 35 | 44 | 0 | 0 | 16 | 0 |
+| Build & Tooling | 70 | 71 | 3 | 1 | 25 | 6 |
+| Combat | 47 | 20 | 2 | 0 | 15 | 1 |
+| Documentation | 36 | 44 | 0 | 0 | 16 | 0 |
 | Extraction | 18 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 66 | 62 | 3 | 1 | 27 | 5 |
+| Inventory & Loot | 67 | 62 | 3 | 1 | 27 | 5 |
 | Movement | 6 | 5 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 32 | 42 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 34 | 55 | 2 | 1 | 20 | 3 |
-| Tests | 92 | 100 | 3 | 1 | 32 | 4 |
-| UI | 37 | 23 | 1 | 0 | 12 | 3 |
+| Networking & Sessions | 34 | 42 | 0 | 0 | 19 | 2 |
+| Persistence & Backend | 36 | 55 | 2 | 1 | 20 | 3 |
+| Tests | 94 | 100 | 3 | 1 | 32 | 4 |
+| UI | 39 | 23 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 24 | 0 |
 | World & Visibility | 27 | 15 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### a08d1f801acf2c35854c146649590a7da0e53168
+
+[a08d1f801acf2c35854c146649590a7da0e53168](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a08d1f801acf2c35854c146649590a7da0e53168)
+
+Date: 2026-11-20T16:59:46-03:00 · Classification: Features (explicit) · Systems: Networking & Sessions, UI, Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(commerce): add designer tooling and specialize town merchant npcs
+```
+
+#### Original body
+
+```text
+Add TownCommerceConfiguration ScriptableObject with custom inspector
+and JSON export button, configure the 3 specialized town merchants
+(General, Blacksmith, Arcanist) in Lobby-Town with matching dialogues
+and dynamic stock initialization, and render weekly rotation countdown.
+
+Authoring & Parity:
+- TownCommerceConfiguration ScriptableObject with one-click export to
+  backend commerceConfig.json.
+- Backend shopCatalog and CommerceRotationService read exported config
+  with parity fallback.
+- Added TownCommerceConfigurationTests and commerce.config.parity.test.js.
+
+Presentation & Scene:
+- Lobby-Town.unity configured with 3 specialized NPCs and unique
+  dialogue assets.
+- TownMerchantNetworkController auto-populates specialized stock using
+  MerchantSpecializationPolicy.
+- MerchantShopUI displays merchant title and weekly countdown feedback.
+
+Refs: #820, #824, #825, #826, #827
+
+Player-Added: Town now features Blacksmith and Arcanist merchants with specialized stocks alongside the General Merchant, plus a reset countdown timer in the shop.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Editor/Commerce.meta
+Project Grimhold/Assets/Editor/Commerce/TownCommerceConfigurationEditor.cs
+Project Grimhold/Assets/Editor/Commerce/TownCommerceConfigurationEditor.cs.meta
+Project Grimhold/Assets/Prefabs/TownMerchantNPC.prefab
+Project Grimhold/Assets/Prefabs/UI/MerchantShopUI.prefab
+Project Grimhold/Assets/Scenes/Lobby-Town.unity
+Project Grimhold/Assets/Scriptable Objects/Commerce.meta
+Project Grimhold/Assets/Scriptable Objects/Commerce/TownCommerceConfiguration.asset
+Project Grimhold/Assets/Scriptable Objects/Commerce/TownCommerceConfiguration.asset.meta
+Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownArcanistNpcDialogue.asset
+Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownArcanistNpcDialogue.asset.meta
+Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownBlacksmithNpcDialogue.asset
+Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownBlacksmithNpcDialogue.asset.meta
+Project Grimhold/Assets/Scripts/Commerce/TownCommerceConfiguration.cs
+Project Grimhold/Assets/Scripts/Commerce/TownCommerceConfiguration.cs.meta
+Project Grimhold/Assets/Scripts/Networking/TownMerchantNetworkController.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopUI.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUIRenderTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownCommerceConfigurationTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownCommerceConfigurationTests.cs.meta
+backend/src/config/commerceConfig.json
+backend/src/config/shopCatalog.js
+backend/src/services/CommerceRotationService.js
+backend/tests/commerce.config.parity.test.js
+odd/tasks/us-83-commerce-weekly-merchants.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scenes/Lobby-Town.unity
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownMerchantNetworkController.cs
+- message-term → Networking &amp; Sessions: Lobby
+- path → UI: Project Grimhold/Assets/Prefabs/UI/MerchantShopUI.prefab
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopUI.cs
+- path → Persistence &amp; Backend: backend/src/config/commerceConfig.json
+- path → Persistence &amp; Backend: backend/src/config/shopCatalog.js
+- path → Persistence &amp; Backend: backend/src/services/CommerceRotationService.js
+- path → Persistence &amp; Backend: backend/tests/commerce.config.parity.test.js
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/Commerce.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/Commerce/TownCommerceConfigurationEditor.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/Commerce/TownCommerceConfigurationEditor.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUIRenderTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownCommerceConfigurationTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownCommerceConfigurationTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUIRenderTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownCommerceConfigurationTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownCommerceConfigurationTests.cs.meta
+- path → Tests: backend/tests/commerce.config.parity.test.js
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 5b5770aca8879a014e09763b78068a4072938d57
+
+[5b5770aca8879a014e09763b78068a4072938d57](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/5b5770aca8879a014e09763b78068a4072938d57)
+
+Date: 2026-11-17T23:34:11-03:00 · Classification: Features (explicit) · Systems: Combat, Inventory & Loot, Networking & Sessions, UI, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(commerce): implement weekly rotation, merchants and unified cart
+```
+
+#### Original body
+
+```text
+Implement weekly catalog rotation, demand pricing (+20%), shared FIFO
+buyback ledger (16 slots), specialized town merchants, and an atomic
+mixed trade cart across backend and Unity client per Docs 22 and 23.
+
+Backend:
+- CommerceRotationService with deterministic Mulberry32 RNG seeded by
+  weekly Monday 00:00 UTC cycle.
+- InventoryService.shopTrade handles mixed purchases, sales, and buybacks
+  in a single atomic commit with ROTATION_EXPIRED validation, personal
+  stock quota enforcement, and demand pricing bonuses.
+- FIFO 16 buyback history shared between merchants and cleared on raid
+  reservation.
+- Added scripts/dev-memory-server.js (npm run dev:mem) for zero-config
+  in-memory dev testing.
+
+Unity:
+- MerchantSpecializationPolicy with General, Blacksmith, and Arcanist
+  contextual filtering for purchases and sales.
+- Updated MerchantTradePreview and MerchantTradeTicket to support
+  bidirectional cart balancing without legacy BuybackMustBeAlone block.
+- Updated MerchantShopUI and TownMerchantTradeSession with merchant title,
+  countdown to next weekly reset, and demand bonus tags.
+- Aligned 12 weapons, 24 armors, and Bone asset to Doc 23 ObjectValues
+  and buy/sell pricing parity.
+- Verified MaxTransportable=1 hoarding in stash vs raid exit block.
+
+Refs: #820, #824, #825, #826, #827
+
+Player-Added: Town merchants now offer a weekly rotating stock, demand buy bonuses, and a shared buyback ledger.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageGarb.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageGloves.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageHat.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageTrousers.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmingSword.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerArmor.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerGloves.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerHat.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerTrousers.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Bone.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON_EXPLOSIVE_BOMB.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON_SELF_REVIVE.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON_SMOKE_BOMB.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON_THROWING_DAGGER.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CompoundBow.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageGarb.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageGloves.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageHood.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageTrousers.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerGloves.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerHood.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerLeatherArmor.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerTrousers.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/GreatHammer.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorBreastplate.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorGauntlets.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorHelmet.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorLegPlate.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorChainMailArmor.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorChainMailTrousers.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorGloves.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorOpenSallet.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightCrossbow.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LongSwordLoot.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicCinquedea.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaff.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicSword.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWand.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ANCIENT_ARMOR.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ANCIENT_ROOT.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ATTUNEMENT_GEM.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BAT_FANG.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BAT_WING.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BLACK_IRON.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_CORRUPT_MARROW.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_CUSTODIAN_SEAL.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ETHER_DUST.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_ARROWHEAD.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_INSIGNIA.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_SCRAP.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOLEM_CORE.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_LOST_GRIMOIRE_PAGE.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_RUBY_GEM.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_RUNE_FRAGMENT.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SAPPHIRE_GEM.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SLIME_CORE.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SLIME_GEL.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SOUL_FRAGMENT.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SPECTRAL_ESSENCE.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_TANNED_LEATHER.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_WITHERED_BONE.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Rapier.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RondelDagger.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Spellbook.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CHALICE.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CHAOS_COIN.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_CROWN.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_FAMINE_IDOL.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_PILGRIM_LIGHT.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_SANCTUARY_HEART.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_VOID_BELL.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE_WANDERER_EYE.asset
+Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs
+Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs
+Project Grimhold/Assets/Scripts/Commerce/BuybackLedger.cs
+Project Grimhold/Assets/Scripts/Commerce/EquipmentBuybackEligibilityPolicy.cs
+Project Grimhold/Assets/Scripts/Commerce/MerchantSpecializationPolicy.cs
+Project Grimhold/Assets/Scripts/Commerce/MerchantSpecializationPolicy.cs.meta
+Project Grimhold/Assets/Scripts/Commerce/MerchantTradePreview.cs
+Project Grimhold/Assets/Scripts/Commerce/MerchantTradeTicket.cs
+Project Grimhold/Assets/Scripts/Core/StashOperationResult.cs
+Project Grimhold/Assets/Scripts/Networking/IMerchantTradeEndpoint.cs
+Project Grimhold/Assets/Scripts/Networking/MerchantTransactionResult.cs
+Project Grimhold/Assets/Scripts/Networking/TownMerchantNetworkController.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopUI.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopViewModel.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/MerchantTradeFeedback.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantTradeSession.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteShopTransactionService.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/ArmorCommerceParityTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/ArmorCommerceParityTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MaxTransportableAdmissionAndStashTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MaxTransportableAdmissionAndStashTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownMerchantTradeSessionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/MerchantTestContent.cs
+Project Grimhold/Docs/Architecture/CommerceArchitecture.md
+backend/package.json
+backend/scripts/dev-memory-server.js
+backend/src/config/shopCatalog.js
+backend/src/models/Character.js
+backend/src/routes/inventory.routes.js
+backend/src/services/CommerceRotationService.js
+backend/src/services/InventoryService.js
+backend/src/validators/inventory.validators.js
+backend/tests/commerce.cart.test.js
+backend/tests/commerce.catalog.doc23.test.js
+backend/tests/commerce.rotation.test.js
+backend/tests/inventory.buyback.test.js
+backend/tests/inventory.instances.test.js
+backend/tests/inventory.shop.test.js
+backend/tests/item.instances.parity.test.js
+backend/tests/shop.catalog.parity.test.js
+backend/tests/shop.receipt-retention.test.js
+odd/tasks/us-83-commerce-weekly-merchants.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- message-term → Combat: weapons
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageGarb.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageGloves.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageHat.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArcaneMageTrousers.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmingSword.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerArmor.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerGloves.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerHat.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ArmyRangerTrousers.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Bone.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON\_EXPLOSIVE\_BOMB.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON\_SELF\_REVIVE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON\_SMOKE\_BOMB.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CON\_THROWING\_DAGGER.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CompoundBow.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageGarb.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageGloves.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageHood.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/FireMageTrousers.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerGloves.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerHood.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerLeatherArmor.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/ForestRangerTrousers.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/GreatHammer.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorBreastplate.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorGauntlets.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorHelmet.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/HeavyArmorLegPlate.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorChainMailArmor.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorChainMailTrousers.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorGloves.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightArmorOpenSallet.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightCrossbow.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LongSwordLoot.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicCinquedea.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaff.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicSword.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWand.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_ANCIENT\_ARMOR.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_ANCIENT\_ROOT.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_ATTUNEMENT\_GEM.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_BAT\_FANG.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_BAT\_WING.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_BLACK\_IRON.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_CORRUPT\_MARROW.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_CUSTODIAN\_SEAL.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_ETHER\_DUST.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_GOBLIN\_ARROWHEAD.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_GOBLIN\_INSIGNIA.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_GOBLIN\_SCRAP.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_GOLEM\_CORE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_LOST\_GRIMOIRE\_PAGE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_RUBY\_GEM.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_RUNE\_FRAGMENT.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_SAPPHIRE\_GEM.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_SLIME\_CORE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_SLIME\_GEL.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_SOUL\_FRAGMENT.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_SPECTRAL\_ESSENCE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_TANNED\_LEATHER.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_WITHERED\_BONE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Rapier.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RondelDagger.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/Spellbook.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_CHALICE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_CHAOS\_COIN.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_CROWN.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_FAMINE\_IDOL.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_PILGRIM\_LIGHT.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_SANCTUARY\_HEART.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_VOID\_BELL.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TRE\_WANDERER\_EYE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Commerce/EquipmentBuybackEligibilityPolicy.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- path → Inventory &amp; Loot: backend/src/routes/inventory.routes.js
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- path → Inventory &amp; Loot: backend/src/validators/inventory.validators.js
+- path → Inventory &amp; Loot: backend/tests/inventory.buyback.test.js
+- path → Inventory &amp; Loot: backend/tests/inventory.instances.test.js
+- path → Inventory &amp; Loot: backend/tests/inventory.shop.test.js
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/IMerchantTradeEndpoint.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/MerchantTransactionResult.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownMerchantNetworkController.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantTradeSession.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownMerchantTradeSessionTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/MerchantTestContent.cs
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopUI.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+- path → Persistence &amp; Backend: backend/package.json
+- path → Persistence &amp; Backend: backend/scripts/dev-memory-server.js
+- path → Persistence &amp; Backend: backend/src/config/shopCatalog.js
+- path → Persistence &amp; Backend: backend/src/models/Character.js
+- path → Persistence &amp; Backend: backend/src/routes/inventory.routes.js
+- path → Persistence &amp; Backend: backend/src/services/CommerceRotationService.js
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/src/validators/inventory.validators.js
+- path → Persistence &amp; Backend: backend/tests/commerce.cart.test.js
+- path → Persistence &amp; Backend: backend/tests/commerce.catalog.doc23.test.js
+- path → Persistence &amp; Backend: backend/tests/commerce.rotation.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.buyback.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.instances.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.shop.test.js
+- path → Persistence &amp; Backend: backend/tests/item.instances.parity.test.js
+- path → Persistence &amp; Backend: backend/tests/shop.catalog.parity.test.js
+- path → Persistence &amp; Backend: backend/tests/shop.receipt-retention.test.js
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/ArmorCommerceParityTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/ArmorCommerceParityTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MaxTransportableAdmissionAndStashTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MaxTransportableAdmissionAndStashTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownMerchantTradeSessionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/MerchantTestContent.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/CommerceArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/ArmorCommerceParityTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/ArmorCommerceParityTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MaxTransportableAdmissionAndStashTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MaxTransportableAdmissionAndStashTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownMerchantTradeSessionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/WeaponCatalogTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/MerchantTestContent.cs
+- path → Tests: backend/tests/commerce.cart.test.js
+- path → Tests: backend/tests/commerce.catalog.doc23.test.js
+- path → Tests: backend/tests/commerce.rotation.test.js
+- path → Tests: backend/tests/inventory.buyback.test.js
+- path → Tests: backend/tests/inventory.instances.test.js
+- path → Tests: backend/tests/inventory.shop.test.js
+- path → Tests: backend/tests/item.instances.parity.test.js
+- path → Tests: backend/tests/shop.catalog.parity.test.js
+- path → Tests: backend/tests/shop.receipt-retention.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 7a4f8c1077506eeac4397f7f9d24748ecaa20a77
 
