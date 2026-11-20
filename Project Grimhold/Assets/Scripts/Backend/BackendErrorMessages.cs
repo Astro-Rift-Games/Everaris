@@ -20,6 +20,10 @@ namespace Grimhold.Backend
                     return "El resultado de la incursión aún se está procesando.";
                 case "RESULT_ALREADY_CONSUMED":
                     return "El resultado de esta incursión ya fue guardado.";
+                case "RAID_ALREADY_STARTED":
+                    return "La incursión ya comenzó; la reserva ya no se puede devolver.";
+                case "REFUND_WINDOW_EXPIRED":
+                    return "Ha pasado el tiempo para devolver la reserva de la incursión.";
                 case "RESERVATION_PENDING":
                     return "Ya tienes una reserva de incursión pendiente.";
                 case "PREPARED_WEAPON_REQUIRED":

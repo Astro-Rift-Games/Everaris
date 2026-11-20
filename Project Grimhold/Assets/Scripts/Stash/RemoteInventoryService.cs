@@ -417,6 +417,68 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
     }
 
     /// <summary>
+    /// Pre-start refund (FIX-95): the backend restores the admitted reservation's items and equipment
+    /// while the raid has not effectively started. A repeat after a lost response is a backend no-op, so
+    /// transient failures are retried with the same reservation id. RESERVATION_MISMATCH,
+    /// RAID_ALREADY_STARTED, REFUND_WINDOW_EXPIRED and RESULT_ALREADY_CONSUMED are never retried by the
+    /// policy; EXTRACTION_RESULT_PENDING is retryable elsewhere but final here.
+    /// </summary>
+    public Task<(bool success, BackendError error)> RefundPendingReservationAsync(string reservationId)
+    {
+        if (string.IsNullOrEmpty(AuthToken))
+        {
+            Debug.LogError($"[{nameof(RemoteInventoryService)}] RefundPendingReservationAsync: Not authenticated.");
+            return Task.FromResult((false, new BackendError { error = "UNAUTHORIZED", message = "Not authenticated" }));
+        }
+
+        return RemoteIdempotentRetryPolicy.ExecuteWithRetryAsync(async () =>
+        {
+            await _mutationLock.WaitAsync();
+            try
+            {
+                var (success, result, error) = await InventoryClient.RefundReservationAsync(_backendConfig, AuthToken, reservationId);
+                if (!success && error.error == BackendErrorUtility.Unauthorized)
+                {
+                    ApplicationAuthContext.Instance?.HandleUnauthorizedSession();
+                }
+                if (success && _store != null)
+                {
+                    _store.SetRemoteRevision(result.revision);
+                }
+                return (success, error);
+            }
+            finally
+            {
+                _mutationLock.Release();
+            }
+        }, retryRevisionConflict: true, stopOnError: "EXTRACTION_RESULT_PENDING");
+    }
+
+    /// <summary>
+    /// Start marker (FIX-95): the Host reports that the raid reached InProgress, which closes the refund
+    /// for every admitted reservation bound to it. It never changes the caller's inventory revision and
+    /// repeating it is a backend no-op, so transient failures are retried.
+    /// </summary>
+    public Task<(bool success, BackendError error)> ReportRaidStartedAsync(string raidId)
+    {
+        if (string.IsNullOrEmpty(AuthToken))
+        {
+            Debug.LogError($"[{nameof(RemoteInventoryService)}] ReportRaidStartedAsync: Not authenticated.");
+            return Task.FromResult((false, new BackendError { error = "UNAUTHORIZED", message = "Not authenticated" }));
+        }
+
+        return RemoteIdempotentRetryPolicy.ExecuteWithRetryAsync(async () =>
+        {
+            var (success, _, error) = await InventoryClient.ReportRaidStartedAsync(_backendConfig, AuthToken, raidId);
+            if (!success && error.error == BackendErrorUtility.Unauthorized)
+            {
+                ApplicationAuthContext.Instance?.HandleUnauthorizedSession();
+            }
+            return (success, error);
+        });
+    }
+
+    /// <summary>
     /// Persists the loot items from a successful raid extraction to the backend loadout.
     /// Idempotent: safe to call multiple times with the same receipt.
     /// </summary>

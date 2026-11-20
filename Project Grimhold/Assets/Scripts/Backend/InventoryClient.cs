@@ -235,6 +235,25 @@ namespace Grimhold.Backend
             return ProcessResponse<ClearPendingReservationResult>(request);
         }
 
+        /// <summary>
+        /// Pre-start refund (FIX-95): restores an admitted reservation's items and equipment while the
+        /// raid has not effectively started. No active reservation answers 200 (idempotent retry).
+        /// </summary>
+        public static Task<(bool success, ClearPendingReservationResult data, BackendError error)>
+            RefundReservationAsync(BackendConfiguration config, string token, string reservationId) =>
+            PostJson<RefundReservationRequest, ClearPendingReservationResult>(config, token,
+                $"{config.BaseUrl}/character/me/inventory/reservation/refund",
+                new RefundReservationRequest { reservationId = reservationId });
+
+        /// <summary>
+        /// Start marker (FIX-95): the Host reports that the raid reached InProgress. Repeating it is a no-op.
+        /// </summary>
+        public static Task<(bool success, RaidStartedResult data, BackendError error)>
+            ReportRaidStartedAsync(BackendConfiguration config, string token, string raidId) =>
+            PostJson<RaidStartedRequest, RaidStartedResult>(config, token,
+                $"{config.BaseUrl}/character/me/inventory/reservation/raid-started",
+                new RaidStartedRequest { raidId = raidId });
+
         // ------------------------------------------------------------------
         // Extraction loot commit
         // ------------------------------------------------------------------

@@ -19,6 +19,9 @@ public sealed class RaidLossNoticeSlot
         return true;
     }
 
+    /// <summary>Drops the pending notice when the departure turned out to carry no loss (refunded).</summary>
+    public void Discard() => _pending = null;
+
     public bool TryConsume(out RaidLossNotice notice)
     {
         notice = _pending;

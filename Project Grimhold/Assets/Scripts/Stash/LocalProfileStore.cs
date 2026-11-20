@@ -2126,6 +2126,33 @@ public sealed class LocalProfileStore : IMissionClaimService
     }
 
     /// <summary>
+    /// Returns an admitted (already confirmed) reservation to Loadout and Equipment after the backend
+    /// refunded it before the raid effectively started (FIX-95). Admission left the player owning nothing
+    /// in Town, so an active reservation or any owned Loadout/Equipment means the refund was already
+    /// applied or ownership changed since: it is rejected without writing, so a repeat cannot duplicate.
+    /// </summary>
+    public StashOperationResult TryRestoreRefundedReservation(PendingLoadoutReservation reservation)
+    {
+        if (reservation == null || string.IsNullOrWhiteSpace(reservation.ReservationId) || !IsAvailable)
+            return StashOperationResult.InvalidInventory;
+
+        var current = _repository.Snapshot;
+        if (current.PendingReservation != null || current.Loadout.Count != 0 || current.PreparedEquipment.HasAnyEquipment)
+            return StashOperationResult.InvalidInventory;
+
+        var next = current.Clone();
+        RestoreSlots(next.Loadout, reservation.Items);
+        PreparedEquipmentLoadout restored = reservation.PreparedEquipment;
+        if (!PreparedEquipmentLoadout.TryValidate(restored, _lootCatalog, requireWeapon: true, out _))
+            return StashOperationResult.PersistenceFailed;
+        if (!PreparedEquipmentLoadout.TryValidateWeaponRequirements(
+                restored, current.CharacterAttributes, _lootCatalog, out _))
+            return StashOperationResult.AttributeRequirementsNotMet;
+        next.PreparedEquipment = restored;
+        return Commit(next);
+    }
+
+    /// <summary>
     /// Commits the exact authoritative raid inventory into the persistent Loadout.
     ///
     /// A valid raid admission consumes the pending reservation and leaves the

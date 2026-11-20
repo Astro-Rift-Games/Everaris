@@ -187,6 +187,20 @@ namespace Grimhold.Backend
         public string reservationId;
     }
 
+    /// <summary>Body for POST /character/me/inventory/reservation/refund (FIX-95).</summary>
+    [Serializable]
+    public struct RefundReservationRequest
+    {
+        public string reservationId;
+    }
+
+    /// <summary>Body for POST /character/me/inventory/reservation/raid-started (FIX-95).</summary>
+    [Serializable]
+    public struct RaidStartedRequest
+    {
+        public string raidId;
+    }
+
     // ---------------------------------------------------------------------------
     // Shop operations
     // ---------------------------------------------------------------------------
@@ -307,6 +321,14 @@ namespace Grimhold.Backend
     public struct ClearPendingReservationResult
     {
         public int revision;
+    }
+
+    /// <summary>Response of raid-started: how many admitted reservations the backend marked.</summary>
+    [Serializable]
+    public struct RaidStartedResult
+    {
+        public string raidId;
+        public int    marked;
     }
 
     // ---------------------------------------------------------------------------

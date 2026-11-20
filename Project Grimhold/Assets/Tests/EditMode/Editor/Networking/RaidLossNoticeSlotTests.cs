@@ -55,4 +55,19 @@ public sealed class RaidLossNoticeSlotTests
         Assert.That(slot.Capture(null), Is.False);
         Assert.That(slot.HasPending, Is.False);
     }
+
+    [Test]
+    public void Discard_DropsThePendingNoticeAndAllowsALaterCapture()
+    {
+        // FIX-95: a refunded pre-start failure carries no loss, so its notice must not reach Town.
+        var slot = new RaidLossNoticeSlot();
+        Assert.That(slot.Capture(Notice(RaidLossNoticeReason.RaidStartFailed)), Is.True);
+
+        slot.Discard();
+
+        Assert.That(slot.HasPending, Is.False);
+        Assert.That(slot.TryConsume(out _), Is.False);
+        RaidLossNotice later = Notice(RaidLossNoticeReason.ConnectionLost, "sword");
+        Assert.That(slot.Capture(later), Is.True);
+    }
 }

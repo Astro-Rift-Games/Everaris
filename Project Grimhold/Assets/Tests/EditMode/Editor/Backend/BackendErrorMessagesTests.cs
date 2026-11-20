@@ -13,6 +13,8 @@ public sealed class BackendErrorMessagesTests
     [TestCase("PREPARED_WEAPON_REQUIRED", "Equipa un arma o pide un arma de entrenamiento al Instructor.")]
     [TestCase("LOADOUT_NOT_EMPTY", "Tu inventario debe estar vacío para recibir el botín.")]
     [TestCase("RESULT_ALREADY_CONSUMED", "El resultado de esta incursión ya fue guardado.")]
+    [TestCase("RAID_ALREADY_STARTED", "La incursión ya comenzó; la reserva ya no se puede devolver.")]
+    [TestCase("REFUND_WINDOW_EXPIRED", "Ha pasado el tiempo para devolver la reserva de la incursión.")]
     [TestCase("INVALID_HOST_SIGNATURE", "No se pudo completar la operación. Vuelve a iniciar sesión o contacta con soporte.")]
     [TestCase("FUTURE_CODE", "No se pudo completar la operación. Vuelve a iniciar sesión o contacta con soporte.")]
     [TestCase("TIMEOUT", "No se pudo conectar con el servidor. Comprueba tu conexión.")]

@@ -83,6 +83,14 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
     private string _reservationParticipationReservationId;
     private NetworkRunner _hostMigrationSourceRunner;
     private Task _participationOutcomeTask = Task.CompletedTask;
+    // FIX-95: the admitted reservation snapshot is what a pre-start refund restores locally (admission
+    // consumed the pending reservation); the admission task orders the refund and the start marker after
+    // the backend admit; the start flags separate a pre-start failure (refund) from an in-raid ending (loss).
+    private PendingLoadoutReservation _admittedReservation;
+    private Task _reservationAdmissionTask = Task.CompletedTask;
+    private bool _raidStartObserved;
+    private bool _raidStartReported;
+    private Task _raidStartedReportTask = Task.CompletedTask;
     private readonly RaidLossNoticeSlot _lossNotice = new();
     private bool _hostResultsReturnRequested;
     private bool _hostResultsReturnStarted;
@@ -626,6 +634,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
     private void Update()
     {
         ObserveTechnicalClosure();
+        ObserveRaidStart();
         ObservePendingHostResultsReturn();
         ObserveHostHandoff();
         if (_loadoutConfirmationPending)
@@ -1262,6 +1271,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             _currentRaidGenerationId = ticket.LaunchContext.RaidCode.RaidId;
             _reservationParticipationRaidId = _currentRaidGenerationId;
             _reservationParticipationReservationId = ticket.HasLoadoutReservation ? ticket.LoadoutReservation.ReservationId : null;
+            ResetRaidStartTracking();
             _currentSessionName = ticket.Request.SessionName;
             _currentRole = ticket.Request.Role;
 
@@ -1450,6 +1460,8 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             _currentRaidGenerationId = ticket.RaidGenerationId;
             _reservationParticipationRaidId = _currentRaidGenerationId;
             _reservationParticipationReservationId = string.IsNullOrEmpty(ticket.ReservationId) ? null : ticket.ReservationId;
+            // A reconnect rejoins a raid already in progress and holds no admitted snapshot: it is never refunded.
+            ResetRaidStartTracking();
             _currentSessionName = ticket.SessionName;
             _currentRole = RaidConnectionRole.Client;
             _activeReconnectTicket = null;
@@ -1845,6 +1857,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             _reservationParticipationReservationId = _activeTicket.HasValue && _activeTicket.Value.HasLoadoutReservation
                 ? _activeTicket.Value.LoadoutReservation.ReservationId
                 : ResolveRecoveryStashContext()?.Store?.PendingReservation?.ReservationId;
+            ResetRaidStartTracking();
             _currentSessionName = sessionName;
             _currentRole = role;
             TryConfirmActiveReservation();
@@ -2183,10 +2196,12 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             _activeTicket.Value.LoadoutReservation.ReservationId);
         if (result == StashOperationResult.Success)
         {
+            // Keep the confirmed reservation: only a pre-start refund can return it to the player.
+            _admittedReservation = _activeTicket.Value.LoadoutReservation.Clone();
             var remoteInventoryService = stashContext.GetComponent<RemoteInventoryService>();
             if (remoteInventoryService != null)
             {
-                _ = MarkReservationAdmittedAsync(remoteInventoryService,
+                _reservationAdmissionTask = MarkReservationAdmittedAsync(remoteInventoryService,
                     _activeTicket.Value.LoadoutReservation.ReservationId);
             }
             _loadoutConfirmationPending = false;
@@ -2194,6 +2209,92 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void ResetRaidStartTracking()
+    {
+        _admittedReservation = null;
+        _raidStartObserved = false;
+        _raidStartReported = false;
+        _raidStartedReportTask = Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Frame-driven (never predicted/resimulated) observation of the replicated match phase: every peer
+    /// latches that the raid reached InProgress, and only the State Authority reports the start marker.
+    /// </summary>
+    private void ObserveRaidStart()
+    {
+        if (State != SessionConnectionState.Raid || string.IsNullOrEmpty(_reservationParticipationRaidId) ||
+            (_raidStartObserved && _raidStartReported))
+        {
+            return;
+        }
+
+        if (TryReadRaidStart(out bool isStateAuthority, out bool started))
+        {
+            ApplyRaidStartObservation(isStateAuthority, started);
+        }
+    }
+
+    private bool TryReadRaidStart(out bool isStateAuthority, out bool started)
+    {
+        isStateAuthority = false;
+        started = false;
+        NetworkRunner runner = _raidLauncher != null ? _raidLauncher.Runner : null;
+        if (runner == null || !runner.IsRunning || !TryResolveMatchController(runner, out NetworkMatchController match))
+        {
+            return false;
+        }
+
+        isStateAuthority = runner.IsServer && match.HasStateAuthority;
+        started = RaidStartPolicy.HasEffectivelyStarted(match.Phase, match.ClosureReason);
+        return true;
+    }
+
+    private void ApplyRaidStartObservation(bool isStateAuthority, bool started)
+    {
+        if (started) _raidStartObserved = true;
+
+        // The snapshot exists only once the local confirmation ran and requested the backend admit, which
+        // the marker must follow (it only marks reservations the backend already knows as admitted).
+        bool hasAdmittedReservation = _admittedReservation != null &&
+                                      !string.IsNullOrEmpty(_reservationParticipationReservationId);
+        if (!RaidStartPolicy.ShouldReportRaidStarted(
+                isStateAuthority, _raidStartObserved, _raidStartReported, hasAdmittedReservation))
+        {
+            return;
+        }
+
+        // Decided once per raid: a failed report is logged, never retried per frame or allowed to block the raid.
+        _raidStartReported = true;
+        ApplicationStashContext context = ResolveRecoveryStashContext();
+        RemoteInventoryService service = context != null ? context.GetComponent<RemoteInventoryService>() : null;
+        if (service == null || string.IsNullOrEmpty(ApplicationAuthContext.Instance?.Token))
+        {
+            Debug.Log($"[{nameof(SessionConnectionCoordinator)}] raid-started marker skipped: no authenticated backend session.", this);
+            return;
+        }
+
+        _raidStartedReportTask = ReportRaidStartedAsync(service, _reservationParticipationRaidId, _reservationAdmissionTask);
+    }
+
+    private async Task ReportRaidStartedAsync(RemoteInventoryService service, string raidId, Task admission)
+    {
+        try
+        {
+            // The backend only marks a reservation it already knows as admitted.
+            await PreStartRefundFlow.AwaitAdmissionAsync(admission);
+            var (success, error) = await service.ReportRaidStartedAsync(raidId);
+            if (!success)
+            {
+                Debug.LogWarning($"[{nameof(SessionConnectionCoordinator)}] raid-started marker failed: {error.error} - {error.message}");
+            }
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+        }
     }
 
     private async Task MarkReservationAdmittedAsync(RemoteInventoryService service, string reservationId)
@@ -2214,6 +2315,13 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
         _reservationParticipationRaidId = null;
         string participationReservationId = _reservationParticipationReservationId;
         _reservationParticipationReservationId = null;
+        PendingLoadoutReservation admittedSnapshot = _admittedReservation;
+        _admittedReservation = null;
+        // The runner can still be alive here: a last read catches an InProgress the frame loop did not see.
+        if (!_raidStartObserved && TryReadRaidStart(out _, out bool startedNow) && startedNow)
+        {
+            _raidStartObserved = true;
+        }
         if (HasCommittedLocalExtraction(raidId)) return;
 
         ApplicationStashContext context = ResolveRecoveryStashContext();
@@ -2229,7 +2337,50 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
             (_activeTicket.HasValue && _activeTicket.Value.HasLoadoutReservation
                 ? _activeTicket.Value.LoadoutReservation.ReservationId
                 : context.Store.PendingReservation?.ReservationId);
+        // FIX-95: only a failure confirmed before the raid reached InProgress is refunded; every ending
+        // after it (defeat, abandon, in-raid disconnect, closure) keeps the loss path.
+        bool hasRefundableSnapshot = admittedSnapshot != null &&
+            string.Equals(admittedSnapshot.ReservationId, reservationId, StringComparison.Ordinal);
+        if (RaidStartPolicy.ShouldRequestPreStartRefund(hasRefundableSnapshot, _raidStartObserved))
+        {
+            RegisterParticipationOutcomeTask(RefundPreStartParticipationAsync(
+                service, context, admittedSnapshot, _reservationAdmissionTask));
+            return;
+        }
+
         RegisterParticipationOutcomeTask(ClearLostParticipationReservationAsync(service, reservationId));
+    }
+
+    private async Task RefundPreStartParticipationAsync(
+        RemoteInventoryService service,
+        ApplicationStashContext context,
+        PendingLoadoutReservation admitted,
+        Task admission)
+    {
+        string reservationId = admitted.ReservationId;
+        PreStartRefundOutcome outcome = await PreStartRefundFlow.ExecuteAsync(
+            admission,
+            () => service.RefundPendingReservationAsync(reservationId),
+            () => context.Store.TryRestoreRefundedReservation(admitted),
+            () => ClearLostParticipationReservationAsync(service, reservationId));
+        switch (outcome)
+        {
+            case PreStartRefundOutcome.Refunded:
+                _lossNotice.Discard();
+                Debug.Log($"[{nameof(SessionConnectionCoordinator)}] Pre-start failure refunded the reservation {reservationId}.");
+                break;
+            case PreStartRefundOutcome.LocalRestoreFailed:
+                // The backend already restored ownership; the next authoritative hydration repairs the local copy.
+                _lossNotice.Discard();
+                Debug.LogWarning($"[{nameof(SessionConnectionCoordinator)}] Reservation {reservationId} was refunded but the local restore failed.");
+                break;
+            case PreStartRefundOutcome.FellBackToLoss:
+                Debug.LogWarning($"[{nameof(SessionConnectionCoordinator)}] Pre-start refund rejected; the reservation {reservationId} was consumed as a loss.");
+                break;
+            default:
+                Debug.LogWarning($"[{nameof(SessionConnectionCoordinator)}] Pre-start refund did not complete; login recovery resolves reservation {reservationId}.");
+                break;
+        }
     }
 
     /// <summary>Registers an asynchronous participation outcome (defeat commit, loss clear) to be awaited before runners are destroyed.</summary>
