@@ -612,13 +612,36 @@ Bounded Player-Host extraction publishing requires (see [Extraction](ExtractionA
 | Launch (`POST /character/me/inventory/reservation`) | Created from the backend-persisted Loadout and prepared Equipment | Owned by the reservation |
 | Failure before admission (`DELETE ...?rollback=true`) | Removed | Restored |
 | Admission confirmed (`POST /character/me/inventory/reservation/admit`) | Kept, marked `admittedAt` (idempotent) | Owned by the Raid participation |
+| Pre-start failure (`POST /character/me/inventory/reservation/refund`, FIX-95) | Removed, only while `startedAt` is null and within the refund window from `admittedAt` | Restored |
+| Raid effectively started (`POST /character/me/inventory/reservation/raid-started`, FIX-95) | Kept, marked `startedAt` (idempotent) | Owned by the Raid participation; no refund |
 | Extraction commit | Consumed by `ExtractionCommitService` | Replaced by the authoritative result |
 | Any other ending (defeat, abandon, return without extraction, definitive disconnect, Absolute Closure, timeouts, Host Migration failure, crash or relogin) | Consumed by `DELETE ...` without rollback | Lost |
 
 An admitted reservation is never rolled back: rollback returns `409 RESERVATION_ADMITTED`, and a new
-launch never restores its items. No pre-start refund exists: the backend has no server-side "raid
-started" marker, so a refund window from `admittedAt` would be self-attested; it is a separate
-follow-up (FIX-53 does not implement it) and needs backend and Game Design approval. A loss clear or a replacement while an unconsumed
+launch never restores its items. The only way back for admitted items is the pre-start refund
+(FIX-95), which follows Game Design 01 §14: a cancellation before Dungeon carries no loss.
+
+- **Start marker.** When the raid reaches `InProgress`, the Host (State Authority) calls
+  `raid-started` with `{ raidId }`. The caller's own admitted reservation must be bound to that
+  `raidId` (Bounded Player-Host Authority, same rule as result publishing), else
+  `403 HOST_NOT_IN_RAID`. The backend sets `startedAt` on every admitted reservation bound to
+  `raidId` whose `startedAt` is null, and returns `{ raidId, marked }`. Retries are no-ops.
+- **Refund.** `refund` with `{ reservationId }` restores the reserved items exactly as a
+  pre-admission rollback, clears the reservation and increments the revision, atomically filtered by
+  revision, `reservationId` and `startedAt: null`. No active reservation returns `200` with
+  `pendingReservation: null` (a retry after a lost response). Rejections never write:
+  different active reservation `409 RESERVATION_MISMATCH`, `startedAt` set
+  `409 RAID_ALREADY_STARTED`, admitted longer than the window `409 REFUND_WINDOW_EXPIRED`,
+  unconsumed authoritative result `409 EXTRACTION_RESULT_PENDING`, applied extraction receipt for
+  the reservation's `raidId` `409 RESULT_ALREADY_CONSUMED`.
+- **Window.** `RESERVATION_REFUND_WINDOW_MS` (`env.reservationRefundWindowMs`, default `120000`).
+  The value is a placeholder: Game Design has not defined N.
+- **Unity.** Only a failure confirmed before the local raid reached `InProgress` requests the refund,
+  retried idempotently; on success the local store returns the reservation to Loadout/Equipment. A
+  terminal rejection falls back to the loss clear. Defeat, abandon and in-raid disconnects remain
+  losses.
+- **Limitation.** In Solo the Host is the player, so the start marker is self-attested there and the
+  window bounds the exposure. Removing it needs a dedicated server (out of scope). A loss clear or a replacement while an unconsumed
 `AuthoritativeExtractionResult` with non-empty `items` or any non-empty `preparedEquipment` slot
 targets the character returns `409 EXTRACTION_RESULT_PENDING`, so extracted loot, including
 equipment-only results, is never discarded. Empty slots are absent, null, `''`, the legacy string
