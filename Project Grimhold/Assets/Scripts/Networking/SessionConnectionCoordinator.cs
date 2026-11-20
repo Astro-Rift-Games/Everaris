@@ -1719,11 +1719,21 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
     /// <summary>
     /// Preserves the existing MainMenu raid lobby as an explicit development-only route.
     /// The coordinator still owns the runner so the single-runner invariant is maintained.
+    /// Unavailable outside the Editor and Development builds (<see cref="DevelopmentRaidRouteAvailability"/>).
     /// </summary>
     public async Task<SessionTransitionResult> StartDirectRaidForDevelopmentAsync(
         string sessionName,
         GameMode mode)
     {
+        if (!DevelopmentRaidRouteAvailability.IsAvailable)
+        {
+            Debug.LogWarning(
+                $"[{nameof(SessionConnectionCoordinator)}] Refused: the development direct raid route is " +
+                "unavailable in this build.",
+                this);
+            return SessionTransitionResult.ServiceUnavailable;
+        }
+
         if (_isQuitting)
         {
             return SessionTransitionResult.ConnectionFailed;

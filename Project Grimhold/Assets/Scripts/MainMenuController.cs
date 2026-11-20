@@ -616,6 +616,8 @@ public sealed class MainMenuController : MonoBehaviour
 
     public async void JoinRoom()
     {
+        // Development-only route: release builds expose no direct raid join.
+        if (!DevelopmentRaidRouteAvailability.IsAvailable) return;
         if (_isBusy || _modalOpen || roomCodeInput == null) return;
         if (string.IsNullOrEmpty(roomCodeInput.text))
         {
