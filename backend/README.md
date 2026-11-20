@@ -290,10 +290,12 @@ DELETE devuelve `{"pendingReservation":null,"revision":13}`; reconciliar GET par
 
 - `POST /me/inventory/reservation/raid-started` `{raidId}` marca `startedAt` en toda reserva admitida
   ligada a `raidId` y devuelve `{raidId,marked}` (idempotente; reintento `marked:0`). El llamador debe
-  tener su propia reserva admitida en ese raid, si no `403 HOST_NOT_IN_RAID`.
+  tener su propia reserva admitida en ese raid, si no `403 HOST_NOT_IN_RAID`. Una reserva que se admite
+  después del marcador (`/reservation/admit` con `raidId` ya marcado) recibe `startedAt` en la misma
+  escritura y ya no puede reembolsarse.
 - `POST /me/inventory/reservation/refund` `{reservationId}` restaura los items como un rollback, borra la
-  reserva y devuelve `{pendingReservation:null,revision}`. Sin reserva activa devuelve `200` igual
-  (reintento tras respuesta perdida). Rechazos `409` sin escritura: `RESERVATION_MISMATCH`,
+  reserva y devuelve `{pendingReservation:null,revision,refunded:true}`. Sin reserva activa devuelve `200`
+  con `refunded:false` y sin escribir (reintento tras respuesta perdida). Rechazos `409` sin escritura: `RESERVATION_MISMATCH`,
   `RAID_ALREADY_STARTED`, `REFUND_WINDOW_EXPIRED` (ver `RESERVATION_REFUND_WINDOW_MS`),
   `EXTRACTION_RESULT_PENDING`, `RESULT_ALREADY_CONSUMED`, `REVISION_CONFLICT`.
 Unified extraction devuelve HTTP 201 (replay 200): `{alreadySecured,loadout,level,experience,

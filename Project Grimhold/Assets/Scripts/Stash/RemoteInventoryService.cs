@@ -422,13 +422,16 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
     /// transient failures are retried with the same reservation id. RESERVATION_MISMATCH,
     /// RAID_ALREADY_STARTED, REFUND_WINDOW_EXPIRED and RESULT_ALREADY_CONSUMED are never retried by the
     /// policy; EXTRACTION_RESULT_PENDING is retryable elsewhere but final here.
+    /// <c>refunded</c> is true only when the backend actually restored the reservation; a successful
+    /// no-op (nothing active, for example a retry whose first attempt already refunded) reports false so
+    /// the caller never restores items locally that the backend no longer owns.
     /// </summary>
-    public Task<(bool success, BackendError error)> RefundPendingReservationAsync(string reservationId)
+    public Task<(bool success, bool refunded, BackendError error)> RefundPendingReservationAsync(string reservationId)
     {
         if (string.IsNullOrEmpty(AuthToken))
         {
             Debug.LogError($"[{nameof(RemoteInventoryService)}] RefundPendingReservationAsync: Not authenticated.");
-            return Task.FromResult((false, new BackendError { error = "UNAUTHORIZED", message = "Not authenticated" }));
+            return Task.FromResult((false, false, new BackendError { error = "UNAUTHORIZED", message = "Not authenticated" }));
         }
 
         return RemoteIdempotentRetryPolicy.ExecuteWithRetryAsync(async () =>
@@ -445,7 +448,7 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
                 {
                     _store.SetRemoteRevision(result.revision);
                 }
-                return (success, error);
+                return (success, success && result.refunded, error);
             }
             finally
             {
@@ -456,8 +459,9 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
 
     /// <summary>
     /// Start marker (FIX-95): the Host reports that the raid reached InProgress, which closes the refund
-    /// for every admitted reservation bound to it. It never changes the caller's inventory revision and
-    /// repeating it is a backend no-op, so transient failures are retried.
+    /// for every admitted reservation bound to it. It increments the revision of every marked participant
+    /// (the response carries no revision, so this client does not track that bump), and repeating it is a
+    /// backend no-op, so transient failures are retried.
     /// </summary>
     public Task<(bool success, BackendError error)> ReportRaidStartedAsync(string raidId)
     {

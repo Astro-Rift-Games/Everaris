@@ -178,6 +178,15 @@ async function assertNoPendingExtractionResult(accountId) {
   }
 }
 
+// FIX-95: the raid is started once any reservation bound to it carries the Host's start marker.
+async function isRaidMarkedStarted(raidId) {
+  if (!raidId) return false;
+  return !!(await Character.exists({
+    'inventory.pendingReservation.raidId': raidId,
+    'inventory.pendingReservation.startedAt': { $ne: null }
+  }));
+}
+
 // soldAt and the internal epoch are deliberately not exposed to clients.
 function serializeBuyback(inventory) {
   return { entries: (inventory.buyback?.entries || []).map(({ entryId, lootId, amount, unitPrice }) => ({ entryId, lootId, amount, unitPrice })) };
@@ -1000,15 +1009,29 @@ class InventoryService {
       return { pendingReservation: serializePendingReservation(reservation, inventoryVersion(character) >= 2, inventoryVersion(character)), revision: character.revision };
     }
 
-    const updated = await Character.findOneAndUpdate(
+    // FIX-95: admission after the Host's start marker inherits it, so a late teammate cannot refund.
+    const raidStarted = await isRaidMarkedStarted(reservation.raidId);
+    const admittedAt = new Date();
+    let updated = await Character.findOneAndUpdate(
       { accountId, revision: character.revision,
         'inventory.pendingReservation.reservationId': reservationId,
         'inventory.pendingReservation.admittedAt': null },
-      { $set: { 'inventory.pendingReservation.admittedAt': new Date() }, $inc: { revision: 1 } },
+      { $set: { 'inventory.pendingReservation.admittedAt': admittedAt,
+                ...(raidStarted ? { 'inventory.pendingReservation.startedAt': admittedAt } : {}) },
+        $inc: { revision: 1 } },
       { new: true }
     );
     if (!updated) {
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict during reservation admission.' };
+    }
+    // The marker may have landed between the check and the write (it only marks admitted reservations).
+    if (!raidStarted && await isRaidMarkedStarted(reservation.raidId)) {
+      updated = await Character.findOneAndUpdate(
+        { accountId, 'inventory.pendingReservation.reservationId': reservationId,
+          'inventory.pendingReservation.startedAt': null },
+        { $set: { 'inventory.pendingReservation.startedAt': new Date() }, $inc: { revision: 1 } },
+        { new: true }
+      ) || updated;
     }
     return { pendingReservation: serializePendingReservation(updated.inventory.pendingReservation, inventoryVersion(updated) >= 2, inventoryVersion(updated)), revision: updated.revision };
   }
@@ -1043,7 +1066,8 @@ class InventoryService {
    * FIX-95 pre-start refund. Restores the reserved items exactly like a pre-admission rollback and
    * clears the reservation, but only while the raid has not started and, for an admitted
    * reservation, within `env.reservationRefundWindowMs` of admission. Rejections never write.
-   * No active reservation is an idempotent no-op (retry after a lost response).
+   * No active reservation is an idempotent no-op (retry after a lost response) reporting
+   * `refunded: false`; `refunded: true` means this call actually restored the items.
    * @throws 404 if no character found; 409 RESERVATION_MISMATCH, RAID_ALREADY_STARTED,
    *         REFUND_WINDOW_EXPIRED, EXTRACTION_RESULT_PENDING, RESULT_ALREADY_CONSUMED, REVISION_CONFLICT.
    */
@@ -1055,7 +1079,7 @@ class InventoryService {
 
     requireMigratedInventory(character);
     const reservation = character.inventory.pendingReservation;
-    if (!reservation) return { pendingReservation: null, revision: character.revision };
+    if (!reservation) return { pendingReservation: null, revision: character.revision, refunded: false };
     if (reservation.reservationId !== reservationId) {
       throw { statusCode: 409, errorCode: 'RESERVATION_MISMATCH', message: 'A different reservation is active.' };
     }
@@ -1091,7 +1115,7 @@ class InventoryService {
     if (!updated) {
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict refunding reservation.' };
     }
-    return { pendingReservation: null, revision: updated.revision };
+    return { pendingReservation: null, revision: updated.revision, refunded: true };
   }
 
   /**

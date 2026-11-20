@@ -625,11 +625,16 @@ launch never restores its items. The only way back for admitted items is the pre
   `raid-started` with `{ raidId }`. The caller's own admitted reservation must be bound to that
   `raidId` (Bounded Player-Host Authority, same rule as result publishing), else
   `403 HOST_NOT_IN_RAID`. The backend sets `startedAt` on every admitted reservation bound to
-  `raidId` whose `startedAt` is null, and returns `{ raidId, marked }`. Retries are no-ops.
+  `raidId` whose `startedAt` is null, increments their revision, and returns `{ raidId, marked }`.
+  Retries are no-ops. Admission after the marker (`POST .../reservation/admit` of a reservation bound
+  to a `raidId` for which any reservation already carries `startedAt`) sets `startedAt` in the same
+  atomic write as `admittedAt`, so a teammate admitted late cannot refund; admission into a raid not
+  yet marked leaves `startedAt` null.
 - **Refund.** `refund` with `{ reservationId }` restores the reserved items exactly as a
   pre-admission rollback, clears the reservation and increments the revision, atomically filtered by
   revision, `reservationId` and `startedAt: null`. No active reservation returns `200` with
-  `pendingReservation: null` (a retry after a lost response). Rejections never write:
+  `pendingReservation: null` and `refunded: false` (a retry after a lost response, or a reservation
+  consumed elsewhere); a refund that restored the items returns `refunded: true`. Rejections never write:
   different active reservation `409 RESERVATION_MISMATCH`, `startedAt` set
   `409 RAID_ALREADY_STARTED`, admitted longer than the window `409 REFUND_WINDOW_EXPIRED`,
   unconsumed authoritative result `409 EXTRACTION_RESULT_PENDING`, applied extraction receipt for
@@ -637,8 +642,12 @@ launch never restores its items. The only way back for admitted items is the pre
 - **Window.** `RESERVATION_REFUND_WINDOW_MS` (`env.reservationRefundWindowMs`, default `120000`).
   The value is a placeholder: Game Design has not defined N.
 - **Unity.** Only a failure confirmed before the local raid reached `InProgress` requests the refund,
-  retried idempotently; on success the local store returns the reservation to Loadout/Equipment. A
-  terminal rejection falls back to the loss clear. Defeat, abandon and in-raid disconnects remain
+  retried idempotently; only `refunded: true` returns the reservation to Loadout/Equipment. A `200`
+  with `refunded: false` (for example a retry whose first attempt already refunded but whose response
+  was lost) restores nothing locally and applies no loss clear, because nothing is active on the
+  backend; it is logged as a distinct outcome and the local state is left for the next profile sync.
+  A response without the field reads as `refunded: false`. A terminal rejection falls back to the
+  loss clear. Defeat, abandon and in-raid disconnects remain
   losses.
 - **Limitation.** In Solo the Host is the player, so the start marker is self-attested there and the
   window bounds the exposure. Removing it needs a dedicated server (out of scope). A loss clear or a replacement while an unconsumed

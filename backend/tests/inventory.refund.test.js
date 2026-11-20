@@ -105,7 +105,7 @@ describe('FIX-95 pre-start refund', () => {
 
         const first = await api('post', '/reservation/refund', accountId).send({ reservationId: 'res-1' });
         assert.equal(first.status, 200, JSON.stringify(first.body));
-        assert.deepEqual(first.body, { pendingReservation: null, revision: admitted.revision + 1 });
+        assert.deepEqual(first.body, { pendingReservation: null, revision: admitted.revision + 1, refunded: true });
 
         const refunded = await snapshotOf(accountId);
         assert.deepEqual(refunded.stash, original.stash);
@@ -116,7 +116,7 @@ describe('FIX-95 pre-start refund', () => {
         // S3: retry after a lost response is a read-only no-op.
         const second = await api('post', '/reservation/refund', accountId).send({ reservationId: 'res-1' });
         assert.equal(second.status, 200);
-        assert.deepEqual(second.body, first.body);
+        assert.deepEqual(second.body, { pendingReservation: null, revision: first.body.revision, refunded: false });
         assert.deepEqual(await snapshotOf(accountId), refunded, 'no duplication and no revision change on retry');
       });
     }
@@ -130,6 +130,7 @@ describe('FIX-95 pre-start refund', () => {
       const response = await api('post', '/reservation/refund', accountId).send({ reservationId: 'res-1' });
       assert.equal(response.status, 200, JSON.stringify(response.body));
       assert.equal(response.body.pendingReservation, null);
+      assert.equal(response.body.refunded, true);
       const refunded = await snapshotOf(accountId);
       assert.deepEqual(refunded.loadout, original.loadout);
       assert.deepEqual(refunded.preparedEquipment, original.preparedEquipment);
@@ -143,12 +144,12 @@ describe('FIX-95 pre-start refund', () => {
       assert.equal(response.status, 200, JSON.stringify(response.body));
     });
 
-    test('S3: refund without an active reservation is a 200 no-op with the current revision', async () => {
+    test('S3/A4: refund without an active reservation is a 200 no-op reporting refunded: false', async () => {
       const accountId = await seed(2);
       const before = await rawOf(accountId);
       const response = await api('post', '/reservation/refund', accountId).send({ reservationId: 'res-1' });
       assert.equal(response.status, 200);
-      assert.deepEqual(response.body, { pendingReservation: null, revision: before.revision });
+      assert.deepEqual(response.body, { pendingReservation: null, revision: before.revision, refunded: false });
       assert.deepEqual(await rawOf(accountId), before);
     });
 
@@ -319,6 +320,39 @@ describe('FIX-95 pre-start refund', () => {
       await api('post', '/reservation/raid-started', host).send({ raidId: 'raid-A' });
       await assertRejectedUnchanged(host,
         () => api('post', '/reservation/refund', host).send({ reservationId: `res-${host}` }), 409, 'RAID_ALREADY_STARTED');
+    });
+
+    test('A1: an admission after the start marker is marked started at admission and cannot be refunded', async () => {
+      const host = await bound('raid-A');
+      const late = await bound('raid-A', { admitted: false });
+      assert.equal((await api('post', '/reservation/raid-started', host).send({ raidId: 'raid-A' })).status, 200);
+      assert.equal((await rawOf(late)).inventory.pendingReservation.startedAt, null, 'unadmitted is not marked');
+
+      const admit = await api('post', '/reservation/admit', late).send({ reservationId: `res-${late}` });
+      assert.equal(admit.status, 200, JSON.stringify(admit.body));
+      const admitted = await rawOf(late);
+      assert.ok(admitted.inventory.pendingReservation.admittedAt instanceof Date);
+      assert.ok(admitted.inventory.pendingReservation.startedAt instanceof Date, 'late admission inherits the start marker');
+      assert.match(admit.body.pendingReservation.startedAt, /^\d{4}-\d{2}-\d{2}T/);
+
+      await assertRejectedUnchanged(late,
+        () => api('post', '/reservation/refund', late).send({ reservationId: `res-${late}` }), 409, 'RAID_ALREADY_STARTED');
+    });
+
+    test('A1: an admission for a raid that has not started keeps startedAt null and stays refundable', async () => {
+      const host = await bound('raid-A');
+      const late = await bound('raid-A', { admitted: false });
+      const other = await bound('raid-B');
+      await api('post', '/reservation/raid-started', other).send({ raidId: 'raid-B' });
+
+      const admit = await api('post', '/reservation/admit', late).send({ reservationId: `res-${late}` });
+      assert.equal(admit.status, 200, JSON.stringify(admit.body));
+      assert.equal((await rawOf(late)).inventory.pendingReservation.startedAt, null);
+      assert.equal(admit.body.pendingReservation.startedAt, null);
+      assert.equal((await rawOf(host)).inventory.pendingReservation.startedAt, null);
+      const refund = await api('post', '/reservation/refund', late).send({ reservationId: `res-${late}` });
+      assert.equal(refund.status, 200, JSON.stringify(refund.body));
+      assert.equal(refund.body.refunded, true);
     });
 
     test('exposes startedAt on the serialized reservation', async () => {

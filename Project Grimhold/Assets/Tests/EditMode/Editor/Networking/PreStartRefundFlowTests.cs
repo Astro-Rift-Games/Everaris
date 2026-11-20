@@ -32,7 +32,7 @@ public sealed class PreStartRefundFlowTests
         var calls = new List<string>();
         PreStartRefundOutcome outcome = await PreStartRefundFlow.ExecuteAsync(
             Task.CompletedTask,
-            () => { calls.Add("refund"); return Task.FromResult((true, default(BackendError))); },
+            () => { calls.Add("refund"); return Task.FromResult((true, true, default(BackendError))); },
             () => { calls.Add("restore"); return StashOperationResult.Success; },
             () => { calls.Add("loss"); return Task.CompletedTask; });
 
@@ -46,7 +46,7 @@ public sealed class PreStartRefundFlowTests
         var calls = new List<string>();
         PreStartRefundOutcome outcome = await PreStartRefundFlow.ExecuteAsync(
             Task.CompletedTask,
-            () => { calls.Add("refund"); return Task.FromResult((false, new BackendError { error = "RAID_ALREADY_STARTED" })); },
+            () => { calls.Add("refund"); return Task.FromResult((false, false, new BackendError { error = "RAID_ALREADY_STARTED" })); },
             () => { calls.Add("restore"); return StashOperationResult.Success; },
             () => { calls.Add("loss"); return Task.CompletedTask; });
 
@@ -60,7 +60,7 @@ public sealed class PreStartRefundFlowTests
         var calls = new List<string>();
         PreStartRefundOutcome outcome = await PreStartRefundFlow.ExecuteAsync(
             Task.CompletedTask,
-            () => { calls.Add("refund"); return Task.FromResult((false, new BackendError { error = "TIMEOUT" })); },
+            () => { calls.Add("refund"); return Task.FromResult((false, false, new BackendError { error = "TIMEOUT" })); },
             () => { calls.Add("restore"); return StashOperationResult.Success; },
             () => { calls.Add("loss"); return Task.CompletedTask; });
 
@@ -69,11 +69,28 @@ public sealed class PreStartRefundFlowTests
     }
 
     [Test]
+    public async Task BackendNoOp_NeitherRestoresNorConsumes()
+    {
+        // A retry whose first attempt already succeeded answers 200 with refunded:false: the backend owns
+        // nothing for this reservation, so restoring locally would invent ownership and a loss clear
+        // would consume a reservation that is no longer active.
+        var calls = new List<string>();
+        PreStartRefundOutcome outcome = await PreStartRefundFlow.ExecuteAsync(
+            Task.CompletedTask,
+            () => { calls.Add("refund"); return Task.FromResult((true, false, default(BackendError))); },
+            () => { calls.Add("restore"); return StashOperationResult.Success; },
+            () => { calls.Add("loss"); return Task.CompletedTask; });
+
+        Assert.That(outcome, Is.EqualTo(PreStartRefundOutcome.NothingToRefund));
+        Assert.That(calls, Is.EqualTo(new[] { "refund" }));
+    }
+
+    [Test]
     public async Task LocalRestoreFailure_IsReportedAfterTheBackendRefundSucceeded()
     {
         PreStartRefundOutcome outcome = await PreStartRefundFlow.ExecuteAsync(
             Task.CompletedTask,
-            () => Task.FromResult((true, default(BackendError))),
+            () => Task.FromResult((true, true, default(BackendError))),
             () => StashOperationResult.InvalidInventory,
             () => Task.CompletedTask);
 
@@ -87,7 +104,7 @@ public sealed class PreStartRefundFlowTests
         var calls = new List<string>();
         Task<PreStartRefundOutcome> flow = PreStartRefundFlow.ExecuteAsync(
             admission.Task,
-            () => { calls.Add("refund"); return Task.FromResult((true, default(BackendError))); },
+            () => { calls.Add("refund"); return Task.FromResult((true, true, default(BackendError))); },
             () => StashOperationResult.Success,
             () => Task.CompletedTask);
 
@@ -105,7 +122,7 @@ public sealed class PreStartRefundFlowTests
         int refunds = 0;
         PreStartRefundOutcome outcome = await PreStartRefundFlow.ExecuteAsync(
             admission,
-            () => { refunds++; return Task.FromResult((true, default(BackendError))); },
+            () => { refunds++; return Task.FromResult((true, true, default(BackendError))); },
             () => StashOperationResult.Success,
             () => Task.CompletedTask);
 

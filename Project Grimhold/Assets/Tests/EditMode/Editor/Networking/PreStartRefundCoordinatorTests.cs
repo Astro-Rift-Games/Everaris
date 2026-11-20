@@ -111,7 +111,7 @@ public sealed class PreStartRefundCoordinatorTests
     [Test]
     public async Task PreStartFailure_RequestsTheRefundNotTheLossClear_AndRestoresLocalOwnership()
     {
-        Start(LoopbackBackendServer.Reply.Ok("{\"pendingReservation\":null,\"revision\":9}"));
+        Start(LoopbackBackendServer.Reply.Ok("{\"pendingReservation\":null,\"revision\":9,\"refunded\":true}"));
         Set("_admittedReservation", _admitted);
         RaidLossNoticeSlot notice = CapturePendingLossNotice();
 
@@ -130,7 +130,7 @@ public sealed class PreStartRefundCoordinatorTests
     public async Task PreStartFailure_TransientFailureIsRetriedAndOwnershipIsRestoredOnlyOnce()
     {
         Start(LoopbackBackendServer.Reply.TransportFailure(),
-            LoopbackBackendServer.Reply.Ok("{\"pendingReservation\":null,\"revision\":4}"));
+            LoopbackBackendServer.Reply.Ok("{\"pendingReservation\":null,\"revision\":4,\"refunded\":true}"));
         Set("_admittedReservation", _admitted);
 
         await EndParticipation();
@@ -142,6 +142,23 @@ public sealed class PreStartRefundCoordinatorTests
         await EndParticipation();
         Assert.That(_server.Requests, Has.Count.EqualTo(2));
         AssertLocalOwnershipRestoredOnce();
+    }
+
+    [Test]
+    public async Task PreStartFailure_BackendNoOp_DoesNotRestoreLocallyNorApplyTheLossClear()
+    {
+        // Nothing was active on the backend (for example a retry whose first attempt already refunded):
+        // the backend owns no items to give back and no reservation to consume.
+        Start(LoopbackBackendServer.Reply.Ok("{\"pendingReservation\":null,\"revision\":9,\"refunded\":false}"));
+        Set("_admittedReservation", _admitted);
+        LogAssert.Expect(LogType.Warning, new System.Text.RegularExpressions.Regex(
+            "Pre-start refund found no active reservation.*" + ReservationId));
+
+        await EndParticipation();
+
+        Assert.That(_server.Requests.Select(r => r.Method + " " + r.Path),
+            Is.EqualTo(new[] { "POST " + RefundPath }));
+        AssertLocalOwnershipStillAdmitted();
     }
 
     [Test]

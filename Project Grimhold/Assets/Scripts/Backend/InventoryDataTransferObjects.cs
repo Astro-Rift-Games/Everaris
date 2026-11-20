@@ -323,6 +323,18 @@ namespace Grimhold.Backend
         public int revision;
     }
 
+    /// <summary>
+    /// Response of the pre-start refund (FIX-95). <c>refunded</c> is true only when this call actually
+    /// restored the reservation; a no-op (nothing active) answers false, and a response without the
+    /// field reads as false so ownership is never invented.
+    /// </summary>
+    [Serializable]
+    public struct RefundReservationResult
+    {
+        public int  revision;
+        public bool refunded;
+    }
+
     /// <summary>Response of raid-started: how many admitted reservations the backend marked.</summary>
     [Serializable]
     public struct RaidStartedResult

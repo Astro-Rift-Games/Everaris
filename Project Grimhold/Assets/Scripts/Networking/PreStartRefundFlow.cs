@@ -8,6 +8,12 @@ public enum PreStartRefundOutcome
     Refunded,
     /// <summary>The backend refunded but the local store could not apply it; the next hydration repairs it.</summary>
     LocalRestoreFailed,
+    /// <summary>
+    /// The backend answered success with nothing refunded (no active reservation, for example a retry whose
+    /// first attempt already succeeded). Local ownership is left to the next profile sync: restoring would
+    /// invent items the backend no longer owns, and a loss clear has no reservation to consume.
+    /// </summary>
+    NothingToRefund,
     /// <summary>The backend rejected the refund definitively and the participation was consumed as a loss.</summary>
     FellBackToLoss,
     /// <summary>The refund did not complete (transport/transient exhaustion); the reservation is left for login recovery.</summary>
@@ -16,7 +22,7 @@ public enum PreStartRefundOutcome
 
 /// <summary>
 /// Orders the FIX-95 pre-start refund: the in-flight admission settles first, the backend refund
-/// (idempotently retried by its caller) decides, and only its success restores local ownership.
+/// (idempotently retried by its caller) decides, and only its confirmed refund restores local ownership.
 /// A definitive rejection falls back to the existing loss clear.
 /// </summary>
 public static class PreStartRefundFlow
@@ -50,12 +56,13 @@ public static class PreStartRefundFlow
 
     public static async Task<PreStartRefundOutcome> ExecuteAsync(
         Task admission,
-        Func<Task<(bool success, BackendError error)>> refund,
+        Func<Task<(bool success, bool refunded, BackendError error)>> refund,
         Func<StashOperationResult> restoreLocal,
         Func<Task> clearAsLoss)
     {
         await AwaitAdmissionAsync(admission);
-        var (success, error) = await refund();
+        var (success, refunded, error) = await refund();
+        if (success && !refunded) return PreStartRefundOutcome.NothingToRefund;
         if (success)
             return restoreLocal() == StashOperationResult.Success
                 ? PreStartRefundOutcome.Refunded

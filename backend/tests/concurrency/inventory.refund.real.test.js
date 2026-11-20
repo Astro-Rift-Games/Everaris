@@ -10,7 +10,7 @@ const InventoryService = require('../../src/services/InventoryService');
 
 const raw = accountId => mongoose.connection.collection('characters').findOne({ accountId });
 
-async function seedAdmitted(raidId = 'raid-A') {
+async function seedAdmitted(raidId = 'raid-A', { admit = true } = {}) {
   const accountId = new mongoose.Types.ObjectId();
   await mongoose.connection.collection('characters').insertOne({
     accountId, name: `Race${accountId}`, revision: 3, unlockedAbilities: [],
@@ -25,7 +25,7 @@ async function seedAdmitted(raidId = 'raid-A') {
   await InventoryService.savePendingReservation(accountId, 'res-1');
   await mongoose.connection.collection('characters').updateOne({ accountId },
     { $set: { 'inventory.pendingReservation.raidId': raidId } });
-  await InventoryService.admitPendingReservation(accountId, 'res-1');
+  if (admit) await InventoryService.admitPendingReservation(accountId, 'res-1');
   return accountId;
 }
 
@@ -66,14 +66,40 @@ test('FIX-95 refund concurrency', async t => {
     assert.deepEqual(after.inventory.stash, [{ slot: 0, lootId: 'bone', amount: 2 }]);
   });
 
+  await t.test('admission racing the start marker always ends marked started (A1)', async () => {
+    for (let round = 0; round < 8; round++) {
+      const raidId = `raid-admit-${round}`;
+      const host = await seedAdmitted(raidId);
+      const late = await seedAdmitted(raidId, { admit: false });
+
+      const [started, admitted] = await Promise.allSettled([
+        InventoryService.markRaidStarted(host, raidId),
+        InventoryService.admitPendingReservation(late, 'res-1')
+      ]);
+
+      assert.equal(started.status, 'fulfilled', `round ${round}`);
+      // A revision conflict between the two writes is a retryable rejection, not a lost marker.
+      if (admitted.status === 'rejected') {
+        assert.equal(admitted.reason.errorCode, 'REVISION_CONFLICT');
+        await InventoryService.admitPendingReservation(late, 'res-1');
+      }
+      const after = await raw(late);
+      assert.ok(after.inventory.pendingReservation.admittedAt instanceof Date, `round ${round}`);
+      assert.ok(after.inventory.pendingReservation.startedAt instanceof Date,
+        `round ${round}: a reservation admitted around the marker must not stay refundable`);
+    }
+  });
+
   await t.test('refund racing the start marker ends in exactly one outcome', async () => {
     for (let round = 0; round < 8; round++) {
-      const accountId = await seedAdmitted();
+      // One raid per round: an admission into a raid already marked started inherits the marker (A1).
+      const raidId = `raid-race-${round}`;
+      const accountId = await seedAdmitted(raidId);
       const admitted = await raw(accountId);
 
       const [refund, started] = await Promise.allSettled([
         InventoryService.refundPendingReservation(accountId, 'res-1'),
-        InventoryService.markRaidStarted(accountId, 'raid-A')
+        InventoryService.markRaidStarted(accountId, raidId)
       ]);
       const after = await raw(accountId);
 

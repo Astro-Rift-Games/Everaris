@@ -237,11 +237,11 @@ namespace Grimhold.Backend
 
         /// <summary>
         /// Pre-start refund (FIX-95): restores an admitted reservation's items and equipment while the
-        /// raid has not effectively started. No active reservation answers 200 (idempotent retry).
+        /// raid has not effectively started. No active reservation answers 200 with refunded:false (idempotent retry).
         /// </summary>
-        public static Task<(bool success, ClearPendingReservationResult data, BackendError error)>
+        public static Task<(bool success, RefundReservationResult data, BackendError error)>
             RefundReservationAsync(BackendConfiguration config, string token, string reservationId) =>
-            PostJson<RefundReservationRequest, ClearPendingReservationResult>(config, token,
+            PostJson<RefundReservationRequest, RefundReservationResult>(config, token,
                 $"{config.BaseUrl}/character/me/inventory/reservation/refund",
                 new RefundReservationRequest { reservationId = reservationId });
 

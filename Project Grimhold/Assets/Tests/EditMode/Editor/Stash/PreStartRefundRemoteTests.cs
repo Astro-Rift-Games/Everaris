@@ -28,12 +28,13 @@ public sealed class PreStartRefundRemoteTests
     public async Task Refund_PostsTheReservationIdAndAdvancesTheRevision()
     {
         using var server = new LoopbackBackendServer(
-            LoopbackBackendServer.Reply.Ok("{\"pendingReservation\":null,\"revision\":9}"));
+            LoopbackBackendServer.Reply.Ok("{\"pendingReservation\":null,\"revision\":9,\"refunded\":true}"));
         using var fixture = new RemoteServiceFixture(server.BaseUrl, _store);
 
-        var (success, error) = await fixture.Service.RefundPendingReservationAsync("reservation-a");
+        var (success, refunded, error) = await fixture.Service.RefundPendingReservationAsync("reservation-a");
 
         Assert.That(success, Is.True, error.error);
+        Assert.That(refunded, Is.True);
         Assert.That(server.Requests, Has.Count.EqualTo(1));
         Assert.That(server.Requests[0].Method, Is.EqualTo("POST"));
         Assert.That(server.Requests[0].Path, Is.EqualTo(RefundPath));
@@ -47,12 +48,13 @@ public sealed class PreStartRefundRemoteTests
     {
         using var server = new LoopbackBackendServer(
             LoopbackBackendServer.Reply.TransportFailure(),
-            LoopbackBackendServer.Reply.Ok("{\"pendingReservation\":null,\"revision\":4}"));
+            LoopbackBackendServer.Reply.Ok("{\"pendingReservation\":null,\"revision\":4,\"refunded\":true}"));
         using var fixture = new RemoteServiceFixture(server.BaseUrl, _store);
 
-        var (success, error) = await fixture.Service.RefundPendingReservationAsync("reservation-a");
+        var (success, refunded, error) = await fixture.Service.RefundPendingReservationAsync("reservation-a");
 
         Assert.That(success, Is.True, error.error);
+        Assert.That(refunded, Is.True);
         Assert.That(server.Requests, Has.Count.EqualTo(2));
         foreach (var request in server.Requests)
         {
@@ -62,6 +64,36 @@ public sealed class PreStartRefundRemoteTests
         }
         Assert.That(fixture.Delays, Has.Count.EqualTo(1));
         Assert.That(_store.RemoteRevision, Is.EqualTo(4));
+    }
+
+    [Test]
+    public async Task Refund_BackendNoOp_IsASuccessThatReportsNothingWasRefunded()
+    {
+        // The backend answers 200 with refunded:false when no reservation was active (a retry whose first
+        // attempt already refunded, or a reservation consumed elsewhere).
+        using var server = new LoopbackBackendServer(
+            LoopbackBackendServer.Reply.Ok("{\"pendingReservation\":null,\"revision\":12,\"refunded\":false}"));
+        using var fixture = new RemoteServiceFixture(server.BaseUrl, _store);
+
+        var (success, refunded, error) = await fixture.Service.RefundPendingReservationAsync("reservation-a");
+
+        Assert.That(success, Is.True, error.error);
+        Assert.That(refunded, Is.False);
+        Assert.That(server.Requests, Has.Count.EqualTo(1));
+        Assert.That(_store.RemoteRevision, Is.EqualTo(12));
+    }
+
+    [Test]
+    public async Task Refund_ResponseWithoutTheRefundedFlag_IsNotTreatedAsARefund()
+    {
+        using var server = new LoopbackBackendServer(
+            LoopbackBackendServer.Reply.Ok("{\"pendingReservation\":null,\"revision\":3}"));
+        using var fixture = new RemoteServiceFixture(server.BaseUrl, _store);
+
+        var (success, refunded, _) = await fixture.Service.RefundPendingReservationAsync("reservation-a");
+
+        Assert.That(success, Is.True);
+        Assert.That(refunded, Is.False);
     }
 
     [TestCase("RESERVATION_MISMATCH")]
@@ -75,9 +107,10 @@ public sealed class PreStartRefundRemoteTests
         using var fixture = new RemoteServiceFixture(server.BaseUrl, _store);
         int revisionBefore = _store.RemoteRevision;
 
-        var (success, error) = await fixture.Service.RefundPendingReservationAsync("reservation-a");
+        var (success, refunded, error) = await fixture.Service.RefundPendingReservationAsync("reservation-a");
 
         Assert.That(success, Is.False);
+        Assert.That(refunded, Is.False);
         Assert.That(error.error, Is.EqualTo(code));
         Assert.That(server.Requests, Has.Count.EqualTo(1));
         Assert.That(fixture.Delays, Is.Empty);

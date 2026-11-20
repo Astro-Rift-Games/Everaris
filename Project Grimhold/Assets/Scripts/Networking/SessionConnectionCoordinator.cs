@@ -2374,6 +2374,10 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
                 _lossNotice.Discard();
                 Debug.LogWarning($"[{nameof(SessionConnectionCoordinator)}] Reservation {reservationId} was refunded but the local restore failed.");
                 break;
+            case PreStartRefundOutcome.NothingToRefund:
+                // No active backend reservation: leave the local state for the next profile sync.
+                Debug.LogWarning($"[{nameof(SessionConnectionCoordinator)}] Pre-start refund found no active reservation for {reservationId}; local state is left for the next profile sync.");
+                break;
             case PreStartRefundOutcome.FellBackToLoss:
                 Debug.LogWarning($"[{nameof(SessionConnectionCoordinator)}] Pre-start refund rejected; the reservation {reservationId} was consumed as a loss.");
                 break;
