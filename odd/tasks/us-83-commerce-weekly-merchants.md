@@ -93,3 +93,29 @@
     - `MerchantTradePreviewTests`: 30/30 PASS.
     - `WeaponCatalogTests`: 13/13 PASS.
     - `RemoteShopTransactionServiceTests`: 36/36 PASS.
+- [x] S9: 3 Specialized Town Merchant NPCs in Lobby-Town Scene (Doc 23 §3)
+  - Configured 3 distinct merchant NPCs in `Project Grimhold/Assets/Scenes/Lobby-Town.unity`:
+    - **Mercader General** (`TownMerchantType.General` = 0): Posición `(0.53, 0.76, 0)`, prompt "Comerciar (Mercader General)", catálogo permanente y utilidades rotativas.
+    - **Herrero** (`TownMerchantType.Blacksmith` = 1): Posición `(-2.2, 1.5, 0)`, prompt "Comerciar (Herrero)", diálogo temático `TownBlacksmithNpcDialogue.asset`, oferta de armas físicas y armaduras.
+    - **Arcanista** (`TownMerchantType.Arcanist` = 2): Posición `(2.8, -1.8, 0)`, prompt "Comerciar (Arcanista)", diálogo temático `TownArcanistNpcDialogue.asset`, oferta de armas mágicas.
+  - Verified no collider/trigger overlap with existing town NPCs (`TownTrainerNpc`, `TownAbilityVendorNPC`, etc.).
+- [x] S10: Game Designer Unity Configuration & Commerce Parity Pipeline (Docs 22 y 23)
+  - Implemented `TownCommerceConfiguration.cs` ScriptableObject in Unity (`Grimhold/Commerce/Town Commerce Configuration`):
+    - Multipliers: Buy (2.0), Regular Sell (1.0), Demand Bonus (1.2), Buyback (1.5), FIFO capacity (16).
+    - Rotation counts: normal weapons (3), special weapons (1), armors (3), utilities (2), demand items (3).
+    - Permanent offers: Health Potion, Mana Potion, Mana Fragment.
+    - Rotating pools: Physical weapons (7), Magical weapons (5), Armors (24), Utilities with individual stock quotas (3).
+    - Special modifier probability table (Scaling E/D/C, 1 slot) with ObjectValue increments.
+    - Demand candidates pool (29 resources and treasures).
+  - Implemented `TownCommerceConfigurationEditor.cs` custom Inspector with one-click export button and menu item (`Grimhold > Commerce > Export Commerce Config to Backend`).
+  - Created authoritative ScriptableObject asset `TownCommerceConfiguration.asset` in `Assets/Scriptable Objects/Commerce/`.
+  - Configured backend (`CommerceRotationService.js` and `shopCatalog.js`) to load directly from `commerceConfig.json`.
+  - Automated parity tests: `TownCommerceConfigurationTests.cs` (Unity EditMode) and `commerce.config.parity.test.js` (Backend, PASS).
+  - UI countdown feedback: Bound `_titleText` and dedicated `_rotationCountdownText` in `MerchantShopUI.prefab` and `MerchantShopUI.cs`. Verified in `MerchantShopUIRenderTests.cs` (PASS).
+  - Dynamic Stock Binding: Connected `TownMerchantNetworkController` to `TownCommerceConfiguration` (`BuildInitialStockForMerchant`) so General Merchant (permanents + utilities), Blacksmith (physical weapons + armors) and Arcanist (magical weapons) dynamically seed their inventories from the ScriptableObject configuration instead of sharing the legacy prefab test stock.
+- [x] S11: Merchant Specialization Stock Initialization Bugfix (Herrero & Arcanista)
+  - Cause: `TownMerchantNetworkController` used a narrow `IsLegacyDefaultStock` heuristic checking for `"ArcaneMage"`. Once the prefab `_stock` was populated with General Merchant items, Blacksmith and Arcanist scene instances inherited those general items; because they contained no ArcaneMage pieces, re-initialization was skipped and `MerchantSpecializationPolicy` filtered out all non-weapon/non-armor items, leaving their shops empty.
+  - Fix: Replaced `IsLegacyDefaultStock` with authoritative `NeedsStockInitialization()`: if `_stock` is empty or contains any item disallowed by `MerchantSpecializationPolicy.IsAllowedToBuyFromMerchant(_merchantType, item)`, the controller automatically rebuilds stock from `_commerceConfig.BuildInitialStockForMerchant(_merchantType, MaxStockSlots)`.
+  - Added `PrefabUtility.IsPartOfPrefabAsset(this)` guard in `OnValidate` to prevent inadvertent mutation of prefab assets in the Project browser.
+  - Automated tests: Added `MerchantNetworkController_InitializesAppropriateStockForEveryMerchantType` in `TownCommerceConfigurationTests.cs`.
+  - Verification: Backend test suite 797/797 PASS. Parity tests PASS.

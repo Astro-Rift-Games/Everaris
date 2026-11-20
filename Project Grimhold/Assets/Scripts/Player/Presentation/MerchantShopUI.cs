@@ -225,11 +225,24 @@ public sealed class MerchantShopUI : MonoBehaviour
     {
         MerchantShopViewModel viewModel = _interaction?.ViewModel ?? MerchantShopViewModel.Unavailable;
 
-        SetText(_titleText, viewModel.Title);
+        string title = viewModel.Title;
         if (!string.IsNullOrEmpty(viewModel.RotationCountdown))
         {
-            SetText(_rotationCountdownText, $"Rotación en: {viewModel.RotationCountdown}");
+            if (_rotationCountdownText != null)
+            {
+                SetText(_rotationCountdownText, $"Rotación en: {viewModel.RotationCountdown}");
+            }
+            else
+            {
+                title = $"{title}  •  Rotación en: {viewModel.RotationCountdown}";
+            }
         }
+        else if (_rotationCountdownText != null)
+        {
+            SetText(_rotationCountdownText, string.Empty);
+        }
+
+        SetText(_titleText, title);
 
         SetText(_currencyText, viewModel.ConfirmedCurrency + Projection + viewModel.ProjectedCurrency);
         SetText(_purchaseTotalText, $"Compra: {viewModel.PurchaseTotal}");

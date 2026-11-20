@@ -10,8 +10,16 @@ const MAX_TRANSACTION_AMOUNT = 999;
 // MerchantRequestValidator: MaxSaleLines and TownMerchantNetworkController.MaxStockSlots.
 const MAX_TRADE_SALE_LINES = 30;
 const MAX_TRADE_PURCHASE_LINES = 16;
-const BUYBACK_PRICE_MULTIPLIER = 1.5;
-const BUYBACK_MAX_ENTRIES = 16;
+
+let commerceConfig = null;
+try {
+  commerceConfig = require('./commerceConfig.json');
+} catch {
+  commerceConfig = null;
+}
+
+const BUYBACK_PRICE_MULTIPLIER = commerceConfig?.multipliers?.buybackPriceMultiplier ?? 1.5;
+const BUYBACK_MAX_ENTRIES = commerceConfig?.multipliers?.maxBuybackEntries ?? 16;
 
 // Classification mirrors LootCategory 5..10, including currently unsellable equipment.
 const BUYBACK_ELIGIBLE_IDS = Object.freeze([

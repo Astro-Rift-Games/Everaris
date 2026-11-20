@@ -1,0 +1,107 @@
+{
+  "multipliers": {
+    "buyPriceMultiplier": 2,
+    "regularSellMultiplier": 1,
+    "demandSellMultiplier": 1.2,
+    "buybackPriceMultiplier": 1.5,
+    "maxBuybackEntries": 16
+  },
+  "rotationCounts": {
+    "normalWeapons": 3,
+    "specialWeapons": 1,
+    "armors": 3,
+    "utilities": 2,
+    "demandItems": 3
+  },
+  "permanentOffers": [
+    { "lootId": "CON_HEALTH_POTION", "buyPrice": 40, "unlimited": true, "stock": 999 },
+    { "lootId": "CON_MANA_POTION", "buyPrice": 40, "unlimited": true, "stock": 999 },
+    { "lootId": "CON_MANA_FRAGMENT", "buyPrice": 16, "unlimited": true, "stock": 999 }
+  ],
+  "pools": {
+    "physicalWeapons": [
+      "arming_sword",
+      "long_sword",
+      "great_hammer",
+      "rondel_dagger",
+      "compound_bow",
+      "light_crossbow",
+      "rapier"
+    ],
+    "magicalWeapons": [
+      "magic_wand",
+      "spell_book",
+      "magic_staff",
+      "magic_sword",
+      "magic_cinquedea"
+    ],
+    "armors": [
+      "heavy_armor_helmet",
+      "heavy_armor_breastplate",
+      "heavy_armor_gauntlets",
+      "heavy_armor_leg_plate",
+      "light_armor_open_sallet",
+      "light_armor_chain_mail_armor",
+      "light_armor_gloves",
+      "light_armor_chain_mail_trousers",
+      "army_ranger_hat",
+      "army_ranger_armor",
+      "army_ranger_gloves",
+      "army_ranger_trousers",
+      "forest_ranger_hood",
+      "forest_ranger_leather_armor",
+      "forest_ranger_gloves",
+      "forest_ranger_trousers",
+      "placeholder_helmet",
+      "placeholder_armor",
+      "placeholder_gloves",
+      "placeholder_boots",
+      "fire_mage_hood",
+      "fire_mage_garb",
+      "fire_mage_gloves",
+      "fire_mage_trousers"
+    ],
+    "utilities": [
+      { "lootId": "CON_LOCKPICK", "stock": 3 },
+      { "lootId": "UTL_RUNE_COMPASS", "stock": 1 },
+      { "lootId": "UTL_ARCANE_DETECTOR", "stock": 1 }
+    ],
+    "demandCandidates": [
+      "RES_SLIME_GEL",
+      "RES_SLIME_CORE",
+      "RES_WITHERED_BONE",
+      "RES_CORRUPT_MARROW",
+      "RES_ANCIENT_ARMOR",
+      "RES_GOBLIN_SCRAP",
+      "RES_GOBLIN_INSIGNIA",
+      "RES_GOBLIN_ARROWHEAD",
+      "RES_BAT_WING",
+      "RES_BAT_FANG",
+      "RES_SPECTRAL_ESSENCE",
+      "RES_SOUL_FRAGMENT",
+      "RES_GOLEM_CORE",
+      "RES_ETHER_DUST",
+      "RES_RUNE_FRAGMENT",
+      "RES_BLACK_IRON",
+      "RES_TANNED_LEATHER",
+      "RES_ANCIENT_ROOT",
+      "RES_ATTUNEMENT_GEM",
+      "RES_LOST_GRIMOIRE_PAGE",
+      "RES_CUSTODIAN_SEAL",
+      "TRE_CHALICE",
+      "TRE_CROWN",
+      "TRE_FAMINE_IDOL",
+      "TRE_WANDERER_EYE",
+      "TRE_PILGRIM_LIGHT",
+      "TRE_SANCTUARY_HEART",
+      "TRE_CHAOS_COIN",
+      "TRE_VOID_BELL"
+    ]
+  },
+  "specialModifiers": [
+    { "type": "scaling_E", "prob": 30, "increment": 20, "description": "Escalado E" },
+    { "type": "scaling_D", "prob": 25, "increment": 35, "description": "Escalado D" },
+    { "type": "scaling_C", "prob": 15, "increment": 50, "description": "Escalado C" },
+    { "type": "empty_socket", "prob": 30, "increment": 60, "description": "1 ranura vacía" }
+  ]
+}

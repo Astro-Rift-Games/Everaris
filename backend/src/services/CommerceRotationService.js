@@ -7,66 +7,111 @@ const {
   PERMANENT_BUY_CATALOG
 } = require('../config/shopCatalog');
 
-const PHYSICAL_WEAPONS = Object.freeze([
-  'arming_sword',
-  'long_sword',
-  'great_hammer',
-  'rondel_dagger',
-  'compound_bow',
-  'light_crossbow',
-  'rapier'
-]);
+let commerceConfig = null;
+try {
+  commerceConfig = require('../config/commerceConfig.json');
+} catch {
+  commerceConfig = null;
+}
 
-const MAGICAL_WEAPONS = Object.freeze([
-  'magic_wand',
-  'spell_book',
-  'magic_staff',
-  'magic_sword',
-  'magic_cinquedea'
-]);
+const PHYSICAL_WEAPONS = Object.freeze(
+  commerceConfig?.pools?.physicalWeapons || [
+    'arming_sword',
+    'long_sword',
+    'great_hammer',
+    'rondel_dagger',
+    'compound_bow',
+    'light_crossbow',
+    'rapier'
+  ]
+);
+
+const MAGICAL_WEAPONS = Object.freeze(
+  commerceConfig?.pools?.magicalWeapons || [
+    'magic_wand',
+    'spell_book',
+    'magic_staff',
+    'magic_sword',
+    'magic_cinquedea'
+  ]
+);
 
 const WEAPON_POOL = Object.freeze([...PHYSICAL_WEAPONS, ...MAGICAL_WEAPONS]);
 
-const ARMOR_POOL = Object.freeze([
-  // Heavy Armor
-  'heavy_armor_helmet', 'heavy_armor_breastplate', 'heavy_armor_gauntlets', 'heavy_armor_leg_plate',
-  // Light Armor
-  'light_armor_open_sallet', 'light_armor_chain_mail_armor', 'light_armor_gloves', 'light_armor_chain_mail_trousers',
-  // Army Ranger
-  'army_ranger_hat', 'army_ranger_armor', 'army_ranger_gloves', 'army_ranger_trousers',
-  // Forest Ranger
-  'forest_ranger_hood', 'forest_ranger_leather_armor', 'forest_ranger_gloves', 'forest_ranger_trousers',
-  // Arcane Mage
-  'placeholder_helmet', 'placeholder_armor', 'placeholder_gloves', 'placeholder_boots',
-  // Fire Mage
-  'fire_mage_hood', 'fire_mage_garb', 'fire_mage_gloves', 'fire_mage_trousers'
-]);
+const ARMOR_POOL = Object.freeze(
+  commerceConfig?.pools?.armors || [
+    // Heavy Armor
+    'heavy_armor_helmet', 'heavy_armor_breastplate', 'heavy_armor_gauntlets', 'heavy_armor_leg_plate',
+    // Light Armor
+    'light_armor_open_sallet', 'light_armor_chain_mail_armor', 'light_armor_gloves', 'light_armor_chain_mail_trousers',
+    // Army Ranger
+    'army_ranger_hat', 'army_ranger_armor', 'army_ranger_gloves', 'army_ranger_trousers',
+    // Forest Ranger
+    'forest_ranger_hood', 'forest_ranger_leather_armor', 'forest_ranger_gloves', 'forest_ranger_trousers',
+    // Arcane Mage
+    'placeholder_helmet', 'placeholder_armor', 'placeholder_gloves', 'placeholder_boots',
+    // Fire Mage
+    'fire_mage_hood', 'fire_mage_garb', 'fire_mage_gloves', 'fire_mage_trousers'
+  ]
+);
 
-const UTILITY_POOL = Object.freeze([
-  'CON_LOCKPICK',
-  'UTL_RUNE_COMPASS',
-  'UTL_ARCANE_DETECTOR'
-]);
+const UTILITY_POOL = Object.freeze(
+  commerceConfig?.pools?.utilities?.map(u => u.lootId) || [
+    'CON_LOCKPICK',
+    'UTL_RUNE_COMPASS',
+    'UTL_ARCANE_DETECTOR'
+  ]
+);
 
-const DEMAND_CANDIDATE_POOL = Object.freeze([
-  // 21 Resources
-  'RES_SLIME_GEL', 'RES_SLIME_CORE', 'RES_WITHERED_BONE', 'RES_CORRUPT_MARROW',
-  'RES_ANCIENT_ARMOR', 'RES_GOBLIN_SCRAP', 'RES_GOBLIN_INSIGNIA', 'RES_GOBLIN_ARROWHEAD',
-  'RES_BAT_WING', 'RES_BAT_FANG', 'RES_SPECTRAL_ESSENCE', 'RES_SOUL_FRAGMENT',
-  'RES_GOLEM_CORE', 'RES_ETHER_DUST', 'RES_RUNE_FRAGMENT', 'RES_BLACK_IRON',
-  'RES_TANNED_LEATHER', 'RES_ANCIENT_ROOT', 'RES_ATTUNEMENT_GEM', 'RES_LOST_GRIMOIRE_PAGE',
-  'RES_CUSTODIAN_SEAL',
-  // 8 Treasures
-  'TRE_CHALICE', 'TRE_CROWN', 'TRE_FAMINE_IDOL', 'TRE_WANDERER_EYE',
-  'TRE_PILGRIM_LIGHT', 'TRE_SANCTUARY_HEART', 'TRE_CHAOS_COIN', 'TRE_VOID_BELL'
-]);
+const UTILITY_STOCKS = Object.freeze(
+  commerceConfig?.pools?.utilities
+    ? Object.fromEntries(commerceConfig.pools.utilities.map(u => [u.lootId, u.stock]))
+    : { CON_LOCKPICK: 3, UTL_RUNE_COMPASS: 1, UTL_ARCANE_DETECTOR: 1 }
+);
 
-const SPECIAL_MODIFIERS = Object.freeze([
-  { type: 'scaling_E', prob: 30, increment: 20, description: 'Escalado E' },
-  { type: 'scaling_D', prob: 25, increment: 35, description: 'Escalado D' },
-  { type: 'scaling_C', prob: 15, increment: 50, description: 'Escalado C' },
-  { type: 'empty_socket', prob: 30, increment: 60, description: '1 ranura vacía' }
-]);
+const DEMAND_CANDIDATE_POOL = Object.freeze(
+  commerceConfig?.pools?.demandCandidates || [
+    // 21 Resources
+    'RES_SLIME_GEL', 'RES_SLIME_CORE', 'RES_WITHERED_BONE', 'RES_CORRUPT_MARROW',
+    'RES_ANCIENT_ARMOR', 'RES_GOBLIN_SCRAP', 'RES_GOBLIN_INSIGNIA', 'RES_GOBLIN_ARROWHEAD',
+    'RES_BAT_WING', 'RES_BAT_FANG', 'RES_SPECTRAL_ESSENCE', 'RES_SOUL_FRAGMENT',
+    'RES_GOLEM_CORE', 'RES_ETHER_DUST', 'RES_RUNE_FRAGMENT', 'RES_BLACK_IRON',
+    'RES_TANNED_LEATHER', 'RES_ANCIENT_ROOT', 'RES_ATTUNEMENT_GEM', 'RES_LOST_GRIMOIRE_PAGE',
+    'RES_CUSTODIAN_SEAL',
+    // 8 Treasures
+    'TRE_CHALICE', 'TRE_CROWN', 'TRE_FAMINE_IDOL', 'TRE_WANDERER_EYE',
+    'TRE_PILGRIM_LIGHT', 'TRE_SANCTUARY_HEART', 'TRE_CHAOS_COIN', 'TRE_VOID_BELL'
+  ]
+);
+
+const SPECIAL_MODIFIERS = Object.freeze(
+  commerceConfig?.specialModifiers || [
+    { type: 'scaling_E', prob: 30, increment: 20, description: 'Escalado E' },
+    { type: 'scaling_D', prob: 25, increment: 35, description: 'Escalado D' },
+    { type: 'scaling_C', prob: 15, increment: 50, description: 'Escalado C' },
+    { type: 'empty_socket', prob: 30, increment: 60, description: '1 ranura vacía' }
+  ]
+);
+
+const ROTATION_COUNTS = Object.freeze(
+  commerceConfig?.rotationCounts || {
+    normalWeapons: 3,
+    specialWeapons: 1,
+    armors: 3,
+    utilities: 2,
+    demandItems: 3
+  }
+);
+
+const MULTIPLIERS = Object.freeze(
+  commerceConfig?.multipliers || {
+    buyPriceMultiplier: 2.0,
+    regularSellMultiplier: 1.0,
+    demandSellMultiplier: 1.2,
+    buybackPriceMultiplier: 1.5,
+    maxBuybackEntries: 16
+  }
+);
 
 /**
  * Computes the weekly window (Monday 00:00 UTC to next Monday 00:00 UTC).
@@ -122,14 +167,16 @@ function shuffle(array, rand) {
 
 /**
  * Selects an initial modifier for the special weapon according to Doc 23 §5.6.
- * Probabilities: E 30%, D 25%, C 15%, 1 slot 30%.
+ * Probabilities: configured in TownCommerceConfiguration / SPECIAL_MODIFIERS.
  */
 function rollSpecialModifier(rand) {
   const roll = rand() * 100;
-  if (roll < 30) return SPECIAL_MODIFIERS[0]; // E
-  if (roll < 55) return SPECIAL_MODIFIERS[1]; // D
-  if (roll < 70) return SPECIAL_MODIFIERS[2]; // C
-  return SPECIAL_MODIFIERS[3]; // empty_socket
+  let cumulative = 0;
+  for (const mod of SPECIAL_MODIFIERS) {
+    cumulative += mod.prob;
+    if (roll < cumulative) return mod;
+  }
+  return SPECIAL_MODIFIERS[SPECIAL_MODIFIERS.length - 1];
 }
 
 /**
@@ -140,9 +187,9 @@ function getWeeklyRotation(date = new Date()) {
   const window = getWeeklyWindow(date);
   const rand = createPrng(`grimhold_week_${window.weekId}`);
 
-  // 1. 3 Normal Weapons from pool of 12
+  // 1. Normal Weapons from configured pool
   const shuffledWeapons = shuffle(WEAPON_POOL, rand);
-  const selectedNormalWeapons = shuffledWeapons.slice(0, 3).map(lootId => {
+  const selectedNormalWeapons = shuffledWeapons.slice(0, ROTATION_COUNTS.normalWeapons).map(lootId => {
     const template = EQUIPMENT_TEMPLATES[lootId];
     const objectValue = template.objectValue || template.sellValue;
     const isPhysical = PHYSICAL_WEAPONS.includes(lootId);
@@ -150,14 +197,14 @@ function getWeeklyRotation(date = new Date()) {
       lootId,
       merchant: isPhysical ? 'blacksmith' : 'arcanist',
       objectValue,
-      buyPrice: Math.ceil(objectValue * 2.0),
-      sellPrice: Math.floor(objectValue * 1.0),
+      buyPrice: Math.ceil(objectValue * MULTIPLIERS.buyPriceMultiplier),
+      sellPrice: Math.floor(objectValue * MULTIPLIERS.regularSellMultiplier),
       stock: 1
     };
   });
 
-  // 2. 1 Special Weapon from remaining 9 weapons
-  const remainingWeapons = shuffledWeapons.slice(3);
+  // 2. Special Weapon from remaining weapons
+  const remainingWeapons = shuffledWeapons.slice(ROTATION_COUNTS.normalWeapons);
   const specialWeaponId = remainingWeapons[0];
   const specialTemplate = EQUIPMENT_TEMPLATES[specialWeaponId];
   const baseObjectValue = specialTemplate.objectValue || specialTemplate.sellValue;
@@ -169,8 +216,8 @@ function getWeeklyRotation(date = new Date()) {
     merchant: isSpecialPhysical ? 'blacksmith' : 'arcanist',
     baseObjectValue,
     objectValue: specialObjectValue,
-    buyPrice: Math.ceil(specialObjectValue * 2.0),
-    sellPrice: Math.floor(specialObjectValue * 1.0),
+    buyPrice: Math.ceil(specialObjectValue * MULTIPLIERS.buyPriceMultiplier),
+    sellPrice: Math.floor(specialObjectValue * MULTIPLIERS.regularSellMultiplier),
     stock: 1,
     modifier: {
       type: modifier.type,
@@ -179,64 +226,77 @@ function getWeeklyRotation(date = new Date()) {
     }
   };
 
-  // 3. 3 Normal Armors from pool of 24 (All sold by Herrero per Doc 23 §5.4)
+  // 3. Normal Armors from configured pool (All sold by Herrero per Doc 23 §5.4)
   const shuffledArmors = shuffle(ARMOR_POOL, rand);
-  const selectedArmors = shuffledArmors.slice(0, 3).map(lootId => {
+  const selectedArmors = shuffledArmors.slice(0, ROTATION_COUNTS.armors).map(lootId => {
     const template = EQUIPMENT_TEMPLATES[lootId];
     const objectValue = template.objectValue || template.sellValue;
     return {
       lootId,
       merchant: 'blacksmith',
       objectValue,
-      buyPrice: Math.ceil(objectValue * 2.0),
-      sellPrice: Math.floor(objectValue * 1.0),
+      buyPrice: Math.ceil(objectValue * MULTIPLIERS.buyPriceMultiplier),
+      sellPrice: Math.floor(objectValue * MULTIPLIERS.regularSellMultiplier),
       stock: 1
     };
   });
 
-  // 4. 2 Utilities from pool of 3 (Sold by Mercader General per Doc 23 §5.5)
+  // 4. Utilities from configured pool (Sold by Mercader General per Doc 23 §5.5)
   const shuffledUtilities = shuffle(UTILITY_POOL, rand);
-  const selectedUtilities = shuffledUtilities.slice(0, 2).map(lootId => {
+  const selectedUtilities = shuffledUtilities.slice(0, ROTATION_COUNTS.utilities).map(lootId => {
     const sellOffer = SELL_CATALOG[lootId];
     const objectValue = sellOffer.sellValue;
-    const stock = lootId === 'CON_LOCKPICK' ? 3 : 1;
+    const stock = UTILITY_STOCKS[lootId] !== undefined ? UTILITY_STOCKS[lootId] : (lootId === 'CON_LOCKPICK' ? 3 : 1);
     return {
       lootId,
       merchant: 'general',
       objectValue,
-      buyPrice: Math.ceil(objectValue * 2.0),
-      sellPrice: Math.floor(objectValue * 1.0),
+      buyPrice: Math.ceil(objectValue * MULTIPLIERS.buyPriceMultiplier),
+      sellPrice: Math.floor(objectValue * MULTIPLIERS.regularSellMultiplier),
       stock
     };
   });
 
-  // 5. 3 Demand Items (+20% sell price) (Doc 23 §7)
+  // 5. Demand Items (Doc 23 §7)
   const shuffledDemand = shuffle(DEMAND_CANDIDATE_POOL, rand);
-  const selectedDemand = shuffledDemand.slice(0, 3).map(lootId => {
+  const selectedDemand = shuffledDemand.slice(0, ROTATION_COUNTS.demandItems).map(lootId => {
     const sellOffer = SELL_CATALOG[lootId];
     const objectValue = sellOffer.sellValue;
     return {
       lootId,
       merchant: 'general',
       objectValue,
-      regularSellPrice: Math.floor(objectValue * 1.0),
-      demandSellPrice: Math.floor(objectValue * 1.2)
+      regularSellPrice: Math.floor(objectValue * MULTIPLIERS.regularSellMultiplier),
+      demandSellPrice: Math.floor(objectValue * MULTIPLIERS.demandSellMultiplier)
     };
   });
 
   // 6. Permanent Offers (Doc 23 §5.1)
-  const permanentOffers = Object.entries(PERMANENT_BUY_CATALOG).map(([lootId, offer]) => {
-    const sellOffer = SELL_CATALOG[lootId];
-    const objectValue = sellOffer.sellValue;
-    return {
-      lootId,
-      merchant: 'general',
-      objectValue,
-      buyPrice: offer.buyPrice,
-      sellPrice: Math.floor(objectValue * 1.0),
-      stock: 'unlimited'
-    };
-  });
+  const permanentOffers = commerceConfig?.permanentOffers
+    ? commerceConfig.permanentOffers.map(p => {
+        const sellOffer = SELL_CATALOG[p.lootId] || { sellValue: Math.floor(p.buyPrice / MULTIPLIERS.buyPriceMultiplier) };
+        const objectValue = sellOffer.sellValue;
+        return {
+          lootId: p.lootId,
+          merchant: 'general',
+          objectValue,
+          buyPrice: p.buyPrice,
+          sellPrice: Math.floor(objectValue * MULTIPLIERS.regularSellMultiplier),
+          stock: p.unlimited ? 'unlimited' : p.stock
+        };
+      })
+    : Object.entries(PERMANENT_BUY_CATALOG).map(([lootId, offer]) => {
+        const sellOffer = SELL_CATALOG[lootId];
+        const objectValue = sellOffer.sellValue;
+        return {
+          lootId,
+          merchant: 'general',
+          objectValue,
+          buyPrice: offer.buyPrice,
+          sellPrice: Math.floor(objectValue * MULTIPLIERS.regularSellMultiplier),
+          stock: 'unlimited'
+        };
+      });
 
   return {
     weekId: window.weekId,
