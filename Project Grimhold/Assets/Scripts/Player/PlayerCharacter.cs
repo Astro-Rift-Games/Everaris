@@ -142,6 +142,11 @@ public sealed class PlayerCharacter : CharacterBase, IManaReceiver
     private bool _reportedInvalidRuntimeStatistics;
     private bool _reportedInvalidMitigation;
 
+    // Authority-local and non-replicated: a fresh spawn whose statistics were unresolved holds the
+    // prefab fallback Health until the first resolvable tick. Host Migration restores skip it.
+    private bool _awaitingInitialHealthStatistics;
+    private float _fallbackInitialHealth;
+
     [Networked]
     public NetworkString<_32> ProfileIdString { get; set; }
 
@@ -228,6 +233,7 @@ public sealed class PlayerCharacter : CharacterBase, IManaReceiver
         {
             VoidBellChimeTimer = TickTimer.None;
             VoidBellChimeSequence = 0;
+            BeginInitialHealthResolution();
             RaidZoneTrigger.EvaluateAllForPlayer(this);
         }
 
@@ -251,6 +257,54 @@ public sealed class PlayerCharacter : CharacterBase, IManaReceiver
         }
 
         return maxHealth;
+    }
+
+    /// <summary>
+    /// A fresh spawn that could not derive its statistics starts at the prefab fallback maximum;
+    /// remember it so the first resolvable tick can replace it with the derived maximum.
+    /// </summary>
+    private void BeginInitialHealthResolution()
+    {
+        if (TryGetRuntimeStatistics(out _))
+        {
+            return;
+        }
+
+        _awaitingInitialHealthStatistics = true;
+        _fallbackInitialHealth = Health;
+        Debug.LogWarning(
+            $"{nameof(PlayerCharacter)} spawned with the fallback maximum Health ({Health}) because runtime " +
+            "statistics were not resolvable; Health will be initialized from the derived maximum once they resolve.",
+            this);
+    }
+
+    /// <summary>
+    /// Initializes Health to the derived maximum exactly once, on the first tick statistics resolve.
+    /// Health that already changed (damage, healing) is never overwritten.
+    /// </summary>
+    private void ResolveInitialHealthFromStatistics()
+    {
+        if (!_awaitingInitialHealthStatistics)
+        {
+            return;
+        }
+
+        if (!HasStateAuthority)
+        {
+            _awaitingInitialHealthStatistics = false;
+            return;
+        }
+
+        if (Runner == null || !Runner.IsForward || !TryGetRuntimeStatistics(out _))
+        {
+            return;
+        }
+
+        _awaitingInitialHealthStatistics = false;
+        if (Mathf.Approximately(Health, _fallbackInitialHealth))
+        {
+            Health = ResolveMaximumHealth();
+        }
     }
 
     /// <summary>Gets the effective local projection without duplicating authoritative state.</summary>
@@ -302,6 +356,7 @@ public sealed class PlayerCharacter : CharacterBase, IManaReceiver
     public override void FixedUpdateNetwork()
     {
         SimulateVoidBellAuthoritativeTick();
+        ResolveInitialHealthFromStatistics();
 
         if (!HasStateAuthority || _participantLink == null ||
             !_participantLink.TryGetCharacterAttributeRevision(out int revision) ||

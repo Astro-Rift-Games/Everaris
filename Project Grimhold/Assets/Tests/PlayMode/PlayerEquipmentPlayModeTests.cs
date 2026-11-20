@@ -44,6 +44,8 @@ namespace Tests.PlayMode.Equipment
         private PlayerStaminaNetworkController _stamina;
         private NetworkRaidParticipant _participant;
         private RuntimeAttributeOverrideNetworkController _attributeOverride;
+        private NetworkObject _participantObject;
+        private NetworkObject _playerObject;
 
         private LootDefinition _meleeWeapon;
         private LootDefinition _rangedWeapon;
@@ -1048,6 +1050,80 @@ namespace Tests.PlayMode.Equipment
         }
 
         [UnityTest]
+        public IEnumerator SpawnHealth_WithConfirmedVitality_StartsAtTheDerivedMaximum()
+        {
+            // Vitality 9 derives 75 + 5 * 9 = 120; the prefab fallback (100) must never be the start value.
+            yield return StartRaidPlayer(CreateAttributes(strength: 5, vitality: 9, resistance: 7));
+
+            AssertRuntimeStatistics(120, 110, 100, 0, 0);
+            yield return WaitUntil(
+                () => Mathf.Approximately(_character.Health, 120f),
+                "Raid spawn Health did not start at the Vitality-derived maximum.");
+            yield return WaitTicks(5);
+
+            Assert.That(_character.Health, Is.EqualTo(120f));
+            Assert.That(_character.MaxHealth, Is.EqualTo(120f));
+            Assert.That(_stamina.CurrentStamina, Is.EqualTo(110f), "Stamina must start at its derived maximum.");
+        }
+
+        [UnityTest]
+        public IEnumerator SpawnHealth_WhenStatisticsResolveAfterSpawned_InitializesOnceAtTheDerivedMaximum()
+        {
+            var warnings = new List<string>();
+            Application.LogCallback capture = (message, _, type) =>
+            {
+                if (type == UnityEngine.LogType.Warning && message.Contains("fallback maximum Health"))
+                {
+                    warnings.Add(message);
+                }
+            };
+            Application.logMessageReceived += capture;
+            try
+            {
+                yield return StartRaidPlayer(CreateAttributes(strength: 5, vitality: 9), deferParticipantLink: true);
+                Assert.That(_character.TryGetRuntimeStatistics(out _), Is.False,
+                    "The fixture must start without resolvable statistics.");
+                Assert.That(_character.Health, Is.EqualTo(100f), "Unresolved statistics start with the prefab fallback.");
+
+                LinkParticipant();
+                yield return WaitUntil(
+                    () => TryGetRuntimeStatistics(out PlayerRuntimeStatistics statistics) &&
+                        statistics.MaximumHealth == 120,
+                    "Statistics never became resolvable after the participant link was set.");
+                yield return WaitUntil(
+                    () => Mathf.Approximately(_character.Health, 120f),
+                    "Health stayed at the fallback after statistics resolved.");
+
+                Assert.That(ApplyDamage(50f, DamageType.TrueDamage).IsApplied, Is.True);
+                Assert.That(_character.Health, Is.EqualTo(70f));
+                yield return WaitTicks(10);
+
+                Assert.That(_character.Health, Is.EqualTo(70f), "Health must be initialized from statistics exactly once.");
+                Assert.That(warnings, Has.Count.EqualTo(1), "The fallback spawn must warn exactly once.");
+            }
+            finally
+            {
+                Application.logMessageReceived -= capture;
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator SpawnHealth_DamageBeforeStatisticsResolve_IsNotOverwrittenByInitialization()
+        {
+            yield return StartRaidPlayer(CreateAttributes(strength: 5, vitality: 9), deferParticipantLink: true);
+            Assert.That(ApplyDamage(30f, DamageType.TrueDamage).IsApplied, Is.True);
+            Assert.That(_character.Health, Is.EqualTo(70f));
+
+            LinkParticipant();
+            yield return WaitUntil(
+                () => TryGetRuntimeStatistics(out _),
+                "Statistics never became resolvable after the participant link was set.");
+            yield return WaitTicks(10);
+
+            Assert.That(_character.Health, Is.EqualTo(70f), "Damage taken before resolution must be preserved.");
+        }
+
+        [UnityTest]
         public IEnumerator EquippedArmor_MitigatesOnlyCompatibleDamageTypes()
         {
             yield return StartRaidPlayer();
@@ -1428,7 +1504,9 @@ namespace Tests.PlayMode.Equipment
 
         // ---- fixture -------------------------------------------------------------------------
 
-        private IEnumerator StartRaidPlayer(CharacterAttributeState? admittedAttributes = null)
+        private IEnumerator StartRaidPlayer(
+            CharacterAttributeState? admittedAttributes = null,
+            bool deferParticipantLink = false)
         {
             // The player prefab logs missing dependencies for systems this fixture does not host.
             LogAssert.ignoreFailingMessages = true;
@@ -1437,9 +1515,11 @@ namespace Tests.PlayMode.Equipment
             CharacterAttributeState attributes = admittedAttributes ??
                 ProgressionBalanceDefaults.InitialCharacterAttributeState;
             NetworkObject participantObject = SpawnParticipant(attributes);
+            _participantObject = participantObject;
             _participant = participantObject.GetComponent<NetworkRaidParticipant>();
             _attributeOverride = participantObject.GetComponent<RuntimeAttributeOverrideNetworkController>();
-            NetworkObject playerObject = SpawnPlayer(participantObject);
+            NetworkObject playerObject = SpawnPlayer(deferParticipantLink ? null : participantObject);
+            _playerObject = playerObject;
             _equipment = playerObject.GetComponent<PlayerWeaponEquipmentNetworkController>();
             _receiver = playerObject.GetComponent<PlayerLootReceiver>();
             _combat = playerObject.GetComponent<PlayerCombatNetworkController>();
@@ -1568,6 +1648,10 @@ namespace Tests.PlayMode.Equipment
                         "equipment-test-generation"));
         }
 
+        private void LinkParticipant() =>
+            _playerObject.GetComponent<RaidAvatarParticipantLink>().Initialize(_participantObject);
+
+        /// <summary>A null participant spawns the avatar with no resolvable participant link.</summary>
         private NetworkObject SpawnPlayer(NetworkObject participantObject)
         {
             NetworkObject prefab = LoadPrefab(PlayerPrefabGuid);
@@ -1589,11 +1673,12 @@ namespace Tests.PlayMode.Equipment
             return prefab;
         }
 
-        private static CharacterAttributeState CreateAttributes(int strength)
+        private static CharacterAttributeState CreateAttributes(
+            int strength, int vitality = 5, int resistance = 5)
         {
             Assert.That(
                 CharacterAttributeState.TryCreate(
-                    5, 5, strength, 5, 5, 5, 0, out CharacterAttributeState attributes),
+                    vitality, resistance, strength, 5, 5, 5, 0, out CharacterAttributeState attributes),
                 Is.True);
             return attributes;
         }
