@@ -41,5 +41,11 @@ public enum StashOperationResult
     ReservationPending,
 
     /// <summary>The destination Inventory has no free slot for the item.</summary>
-    InventoryFull
+    InventoryFull,
+
+    /// <summary>
+    /// The reservation was confirmed for raid admission, so it can only be lost or consumed,
+    /// never rolled back to the Inventory and Equipment.
+    /// </summary>
+    ReservationAdmitted
 }

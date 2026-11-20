@@ -125,7 +125,7 @@ public sealed class InMemoryPlayerLoadoutService : MonoBehaviour, IPlayerLoadout
 
     public StashOperationResult TryConfirmLoadoutReservation(ProfileId profileId, string reservationId) =>
         IsProfile(profileId)
-            ? _store.TryConfirmLoadoutReservation(reservationId)
+            ? _store.TryAdmitLoadoutReservation(reservationId)
             : StashOperationResult.InvalidInventory;
 
     public StashOperationResult TryRollbackLoadoutReservation(ProfileId profileId, string reservationId) =>

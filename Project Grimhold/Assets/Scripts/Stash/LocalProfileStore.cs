@@ -60,6 +60,7 @@ public sealed class LocalProfileStore : IMissionClaimService
     public PendingExtractionCommit PendingExtractionCommit => 
         _repository.Snapshot?.PendingExtractionCommit;
     public PendingDefeatCommit PendingDefeatCommit => _repository.Snapshot?.PendingDefeatCommit;
+    public string AdmissionPendingReservationId => _repository.Snapshot?.AdmissionPendingReservationId;
     /// <summary>
     /// Remains true after the pending backend commit is acknowledged and cleared.
     /// Departure cleanup must match this participation, not a previous Raid's receipt.
@@ -2096,11 +2097,41 @@ public sealed class LocalProfileStore : IMissionClaimService
         return Commit(next);
     }
 
+    /// <summary>
+    /// Confirms the reservation for raid admission: its items leave the profile in the same
+    /// write that durably marks it as awaiting backend admission, so a crash or a failed
+    /// admission can never turn it back into a rollback candidate.
+    /// </summary>
+    public StashOperationResult TryAdmitLoadoutReservation(string reservationId)
+    {
+        var current = _repository.Snapshot;
+        if (current?.PendingReservation == null || !string.Equals(current.PendingReservation.ReservationId, reservationId, StringComparison.Ordinal))
+            return StashOperationResult.InvalidInventory;
+        var next = current.Clone();
+        next.PendingReservation = null;
+        next.AdmissionPendingReservationId = reservationId;
+        return Commit(next);
+    }
+
+    /// <summary>Clears the admission mark once the backend has proven that reservation admitted or gone.</summary>
+    public StashOperationResult TryClearReservationAdmission(string reservationId)
+    {
+        var current = _repository.Snapshot;
+        if (current == null || string.IsNullOrEmpty(reservationId) ||
+            !string.Equals(current.AdmissionPendingReservationId, reservationId, StringComparison.Ordinal))
+            return StashOperationResult.InvalidInventory;
+        var next = current.Clone();
+        next.AdmissionPendingReservationId = null;
+        return Commit(next);
+    }
+
     public StashOperationResult TryRollbackLoadoutReservation(string reservationId)
     {
         var current = _repository.Snapshot;
         if (current.PendingReservation == null || !string.Equals(current.PendingReservation.ReservationId, reservationId, StringComparison.Ordinal))
             return StashOperationResult.InvalidInventory;
+        if (string.Equals(current.AdmissionPendingReservationId, reservationId, StringComparison.Ordinal))
+            return StashOperationResult.ReservationAdmitted;
         var next = current.Clone();
         RestoreSlots(next.Loadout, next.PendingReservation.Items);
         PreparedEquipmentLoadout restoredWeapons = next.PendingReservation.PreparedEquipment;

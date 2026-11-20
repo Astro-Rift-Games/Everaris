@@ -6,7 +6,7 @@ using System.Collections.Generic;
 /// </summary>
 public sealed class LocalProfileSnapshot
 {
-    public const int CurrentSchemaVersion = 13;
+    public const int CurrentSchemaVersion = 14;
     public const int MaxLoadoutSlots = 30;
     public const int MaxAppliedExtractionReceipts = 256;
     public const int MaxAppliedShopTransactionReceipts = 256;
@@ -28,6 +28,11 @@ public sealed class LocalProfileSnapshot
     public List<StashItem> Loadout { get; } = new();
     public PreparedEquipmentLoadout PreparedEquipment { get; set; }
     public PendingLoadoutReservation PendingReservation { get; set; }
+    /// <summary>
+    /// Reservation confirmed locally for raid admission whose backend admission is not yet
+    /// proven. It must never be rolled back while this mark holds.
+    /// </summary>
+    public string AdmissionPendingReservationId { get; set; }
     public PendingExtractionCommit PendingExtractionCommit { get; set; }
     public PendingDefeatCommit PendingDefeatCommit { get; set; }
     public List<ExtractionReceipt> AppliedExtractionReceipts { get; } = new();
@@ -57,6 +62,7 @@ public sealed class LocalProfileSnapshot
             LastProgressionReceipt = LastProgressionReceipt,
             PreparedEquipment = PreparedEquipment,
             PendingReservation = PendingReservation?.Clone(),
+            AdmissionPendingReservationId = AdmissionPendingReservationId,
             PendingExtractionCommit = PendingExtractionCommit,
             PendingDefeatCommit = PendingDefeatCommit,
             ShopIdempotencyWatermark = ShopIdempotencyWatermark,

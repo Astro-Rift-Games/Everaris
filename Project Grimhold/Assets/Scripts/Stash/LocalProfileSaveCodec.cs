@@ -36,6 +36,7 @@ public static class LocalProfileSaveCodec
         public string preparedGloves;
         public string preparedBoots;
         public ReservationData pendingReservation;
+        public string admissionPendingReservationId;
         public PendingExtractionCommitData pendingExtractionCommit;
         public PendingDefeatCommitData pendingDefeatCommit;
         public ReceiptData[] appliedExtractionReceipts;
@@ -201,6 +202,7 @@ public static class LocalProfileSaveCodec
                 preparedGloves = snapshot.PendingReservation.PreparedEquipment.Gloves.Value,
                 preparedBoots = snapshot.PendingReservation.PreparedEquipment.Boots.Value
             },
+            admissionPendingReservationId = snapshot.AdmissionPendingReservationId,
             pendingExtractionCommit = snapshot.PendingExtractionCommit == null ? null : new PendingExtractionCommitData
             {
                 raidId = snapshot.PendingExtractionCommit.Receipt.RaidId,
@@ -536,6 +538,16 @@ public static class LocalProfileSaveCodec
                 data.pendingReservation.reservationId,
                 reservationItems,
                 reservedEquipment);
+        }
+
+        if (data.schemaVersion >= 14 && data.admissionPendingReservationId != null)
+        {
+            if (string.IsNullOrWhiteSpace(data.admissionPendingReservationId))
+            {
+                error = "Admission-pending reservation identity is invalid.";
+                return false;
+            }
+            candidate.AdmissionPendingReservationId = data.admissionPendingReservationId;
         }
 
         if (hasPendingExtractionData)

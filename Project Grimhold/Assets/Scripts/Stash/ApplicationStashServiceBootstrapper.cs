@@ -116,6 +116,7 @@ public static class ApplicationStashServiceBootstrapper
             _configuration.MissionCatalog,
             _configuration.AbilityCatalog,
             _configuration.StashCapacity);
+        string usedReservationId = ResolveAdmissionMarkOnLogin(store, inventoryData);
         bool? orphanRollback = null;
         string orphanReservationId = store.PendingReservation?.ReservationId;
         if (store.PendingDefeatCommit != null)
@@ -163,6 +164,10 @@ public static class ApplicationStashServiceBootstrapper
         if (orphanRollback.HasValue)
         {
             _ = ClearOrphanedReservationAsync(remoteInventoryService, orphanRollback.Value, orphanReservationId);
+        }
+        if (usedReservationId != null)
+        {
+            _ = ResolveAdmissionMarkedReservationAsync(remoteInventoryService, usedReservationId);
         }
 
         // Add ProfileReconciliationService to handle automatic retry and hydration on conflicts
@@ -625,6 +630,54 @@ public static class ApplicationStashServiceBootstrapper
         return admitted
             ? store.TryConfirmLoadoutReservation(reservationId)
             : store.TryRollbackLoadoutReservation(reservationId);
+    }
+
+    /// <summary>
+    /// FIX-56: a reservation confirmed locally for a raid whose backend admission never completed is a used
+    /// reservation, not an orphan. Hydration restored it from the backend; its items are already spent, so it
+    /// is discarded as a loss and never rolled back. Returns the reservation id whose backend admission and
+    /// loss clear still have to run, or null. A mark the backend contradicts (no reservation, another id, or
+    /// already admitted) is cleared: the backend itself is the proof. Pending commits keep their own recovery.
+    /// </summary>
+    internal static string ResolveAdmissionMarkOnLogin(LocalProfileStore store, Grimhold.Backend.InventoryData? inventoryData)
+    {
+        if (store == null || !store.IsAvailable || !inventoryData.HasValue) return null;
+        string mark = store.AdmissionPendingReservationId;
+        if (string.IsNullOrEmpty(mark)) return null;
+        if (store.PendingExtractionCommit != null || store.PendingDefeatCommit != null) return null;
+
+        Grimhold.Backend.PendingReservationData backend = inventoryData.Value.pendingReservation;
+        if (backend.reservationId != mark || !string.IsNullOrEmpty(backend.admittedAt))
+        {
+            store.TryClearReservationAdmission(mark);
+            return null;
+        }
+
+        if (store.PendingReservation?.ReservationId != mark) return null;
+        StashOperationResult discarded = TryResolveOrphanedReservation(store, admitted: true);
+        if (discarded == StashOperationResult.Success) return mark;
+        Debug.LogError($"[{nameof(ApplicationStashServiceBootstrapper)}] Used reservation could not be discarded locally: {discarded}. Backend cleanup skipped.");
+        return null;
+    }
+
+    /// <summary>
+    /// Completes a used reservation on the backend: confirm its admission, then clear it as a loss. A failed
+    /// admission rolls nothing back; the local mark stays so the next login retries.
+    /// </summary>
+    internal static async System.Threading.Tasks.Task<bool> ResolveAdmissionMarkedReservationAsync(
+        RemoteInventoryService service, string reservationId)
+    {
+        var (admitted, admitError) = await service.EnsureReservationAdmittedAsync(reservationId);
+        if (!admitted)
+        {
+            Debug.LogWarning($"[{nameof(ApplicationStashServiceBootstrapper)}] Used reservation not admitted yet: {admitError.error}. It stays marked and is not rolled back.");
+            return false;
+        }
+
+        var (cleared, clearError) = await service.ClearPendingReservationAsync(reservationId);
+        if (!cleared && clearError.error != "EXTRACTION_RESULT_PENDING")
+            Debug.LogWarning($"[{nameof(ApplicationStashServiceBootstrapper)}] Used reservation loss clear failed: {clearError.error} - {clearError.message}");
+        return cleared;
     }
 
     private static async System.Threading.Tasks.Task ClearOrphanedReservationAsync(
