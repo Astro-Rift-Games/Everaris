@@ -4,32 +4,700 @@
 
 Release: Unreleased
 
-302 original commits; 302 canonical entries.
+312 original commits; 312 canonical entries.
 
 ## Canonical classification
 
-94 features; 101 bug fixes; 3 refactoring; 1 architecture & infrastructure; 51 documentation; 22 tests; 11 maintenance; 19 other changes
+97 features; 106 bug fixes; 3 refactoring; 1 architecture & infrastructure; 53 documentation; 22 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 12 | 11 | 1 | 0 | 10 | 1 |
 | Art & Animation | 20 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 67 | 67 | 3 | 1 | 25 | 6 |
+| Build & Tooling | 68 | 71 | 3 | 1 | 25 | 6 |
 | Combat | 46 | 20 | 2 | 0 | 15 | 1 |
-| Documentation | 35 | 42 | 0 | 0 | 15 | 0 |
-| Extraction | 18 | 21 | 2 | 0 | 10 | 5 |
+| Documentation | 35 | 44 | 0 | 0 | 16 | 0 |
+| Extraction | 18 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 64 | 59 | 3 | 1 | 27 | 5 |
+| Inventory & Loot | 66 | 62 | 3 | 1 | 27 | 5 |
 | Movement | 6 | 5 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 31 | 38 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 31 | 51 | 2 | 1 | 19 | 3 |
-| Tests | 90 | 95 | 3 | 1 | 32 | 4 |
-| UI | 37 | 22 | 1 | 0 | 12 | 3 |
-| Unassigned | 0 | 1 | 0 | 0 | 23 | 0 |
-| World & Visibility | 27 | 13 | 0 | 0 | 3 | 12 |
+| Networking & Sessions | 32 | 42 | 0 | 0 | 19 | 2 |
+| Persistence & Backend | 34 | 55 | 2 | 1 | 20 | 3 |
+| Tests | 92 | 100 | 3 | 1 | 32 | 4 |
+| UI | 37 | 23 | 1 | 0 | 12 | 3 |
+| Unassigned | 0 | 1 | 0 | 0 | 24 | 0 |
+| World & Visibility | 27 | 15 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 7a4f8c1077506eeac4397f7f9d24748ecaa20a77
+
+[7a4f8c1077506eeac4397f7f9d24748ecaa20a77](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7a4f8c1077506eeac4397f7f9d24748ecaa20a77)
+
+Date: 2026-11-19T20:45:21-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Inventory & Loot, Networking & Sessions, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(stash): retry reservation admission and never roll back used ones
+```
+
+#### Original body
+
+```text
+Backend admission of a raid reservation was fire-and-forget: one failed
+admit left the reservation without admittedAt and the next login
+rolled it back, returning items already used in the Raid to the stash.
+
+- RemoteInventoryService.EnsureReservationAdmittedAsync retries the
+  idempotent admit in 4 bounded rounds (pauses 2/4/8 s) over the
+  existing 3-attempt policy. Only backend proof (admit success or
+  NO_ACTIVE_RESERVATION) clears the local mark; exhaustion or terminal
+  codes keep it. The coordinator uses it on raid admission.
+- RollbackPendingReservationAsync for the marked id returns
+  RESERVATION_ADMITTED without sending a request.
+- Login: an un-admitted backend reservation matching the mark is
+  discarded locally as a loss, re-admitted and cleared as a loss; on
+  failure nothing is rolled back and the mark stays. Marks the backend
+  contradicts are cleared. Pending extraction/defeat paths unchanged.
+No backend contract change.
+
+Tests:
+- ReservationAdmissionRetryTests (real HTTP boundary): transient
+  failures end admitted, bounded exhaustion, NO_ACTIVE_RESERVATION,
+  terminal codes, rollback guard.
+- ReservationLoginAdmissionTests: used reservation lost and re-admitted,
+  admit failure rolls nothing back, unmarked orphan still restores,
+  stale marks cleared, offline and pending extraction untouched.
+- ReservationBackendHarness shared HttpListener harness.
+
+Docs: LocalPlayerPersistenceArchitecture.md "Admission pending proof";
+ODD tracker odd/tasks/fix-56-reservation-admission-retry.md.
+
+Refs: FIX-56
+Player-Fixed: Items you took into a raid no longer reappear in your stash after a connection problem and logging back in.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationAdmissionRetryTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationAdmissionRetryTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationBackendHarness.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationBackendHarness.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationLoginAdmissionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationLoginAdmissionTests.cs.meta
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+odd/tasks/fix-56-reservation-admission-retry.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Extraction: extraction
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationBackendHarness.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationBackendHarness.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- message-term → Persistence &amp; Backend: Backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationAdmissionRetryTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationAdmissionRetryTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationBackendHarness.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationBackendHarness.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationLoginAdmissionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationLoginAdmissionTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationAdmissionRetryTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationAdmissionRetryTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationBackendHarness.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationBackendHarness.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationLoginAdmissionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationLoginAdmissionTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 4311e62d0905cd81ae2f7018ca6f4d4aea6396e0
+
+[4311e62d0905cd81ae2f7018ca6f4d4aea6396e0](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/4311e62d0905cd81ae2f7018ca6f4d4aea6396e0)
+
+Date: 2026-11-19T20:45:21-03:00 · Classification: Bug Fixes (explicit) · Systems: Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(stash): persist the admission mark of a raid-used reservation
+```
+
+#### Original body
+
+```text
+Local raid admission now discards the reservation and, in the same
+local write, records its id as AdmissionPendingReservationId. The mark
+is the local proof that the reserved items were spent in a Raid while
+the backend may still lack admittedAt, so the store refuses to roll
+that reservation back (new StashOperationResult.ReservationAdmitted).
+
+Reviewers should verify the save format change:
+- LocalProfileSnapshot.CurrentSchemaVersion 13 -> 14; the mark is
+  cloned, encoded as admissionPendingReservationId and read only for
+  schemaVersion >= 14 (older caches decode with no mark); a blank mark
+  is rejected. Older clients reject schema 14 as UnsupportedVersion.
+- IPlayerLoadoutService.TryConfirmLoadoutReservation (raid admission
+  entry) now calls LocalProfileStore.TryAdmitLoadoutReservation; the
+  store's TryConfirmLoadoutReservation used by login discard paths is
+  unchanged.
+
+Tests:
+- ReservationAdmissionMarkerTests: admit marks and persists, unknown id
+  rejected unchanged, marked rollback refused, unmarked rollback still
+  restores, exact-id clear, schema 13 decode, blank mark, future schema,
+  orphan resolver never restores a marked reservation.
+- LocalProfilePersistenceEditModeTests: current schema pin 13 -> 14.
+
+Refs: FIX-56
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Core/StashOperationResult.cs
+Project Grimhold/Assets/Scripts/Stash/IPlayerLoadoutService.cs
+Project Grimhold/Assets/Scripts/Stash/InMemoryPlayerLoadoutService.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileSnapshot.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationAdmissionMarkerTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationAdmissionMarkerTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileSnapshot.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationAdmissionMarkerTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationAdmissionMarkerTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationAdmissionMarkerTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/ReservationAdmissionMarkerTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 32e4989607cf23204562298570cbe046d46149ee
+
+[32e4989607cf23204562298570cbe046d46149ee](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/32e4989607cf23204562298570cbe046d46149ee)
+
+Date: 2026-11-20T01:05:15-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record FIX-95 verification and fix evidence
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-95-pre-start-refund.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### 7efba6d6e7172edb524db4f359810f7b04912554
+
+[7efba6d6e7172edb524db4f359810f7b04912554](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7efba6d6e7172edb524db4f359810f7b04912554)
+
+Date: 2026-11-20T01:04:43-03:00 · Classification: Bug Fixes (explicit) · Systems: Inventory & Loot, Networking & Sessions, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(persistence): keep late admissions and no-op refunds out of the pre-start refund
+```
+
+#### Original body
+
+```text
+FIX-95 verify findings: admission after the start marker inherits it; refund reports refunded so Unity restores only real refunds; marker comment corrected; verifier probes kept as tests.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs
+Project Grimhold/Assets/Scripts/Networking/PreStartRefundFlow.cs
+Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundCoordinatorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundFlowTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRemoteTests.cs
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+backend/README.md
+backend/src/services/InventoryService.js
+backend/tests/concurrency/inventory.refund.real.test.js
+backend/tests/inventory.refund.probe.test.js
+backend/tests/inventory.refund.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- path → Inventory &amp; Loot: backend/tests/concurrency/inventory.refund.real.test.js
+- path → Inventory &amp; Loot: backend/tests/inventory.refund.probe.test.js
+- path → Inventory &amp; Loot: backend/tests/inventory.refund.test.js
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/PreStartRefundFlow.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundCoordinatorTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundFlowTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Persistence &amp; Backend: backend/README.md
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/tests/concurrency/inventory.refund.real.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.refund.probe.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.refund.test.js
+- scope → Persistence &amp; Backend: persistence
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundCoordinatorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundFlowTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRemoteTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundCoordinatorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundFlowTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRemoteTests.cs
+- path → Tests: backend/tests/concurrency/inventory.refund.real.test.js
+- path → Tests: backend/tests/inventory.refund.probe.test.js
+- path → Tests: backend/tests/inventory.refund.test.js
+- message-term → Tests: tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 19b3c219f9eeeed67a1f8310d1f1bf010fd91118
+
+[19b3c219f9eeeed67a1f8310d1f1bf010fd91118](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/19b3c219f9eeeed67a1f8310d1f1bf010fd91118)
+
+Date: 2026-11-20T00:25:41-03:00 · Classification: Features (inferred) · Systems: Persistence & Backend
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+Add reservation refund window config
+```
+
+#### Original body
+
+```text
+Adds the FIX-95 reservation pre-start refund window setting to backend/.env.example with a temporary 120-second placeholder.
+```
+
+#### Changed paths
+
+```text
+backend/.env.example
+odd/tasks/fix-95-pre-start-refund.md
+```
+
+#### Classification evidence
+
+- subject-action → Features: Add reservation refund window config
+- path → Persistence &amp; Backend: backend/.env.example
+- message-term → Persistence &amp; Backend: backend
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 8668765f39c209f804b2ff5290b935a418e73cd7
+
+[8668765f39c209f804b2ff5290b935a418e73cd7](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/8668765f39c209f804b2ff5290b935a418e73cd7)
+
+Date: 2026-11-20T00:18:27-03:00 · Classification: Features (explicit) · Systems: Inventory & Loot, Networking & Sessions, Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(networking): refund the reservation when the raid fails before it starts
+```
+
+#### Original body
+
+```text
+FIX-95: Host reports raid-started at InProgress; pre-start failures request the refund and restore local ownership, falling back to the loss clear on terminal rejection.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs
+Project Grimhold/Assets/Scripts/Networking/PreStartRefundFlow.cs
+Project Grimhold/Assets/Scripts/Networking/PreStartRefundFlow.cs.meta
+Project Grimhold/Assets/Scripts/Networking/RaidLossNoticeSlot.cs
+Project Grimhold/Assets/Scripts/Networking/RaidStartPolicy.cs
+Project Grimhold/Assets/Scripts/Networking/RaidStartPolicy.cs.meta
+Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundCoordinatorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundCoordinatorTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundFlowTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundFlowTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidLossNoticeSlotTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidStartPolicyTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidStartPolicyTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRemoteTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRemoteTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRestoreTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRestoreTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/PreStartRefundFlow.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/PreStartRefundFlow.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidLossNoticeSlot.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidStartPolicy.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidStartPolicy.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundCoordinatorTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundCoordinatorTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundFlowTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundFlowTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidLossNoticeSlotTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidStartPolicyTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidStartPolicyTests.cs.meta
+- scope → Networking &amp; Sessions: networking
+- message-term → Networking &amp; Sessions: networking
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundCoordinatorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundCoordinatorTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundFlowTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundFlowTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidLossNoticeSlotTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidStartPolicyTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidStartPolicyTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRemoteTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRemoteTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRestoreTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRestoreTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundCoordinatorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundCoordinatorTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundFlowTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/PreStartRefundFlowTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidLossNoticeSlotTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidStartPolicyTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidStartPolicyTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRemoteTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRemoteTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRestoreTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PreStartRefundRestoreTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 1e1155b06dd8ba8e0f4c5f943449ca130ac16f2f
+
+[1e1155b06dd8ba8e0f4c5f943449ca130ac16f2f](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/1e1155b06dd8ba8e0f4c5f943449ca130ac16f2f)
+
+Date: 2026-11-19T23:51:02-03:00 · Classification: Features (explicit) · Systems: Inventory & Loot, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(backend): refund admitted reservations before the raid starts
+```
+
+#### Original body
+
+```text
+FIX-95: raid-started Host marker and bounded pre-start refund (RESERVATION_REFUND_WINDOW_MS placeholder).
+```
+
+#### Changed paths
+
+```text
+backend/README.md
+backend/src/config/env.js
+backend/src/models/Character.js
+backend/src/routes/inventory.routes.js
+backend/src/services/InventoryService.js
+backend/src/validators/inventory.validators.js
+backend/tests/concurrency/inventory.refund.real.test.js
+backend/tests/inventory.refund.test.js
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Inventory &amp; Loot: backend/src/routes/inventory.routes.js
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- path → Inventory &amp; Loot: backend/src/validators/inventory.validators.js
+- path → Inventory &amp; Loot: backend/tests/concurrency/inventory.refund.real.test.js
+- path → Inventory &amp; Loot: backend/tests/inventory.refund.test.js
+- path → Persistence &amp; Backend: backend/README.md
+- path → Persistence &amp; Backend: backend/src/config/env.js
+- path → Persistence &amp; Backend: backend/src/models/Character.js
+- path → Persistence &amp; Backend: backend/src/routes/inventory.routes.js
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/src/validators/inventory.validators.js
+- path → Persistence &amp; Backend: backend/tests/concurrency/inventory.refund.real.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.refund.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/concurrency/inventory.refund.real.test.js
+- path → Tests: backend/tests/inventory.refund.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 034b7a8f249e1dc8e45da8672c135bc142c356d0
+
+[034b7a8f249e1dc8e45da8672c135bc142c356d0](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/034b7a8f249e1dc8e45da8672c135bc142c356d0)
+
+Date: 2026-11-19T23:40:27-03:00 · Classification: Documentation (explicit) · Systems: Persistence & Backend, Documentation
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(persistence): define the pre-start reservation refund contract
+```
+
+#### Original body
+
+```text
+FIX-95: Host start marker and bounded refund window for admitted reservations.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+odd/tasks/fix-95-pre-start-refund.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+- scope → Persistence &amp; Backend: persistence
+- message-term → Persistence &amp; Backend: persistence
+- path → Documentation: Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 0c8675e78bfa71c48de4414a3ef8107f5e2befcb
+
+[0c8675e78bfa71c48de4414a3ef8107f5e2befcb](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0c8675e78bfa71c48de4414a3ef8107f5e2befcb)
+
+Date: 2026-11-19T21:33:46-03:00 · Classification: Bug Fixes (explicit) · Systems: Networking & Sessions, UI, World & Visibility, Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(networking): keep the direct raid route out of release builds
+```
+
+#### Original body
+
+```text
+MainMenuController.JoinRoom called
+SessionConnectionCoordinator.StartDirectRaidForDevelopmentAsync with
+no build guard; only the hidden UI kept players away from a real
+reservation and raid launch.
+
+DevelopmentRaidRouteAvailability is the single gate: available only
+under UNITY_EDITOR || DEVELOPMENT_BUILD and a constant false otherwise,
+mirroring DevelopmentProfileIdentity. The coordinator refuses first,
+before any state, reservation or launcher access, and returns
+ServiceUnavailable; JoinRoom returns silently. The
+DirectRaidDevelopmentStarter context menu reaches the same guard. The
+test override is compiled only in Editor and Development builds.
+
+Tests: DevelopmentRaidRouteAvailabilityTests (release refusal without
+side effects, refusal precedes other validation, starter and MainMenu
+paths, development behavior preserved).
+
+The ODD tracker records FIX-61 evidence: no default-weapon fallback
+remains in the backend, the live spawn-safety rule (doc 10 §4) needs
+no change, and the v2 backend accepts a non-weapon as the prepared
+weapon (follow-up, out of scope).
+
+Refs: FIX-61
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/MainMenuController.cs
+Project Grimhold/Assets/Scripts/Networking/DevelopmentRaidRouteAvailability.cs
+Project Grimhold/Assets/Scripts/Networking/DevelopmentRaidRouteAvailability.cs.meta
+Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DevelopmentRaidRouteAvailabilityTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DevelopmentRaidRouteAvailabilityTests.cs.meta
+odd/tasks/fix-61-dungeon-entry-checks.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/DevelopmentRaidRouteAvailability.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/DevelopmentRaidRouteAvailability.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DevelopmentRaidRouteAvailabilityTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DevelopmentRaidRouteAvailabilityTests.cs.meta
+- scope → Networking &amp; Sessions: networking
+- message-term → Networking &amp; Sessions: networking
+- path → UI: Project Grimhold/Assets/Scripts/MainMenuController.cs
+- message-term → UI: menu
+- path → World &amp; Visibility: odd/tasks/fix-61-dungeon-entry-checks.md
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DevelopmentRaidRouteAvailabilityTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DevelopmentRaidRouteAvailabilityTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DevelopmentRaidRouteAvailabilityTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DevelopmentRaidRouteAvailabilityTests.cs.meta
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### d320a1d9d3267a9116927d20aadeab3a25b229d7
+
+[d320a1d9d3267a9116927d20aadeab3a25b229d7](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/d320a1d9d3267a9116927d20aadeab3a25b229d7)
+
+Date: 2026-11-19T21:33:46-03:00 · Classification: Bug Fixes (explicit) · Systems: Inventory & Loot, Networking & Sessions, World & Visibility, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(player): start the raid with the health derived from vitality
+```
+
+#### Original body
+
+```text
+A fresh raid spawn whose runtime statistics were not resolvable yet in
+Spawned latched the prefab fallback Health (100) and never corrected
+it upward, so a profile with vitality other than 5 could enter the
+Dungeon with the wrong health. The default derived maximum
+(75 + 5 * vitality) equals 100 and hid it.
+
+PlayerCharacter now records the fallback on fresh state-authority
+spawns (never on Host Migration restores) and, on the first forward
+tick its statistics resolve, initializes Health to the derived maximum
+exactly once, only if Health still equals the fallback. It logs one
+warning when the fallback was used. The flag is authority-local: no
+[Networked] words added. Mana and stamina already self-initialize.
+
+Tests (PlayerEquipmentPlayModeTests):
+- SpawnHealth_WithConfirmedVitality_StartsAtTheDerivedMaximum
+- SpawnHealth_WhenStatisticsResolveAfterSpawned_InitializesOnceAtTheDerivedMaximum
+- SpawnHealth_DamageBeforeStatisticsResolve_IsNotOverwrittenByInitialization
+- Harness: StartRaidPlayer deferParticipantLink, CreateAttributes
+  vitality/resistance.
+
+Refs: FIX-61
+Player-Fixed: Characters with extra Vitality now start a raid with their full, correct health.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/PlayerCharacter.cs
+Project Grimhold/Assets/Tests/PlayMode/PlayerEquipmentPlayModeTests.cs
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/PlayMode/PlayerEquipmentPlayModeTests.cs
+- message-term → Networking &amp; Sessions: Host Migration
+- message-term → World &amp; Visibility: Dungeon
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/PlayerEquipmentPlayModeTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 8b809685b09b6de62b086f6eebcc2f7839acf882
 

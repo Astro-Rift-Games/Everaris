@@ -126,6 +126,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - After dying, abandoning or losing connection in a raid, your training weapon is no longer shown among the lost items.
 - Sound effects now follow the master and effects volume sliders.
 - Town music no longer keeps playing on the loading screen and in the raid.
+- Characters with extra Vitality now start a raid with their full, correct health.
+- Items you took into a raid no longer reappear in your stash after a connection problem and logging back in.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08
