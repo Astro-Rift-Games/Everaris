@@ -95,5 +95,8 @@ module.exports = {
   trustProxy,
   rateLimitWindowMs: parseInt(process.env.AUTH_RATE_LIMIT_WINDOW_MS || '900000', 10),
   rateLimitIpMax: parseInt(process.env.AUTH_RATE_LIMIT_IP_MAX || '30', 10),
+  // FIX-95: PLACEHOLDER. Game Design has not defined the pre-start refund window N (01 §14);
+  // edit RESERVATION_REFUND_WINDOW_MS (or this default) once it does.
+  reservationRefundWindowMs: parseInt(process.env.RESERVATION_REFUND_WINDOW_MS || '120000', 10),
   rateLimitUserMax: parseInt(process.env.AUTH_RATE_LIMIT_USER_MAX || '5', 10),
 };

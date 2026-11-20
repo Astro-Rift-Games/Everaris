@@ -37,6 +37,8 @@ const pendingReservationSchema = new mongoose.Schema({
   reservationId:     { type: String, required: true },
   raidId:            { type: String, default: null },
   admittedAt:        { type: Date, default: null },
+  // FIX-95: set by the Host when the raid effectively starts; once set, the pre-start refund is closed.
+  startedAt:         { type: Date, default: null },
   items:             { type: [itemSchema], default: [] },
   preparedEquipment: { type: preparedEquipmentSchema, default: () => ({}) },
   preparedAbilities: { type: preparedAbilitiesSchema, default: () => ({}) }

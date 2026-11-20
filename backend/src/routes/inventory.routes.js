@@ -19,6 +19,8 @@ const {
   trainingWeaponValidator,
   pendingReservationValidator,
   admitReservationValidator,
+  refundReservationValidator,
+  raidStartedValidator,
   commitExtractionValidator,
   shopSellValidator,
   shopTradeValidator,
@@ -225,6 +227,32 @@ router.post('/me/inventory/reservation/admit', inventoryProtocol, admitReservati
   try {
     const result = await InventoryService.admitPendingReservation(req.accountId, req.body.reservationId);
     res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /character/me/inventory/reservation/raid-started  (FIX-95)
+// Body: { raidId: string }. The Host reports that the raid effectively started; every admitted
+// reservation bound to the raid gets startedAt, which closes its pre-start refund. Idempotent.
+// Returns { raidId, marked }. Caller not admitted in the raid: 403 HOST_NOT_IN_RAID.
+router.post('/me/inventory/reservation/raid-started', inventoryProtocol, raidStartedValidator, async (req, res, next) => {
+  try {
+    res.json(await InventoryService.markRaidStarted(req.accountId, req.body.raidId));
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /character/me/inventory/reservation/refund  (FIX-95)
+// Body: { reservationId: string }. Restores reserved items and clears the reservation when raid
+// entry failed before the raid started and within the refund window. Returns
+// { pendingReservation: null, revision }; no active reservation is a 200 no-op (idempotent retry).
+// 409: RESERVATION_MISMATCH, RAID_ALREADY_STARTED, REFUND_WINDOW_EXPIRED,
+// EXTRACTION_RESULT_PENDING, RESULT_ALREADY_CONSUMED, REVISION_CONFLICT.
+router.post('/me/inventory/reservation/refund', inventoryProtocol, refundReservationValidator, async (req, res, next) => {
+  try {
+    res.json(await InventoryService.refundPendingReservation(req.accountId, req.body.reservationId));
   } catch (err) {
     next(err);
   }

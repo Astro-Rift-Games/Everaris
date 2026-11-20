@@ -112,6 +112,19 @@ const admitReservationValidator = [
   handleValidationErrors
 ];
 
+// FIX-95: refund identifies the reservation exactly like admission does.
+const refundReservationValidator = admitReservationValidator;
+
+// FIX-95: the start marker names the raid the Host reports as started.
+const raidStartedValidator = [
+  body('raidId')
+    .isString().withMessage('must be a string')
+    .bail()
+    .trim()
+    .notEmpty().withMessage('must not be empty'),
+  handleValidationErrors
+];
+
 // Validates the body for an extraction loot commit.
 // `items` may be empty (the player extracted but carried no loot).
 const commitExtractionValidator = [
@@ -226,4 +239,4 @@ const trainingWeaponValidator = [
   handleValidationErrors
 ];
 
-module.exports = { trainingWeaponValidator, shopTradeValidator, slotSplitValidator, slotMoveValidator, shopBuybackValidator, inventoryOrderValidator, moveItemValidator, transferAllValidator, preparedEquipmentValidator, pendingReservationValidator, admitReservationValidator, commitExtractionValidator, shopSellValidator, shopBuyValidator };
+module.exports = { trainingWeaponValidator, shopTradeValidator, slotSplitValidator, slotMoveValidator, shopBuybackValidator, inventoryOrderValidator, moveItemValidator, transferAllValidator, preparedEquipmentValidator, pendingReservationValidator, admitReservationValidator, refundReservationValidator, raidStartedValidator, commitExtractionValidator, shopSellValidator, shopBuyValidator };

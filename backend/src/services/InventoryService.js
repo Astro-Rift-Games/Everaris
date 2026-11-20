@@ -1,6 +1,7 @@
 // src/services/InventoryService.js
 const Character = require('../models/Character');
 const AuthoritativeExtractionResult = require('../models/AuthoritativeExtractionResult');
+const env = require('../config/env');
 const { randomUUID } = require('crypto');
 const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
 const {
@@ -158,6 +159,7 @@ function serializePendingReservation(res, sorted = false, version = 2) {
   return {
     reservationId:    res.reservationId,
     admittedAt:       res.admittedAt ? res.admittedAt.toISOString() : null,
+    startedAt:        res.startedAt ? res.startedAt.toISOString() : null,
     items:            serializeItems(res.items, sorted),
     preparedEquipment: serializePreparedEquipment(res.preparedEquipment, version)
   };
@@ -952,6 +954,7 @@ class InventoryService {
     const pendingReservation = {
       reservationId,
       admittedAt: null,
+      startedAt: null,
       items,
       preparedEquipment,
       preparedAbilities: resolvedAbilities
@@ -1008,6 +1011,87 @@ class InventoryService {
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict during reservation admission.' };
     }
     return { pendingReservation: serializePendingReservation(updated.inventory.pendingReservation, inventoryVersion(updated) >= 2, inventoryVersion(updated)), revision: updated.revision };
+  }
+
+  /**
+   * FIX-95 start marker. The Host reports that the raid effectively started; every admitted
+   * reservation bound to the raid is marked once, which closes its pre-start refund.
+   * The caller must itself hold an admitted reservation bound to `raidId` (Bounded Player-Host
+   * Authority). Retries mark nothing.
+   * @throws 404 if no character found, 403 HOST_NOT_IN_RAID if the caller is not in the raid.
+   */
+  static async markRaidStarted(accountId, raidId) {
+    const character = await Character.findOne({ accountId });
+    if (!character) {
+      throw { statusCode: 404, errorCode: 'CHARACTER_NOT_FOUND', message: 'No character found for this account.' };
+    }
+    const reservation = character.inventory.pendingReservation;
+    if (!reservation?.admittedAt || reservation.raidId !== raidId) {
+      throw { statusCode: 403, errorCode: 'HOST_NOT_IN_RAID', message: 'The caller has no admitted reservation in this raid.' };
+    }
+
+    const result = await Character.updateMany(
+      { 'inventory.pendingReservation.raidId': raidId,
+        'inventory.pendingReservation.admittedAt': { $ne: null },
+        'inventory.pendingReservation.startedAt': null },
+      { $set: { 'inventory.pendingReservation.startedAt': new Date() }, $inc: { revision: 1 } }
+    );
+    return { raidId, marked: result.modifiedCount };
+  }
+
+  /**
+   * FIX-95 pre-start refund. Restores the reserved items exactly like a pre-admission rollback and
+   * clears the reservation, but only while the raid has not started and, for an admitted
+   * reservation, within `env.reservationRefundWindowMs` of admission. Rejections never write.
+   * No active reservation is an idempotent no-op (retry after a lost response).
+   * @throws 404 if no character found; 409 RESERVATION_MISMATCH, RAID_ALREADY_STARTED,
+   *         REFUND_WINDOW_EXPIRED, EXTRACTION_RESULT_PENDING, RESULT_ALREADY_CONSUMED, REVISION_CONFLICT.
+   */
+  static async refundPendingReservation(accountId, reservationId) {
+    const character = await Character.findOne({ accountId });
+    if (!character) {
+      throw { statusCode: 404, errorCode: 'CHARACTER_NOT_FOUND', message: 'No character found for this account.' };
+    }
+
+    requireMigratedInventory(character);
+    const reservation = character.inventory.pendingReservation;
+    if (!reservation) return { pendingReservation: null, revision: character.revision };
+    if (reservation.reservationId !== reservationId) {
+      throw { statusCode: 409, errorCode: 'RESERVATION_MISMATCH', message: 'A different reservation is active.' };
+    }
+    if (reservation.startedAt) {
+      throw { statusCode: 409, errorCode: 'RAID_ALREADY_STARTED', message: 'The raid has started; the reservation can no longer be refunded.' };
+    }
+    if (reservation.admittedAt) {
+      if (Date.now() - reservation.admittedAt.getTime() > env.reservationRefundWindowMs) {
+        throw { statusCode: 409, errorCode: 'REFUND_WINDOW_EXPIRED', message: 'The refund window for this reservation has expired.' };
+      }
+      await assertNoPendingExtractionResult(character.accountId);
+    }
+    if (reservation.raidId && (character.inventory.appliedExtractionReceipts || [])
+      .some(receipt => receipt.raidId === reservation.raidId)) {
+      throw { statusCode: 409, errorCode: 'RESULT_ALREADY_CONSUMED', message: 'The raid result was already applied for this reservation.' };
+    }
+
+    restoreReservation(character);
+    const updated = await Character.findOneAndUpdate(
+      { accountId, revision: character.revision,
+        'inventory.pendingReservation.reservationId': reservationId,
+        'inventory.pendingReservation.startedAt': null },
+      {
+        $set: {
+          'inventory.pendingReservation': null,
+          'inventory.loadout': character.inventory.loadout,
+          'inventory.preparedEquipment': character.inventory.preparedEquipment
+        },
+        $inc: { revision: 1 }
+      },
+      { new: true }
+    );
+    if (!updated) {
+      throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict refunding reservation.' };
+    }
+    return { pendingReservation: null, revision: updated.revision };
   }
 
   /**

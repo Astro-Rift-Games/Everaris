@@ -28,6 +28,7 @@ Node.js + Express + Mongoose backend para Project Grimhold.
 | `INVENTORY_SPLIT_ENABLED` | No (default `true`) | Habilita split por slot v2/v3 (sólo stacks, nunca instancias); sólo `false` lo deshabilita; independiente de ambos gates |
 | `ENABLE_DEV_DEBUG_ROUTES` | No (default `false`) | Sólo `true` habilita `/character/debug/mock-fusion-result` fuera de producción |
 | `ENABLE_LEGACY_EXTRACTION` | No (default `false`) | Sólo `true` habilita `/character/me/inventory/extraction` fuera de producción |
+| `RESERVATION_REFUND_WINDOW_MS` | No (default `120000`) | FIX-95: ventana (ms desde `admittedAt`) en la que una reserva admitida aún puede reembolsarse antes del inicio efectivo. **Placeholder**: Game Design no ha definido N |
 
 ## Endpoints disponibles
 
@@ -79,7 +80,7 @@ Rutas protegidas (prefijo `/character`):
 | POST | `/me/inventory/shop/sell`, `/me/inventory/shop/buy`, `/me/inventory/shop/buyback`, `/me/inventory/shop/trade` |
 | POST | `/me/inventory/training-weapon` |
 | POST / DELETE | `/me/inventory/reservation` |
-| POST | `/me/inventory/reservation/admit`, `/me/inventory/extraction`, `/me/extraction/commit` |
+| POST | `/me/inventory/reservation/admit`, `/me/inventory/reservation/refund`, `/me/inventory/reservation/raid-started`, `/me/inventory/extraction`, `/me/extraction/commit` |
 | POST | `/debug/mock-fusion-result`, `/me/raid/admission-ticket`, `/raid/verify-admission`, `/raid/extraction-result` |
 | POST | `/me` (crea las listas; permite crear sin personaje previo) |
 
@@ -284,6 +285,17 @@ Reserva (201), admisión (200) y replay devuelven `{pendingReservation,revision}
 ```
 
 DELETE devuelve `{"pendingReservation":null,"revision":13}`; reconciliar GET para listas restauradas.
+
+**Reembolso previo al inicio (FIX-95).** `pendingReservation.startedAt` (ISO o `null`) lo fija el Host:
+
+- `POST /me/inventory/reservation/raid-started` `{raidId}` marca `startedAt` en toda reserva admitida
+  ligada a `raidId` y devuelve `{raidId,marked}` (idempotente; reintento `marked:0`). El llamador debe
+  tener su propia reserva admitida en ese raid, si no `403 HOST_NOT_IN_RAID`.
+- `POST /me/inventory/reservation/refund` `{reservationId}` restaura los items como un rollback, borra la
+  reserva y devuelve `{pendingReservation:null,revision}`. Sin reserva activa devuelve `200` igual
+  (reintento tras respuesta perdida). Rechazos `409` sin escritura: `RESERVATION_MISMATCH`,
+  `RAID_ALREADY_STARTED`, `REFUND_WINDOW_EXPIRED` (ver `RESERVATION_REFUND_WINDOW_MS`),
+  `EXTRACTION_RESULT_PENDING`, `RESULT_ALREADY_CONSUMED`, `REVISION_CONFLICT`.
 Unified extraction devuelve HTTP 201 (replay 200): `{alreadySecured,loadout,level,experience,
 characterAttributes,revision}`; el payload autoritativo sigue agregado, y `loadout` devuelve slots v2.
 
