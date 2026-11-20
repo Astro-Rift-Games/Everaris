@@ -318,6 +318,38 @@ public class MerchantShopUIRenderTests
         Assert.That(SlotText(slot, "_priceText"), Is.EqualTo("30"));
     }
 
+    [Test]
+    public void TitleAndCountdown_AreBoundAndRendered()
+    {
+        _ui.Bind(_intentions);
+        var viewModel = new MerchantShopViewModel(
+            isAvailable: true,
+            confirmedCurrency: 100,
+            projectedCurrency: 100,
+            purchaseTotal: 0,
+            saleTotal: 0,
+            balance: 0,
+            occupiedSlots: 0,
+            projectedOccupiedSlots: 0,
+            slotCapacity: 20,
+            hasDraft: false,
+            isInFlight: false,
+            canConfirm: false,
+            blocks: new[] { new MerchantTradeBlock(MerchantTradeBlockReason.EmptyDraft) },
+            merchantRows: new List<MerchantShopRowViewModel>(),
+            inventoryRows: new List<MerchantShopRowViewModel>(),
+            merchantType: TownMerchantType.Blacksmith,
+            title: "Herrero",
+            rotationCountdown: "5d 12h 30m");
+
+        _ui.Present(viewModel);
+
+        Assert.That(Field<TMP_Text>("_titleText"), Is.Not.Null, "_titleText must be bound in prefab");
+        Assert.That(Field<TMP_Text>("_rotationCountdownText"), Is.Not.Null, "_rotationCountdownText must be bound in prefab");
+        Assert.That(Text("_titleText"), Is.EqualTo("Herrero"));
+        Assert.That(Text("_rotationCountdownText"), Is.EqualTo("Rotación en: 5d 12h 30m"));
+    }
+
     private MerchantShopViewModel View(
         int potionDraft,
         long projectedCurrency,

@@ -188,7 +188,7 @@ test('InventoryService - Shop Authoritative Security (US-57 / SEC-57.2)', async 
 
     await assert.rejects(
       async () => {
-        await InventoryService.shopBuy('acc123', 'bone', MAX_TRANSACTION_AMOUNT + 1, 0, 0, 'tx_overflow');
+        await InventoryService.shopBuy('acc123', 'CON_HEALTH_POTION', MAX_TRANSACTION_AMOUNT + 1, 0, 0, 'tx_overflow');
       },
       (err) => err.statusCode === 400 && err.errorCode === 'INVALID_QUANTITY'
     );
@@ -198,18 +198,18 @@ test('InventoryService - Shop Authoritative Security (US-57 / SEC-57.2)', async 
     const char = makeCharacter({ inventory: { currency: 100, loadout: [], stash: [] } });
     setupMocks(char);
 
-    // Bone buyPrice is 5. Buying 4 bones should cost 20 gold.
-    const result = await InventoryService.shopBuy('acc123', 'bone', 4, 999999, 0, 'tx_buy_bones');
-    assert.strictEqual(result.currency, 80, '100 - (4 * 5) = 80 gold');
-    assert.strictEqual(char.inventory.currency, 80);
-    assert.strictEqual(result.loadout.find(i => i.lootId === 'bone').amount, 4);
+    // Health potion buyPrice is 40. Buying 2 potions should cost 80 gold.
+    const result = await InventoryService.shopBuy('acc123', 'CON_HEALTH_POTION', 2, 999999, 0, 'tx_buy_potions');
+    assert.strictEqual(result.currency, 20, '100 - (2 * 40) = 20 gold');
+    assert.strictEqual(char.inventory.currency, 20);
+    assert.strictEqual(result.loadout.find(i => i.lootId === 'CON_HEALTH_POTION').amount, 2);
   });
 
   await t.test('Authoritative calculation: Insufficient funds rejects purchase', async () => {
     const char = makeCharacter({ inventory: { currency: 15, loadout: [], stash: [] } });
     setupMocks(char);
 
-    // Health potion costs 20 gold. Player only has 15 gold.
+    // Health potion costs 40 gold. Player only has 15 gold.
     await assert.rejects(
       async () => {
         await InventoryService.shopBuy('acc123', 'healthpotion', 1, 0, 0, 'tx_broke');
@@ -224,27 +224,27 @@ test('InventoryService - Shop Authoritative Security (US-57 / SEC-57.2)', async 
     setupMocks(char);
 
     // First buy
-    const res1 = await InventoryService.shopBuy('acc123', 'bone', 2, 0, 0, 'tx_idempotent');
-    assert.strictEqual(res1.currency, 90);
+    const res1 = await InventoryService.shopBuy('acc123', 'CON_HEALTH_POTION', 1, 0, 0, 'tx_idempotent');
+    assert.strictEqual(res1.currency, 60);
 
     // Replay with exact same payload
-    const res2 = await InventoryService.shopBuy('acc123', 'bone', 2, 0, res1.revision, 'tx_idempotent');
+    const res2 = await InventoryService.shopBuy('acc123', 'CON_HEALTH_POTION', 1, 0, res1.revision, 'tx_idempotent');
     assert.strictEqual(res2.alreadySecured, true);
-    assert.strictEqual(res2.currency, 90);
-    assert.strictEqual(char.inventory.currency, 90, 'No double charge');
+    assert.strictEqual(res2.currency, 60);
+    assert.strictEqual(char.inventory.currency, 60, 'No double charge');
   });
 
   await t.test('Idempotency: Reusing transactionId with different payload is rejected', async () => {
     const char = makeCharacter({ inventory: { currency: 100, loadout: [], stash: [] } });
     setupMocks(char);
 
-    // First buy bone
-    await InventoryService.shopBuy('acc123', 'bone', 2, 0, 0, 'tx_reuse');
+    // First buy health potion
+    await InventoryService.shopBuy('acc123', 'CON_HEALTH_POTION', 1, 0, 0, 'tx_reuse');
 
-    // Attempt to reuse tx_reuse to buy healthpotion
+    // Attempt to reuse tx_reuse to buy mana potion
     await assert.rejects(
       async () => {
-        await InventoryService.shopBuy('acc123', 'healthpotion', 1, 0, 1, 'tx_reuse');
+        await InventoryService.shopBuy('acc123', 'CON_MANA_POTION', 1, 0, 1, 'tx_reuse');
       },
       (err) => err.statusCode === 409 && err.errorCode === 'TRANSACTION_ID_REUSED'
     );

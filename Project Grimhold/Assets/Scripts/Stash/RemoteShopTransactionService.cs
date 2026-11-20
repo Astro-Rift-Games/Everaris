@@ -148,6 +148,16 @@ public sealed class RemoteShopTransactionService : MonoBehaviour, IShopTransacti
                 sourceSlot = ResolveSaleSlot(_store, line.LootId)
             };
         }
+        ShopTradeBuybackLine[] buybacks = null;
+        if (ticket.Buybacks != null && ticket.Buybacks.Count > 0)
+        {
+            buybacks = new ShopTradeBuybackLine[ticket.Buybacks.Count];
+            for (int i = 0; i < buybacks.Length; i++)
+            {
+                var line = ticket.Buybacks[i];
+                buybacks[i] = new ShopTradeBuybackLine { entryId = line.EntryId, amount = line.Amount };
+            }
+        }
         (bool success, ShopTransactionResult data, BackendError error) response;
         try
         {
@@ -155,7 +165,10 @@ public sealed class RemoteShopTransactionService : MonoBehaviour, IShopTransacti
             response = await _backend(new ShopTradeRequest
             {
                 transactionId = ticket.TransactionId.ToString(),
-                expectedRevision = _store.RemoteRevision, purchases = purchases, sales = sales
+                expectedRevision = _store.RemoteRevision,
+                purchases = purchases,
+                sales = sales,
+                buybacks = buybacks
             });
         }
         catch (Exception exception)
@@ -213,6 +226,7 @@ public sealed class RemoteShopTransactionService : MonoBehaviour, IShopTransacti
         return response.error.error switch
         {
             "RESERVATION_PENDING" => StashOperationResult.ReservationPending,
+            "ROTATION_EXPIRED" => StashOperationResult.RotationExpired,
             "INSUFFICIENT_FUNDS" or "INSUFFICIENT_ITEMS" or "ITEM_NOT_SELLABLE" or "ITEM_NOT_OFFERED" or
                 "REVISION_CONFLICT" or "VALIDATION_FAILED" or "TRANSACTION_RETENTION_EXCEEDED" => StashOperationResult.InvalidInventory,
             _ => StashOperationResult.PersistenceFailed

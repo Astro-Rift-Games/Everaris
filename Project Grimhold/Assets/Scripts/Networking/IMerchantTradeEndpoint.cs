@@ -27,6 +27,7 @@ public interface IMerchantTradeClient
 /// </summary>
 public interface IMerchantTradeEndpoint
 {
+    TownMerchantType MerchantType => TownMerchantType.General;
     LootDefinitionCatalog Catalog { get; }
     IReadOnlyList<MerchantStockItem> Stock { get; }
 

@@ -10,13 +10,23 @@ public static class MerchantTestContent
 {
     private const BindingFlags PrivateInstance = BindingFlags.NonPublic | BindingFlags.Instance;
 
-    public static LootDefinition CreateDefinition(string id, int buyValue, int sellValue, int extractionValue = 0)
+    public static LootDefinition CreateDefinition(string id, int buyValue, int sellValue, int extractionValue = 0, LootCategory category = LootCategory.None)
     {
         var definition = ScriptableObject.CreateInstance<LootDefinition>();
         SetField(definition, "_id", id);
+        if (category == LootCategory.None)
+        {
+            if (id != null && (id.Contains("helmet") || id.Contains("hat"))) category = LootCategory.Helmet;
+            else if (id != null && id.Contains("armor")) category = LootCategory.Armor;
+            else if (id != null && id.Contains("potion")) category = LootCategory.Consumable;
+            else category = LootCategory.Resource;
+        }
+        SetField(definition, "_category", category);
         SetField(definition, "_buyValuePerUnit", buyValue);
         SetField(definition, "_sellValuePerUnit", sellValue);
         SetField(definition, "_extractionValuePerUnit", extractionValue);
+        SetField(definition, "_objectValue", sellValue);
+        SetField(definition, "_tradable", true);
         return definition;
     }
 

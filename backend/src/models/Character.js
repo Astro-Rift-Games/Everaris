@@ -78,11 +78,18 @@ const buybackEntrySchema = new mongoose.Schema({
   lootId: { type: String, required: true },
   amount: { type: Number, required: true, min: 1 },
   unitPrice: { type: Number, required: true, min: 0 },
+  instance: { type: mongoose.Schema.Types.Mixed },
   soldAt: { type: Date, default: Date.now }
 }, { _id: false });
+
 const buybackSchema = new mongoose.Schema({
   sessionEpoch: { type: String, default: '' },
   entries: { type: [buybackEntrySchema], default: [] }
+}, { _id: false });
+
+const weeklyStockSchema = new mongoose.Schema({
+  weekId: { type: String, default: '' },
+  purchased: { type: Map, of: Number, default: () => new Map() }
 }, { _id: false });
 
 const shopReceiptSchema = new mongoose.Schema({
@@ -125,6 +132,7 @@ const characterSchema = new mongoose.Schema({
   inventory: {
     inventorySchemaVersion: { type: Number, default: 1 },
     buyback: { type: buybackSchema, default: () => ({}) },
+    weeklyStock: { type: weeklyStockSchema, default: () => ({}) },
     currency:           { type: Number, default: 0 },
     stash:              { type: [itemSchema],             default: [] },
     loadout:            { type: [itemSchema],             default: [] },

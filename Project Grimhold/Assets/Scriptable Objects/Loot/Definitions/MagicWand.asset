@@ -18,9 +18,11 @@ MonoBehaviour:
   _icon: {fileID: 21300000, guid: 8544f68e1f741774fb5d1dcd851150c7, type: 3}
   _worldSprite: {fileID: 21300000, guid: 8544f68e1f741774fb5d1dcd851150c7, type: 3}
   _category: 5
+  _objectValue: 70
   _rarity: 0
   _extractionValuePerUnit: 10
-  _sellValuePerUnit: 0
+  _sellValuePerUnit: 70
+  _buyValuePerUnit: 140
   _defaultPickupQuantity: 1
   _consumableDefinition: {fileID: 0}
   _weaponDefinition: {fileID: 11400000, guid: 3c5626000bf14878911f62059c517d9c, type: 2}

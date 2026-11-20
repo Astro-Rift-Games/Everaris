@@ -19,6 +19,8 @@ public sealed class TownMerchantNetworkController : NetworkBehaviour, IMerchantT
     public const int MaxTradeStockLines = 64;
 
     [SerializeField] private LootDefinitionCatalog _catalog;
+    [SerializeField] private TownMerchantType _merchantType = TownMerchantType.General;
+    [SerializeField] private TownCommerceConfiguration _commerceConfig;
     [SerializeField, Tooltip("Initial offering. Seeds the shared stock once; it is not runtime state.")]
     private List<MerchantStockItem> _stock;
 
@@ -28,6 +30,16 @@ public sealed class TownMerchantNetworkController : NetworkBehaviour, IMerchantT
     [Networked, Capacity(MaxTradeRecords)] private NetworkArray<MerchantTradeRecord> TradeRecords => default;
     [Networked, Capacity(MaxTradeStockLines)] private NetworkArray<MerchantTradeStockLine> TradeStockLines => default;
 
+    public TownMerchantType MerchantType
+    {
+        get => _merchantType;
+        set => _merchantType = value;
+    }
+    public TownCommerceConfiguration CommerceConfig
+    {
+        get => _commerceConfig;
+        set => _commerceConfig = value;
+    }
     public IReadOnlyList<MerchantStockItem> Stock => _stock;
     public LootDefinitionCatalog Catalog => _catalog;
 
@@ -102,8 +114,62 @@ public sealed class TownMerchantNetworkController : NetworkBehaviour, IMerchantT
         }
     }
 
+    private void Awake()
+    {
+        InitializeStockFromConfiguration();
+    }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(this))
+        {
+            return;
+        }
+
+        InitializeStockFromConfiguration();
+    }
+#endif
+
+    public void InitializeStockFromConfiguration()
+    {
+        if (_commerceConfig == null)
+        {
+#if UNITY_EDITOR
+            _commerceConfig = UnityEditor.AssetDatabase.LoadAssetAtPath<TownCommerceConfiguration>(
+                "Assets/Scriptable Objects/Commerce/TownCommerceConfiguration.asset");
+#endif
+        }
+
+        if (_commerceConfig != null && NeedsStockInitialization())
+        {
+            _stock = _commerceConfig.BuildInitialStockForMerchant(_merchantType, MaxStockSlots);
+        }
+    }
+
+    private bool NeedsStockInitialization()
+    {
+        if (_stock == null || _stock.Count == 0)
+        {
+            return true;
+        }
+
+        for (int i = 0; i < _stock.Count; i++)
+        {
+            var stockItem = _stock[i];
+            if (stockItem.Item == null || !MerchantSpecializationPolicy.IsAllowedToBuyFromMerchant(_merchantType, stockItem.Item))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public override void Spawned()
     {
+        InitializeStockFromConfiguration();
+
         if (!MerchantRequestValidator.TryValidateStockConfiguration(_stock, MaxStockSlots, out string error))
         {
             Debug.LogError($"[TownMerchantNetworkController] Invalid merchant stock configuration: {error}", this);

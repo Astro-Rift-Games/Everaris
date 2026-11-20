@@ -201,15 +201,23 @@ const { normalizeLootId } = require('../services/InventoryLootIdNormalizer');
 const { MAX_TRADE_PURCHASE_LINES, MAX_TRADE_SALE_LINES } = require('../config/shopCatalog');
 const shopTradeValidator = [
   body().custom(value => {
-    if (!value || Object.keys(value).some(key => !['transactionId', 'expectedRevision', 'purchases', 'sales'].includes(key)) ||
+    if (!value || Object.keys(value).some(key => !['transactionId', 'expectedRevision', 'purchases', 'sales', 'buybacks', 'weekId', 'merchant'].includes(key)) ||
         typeof value.transactionId !== 'string' || !value.transactionId.trim() || value.transactionId.length > 128 ||
-        !Number.isSafeInteger(value.expectedRevision) || value.expectedRevision < 0 ||
-        !Array.isArray(value.purchases) || !Array.isArray(value.sales) ||
-        value.purchases.length > MAX_TRADE_PURCHASE_LINES || value.sales.length > MAX_TRADE_SALE_LINES ||
-        value.purchases.length + value.sales.length === 0) return false;
-    for (const side of ['purchases', 'sales']) {
+        !Number.isSafeInteger(value.expectedRevision) || value.expectedRevision < 0) return false;
+
+    const purchases = Array.isArray(value.purchases) ? value.purchases : [];
+    const sales = Array.isArray(value.sales) ? value.sales : [];
+    const buybacks = Array.isArray(value.buybacks) ? value.buybacks : [];
+
+    if (purchases.length > MAX_TRADE_PURCHASE_LINES || sales.length > MAX_TRADE_SALE_LINES || buybacks.length > 16 ||
+        purchases.length + sales.length + buybacks.length === 0) return false;
+
+    if (value.weekId !== undefined && (typeof value.weekId !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value.weekId))) return false;
+    if (value.merchant !== undefined && (typeof value.merchant !== 'string' || !['general', 'blacksmith', 'arcanist'].includes(value.merchant.toLowerCase().trim()))) return false;
+
+    for (const [side, list] of [['purchases', purchases], ['sales', sales]]) {
       const ids = new Set(); const slots = new Set();
-      for (const line of value[side]) {
+      for (const line of list) {
         if (!line || typeof line !== 'object' || Array.isArray(line) ||
             Object.keys(line).some(key => !(side === 'sales' ? ['lootId', 'amount', 'sourceSlot'] : ['lootId', 'amount']).includes(key)) ||
             typeof line.lootId !== 'string' || !line.lootId.trim() ||
@@ -223,6 +231,17 @@ const shopTradeValidator = [
         }
       }
     }
+
+    const buybackEntryIds = new Set();
+    for (const line of buybacks) {
+      if (!line || typeof line !== 'object' || Array.isArray(line) ||
+          Object.keys(line).some(key => !['entryId', 'amount'].includes(key)) ||
+          typeof line.entryId !== 'string' || !line.entryId.trim() ||
+          !Number.isSafeInteger(line.amount) || line.amount < 1 || line.amount > MAX_TRANSACTION_AMOUNT) return false;
+      if (buybackEntryIds.has(line.entryId)) return false;
+      buybackEntryIds.add(line.entryId);
+    }
+
     return true;
   }).withMessage('Invalid trade ticket.'),
   handleValidationErrors

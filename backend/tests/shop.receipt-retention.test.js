@@ -104,7 +104,7 @@ describe('shop receipt retention (FIX-31)', () => {
   });
 
   const revision = async () => (await Character.findOne({ accountId })).revision;
-  const buy = async (id, expectedRevision) => InventoryService.shopBuy(accountId, 'bone', 1, 0, expectedRevision ?? await revision(), id);
+  const buy = async (id, expectedRevision) => InventoryService.shopBuy(accountId, 'CON_HEALTH_POTION', 1, 0, expectedRevision ?? await revision(), id);
 
   // `count` later purchases with strictly increasing ids, starting at txId(from).
   async function fill(from, count) {
@@ -158,7 +158,7 @@ describe('shop receipt retention (FIX-31)', () => {
       const before = await snapshot();
       const replay = await buy(hex(1), before.revision);
       assert.equal(replay.revision, before.revision + 1, 'legacy replay applies as before');
-      assert.equal(replay.currency, before.inventory.currency - 5);
+      assert.equal(replay.currency, before.inventory.currency - 40);
     });
 
     test('a far-future id timestamp cannot raise the watermark above server time', async () => {
@@ -212,7 +212,7 @@ describe('shop receipt retention (FIX-31)', () => {
   describe('trade', () => {
     const trade = async (id, expectedRevision) => InventoryService.shopTrade(accountId, {
       transactionId: id, expectedRevision: expectedRevision ?? await revision(),
-      purchases: [{ lootId: 'bone', amount: 1 }], sales: [] });
+      purchases: [{ lootId: 'CON_HEALTH_POTION', amount: 1 }], sales: [] });
 
     test('replaying tx-old after 64 later transactions is rejected without any change', async () => {
       await trade(txId(0));

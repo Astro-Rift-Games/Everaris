@@ -153,6 +153,17 @@ router.post('/me/inventory/shop/buy', inventoryProtocol, shopBuyValidator, async
   }
 });
 
+// GET /character/me/inventory/shop/state
+// Query: ?merchant=general|blacksmith|arcanist
+router.get('/me/inventory/shop/state', inventoryProtocol, async (req, res, next) => {
+  try {
+    const merchant = req.query.merchant || '';
+    res.json(await InventoryService.getCommercialState(req.accountId, merchant));
+  } catch (err) {
+    next(err);
+  }
+});
+
 // POST /character/me/inventory/shop/trade
 // Body: { transactionId, expectedRevision, purchases: [{lootId, amount}], sales: [{lootId, amount, sourceSlot?}] }
 router.post('/me/inventory/shop/trade', inventoryProtocol, shopTradeValidator, async (req, res, next) => {

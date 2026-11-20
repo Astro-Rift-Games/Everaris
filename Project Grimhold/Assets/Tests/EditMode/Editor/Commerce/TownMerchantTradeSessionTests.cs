@@ -184,16 +184,14 @@ public class TownMerchantTradeSessionTests
 
     [TestCase(true)]
     [TestCase(false)]
-    public void BuybackMixedWithTrade_CannotConfirmAndExplainsSeparateOperation(bool purchase)
+    public void BuybackMixedWithTrade_AllowsUnifiedConfirmationAndBalancesTogether(bool purchase)
     {
         OpenBuyback(new FakeBuybackService());
         _session.SetBuyback("sale-1", 1);
-        if (purchase) _session.AddPurchase(Potion, 1); else _session.AddSale(Bone, 1);
-        Assert.That(View.CanConfirm, Is.False);
-        Assert.That(View.Blocks.Any(b => b.Reason == MerchantTradeBlockReason.BuybackMustBeAlone), Is.True);
-        Assert.That(MerchantTradeFeedback.DescribePrimaryBlock(View), Is.EqualTo("La recompra se confirma por separado"));
-        Assert.That(_session.ConfirmTrade(), Is.False);
-        Assert.That(_endpoint.Submissions, Is.Empty);
+        if (purchase) _session.AddPurchase(Potion, 1); else _session.AddSale(Hat, 1);
+        Assert.That(View.Blocks.Any(b => b.Reason == MerchantTradeBlockReason.BuybackMustBeAlone), Is.False);
+        Assert.That(View.CanConfirm, Is.True);
+        Assert.That(_session.ConfirmTrade(), Is.True);
     }
 
     [UnityTest]
@@ -275,6 +273,65 @@ public class TownMerchantTradeSessionTests
         Assert.That(View.MerchantRows[0].Available, Is.EqualTo(3));
         Assert.That(View.MerchantRows[1].IsUnlimited, Is.True);
         Assert.That(View.InventoryRows.Select(r => r.Available), Is.EqualTo(new[] { 2, 1 }));
+    }
+
+    [Test]
+    public void Specialization_TitlesAndWeeklyCountdown_ArePresented()
+    {
+        Assert.That(View.MerchantType, Is.EqualTo(TownMerchantType.General));
+        Assert.That(View.Title, Is.EqualTo("Mercader General"));
+        Assert.That(View.RotationCountdown, Does.Contain("d"));
+    }
+
+    [Test]
+    public void Specialization_Blacksmith_AcceptsOnlyPhysicalWeaponsAndArmors()
+    {
+        _session.Dispose();
+        _endpoint.MerchantType = TownMerchantType.Blacksmith;
+        OpenSession();
+        Assert.That(View.Title, Is.EqualTo("Herrero"));
+
+        int hatIndex = View.InventoryRows.ToList().FindIndex(r => r.LootId == Hat);
+        Assert.That(hatIndex, Is.GreaterThanOrEqualTo(0));
+        Assert.That(View.InventoryRows[hatIndex].CanAdd, Is.True);
+
+        int boneIndex = View.InventoryRows.ToList().FindIndex(r => r.LootId == Bone);
+        Assert.That(boneIndex, Is.GreaterThanOrEqualTo(0));
+        Assert.That(View.InventoryRows[boneIndex].CanAdd, Is.False);
+    }
+
+    [Test]
+    public void DemandItem_Applies20PercentBonusToSalePrice()
+    {
+        _session.Dispose();
+        _session = new TownMerchantTradeSession(
+            Profile,
+            _endpoint,
+            _profile,
+            _profile,
+            () => _profile.Currency,
+            _presented.Add,
+            () => _now,
+            Timeout,
+            () => new Guid(++_requestIdCount, 0, 0, new byte[8]),
+            isDemandItem: id => id == Hat);
+
+        int hatIndex = View.InventoryRows.ToList().FindIndex(r => r.LootId == Hat);
+        Assert.That(hatIndex, Is.GreaterThanOrEqualTo(0));
+        Assert.That(View.InventoryRows[hatIndex].IsDemand, Is.True);
+        Assert.That(View.InventoryRows[hatIndex].UnitPrice, Is.EqualTo(6));
+
+        _session.AddSale(Hat, 2);
+        Assert.That(View.SaleTotal, Is.EqualTo(12));
+    }
+
+    [Test]
+    public void WeeklyRotationCountdown_CalculatesUntilNextMondayUtc()
+    {
+        var wednesday = new DateTime(2026, 11, 18, 12, 0, 0, DateTimeKind.Utc);
+        DateTime nextMonday = TownMerchantTradeSession.GetNextWeeklyRotationUtc(wednesday);
+        Assert.That(nextMonday, Is.EqualTo(new DateTime(2026, 11, 23, 0, 0, 0, DateTimeKind.Utc)));
+        Assert.That(nextMonday.DayOfWeek, Is.EqualTo(DayOfWeek.Monday));
     }
 
     [Test]
@@ -735,6 +792,7 @@ public class TownMerchantTradeSessionTests
         public FakeMerchantAuthorityState State { get; }
         public LootDefinitionCatalog Catalog { get; }
         public IReadOnlyList<MerchantStockItem> Stock { get; }
+        public TownMerchantType MerchantType { get; set; } = TownMerchantType.General;
         public bool AcceptSubmissions { get; set; } = true;
         public bool RejectNext { get; set; }
         public bool HasHandler => _client != null;

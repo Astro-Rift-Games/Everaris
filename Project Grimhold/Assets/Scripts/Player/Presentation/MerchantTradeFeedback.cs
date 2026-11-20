@@ -88,6 +88,7 @@ public static class MerchantTradeFeedback
         MerchantTransactionResult.PersistenceFailed => "No se pudo guardar la transacción",
         MerchantTransactionResult.SubmissionFailed => "No se pudo enviar la transacción",
         MerchantTransactionResult.NoResponse => "Sin respuesta del comerciante; puedes reintentar",
+        MerchantTransactionResult.RotationExpired => "La rotación semanal ha cambiado. Por favor reconfirma tu carrito.",
         _ => string.Empty
     };
 

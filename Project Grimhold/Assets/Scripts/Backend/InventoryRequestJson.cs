@@ -83,6 +83,38 @@ namespace Grimhold.Backend
                     ["experienceGranted"] = published.experienceGranted, ["issuedAt"] = published.issuedAt,
                     ["hostSignature"] = published.hostSignature
                 }.ToString(Formatting.None);
+            if (body is ShopTradeRequest trade)
+            {
+                var obj = new JObject
+                {
+                    ["transactionId"] = trade.transactionId,
+                    ["expectedRevision"] = trade.expectedRevision
+                };
+                if (trade.purchases != null)
+                {
+                    var pArr = new JArray();
+                    foreach (var p in trade.purchases)
+                        pArr.Add(new JObject { ["lootId"] = p.lootId, ["amount"] = p.amount });
+                    obj["purchases"] = pArr;
+                }
+                if (trade.sales != null)
+                {
+                    var sArr = new JArray();
+                    foreach (var s in trade.sales)
+                        sArr.Add(new JObject { ["lootId"] = s.lootId, ["amount"] = s.amount, ["sourceSlot"] = s.sourceSlot });
+                    obj["sales"] = sArr;
+                }
+                if (trade.buybacks != null && trade.buybacks.Length > 0)
+                {
+                    var bArr = new JArray();
+                    foreach (var b in trade.buybacks)
+                        bArr.Add(new JObject { ["entryId"] = b.entryId, ["amount"] = b.amount });
+                    obj["buybacks"] = bArr;
+                }
+                if (!string.IsNullOrEmpty(trade.weekId)) obj["weekId"] = trade.weekId;
+                if (!string.IsNullOrEmpty(trade.merchantId)) obj["merchantId"] = trade.merchantId;
+                return obj.ToString(Formatting.None);
+            }
             return JsonUtility.ToJson(body);
         }
 

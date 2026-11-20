@@ -27,6 +27,8 @@ public readonly struct MerchantShopRowViewModel
 
     public bool IsUnlimited => Available == MerchantStockItem.UnlimitedQuantity;
 
+    public bool IsDemand { get; }
+
     /// <summary>Displayed total of a line of this row at the given amount, priced like <see cref="DraftTotal"/>.</summary>
     public long TotalFor(int amount) => (long)UnitPrice * amount;
 
@@ -40,7 +42,8 @@ public readonly struct MerchantShopRowViewModel
         long draftTotal,
         bool canAdd,
         int maxDraftAmount,
-        string buybackEntryId = null)
+        string buybackEntryId = null,
+        bool isDemand = false)
     {
         BuybackEntryId = buybackEntryId;
         Definition = definition;
@@ -52,6 +55,7 @@ public readonly struct MerchantShopRowViewModel
         DraftTotal = draftTotal;
         CanAdd = canAdd;
         MaxDraftAmount = maxDraftAmount;
+        IsDemand = isDemand;
     }
 }
 
@@ -83,6 +87,17 @@ public sealed class MerchantShopViewModel
     public IReadOnlyList<MerchantTradeBlock> Blocks { get; }
     public IReadOnlyList<MerchantShopRowViewModel> MerchantRows { get; }
     public IReadOnlyList<MerchantShopRowViewModel> InventoryRows { get; }
+    public TownMerchantType MerchantType { get; }
+    public string Title { get; }
+    public string RotationCountdown { get; }
+
+    public static string GetMerchantTitle(TownMerchantType merchantType) => merchantType switch
+    {
+        TownMerchantType.General => "Mercader General",
+        TownMerchantType.Blacksmith => "Herrero",
+        TownMerchantType.Arcanist => "Arcanista",
+        _ => "Mercader"
+    };
 
     public static readonly MerchantShopViewModel Unavailable = new MerchantShopViewModel(
         false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false,
@@ -103,7 +118,10 @@ public sealed class MerchantShopViewModel
         bool canConfirm,
         IReadOnlyList<MerchantTradeBlock> blocks,
         IReadOnlyList<MerchantShopRowViewModel> merchantRows,
-        IReadOnlyList<MerchantShopRowViewModel> inventoryRows)
+        IReadOnlyList<MerchantShopRowViewModel> inventoryRows,
+        TownMerchantType merchantType = TownMerchantType.General,
+        string title = null,
+        string rotationCountdown = null)
     {
         IsAvailable = isAvailable;
         ConfirmedCurrency = confirmedCurrency;
@@ -122,5 +140,8 @@ public sealed class MerchantShopViewModel
         Blocks = blocks ?? throw new ArgumentNullException(nameof(blocks));
         MerchantRows = merchantRows ?? throw new ArgumentNullException(nameof(merchantRows));
         InventoryRows = inventoryRows ?? throw new ArgumentNullException(nameof(inventoryRows));
+        MerchantType = merchantType;
+        Title = title ?? GetMerchantTitle(merchantType);
+        RotationCountdown = rotationCountdown ?? string.Empty;
     }
 }

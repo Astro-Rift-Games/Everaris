@@ -152,7 +152,7 @@ test('v3 instance public HTTP/service contract', async t => {
 
   await t.test('buy creates one backend-issued plain instance per unit and replay does not issue again', async () => {
     const bought = await Inventory.shopBuy(accountId, 'placeholder_helmet', 2, 0, 4, 'buy');
-    assert.equal(bought.currency, 480); assert.equal(bought.revision, 5); assert.deepEqual(bought.buyback, { entries: [] });
+    assert.equal(bought.currency, 160); assert.equal(bought.revision, 5); assert.deepEqual(bought.buyback, { entries: [] });
     assert.deepEqual(bought.loadout.map(({ instance, ...item }) => item), [
       { slot: 0, lootId: 'placeholder_helmet', amount: 1 }, { slot: 1, lootId: 'placeholder_helmet', amount: 1 }]);
     assert.equal(new Set(bought.loadout.map(i => i.instance.instanceId)).size, 2);
@@ -161,10 +161,13 @@ test('v3 instance public HTTP/service contract', async t => {
     assert.equal(writes, 1);
   });
 
-  for (const gems of [[], ['RES_RUBY_GEM'], ['RES_RUBY_GEM', 'RES_SAPPHIRE_GEM']]) await t.test(`sell accepts zero-base weapon with ${gems.length} gems and no buyback`, async () => {
+  for (const gems of [[], ['RES_RUBY_GEM'], ['RES_RUBY_GEM', 'RES_SAPPHIRE_GEM']]) await t.test(`sell accepts weapon with ${gems.length} gems and creates buyback`, async () => {
     stored.inventory.loadout = [unit(8, 'arming_sword', 1, { gemSocketCount: gems.length, gems })];
     const sold = await Inventory.shopSell(accountId, 'arming_sword', 1, 99999, 4, 'sell', 8);
-    assert.deepEqual(sold, { revision: 5, currency: 500 + gems.length * 70, stash: [], loadout: [], preparedEquipment: emptyEquipment(), buyback: { entries: [] } });
+    const unitSellValue = 60 + gems.length * 70;
+    assert.equal(sold.currency, 500 + unitSellValue);
+    assert.equal(sold.buyback.entries.length, 1);
+    assert.equal(sold.buyback.entries[0].unitPrice, Math.ceil(unitSellValue * 1.5));
     assert.deepEqual(await Inventory.shopSell(accountId, 'arming_sword', 1, 0, 4, 'sell', 8), { ...sold, alreadySecured: true });
     await rejected(() => Inventory.shopSell(accountId, 'arming_sword', 1, 0, 5, 'sell', 3), 'TRANSACTION_ID_REUSED'); assert.equal(writes, 1);
   });
@@ -381,7 +384,7 @@ test('v3 instance public HTTP/service contract', async t => {
     const equipped = await Inventory.updatePreparedEquipment(accountId, { helmet: 'placeholder_helmet' }, 10);
     assert.equal(equipped.preparedEquipment.helmet, 'placeholder_helmet');
     const sold = await Inventory.shopSell(accountId, 'placeholder_helmet', 1, 0, 11, 'sell', 2);
-    assert.equal(sold.currency, 485); assert.equal(sold.buyback.entries.length, 1);
+    assert.equal(sold.currency, 245); assert.equal(sold.buyback.entries.length, 1);
     const line = sold.buyback.entries[0];
     assert.deepEqual((await Inventory.shopBuyback(accountId, line.entryId, 1, 12, 'rebuy')).loadout.at(-1), { slot: 2, lootId: 'placeholder_helmet', amount: 1 });
     stored.inventory.preparedEquipment.weaponSlot1 = 'training_dagger';

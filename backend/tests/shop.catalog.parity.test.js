@@ -39,8 +39,11 @@ test('shop catalogs mirror every Unity LootDefinition price and eligibility', t 
     // Eligibility is a classification, independent of sell value. Unsellable equipment
     // stays classified but cannot create a buyback entry because shopSell rejects it.
     const category = Number(text.match(/^\s*_category:\s*(\d+)\s*$/m)?.[1]);
+    const sellValue = Number(text.match(/^\s*_sellValuePerUnit:\s*(\d+)\s*$/m)?.[1] || 0);
     if (category >= 5 && category <= 10) eligibleIds.add(id);
-    assert.equal(isBuybackEligible(id), false, `${id} v3`);
+    const isSpecialBuyback = ['CON_EXPLOSIVE_BOMB', 'CON_SMOKE_BOMB', 'CON_THROWING_DAGGER', 'CON_SELF_REVIVE'].includes(id);
+    const isEquipmentBuyback = category >= 5 && category <= 10 && sellValue > 0;
+    assert.equal(isBuybackEligible(id), isEquipmentBuyback || isSpecialBuyback, `${id} v3`);
     assert.equal(isBuybackEligible(id, 2), category >= 5 && category <= 10, `${id} v2`);
     for (const [field, catalog, price] of [
       ['_buyValuePerUnit', BUY_CATALOG, 'buyPrice'],

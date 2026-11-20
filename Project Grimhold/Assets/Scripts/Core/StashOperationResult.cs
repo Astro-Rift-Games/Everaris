@@ -47,5 +47,8 @@ public enum StashOperationResult
     /// The reservation was confirmed for raid admission, so it can only be lost or consumed,
     /// never rolled back to the Inventory and Equipment.
     /// </summary>
-    ReservationAdmitted
+    ReservationAdmitted,
+
+    /// <summary>The weekly merchant rotation cycle has expired.</summary>
+    RotationExpired
 }
