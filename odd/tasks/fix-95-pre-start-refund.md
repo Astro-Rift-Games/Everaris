@@ -38,9 +38,9 @@ Unity:
 
 | ID | Specs | Route | Commit |
 | --- | --- | --- | --- |
-| T1 | S5-S8 | inline: architecture contract | — |
-| T2 | S1-S3, S5, S6 | writer: backend endpoints + tests | — |
-| T3 | S1, S3, S4, S5, S8 | writer: Unity client + coordinator + EditMode tests | — |
+| T1 | S5-S8 | inline: architecture contract | 034b7a8f |
+| T2 | S1-S3, S5, S6 | writer: backend endpoints + tests | 1e1155b0 |
+| T3 | S1, S3, S4, S5, S8 | writer: Unity client + coordinator + EditMode tests | 8668765f |
 | T4 | S1-S8 | gentle-ai-verify (Risk items 1, 3, 4) | — |
 | T5 | S1, S4 | manual multi-process validation (owner) | — |
 
@@ -51,4 +51,6 @@ Unity:
 - **L3** (user decisions): start signal "(a) Marcador server-side del Host (Recomendado)"; branch "Rama actual fix-61"; commits "Sí, commits por unidad".
 - **L4** (evidence): Game Design 01 §14 read live: "Una cancelación previa a Dungeon no genera Loot, XP, Derrota definitiva ni Abandono voluntario, porque el riesgo de expedición todavía no había comenzado." No N value. Placeholder 120 s chosen to cover Conectando plus recovery to Town.
 - **L5** (evidence): `raidId` bound to the reservation by `backend/src/services/SessionTicketService.js:244-247`; host-membership pattern in `RaidResultService.js:263-283`.
+- **L7** (evidence T2): parent rerun `npm test` 870/870, `npm run test:concurrency` 38/38; worker reported `test:integration` 245/245. `backend/.env.example` not updated (read blocked by safety policy).
+- **L8** (evidence T3, worker-run in Editor): FIX-95 suites 47/47, RaidStartPolicy 12/12, preserve suites green; full EditMode 7846/7857, 11 failures in unrelated prefab/scene/extraction tests, pre-existence not proven. Editor side effects left unstaged: two Minimap layout assets re-serialized, two ProjectSettings line-ending only.
 - **L6** (limitation): in Solo the Host is the player, so the start marker stays self-attested there; N bounds it. Removing it needs the dedicated server (ID 400, out of scope).
