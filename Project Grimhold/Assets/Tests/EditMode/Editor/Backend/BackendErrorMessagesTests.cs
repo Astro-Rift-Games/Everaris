@@ -18,6 +18,9 @@ public sealed class BackendErrorMessagesTests
     [TestCase("INVALID_HOST_SIGNATURE", "No se pudo completar la operación. Vuelve a iniciar sesión o contacta con soporte.")]
     [TestCase("FUTURE_CODE", "No se pudo completar la operación. Vuelve a iniciar sesión o contacta con soporte.")]
     [TestCase("TIMEOUT", "No se pudo conectar con el servidor. Comprueba tu conexión.")]
+    [TestCase("TOKEN_EXPIRED", "Tu sesión ha caducado. Vuelve a iniciar sesión.")]
+    [TestCase("REFRESH_INVALID", "No se pudo renovar tu sesión. Vuelve a iniciar sesión.")]
+    [TestCase("UNAUTHORIZED", "Tu sesión ya no es válida. Vuelve a iniciar sesión.")]
     public void Error_HasSpanishGuidanceWithoutRawDiagnostics(string code, string expected)
     {
         Assert.That(BackendErrorMessages.ForError(new BackendError { error = code, message = "raw diagnostic" }), Is.EqualTo(expected));

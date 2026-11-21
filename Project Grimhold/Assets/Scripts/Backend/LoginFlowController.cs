@@ -53,6 +53,7 @@ public sealed class LoginFlowController : MonoBehaviour
     private const string InvalidTownTicketResponse = "INVALID_TOWN_TICKET_RESPONSE";
 
     private string _pendingToken;
+    private string _pendingRefreshToken;
     private string _pendingUsername;
     private bool _hydrationFailed;
     private ILoginFlowBackend _backend = StaticLoginFlowBackend.Instance;
@@ -126,7 +127,7 @@ public sealed class LoginFlowController : MonoBehaviour
             return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, "Invalid username or password.", loginError);
         }
 
-        return await CompleteAuthenticationAndInjectIdentity(loginResult.token, username);
+        return await CompleteAuthenticationAndInjectIdentity(loginResult.token, username, loginResult.refreshToken);
     }
 
     public async Task<LoginFlowResult> ExecuteRegisterAsync(string username, string password)
@@ -158,7 +159,7 @@ public sealed class LoginFlowController : MonoBehaviour
             return LoginFlowResult.Failure(LoginFlowStatus.RegistrationFailed, message, registerError);
         }
 
-        return await CompleteAuthenticationAndInjectIdentity(loginResult.token, username);
+        return await CompleteAuthenticationAndInjectIdentity(loginResult.token, username, loginResult.refreshToken);
     }
 
     public async Task<LoginFlowResult> CreateCharacterAsync(string name)
@@ -174,10 +175,11 @@ public sealed class LoginFlowController : MonoBehaviour
             return LoginFlowResult.Failure(LoginFlowStatus.CharacterCreationFailed, err.message ?? "Failed to create character.");
         }
 
-        var result = await CompleteAuthenticationAndInjectIdentity(_pendingToken, _pendingUsername);
+        var result = await CompleteAuthenticationAndInjectIdentity(_pendingToken, _pendingUsername, _pendingRefreshToken);
         if (result.IsSuccess)
         {
             _pendingToken = null;
+            _pendingRefreshToken = null;
             _pendingUsername = null;
         }
         return result;
@@ -189,12 +191,13 @@ public sealed class LoginFlowController : MonoBehaviour
         {
             return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, "No authentication token available.");
         }
-        return await CompleteAuthenticationAndInjectIdentity(_pendingToken, _pendingUsername);
+        return await CompleteAuthenticationAndInjectIdentity(_pendingToken, _pendingUsername, _pendingRefreshToken);
     }
 
     private void ClearState()
     {
         _pendingToken = null;
+        _pendingRefreshToken = null;
         _pendingUsername = null;
         _hydrationFailed = false;
         LocalProfileProvider.ClearRemoteCharacterId();
@@ -214,7 +217,7 @@ public sealed class LoginFlowController : MonoBehaviour
         return (invResult.success, invResult.data, invResult.error, progResult.success, progResult.data, progResult.error);
     }
 
-    private async Task<LoginFlowResult> CompleteAuthenticationAndInjectIdentity(string token, string username, bool isRetry = false)
+    private async Task<LoginFlowResult> CompleteAuthenticationAndInjectIdentity(string token, string username, string refreshToken, bool isRetry = false)
     {
         // Step 2: Fetch character identity
         var (charOk, charData, charError) = await _backend.GetCharacterAsync(_config, token);
@@ -223,6 +226,7 @@ public sealed class LoginFlowController : MonoBehaviour
             if (charError.error == "CHARACTER_NOT_FOUND")
             {
                 _pendingToken = token;
+                _pendingRefreshToken = refreshToken;
                 _pendingUsername = username;
                 _hydrationFailed = false;
                 return LoginFlowResult.Failure(LoginFlowStatus.NeedsCharacterCreation, "Account has no character.");
@@ -233,6 +237,7 @@ public sealed class LoginFlowController : MonoBehaviour
                 return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, "Session expired.");
             }
             _pendingToken = token;
+            _pendingRefreshToken = refreshToken;
             _pendingUsername = username;
             _hydrationFailed = true;
             return LoginHydrationFailureClassifier.ClassifyHydrationFailure(charError, "character profile");
@@ -248,6 +253,7 @@ public sealed class LoginFlowController : MonoBehaviour
                 return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, "Session expired.");
             }
             _pendingToken = token;
+            _pendingRefreshToken = refreshToken;
             _pendingUsername = username;
             _hydrationFailed = true;
             return LoginHydrationFailureClassifier.ClassifyHydrationFailure(profileError, "character profile");
@@ -266,6 +272,7 @@ public sealed class LoginFlowController : MonoBehaviour
         {
             if (invError.error == "UNAUTHORIZED") { ClearState(); return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, "Session expired."); }
             _pendingToken = token;
+            _pendingRefreshToken = refreshToken;
             _pendingUsername = username;
             _hydrationFailed = true;
             return LoginHydrationFailureClassifier.ClassifyHydrationFailure(invError, "inventory");
@@ -275,6 +282,7 @@ public sealed class LoginFlowController : MonoBehaviour
         {
             if (progError.error == "UNAUTHORIZED") { ClearState(); return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, "Session expired."); }
             _pendingToken = token;
+            _pendingRefreshToken = refreshToken;
             _pendingUsername = username;
             _hydrationFailed = true;
             return LoginHydrationFailureClassifier.ClassifyHydrationFailure(progError, "progression");
@@ -283,6 +291,7 @@ public sealed class LoginFlowController : MonoBehaviour
         if (invData.revision != progData.revision)
         {
             _pendingToken = token;
+            _pendingRefreshToken = refreshToken;
             _pendingUsername = username;
             _hydrationFailed = true;
             return LoginHydrationFailureClassifier.ClassifyRevisionMismatch(invData.revision, progData.revision);
@@ -317,6 +326,7 @@ public sealed class LoginFlowController : MonoBehaviour
                     return LoginFlowResult.Failure(LoginFlowStatus.AuthFailed, "Session expired.");
                 }
                 _pendingToken = token;
+                _pendingRefreshToken = refreshToken;
                 _pendingUsername = username;
                 _hydrationFailed = true;
                 return LoginHydrationFailureClassifier.ClassifyHydrationFailure(ticketError, "town session");
@@ -333,7 +343,7 @@ public sealed class LoginFlowController : MonoBehaviour
 
         if (_authContext != null)
         {
-            _authContext.Initialize(token, charData, profileData, _config);
+            _authContext.Initialize(token, charData, profileData, _config, refreshToken);
             _authContext.SetTownSessionTicket(townTicket);
         }
 
@@ -344,12 +354,14 @@ public sealed class LoginFlowController : MonoBehaviour
             LocalProfileProvider.ClearRemoteCharacterId();
             _authContext?.Clear();
             _pendingToken = token;
+            _pendingRefreshToken = refreshToken;
             _pendingUsername = username;
             _hydrationFailed = true;
             return LoginFlowResult.Failure(LoginFlowStatus.HydrationFailed, "Failed to load character data. Please try again.");
         }
 
         _pendingToken = null;
+        _pendingRefreshToken = null;
         _pendingUsername = null;
         _hydrationFailed = false;
         return LoginFlowResult.Success();

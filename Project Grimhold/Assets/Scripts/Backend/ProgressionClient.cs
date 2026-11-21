@@ -18,14 +18,8 @@ namespace Grimhold.Backend
         {
             var baseUrl = config.BaseUrl.TrimEnd('/');
             var url = $"{baseUrl}/character/me/progression";
-            using var request = InventoryProtocol.Get(url);
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone) await Task.Yield();
-
-            return ProcessResponse<ProgressionData>(request);
+            return await AuthorizedRequest.SendAsync<ProgressionData>(config, token,
+                () => InventoryProtocol.Get(url), ProcessResponse<ProgressionData>);
         }
 
         // ------------------------------------------------------------------
@@ -67,20 +61,19 @@ namespace Grimhold.Backend
             PostJson<TRequest, TResult>(BackendConfiguration config, string token, string url, TRequest body)
         {
             var json = JsonUtility.ToJson(body);
-            using var request = InventoryProtocol.Create(url, "POST");
-            request.uploadHandler   = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone) await Task.Yield();
-
-            var responseText = request.downloadHandler?.text ?? "null";
-            Debug.Log($"[ProgressionClient] POST {url} returned HTTP {request.responseCode}. Raw body: {responseText}");
-
-            return ProcessResponse<TResult>(request);
+            return await AuthorizedRequest.SendAsync<TResult>(config, token, () =>
+            {
+                var webRequest = InventoryProtocol.Create(url, "POST");
+                webRequest.uploadHandler   = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json));
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                return webRequest;
+            }, request =>
+            {
+                var responseText = request.downloadHandler?.text ?? "null";
+                Debug.Log($"[ProgressionClient] POST {url} returned HTTP {request.responseCode}. Raw body: {responseText}");
+                return ProcessResponse<TResult>(request);
+            });
         }
 
         private static (bool success, T data, BackendError error) ProcessResponse<T>(UnityWebRequest request)

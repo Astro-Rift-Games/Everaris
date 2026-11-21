@@ -9,6 +9,10 @@ namespace Grimhold.Backend
         public const string RequestCancelled = "REQUEST_CANCELLED";
         public const string TooManyRequests = "TOO_MANY_REQUESTS";
         public const string Unauthorized = "UNAUTHORIZED";
+        // The access JWT is expired but the session may still be renewable (FIX-34).
+        public const string TokenExpired = "TOKEN_EXPIRED";
+        // The refresh token is unknown, expired, revoked or was reused.
+        public const string RefreshInvalid = "REFRESH_INVALID";
 
         public static string ClassifyConnectionError(string requestError)
         {

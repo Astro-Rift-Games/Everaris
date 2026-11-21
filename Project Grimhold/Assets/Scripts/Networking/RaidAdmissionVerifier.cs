@@ -6,14 +6,19 @@ using Grimhold.Backend;
 public sealed class BackendRaidAdmissionVerifier : IRaidAdmissionVerifier
 {
     private readonly BackendConfiguration _config;
-    private readonly string _bearerToken;
+    private readonly Func<string> _bearerTokenProvider;
     private readonly Dictionary<string, Task<(bool valid, AuthoritativeRaidAdmissionTicket ticket, string error)>> _verificationCache =
         new Dictionary<string, Task<(bool, AuthoritativeRaidAdmissionTicket, string)>>(StringComparer.Ordinal);
 
     public BackendRaidAdmissionVerifier(BackendConfiguration config, string bearerToken)
+        : this(config, () => bearerToken)
+    {
+    }
+
+    public BackendRaidAdmissionVerifier(BackendConfiguration config, Func<string> bearerTokenProvider)
     {
         _config = config;
-        _bearerToken = bearerToken;
+        _bearerTokenProvider = bearerTokenProvider;
     }
 
     public Task<(bool valid, AuthoritativeRaidAdmissionTicket ticket, string error)> VerifyRaidAdmissionTicketAsync(
@@ -56,7 +61,7 @@ public sealed class BackendRaidAdmissionVerifier : IRaidAdmissionVerifier
     {
         var (success, data, error) = await CharacterClient.VerifyAuthoritativeRaidAdmissionTicketAsync(
             _config,
-            _bearerToken,
+            _bearerTokenProvider(),
             rawTicket,
             expectedRaidCode.Value);
 

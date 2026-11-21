@@ -101,12 +101,20 @@ namespace Grimhold.Backend
             }
         }
 
-        public static async Task<bool> PostLogoutAsync(BackendConfiguration config, string token)
+        /// <summary>
+        /// Exchanges the refresh token for a new access/refresh pair. Unauthenticated and strictly one attempt:
+        /// the backend treats a second use of the same refresh token as reuse and revokes the whole session
+        /// family, so this call is never retried here.
+        /// </summary>
+        public static async Task<(bool success, RefreshResult result, BackendError error)> PostRefreshAsync(BackendConfiguration config, string refreshToken)
         {
-            var url = $"{config.BaseUrl}/auth/logout";
+            var url = $"{config.BaseUrl}/auth/refresh";
+            var json = JsonUtility.ToJson(new RefreshRequest { refreshToken = refreshToken });
+
             using var request = InventoryProtocol.Create(url, "POST");
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
             request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
+            request.SetRequestHeader("Content-Type", "application/json");
             request.timeout = config.TimeoutSeconds;
 
             var operation = request.SendWebRequest();
@@ -115,13 +123,73 @@ namespace Grimhold.Backend
                 await Task.Yield();
             }
 
-            if (request.result != UnityWebRequest.Result.Success)
+            if (request.result == UnityWebRequest.Result.Success)
             {
-                Debug.LogWarning($"[{nameof(AuthenticationClient)}] Logout failed (network or server error), proceeding with local logout. Error: {request.error}");
-                return false;
+                try
+                {
+                    return (true, JsonUtility.FromJson<RefreshResult>(request.downloadHandler.text), default);
+                }
+                catch (ArgumentException)
+                {
+                    return (false, default, new BackendError { error = "INVALID_REFRESH_RESPONSE", message = "Refresh response is not valid JSON." });
+                }
             }
 
-            return true;
+            BackendError backendError = default;
+            if (!string.IsNullOrEmpty(request.downloadHandler.text))
+            {
+                try
+                {
+                    backendError = JsonUtility.FromJson<BackendError>(request.downloadHandler.text);
+                }
+                catch
+                {
+                    backendError = default;
+                }
+            }
+            if (string.IsNullOrEmpty(backendError.error))
+            {
+                backendError = new BackendError { error = BackendErrorUtility.ClassifyConnectionError(request.error), message = request.error };
+            }
+            backendError = BackendRetrySchedule.WithRetryAfter(
+                backendError, request.GetResponseHeader("Retry-After"), DateTimeOffset.UtcNow);
+            return (false, default, backendError);
+        }
+
+        public static async Task<bool> PostLogoutAsync(BackendConfiguration config, string token)
+        {
+            var url = $"{config.BaseUrl}/auth/logout";
+            // Authenticated like every other call, so an expired access token is renewed first and the
+            // backend can still revoke the refresh family.
+            var (success, _, error) = await AuthorizedRequest.SendAsync<bool>(config, token, () =>
+            {
+                var webRequest = InventoryProtocol.Create(url, "POST");
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                return webRequest;
+            }, request => request.result == UnityWebRequest.Result.Success
+                ? (true, true, default)
+                : (false, false, ParseError(request)));
+
+            if (!success)
+            {
+                Debug.LogWarning($"[{nameof(AuthenticationClient)}] Logout failed (network or server error), proceeding with local logout. Error: {error.error}");
+            }
+
+            return success;
+        }
+
+        private static BackendError ParseError(UnityWebRequest request)
+        {
+            if (!string.IsNullOrEmpty(request.downloadHandler?.text))
+            {
+                try
+                {
+                    var parsed = JsonUtility.FromJson<BackendError>(request.downloadHandler.text);
+                    if (!string.IsNullOrEmpty(parsed.error)) return parsed;
+                }
+                catch { /* fall through */ }
+            }
+            return new BackendError { error = BackendErrorUtility.ClassifyConnectionError(request.error), message = request.error };
         }
     }
 }
