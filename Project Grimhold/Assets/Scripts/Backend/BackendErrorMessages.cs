@@ -15,6 +15,12 @@ namespace Grimhold.Backend
                             ? $"Demasiadas solicitudes. Espera {System.Math.Ceiling(error.retryAfter / 60d):0} {(System.Math.Ceiling(error.retryAfter / 60d) == 1 ? "minuto" : "minutos")} antes de volver a intentarlo."
                             : $"Demasiadas solicitudes. Espera {System.Math.Ceiling(error.retryAfter):0} segundos antes de volver a intentarlo."
                         : "Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.";
+                case "TOKEN_EXPIRED":
+                    return "Tu sesión ha caducado. Vuelve a iniciar sesión.";
+                case "REFRESH_INVALID":
+                    return "No se pudo renovar tu sesión. Vuelve a iniciar sesión.";
+                case "UNAUTHORIZED":
+                    return "Tu sesión ya no es válida. Vuelve a iniciar sesión.";
                 case "EXTRACTION_RESULT_PENDING":
                 case "NO_AUTHORITATIVE_RESULT":
                     return "El resultado de la incursión aún se está procesando.";

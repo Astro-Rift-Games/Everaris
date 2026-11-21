@@ -20,20 +20,26 @@ internal sealed class LoopbackBackendServer : IDisposable
 {
     internal readonly struct Recorded
     {
-        public Recorded(string method, string path, string query, string body)
-        { Method = method; Path = path; Query = query; Body = body; }
+        public Recorded(string method, string path, string query, string body, string authorization = null)
+        { Method = method; Path = path; Query = query; Body = body; Authorization = authorization; }
 
         public string Method { get; }
         public string Path { get; }
         public string Query { get; }
         public string Body { get; }
+        /// <summary>The raw Authorization header the client sent, or null.</summary>
+        public string Authorization { get; }
     }
 
     internal readonly struct Reply
     {
-        private Reply(int status, string body, bool truncated) { Status = status; Body = body; Truncated = truncated; }
+        private Reply(int status, string body, bool truncated, int delayMs = 0)
+        { Status = status; Body = body; Truncated = truncated; DelayMs = delayMs; }
         public int Status { get; }
         public string Body { get; }
+        /// <summary>Milliseconds the server waits before answering, so requests can overlap in flight.</summary>
+        public int DelayMs { get; }
+        public Reply After(int delayMs) => new Reply(Status, Body, Truncated, delayMs);
         /// <summary>Declares more bytes than it sends: a genuine transport failure for the client.</summary>
         public bool Truncated { get; }
 
@@ -45,13 +51,20 @@ internal sealed class LoopbackBackendServer : IDisposable
 
     private readonly HttpListener _listener = new HttpListener();
     private readonly Queue<Reply> _script;
+    private readonly Func<Recorded, Reply> _responder;
     private readonly List<Recorded> _requests = new List<Recorded>();
     private readonly object _gate = new object();
     private Reply _last;
 
-    public LoopbackBackendServer(params Reply[] replies)
+    public LoopbackBackendServer(params Reply[] replies) : this(replies, null) { }
+
+    /// <summary>Answers every request from <paramref name="responder"/>, which can route by path and credential.</summary>
+    public LoopbackBackendServer(Func<Recorded, Reply> responder) : this(Array.Empty<Reply>(), responder) { }
+
+    private LoopbackBackendServer(Reply[] replies, Func<Recorded, Reply> responder)
     {
         _script = new Queue<Reply>(replies);
+        _responder = responder;
         var probe = new TcpListener(IPAddress.Loopback, 0);
         probe.Start();
         int port = ((IPEndPoint)probe.LocalEndpoint).Port;
@@ -77,28 +90,43 @@ internal sealed class LoopbackBackendServer : IDisposable
             try { context = await _listener.GetContextAsync(); }
             catch { return; }
 
-            string body;
-            using (var reader = new StreamReader(context.Request.InputStream))
-                body = await reader.ReadToEndAsync();
-            Reply reply;
-            lock (_gate)
+            // Each exchange is handled on its own so a delayed reply never blocks an overlapping request.
+            _ = HandleAsync(context);
+        }
+    }
+
+    private async Task HandleAsync(HttpListenerContext context)
+    {
+        string body;
+        using (var reader = new StreamReader(context.Request.InputStream))
+            body = await reader.ReadToEndAsync();
+        var recorded = new Recorded(context.Request.HttpMethod, context.Request.Url.AbsolutePath,
+            context.Request.Url.Query, body, context.Request.Headers["Authorization"]);
+        Reply reply;
+        lock (_gate)
+        {
+            _requests.Add(recorded);
+            if (_responder == null)
             {
-                _requests.Add(new Recorded(context.Request.HttpMethod, context.Request.Url.AbsolutePath,
-                    context.Request.Url.Query, body));
                 if (_script.Count > 0) _last = _script.Dequeue();
                 reply = _last;
             }
-
-            byte[] payload = Encoding.UTF8.GetBytes(reply.Body ?? string.Empty);
-            context.Response.StatusCode = reply.Status;
-            context.Response.ContentLength64 = reply.Truncated ? payload.Length + 100 : payload.Length;
-            try
+            else
             {
-                await context.Response.OutputStream.WriteAsync(payload, 0, payload.Length);
-                context.Response.Close();
+                reply = _responder(recorded);
             }
-            catch { /* the client of a truncated reply may have gone away */ }
         }
+
+        if (reply.DelayMs > 0) await Task.Delay(reply.DelayMs);
+        byte[] payload = Encoding.UTF8.GetBytes(reply.Body ?? string.Empty);
+        context.Response.StatusCode = reply.Status;
+        context.Response.ContentLength64 = reply.Truncated ? payload.Length + 100 : payload.Length;
+        try
+        {
+            await context.Response.OutputStream.WriteAsync(payload, 0, payload.Length);
+            context.Response.Close();
+        }
+        catch { /* the client of a truncated reply may have gone away */ }
     }
 
     public void Dispose()

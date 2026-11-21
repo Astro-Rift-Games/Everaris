@@ -11,33 +11,15 @@ namespace Grimhold.Backend
         public static async Task<(bool success, CharacterData data, BackendError error)> GetCharacterAsync(BackendConfiguration config, string token)
         {
             var url = $"{config.BaseUrl}/character/me";
-            using var request = InventoryProtocol.Get(url);
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone)
-            {
-                await Task.Yield();
-            }
-
-            return ProcessResponse<CharacterData>(request);
+            return await AuthorizedRequest.SendAsync<CharacterData>(config, token, () => InventoryProtocol.Get(url),
+                ProcessResponse<CharacterData>);
         }
 
         public static async Task<(bool success, CharacterProfileData data, BackendError error)> GetProfileAsync(BackendConfiguration config, string token)
         {
             var url = $"{config.BaseUrl}/character/me/profile";
-            using var request = InventoryProtocol.Get(url);
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone)
-            {
-                await Task.Yield();
-            }
-
-            return ProcessResponse<CharacterProfileData>(request);
+            return await AuthorizedRequest.SendAsync<CharacterProfileData>(config, token, () => InventoryProtocol.Get(url),
+                ProcessResponse<CharacterProfileData>);
         }
 
         public static async Task<(bool success, CharacterProfileData data, BackendError error)> PatchProfileAsync(BackendConfiguration config, string token, string customNote)
@@ -46,20 +28,14 @@ namespace Grimhold.Backend
             var requestData = new PatchProfileRequest { customNote = customNote };
             var json = JsonUtility.ToJson(requestData);
 
-            using var request = InventoryProtocol.Create(url, "PATCH");
-            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone)
+            return await AuthorizedRequest.SendAsync<CharacterProfileData>(config, token, () =>
             {
-                await Task.Yield();
-            }
-
-            return ProcessResponse<CharacterProfileData>(request);
+                var webRequest = InventoryProtocol.Create(url, "PATCH");
+                webRequest.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                return webRequest;
+            }, ProcessResponse<CharacterProfileData>);
         }
 
         public static async Task<(bool success, CreateCharacterResult data, BackendError error)> PostCreateCharacterAsync(BackendConfiguration config, string token, string name)
@@ -68,34 +44,26 @@ namespace Grimhold.Backend
             var requestData = new CreateCharacterRequest { name = name };
             var json = JsonUtility.ToJson(requestData);
 
-            using var request = InventoryProtocol.Create(url, "POST");
-            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone)
+            return await AuthorizedRequest.SendAsync<CreateCharacterResult>(config, token, () =>
             {
-                await Task.Yield();
-            }
-
-            return ProcessResponse<CreateCharacterResult>(request);
+                var webRequest = InventoryProtocol.Create(url, "POST");
+                webRequest.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                return webRequest;
+            }, ProcessResponse<CreateCharacterResult>);
         }
 
         public static async Task<(bool success, TownSessionTicketResponse data, BackendError error)> GetTownSessionTicketAsync(BackendConfiguration config, string token)
         {
             var url = $"{config.BaseUrl}/character/me/session-ticket/town";
-            using var request = InventoryProtocol.Create(url, "POST");
-            request.uploadHandler = new UploadHandlerRaw(Array.Empty<byte>());
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone) await Task.Yield();
-            return ProcessResponse<TownSessionTicketResponse>(request);
+            return await AuthorizedRequest.SendAsync<TownSessionTicketResponse>(config, token, () =>
+            {
+                var webRequest = InventoryProtocol.Create(url, "POST");
+                webRequest.uploadHandler = new UploadHandlerRaw(Array.Empty<byte>());
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                return webRequest;
+            }, ProcessResponse<TownSessionTicketResponse>);
         }
 
         public static async Task<(bool success, VerifyTownTicketResponse data, BackendError error)> VerifyTownSessionTicketAsync(BackendConfiguration config, string token, string rawTicket)
@@ -104,16 +72,14 @@ namespace Grimhold.Backend
             var body = new VerifyTownTicketRequest { ticket = rawTicket };
             var json = JsonUtility.ToJson(body);
 
-            using var request = InventoryProtocol.Create(url, "POST");
-            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone) await Task.Yield();
-            return ProcessResponse<VerifyTownTicketResponse>(request);
+            return await AuthorizedRequest.SendAsync<VerifyTownTicketResponse>(config, token, () =>
+            {
+                var webRequest = InventoryProtocol.Create(url, "POST");
+                webRequest.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                return webRequest;
+            }, ProcessResponse<VerifyTownTicketResponse>);
         }
 
         public static async Task<(bool success, AuthoritativeRaidAdmissionTicketResponse data, BackendError error)> GetAuthoritativeRaidAdmissionTicketAsync(
@@ -126,16 +92,14 @@ namespace Grimhold.Backend
             var body = new IssueRaidAdmissionTicketRequest { raidCode = raidCode, reservationId = reservationId };
             var json = JsonUtility.ToJson(body);
 
-            using var request = InventoryProtocol.Create(url, "POST");
-            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone) await Task.Yield();
-            return ProcessResponse<AuthoritativeRaidAdmissionTicketResponse>(request);
+            return await AuthorizedRequest.SendAsync<AuthoritativeRaidAdmissionTicketResponse>(config, token, () =>
+            {
+                var webRequest = InventoryProtocol.Create(url, "POST");
+                webRequest.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                return webRequest;
+            }, ProcessResponse<AuthoritativeRaidAdmissionTicketResponse>);
         }
 
         public static async Task<(bool success, VerifyRaidAdmissionTicketResponse data, BackendError error)> VerifyAuthoritativeRaidAdmissionTicketAsync(
@@ -148,16 +112,14 @@ namespace Grimhold.Backend
             var body = new VerifyRaidAdmissionTicketRequest { ticket = rawTicket, raidCode = raidCode };
             var json = JsonUtility.ToJson(body);
 
-            using var request = InventoryProtocol.Create(url, "POST");
-            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone) await Task.Yield();
-            return ProcessResponse<VerifyRaidAdmissionTicketResponse>(request);
+            return await AuthorizedRequest.SendAsync<VerifyRaidAdmissionTicketResponse>(config, token, () =>
+            {
+                var webRequest = InventoryProtocol.Create(url, "POST");
+                webRequest.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                return webRequest;
+            }, ProcessResponse<VerifyRaidAdmissionTicketResponse>);
         }
 
         private static (bool success, T data, BackendError error) ProcessResponse<T>(UnityWebRequest request)

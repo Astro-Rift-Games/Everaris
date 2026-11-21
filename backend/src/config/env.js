@@ -66,11 +66,29 @@ if (rawTrustProxy && rawTrustProxy !== 'false') {
   trustProxy = Number(rawTrustProxy);
 }
 
+// FIX-34: PLACEHOLDER. Game Design has not defined the refresh token lifetime;
+// edit JWT_REFRESH_EXPIRES_IN (or this default, seconds) once it does.
+const jwtRefreshExpiresIn = parseInt(process.env.JWT_REFRESH_EXPIRES_IN || '86400', 10);
+if (!Number.isSafeInteger(jwtRefreshExpiresIn) || jwtRefreshExpiresIn <= 0) {
+  console.error('[Config] JWT_REFRESH_EXPIRES_IN must be a positive integer number of seconds.');
+  process.exit(1);
+}
+
+// FIX-34 (L9): a rotated refresh token presented again within this many seconds of its first use
+// is treated as a retry of a lost response, not as theft. 0 disables the grace (strict reuse detection).
+const jwtRefreshReuseGraceSeconds = parseInt(process.env.JWT_REFRESH_REUSE_GRACE_SECONDS || '30', 10);
+if (!Number.isSafeInteger(jwtRefreshReuseGraceSeconds) || jwtRefreshReuseGraceSeconds < 0) {
+  console.error('[Config] JWT_REFRESH_REUSE_GRACE_SECONDS must be a non-negative integer number of seconds (0 disables the grace window).');
+  process.exit(1);
+}
+
 module.exports = {
   port: parseInt(process.env.PORT, 10),
   mongodbUri: process.env.MONGODB_URI,
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '3600',
+  jwtRefreshExpiresIn,
+  jwtRefreshReuseGraceSeconds,
   nodeEnv: nodeEnv,
   webhookSecret: webhookSecret,
   allowDevWebhookSecret: allowDevWebhookSecret,

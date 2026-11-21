@@ -42,6 +42,14 @@ async function authenticate(req, res, next) {
     if (err && err.statusCode) {
       return next(err);
     }
+    // FIX-34: only a correctly signed token past its `exp` is recoverable through POST /auth/refresh.
+    if (err && err.name === 'TokenExpiredError') {
+      return next({
+        statusCode: 401,
+        errorCode: 'TOKEN_EXPIRED',
+        message: 'Token has expired.'
+      });
+    }
     return next({
       statusCode: 401,
       errorCode: 'UNAUTHORIZED',

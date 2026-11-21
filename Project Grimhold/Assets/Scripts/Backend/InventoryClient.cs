@@ -72,14 +72,8 @@ namespace Grimhold.Backend
             GetInventoryAsync(BackendConfiguration config, string token)
         {
             var url = $"{config.BaseUrl}/character/me/inventory";
-            using var request = InventoryProtocol.Get(url);
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone) await Task.Yield();
-
-            return ProcessResponse<InventoryData>(request);
+            return await AuthorizedRequest.SendAsync<InventoryData>(config, token, () => InventoryProtocol.Get(url),
+                ProcessResponse<InventoryData>);
         }
 
         // ------------------------------------------------------------------
@@ -203,16 +197,13 @@ namespace Grimhold.Backend
             var url = $"{config.BaseUrl}/character/me/inventory/reservation";
             if (expectedReservationId != null)
                 url += "?expectedReservationId=" + System.Uri.EscapeDataString(expectedReservationId);
-            using var request = InventoryProtocol.Delete(url);
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            // DELETE needs a download handler to read the response body.
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone) await Task.Yield();
-
-            return ProcessResponse<ClearPendingReservationResult>(request);
+            return await AuthorizedRequest.SendAsync<ClearPendingReservationResult>(config, token, () =>
+            {
+                var webRequest = InventoryProtocol.Delete(url);
+                // DELETE needs a download handler to read the response body.
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                return webRequest;
+            }, ProcessResponse<ClearPendingReservationResult>);
         }
 
         /// <summary>
@@ -224,15 +215,12 @@ namespace Grimhold.Backend
             var url = $"{config.BaseUrl}/character/me/inventory/reservation?rollback=true";
             if (expectedReservationId != null)
                 url += "&expectedReservationId=" + System.Uri.EscapeDataString(expectedReservationId);
-            using var request = InventoryProtocol.Delete(url);
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone) await Task.Yield();
-
-            return ProcessResponse<ClearPendingReservationResult>(request);
+            return await AuthorizedRequest.SendAsync<ClearPendingReservationResult>(config, token, () =>
+            {
+                var webRequest = InventoryProtocol.Delete(url);
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                return webRequest;
+            }, ProcessResponse<ClearPendingReservationResult>);
         }
 
         /// <summary>
@@ -329,34 +317,28 @@ namespace Grimhold.Backend
             PostJson<TRequest, TResult>(BackendConfiguration config, string token, string url, TRequest body)
         {
             var json = InventoryRequestJson.Encode(body);
-            using var request = InventoryProtocol.Create(url, "POST");
-            request.uploadHandler   = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone) await Task.Yield();
-
-            return ProcessResponse<TResult>(request);
+            return await AuthorizedRequest.SendAsync<TResult>(config, token, () =>
+            {
+                var webRequest = InventoryProtocol.Create(url, "POST");
+                webRequest.uploadHandler   = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json));
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                return webRequest;
+            }, ProcessResponse<TResult>);
         }
 
         private static async Task<(bool success, TResult data, BackendError error)>
             PutJson<TRequest, TResult>(BackendConfiguration config, string token, string url, TRequest body)
         {
             var json = InventoryRequestJson.Encode(body);
-            using var request = InventoryProtocol.Create(url, "PUT");
-            request.uploadHandler   = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Authorization", $"Bearer {token}");
-            request.timeout = config.TimeoutSeconds;
-
-            var operation = request.SendWebRequest();
-            while (!operation.isDone) await Task.Yield();
-
-            return ProcessResponse<TResult>(request);
+            return await AuthorizedRequest.SendAsync<TResult>(config, token, () =>
+            {
+                var webRequest = InventoryProtocol.Create(url, "PUT");
+                webRequest.uploadHandler   = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json));
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                return webRequest;
+            }, ProcessResponse<TResult>);
         }
 
         private static (bool success, T data, BackendError error) ProcessResponse<T>(UnityWebRequest request)

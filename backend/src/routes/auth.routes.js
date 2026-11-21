@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const AuthService = require('../services/AuthService');
-const { loginValidator, registerValidator } = require('../validators/auth.validators');
+const { loginValidator, registerValidator, refreshValidator } = require('../validators/auth.validators');
 const authenticate = require('../middleware/authenticate');
 const { MemoryRateLimiter, UserFailedLoginLimiter } = require('../middleware/rateLimiter');
 const config = require('../config/env');
@@ -19,8 +19,16 @@ const userLoginLimiter = new UserFailedLoginLimiter({
   message: 'Too many failed login attempts for this account. Please try again later.'
 });
 
+// Separate bucket so silent refreshes never consume the login/register allowance of the same IP.
+const refreshRateLimiter = new MemoryRateLimiter({
+  windowMs: config.rateLimitWindowMs,
+  max: config.rateLimitIpMax,
+  message: 'Too many refresh requests from this IP. Please try again later.'
+});
+
 // Expose rate limiters on router for testing and administrative inspection
 router.ipRateLimiter = ipRateLimiter;
+router.refreshRateLimiter = refreshRateLimiter;
 router.userLoginLimiter = userLoginLimiter;
 
 // POST /auth/login
@@ -45,6 +53,16 @@ router.post('/register', ipRateLimiter.middleware(), registerValidator, async (r
     const { username, password } = req.body;
     const result = await AuthService.register(username, password);
     res.status(201).json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /auth/refresh (unauthenticated: the access token is expected to be expired)
+router.post('/refresh', refreshRateLimiter.middleware(), refreshValidator, async (req, res, next) => {
+  try {
+    const result = await AuthService.refresh(req.body.refreshToken);
+    res.json(result);
   } catch (err) {
     next(err);
   }

@@ -6,14 +6,19 @@ using Grimhold.Backend;
 public sealed class BackendTownSessionTicketVerifier : ITownSessionTicketVerifier
 {
     private readonly BackendConfiguration _config;
-    private readonly string _bearerToken;
+    private readonly Func<string> _bearerTokenProvider;
     private readonly Dictionary<string, Task<(bool valid, ProfileId profileId, string characterName, string error)>> _verificationCache =
         new Dictionary<string, Task<(bool, ProfileId, string, string)>>(StringComparer.Ordinal);
 
     public BackendTownSessionTicketVerifier(BackendConfiguration config, string bearerToken)
+        : this(config, () => bearerToken)
+    {
+    }
+
+    public BackendTownSessionTicketVerifier(BackendConfiguration config, Func<string> bearerTokenProvider)
     {
         _config = config;
-        _bearerToken = bearerToken;
+        _bearerTokenProvider = bearerTokenProvider;
     }
 
     public Task<(bool valid, ProfileId profileId, string characterName, string error)> VerifyTownTicketAsync(string rawTicket)
@@ -49,7 +54,7 @@ public sealed class BackendTownSessionTicketVerifier : ITownSessionTicketVerifie
 
     private async Task<(bool valid, ProfileId profileId, string characterName, string error)> VerifyTownTicketInternalAsync(string rawTicket)
     {
-        var (success, data, error) = await CharacterClient.VerifyTownSessionTicketAsync(_config, _bearerToken, rawTicket);
+        var (success, data, error) = await CharacterClient.VerifyTownSessionTicketAsync(_config, _bearerTokenProvider(), rawTicket);
         if (!success || !data.valid)
         {
             return (false, default, string.Empty, data.error ?? error.error ?? "VERIFICATION_FAILED");
