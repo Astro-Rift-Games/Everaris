@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1194,
-  "canonicalEntries": 1191,
+  "rawCommits": 1195,
+  "canonicalEntries": 1192,
   "before": {
+    "Features": 422,
     "Tests": 47,
-    "Features": 421,
     "Bug Fixes": 185,
     "Documentation": 127,
     "Other Changes": 374,
@@ -12,8 +12,8 @@
     "Architecture & Infrastructure": 24
   },
   "after": {
+    "Features": 561,
     "Tests": 52,
-    "Features": 560,
     "Bug Fixes": 201,
     "Documentation": 143,
     "Refactoring": 29,
@@ -23,27 +23,27 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Tests": 758,
-    "Inventory & Loot": 482,
+    "Inventory & Loot": 483,
+    "UI": 349,
+    "World & Visibility": 169,
+    "Art & Animation": 262,
+    "Build & Tooling": 619,
+    "Tests": 759,
     "Networking & Sessions": 355,
-    "UI": 348,
     "Persistence & Backend": 303,
-    "Build & Tooling": 618,
     "Documentation": 440,
-    "World & Visibility": 168,
     "Combat": 401,
     "Extraction": 176,
     "Unassigned": 43,
     "Audio": 42,
-    "Art & Animation": 261,
     "Abilities": 139,
     "Movement": 102,
     "Input": 32
   },
   "canonical": {
     "sections": {
+      "Features": 560,
       "Tests": 52,
-      "Features": 559,
       "Bug Fixes": 200,
       "Documentation": 143,
       "Refactoring": 29,
@@ -52,19 +52,19 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Tests": 756,
-      "Inventory & Loot": 482,
+      "Inventory & Loot": 483,
+      "UI": 348,
+      "World & Visibility": 167,
+      "Art & Animation": 259,
+      "Build & Tooling": 617,
+      "Tests": 757,
       "Networking & Sessions": 355,
-      "UI": 347,
       "Persistence & Backend": 303,
-      "Build & Tooling": 616,
       "Documentation": 438,
-      "World & Visibility": 166,
       "Combat": 399,
       "Extraction": 176,
       "Unassigned": 43,
       "Audio": 42,
-      "Art & Animation": 258,
       "Abilities": 137,
       "Movement": 102,
       "Input": 32
@@ -74437,8 +74437,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 317,
-      "canonicalEntries": 317
+      "originalCommits": 318,
+      "canonicalEntries": 318
     },
     {
       "key": "v0.5.0",
@@ -74482,6 +74482,2271 @@
     }
   ],
   "commits": [
+    {
+      "sha": "bdb3e623721f631a357d97852ea960fae9a52e21",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bdb3e623721f631a357d97852ea960fae9a52e21",
+      "subject": "feat(art): integrate resource sprites and item bindings",
+      "body": "Configure all sixty-three resource sprite variants with 16 PPU, Point\nfiltering, Single sprite mode, centered pivot, and no compression. Bind\nthe twenty-one existing resource definitions to their world sprites\n(-Base) and UI icons (-Icon).\n\nAdd ResourceSpriteAssetsTests asserting exact sprite import settings,\ndefinition bindings, and LootDefinitionCatalog validation. Interactable\nvariants are configured for parity without behavior wiring.\n\nPlayer-Improved: Resources now display distinct world sprites and inventory icons.\n",
+      "date": "2026-11-21T01:41:15-03:00",
+      "files": [
+        "Project Grimhold/Assets/Art/Loot.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Interactable.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Base.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Base.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Icon.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Icon.png.meta",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Interactable.png",
+        "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Interactable.png.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ANCIENT_ARMOR.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ANCIENT_ROOT.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ATTUNEMENT_GEM.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BAT_FANG.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BAT_WING.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BLACK_IRON.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_CORRUPT_MARROW.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_CUSTODIAN_SEAL.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ETHER_DUST.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_ARROWHEAD.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_INSIGNIA.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_SCRAP.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOLEM_CORE.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_LOST_GRIMOIRE_PAGE.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_RUNE_FRAGMENT.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SLIME_CORE.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SLIME_GEL.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SOUL_FRAGMENT.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SPECTRAL_ESSENCE.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_TANNED_LEATHER.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_WITHERED_BONE.asset",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "art",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "UI",
+        "World & Visibility",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Base.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Base.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Icon.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Icon.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Interactable.png",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Interactable.png.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ANCIENT_ARMOR.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ANCIENT_ROOT.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ATTUNEMENT_GEM.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BAT_FANG.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BAT_WING.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BLACK_IRON.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_CORRUPT_MARROW.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_CUSTODIAN_SEAL.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ETHER_DUST.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_ARROWHEAD.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_INSIGNIA.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_SCRAP.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOLEM_CORE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_LOST_GRIMOIRE_PAGE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_RUNE_FRAGMENT.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SLIME_CORE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SLIME_GEL.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SOUL_FRAGMENT.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SPECTRAL_ESSENCE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_TANNED_LEATHER.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_WITHERED_BONE.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "UI",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Base.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Base.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Icon.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Icon.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Interactable.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Interactable.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Icon.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Icon.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Interactable.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Interactable.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "scope",
+          "value": "art",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "sprites",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs.meta",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "a2bcb5a412761ca12e6ea131f1ac240452513ee8",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a2bcb5a412761ca12e6ea131f1ac240452513ee8",

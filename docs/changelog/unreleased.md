@@ -4,32 +4,641 @@
 
 Release: Unreleased
 
-317 original commits; 317 canonical entries.
+318 original commits; 318 canonical entries.
 
 ## Canonical classification
 
-100 features; 107 bug fixes; 3 refactoring; 1 architecture & infrastructure; 53 documentation; 23 tests; 11 maintenance; 19 other changes
+101 features; 107 bug fixes; 3 refactoring; 1 architecture & infrastructure; 53 documentation; 23 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 12 | 11 | 1 | 0 | 10 | 1 |
-| Art & Animation | 20 | 12 | 3 | 0 | 9 | 7 |
+| Art & Animation | 21 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 71 | 71 | 3 | 1 | 25 | 6 |
+| Build & Tooling | 72 | 71 | 3 | 1 | 25 | 6 |
 | Combat | 47 | 20 | 2 | 0 | 15 | 1 |
 | Documentation | 37 | 44 | 0 | 0 | 16 | 0 |
 | Extraction | 18 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 68 | 62 | 3 | 1 | 27 | 5 |
+| Inventory & Loot | 69 | 62 | 3 | 1 | 27 | 5 |
 | Movement | 6 | 5 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 35 | 43 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 37 | 55 | 2 | 1 | 20 | 3 |
-| Tests | 95 | 101 | 3 | 1 | 33 | 4 |
-| UI | 40 | 23 | 1 | 0 | 12 | 3 |
+| Tests | 96 | 101 | 3 | 1 | 33 | 4 |
+| UI | 41 | 23 | 1 | 0 | 12 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 24 | 0 |
-| World & Visibility | 27 | 16 | 0 | 0 | 3 | 12 |
+| World & Visibility | 28 | 16 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### bdb3e623721f631a357d97852ea960fae9a52e21
+
+[bdb3e623721f631a357d97852ea960fae9a52e21](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bdb3e623721f631a357d97852ea960fae9a52e21)
+
+Date: 2026-11-21T01:41:15-03:00 · Classification: Features (explicit) · Systems: Inventory & Loot, UI, World & Visibility, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(art): integrate resource sprites and item bindings
+```
+
+#### Original body
+
+```text
+Configure all sixty-three resource sprite variants with 16 PPU, Point
+filtering, Single sprite mode, centered pivot, and no compression. Bind
+the twenty-one existing resource definitions to their world sprites
+(-Base) and UI icons (-Icon).
+
+Add ResourceSpriteAssetsTests asserting exact sprite import settings,
+definition bindings, and LootDefinitionCatalog validation. Interactable
+variants are configured for parity without behavior wiring.
+
+Player-Improved: Resources now display distinct world sprites and inventory icons.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Art/Loot.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ARMOR-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ANCIENT_ROOT-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ATTUNEMENT_GEM-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_FANG-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BAT_WING-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_BLACK_IRON-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CORRUPT_MARROW-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_CUSTODIAN_SEAL-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_ETHER_DUST-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_ARROWHEAD-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_INSIGNIA-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOBLIN_SCRAP-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_GOLEM_CORE-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_LOST_GRIMOIRE_PAGE-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_RUNE_FRAGMENT-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_CORE-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SLIME_GEL-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SOUL_FRAGMENT-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_SPECTRAL_ESSENCE-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_TANNED_LEATHER-Interactable.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Base.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Base.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Icon.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Icon.png.meta
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Interactable.png
+Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES_WITHERED_BONE-Interactable.png.meta
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ANCIENT_ARMOR.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ANCIENT_ROOT.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ATTUNEMENT_GEM.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BAT_FANG.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BAT_WING.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_BLACK_IRON.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_CORRUPT_MARROW.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_CUSTODIAN_SEAL.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_ETHER_DUST.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_ARROWHEAD.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_INSIGNIA.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOBLIN_SCRAP.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_GOLEM_CORE.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_LOST_GRIMOIRE_PAGE.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_RUNE_FRAGMENT.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SLIME_CORE.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SLIME_GEL.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SOUL_FRAGMENT.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_SPECTRAL_ESSENCE.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_TANNED_LEATHER.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES_WITHERED_BONE.asset
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Base.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Base.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Icon.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Icon.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Interactable.png
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Interactable.png.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_ANCIENT\_ARMOR.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_ANCIENT\_ROOT.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_ATTUNEMENT\_GEM.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_BAT\_FANG.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_BAT\_WING.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_BLACK\_IRON.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_CORRUPT\_MARROW.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_CUSTODIAN\_SEAL.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_ETHER\_DUST.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_GOBLIN\_ARROWHEAD.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_GOBLIN\_INSIGNIA.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_GOBLIN\_SCRAP.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_GOLEM\_CORE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_LOST\_GRIMOIRE\_PAGE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_RUNE\_FRAGMENT.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_SLIME\_CORE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_SLIME\_GEL.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_SOUL\_FRAGMENT.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_SPECTRAL\_ESSENCE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_TANNED\_LEATHER.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/RES\_WITHERED\_BONE.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs.meta
+- message-term → Inventory &amp; Loot: inventory
+- message-term → UI: UI
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Interactable.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Base.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Base.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Icon.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Icon.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Interactable.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ARMOR-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ANCIENT\_ROOT-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ATTUNEMENT\_GEM-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_FANG-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BAT\_WING-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_BLACK\_IRON-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CORRUPT\_MARROW-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_CUSTODIAN\_SEAL-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_ETHER\_DUST-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_ARROWHEAD-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_INSIGNIA-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOBLIN\_SCRAP-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_GOLEM\_CORE-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_LOST\_GRIMOIRE\_PAGE-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_RUNE\_FRAGMENT-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_CORE-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SLIME\_GEL-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SOUL\_FRAGMENT-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_SPECTRAL\_ESSENCE-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_TANNED\_LEATHER-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Icon.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Icon.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Interactable.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Loot/World and Monsters Resources/RES\_WITHERED\_BONE-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs.meta
+- scope → Art &amp; Animation: art
+- message-term → Art &amp; Animation: sprites
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ResourceSpriteAssetsTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### a2bcb5a412761ca12e6ea131f1ac240452513ee8
 

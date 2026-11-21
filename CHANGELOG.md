@@ -62,6 +62,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Dropped items now render above floor tiles on the character layer.
 - Health Potions across chests, enemies, and the Town Merchant now stack together with matching sprites.
 - Combat and world sounds now get quieter with distance.
+- Resources now display distinct world sprites and inventory icons.
 
 ### Fixed
 
