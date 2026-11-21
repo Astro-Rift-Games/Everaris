@@ -15,8 +15,8 @@ MonoBehaviour:
   _id: RES_CUSTODIAN_SEAL
   _displayName: Custodian Seal
   _description: An official wax seal belonging to the dungeon custodians.
-  _icon: {fileID: 21300000, guid: 3968ca9e97ed44feac69874b87f09c5c, type: 3}
-  _worldSprite: {fileID: 21300000, guid: 3968ca9e97ed44feac69874b87f09c5c, type: 3}
+  _icon: {fileID: 21300000, guid: a3c061f112f51e246abad75700fd900b, type: 3}
+  _worldSprite: {fileID: 21300000, guid: 1615d63d941a3494083801e8ca4171bf, type: 3}
   _category: 1
   _rarity: 1
   _objectValue: 45
@@ -34,6 +34,7 @@ MonoBehaviour:
   _canBeUsed: 0
   _missionCompatible: 0
   _useMode: 0
+  _isTrainingWeapon: 0
   _extractionValuePerUnit: 45
   _sellValuePerUnit: 45
   _buyValuePerUnit: 0
@@ -42,10 +43,10 @@ MonoBehaviour:
   _weaponDefinition: {fileID: 0}
   _shieldDefinition: {fileID: 0}
   _armorDefinition: {fileID: 0}
-  _equipmentVisualDefinition: {fileID: 0}
-  _defenseSprites:
-    _up: {fileID: 0}
-    _down: {fileID: 0}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+  _gemDefinition: {fileID: 0}
+  _equipmentVisualDefinition:
+    _usesBaseSpritesAsPlaceholder: 1
+    _tint: {r: 1, g: 1, b: 1, a: 1}
+    _spriteMappings: []
+  _defenseSprites: {fileID: 0}
   _quickSlotCompatible: 0

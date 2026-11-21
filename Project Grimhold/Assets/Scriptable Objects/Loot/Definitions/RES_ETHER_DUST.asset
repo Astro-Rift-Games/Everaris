@@ -15,8 +15,8 @@ MonoBehaviour:
   _id: RES_ETHER_DUST
   _displayName: Ether Dust
   _description: Fine shimmering particles of condensed ether.
-  _icon: {fileID: 21300000, guid: 3968ca9e97ed44feac69874b87f09c5c, type: 3}
-  _worldSprite: {fileID: 21300000, guid: 3968ca9e97ed44feac69874b87f09c5c, type: 3}
+  _icon: {fileID: 21300000, guid: 022aeafa9c8ce6d4d836f6edf7d9136f, type: 3}
+  _worldSprite: {fileID: 21300000, guid: 4c812a8d530d25a4e9b4e3bde4c88a70, type: 3}
   _category: 1
   _rarity: 0
   _objectValue: 18
@@ -34,6 +34,7 @@ MonoBehaviour:
   _canBeUsed: 0
   _missionCompatible: 0
   _useMode: 0
+  _isTrainingWeapon: 0
   _extractionValuePerUnit: 18
   _sellValuePerUnit: 18
   _buyValuePerUnit: 0
@@ -42,10 +43,10 @@ MonoBehaviour:
   _weaponDefinition: {fileID: 0}
   _shieldDefinition: {fileID: 0}
   _armorDefinition: {fileID: 0}
-  _equipmentVisualDefinition: {fileID: 0}
-  _defenseSprites:
-    _up: {fileID: 0}
-    _down: {fileID: 0}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+  _gemDefinition: {fileID: 0}
+  _equipmentVisualDefinition:
+    _usesBaseSpritesAsPlaceholder: 1
+    _tint: {r: 1, g: 1, b: 1, a: 1}
+    _spriteMappings: []
+  _defenseSprites: {fileID: 0}
   _quickSlotCompatible: 0

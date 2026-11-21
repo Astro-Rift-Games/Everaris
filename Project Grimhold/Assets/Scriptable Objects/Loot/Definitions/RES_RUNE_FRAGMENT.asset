@@ -15,8 +15,8 @@ MonoBehaviour:
   _id: RES_RUNE_FRAGMENT
   _displayName: Rune Fragment
   _description: A fractured piece of an ancient inscribed rune.
-  _icon: {fileID: 21300000, guid: 3968ca9e97ed44feac69874b87f09c5c, type: 3}
-  _worldSprite: {fileID: 21300000, guid: 3968ca9e97ed44feac69874b87f09c5c, type: 3}
+  _icon: {fileID: 21300000, guid: b0d722d6d7f7de8489d4400ae4c3035d, type: 3}
+  _worldSprite: {fileID: 21300000, guid: ea0d0cb7339c8e3429a32987e542ecec, type: 3}
   _category: 1
   _rarity: 0
   _objectValue: 20
@@ -34,6 +34,7 @@ MonoBehaviour:
   _canBeUsed: 0
   _missionCompatible: 0
   _useMode: 0
+  _isTrainingWeapon: 0
   _extractionValuePerUnit: 20
   _sellValuePerUnit: 20
   _buyValuePerUnit: 0
@@ -42,10 +43,10 @@ MonoBehaviour:
   _weaponDefinition: {fileID: 0}
   _shieldDefinition: {fileID: 0}
   _armorDefinition: {fileID: 0}
-  _equipmentVisualDefinition: {fileID: 0}
-  _defenseSprites:
-    _up: {fileID: 0}
-    _down: {fileID: 0}
-    _left: {fileID: 0}
-    _right: {fileID: 0}
+  _gemDefinition: {fileID: 0}
+  _equipmentVisualDefinition:
+    _usesBaseSpritesAsPlaceholder: 1
+    _tint: {r: 1, g: 1, b: 1, a: 1}
+    _spriteMappings: []
+  _defenseSprites: {fileID: 0}
   _quickSlotCompatible: 0
