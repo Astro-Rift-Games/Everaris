@@ -1,6 +1,6 @@
 // tests/auth.refresh.test.js
 // FIX-34: rotating refresh token, TOKEN_EXPIRED vs UNAUTHORIZED, family revocation on logout/reuse.
-const { test, describe, before, after } = require('node:test');
+const { test, describe, before, after, afterEach } = require('node:test');
 const assert = require('node:assert/strict');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
@@ -29,6 +29,15 @@ async function assertRefreshInvalid(promise) {
   });
 }
 
+// Moves the use of a rotated token back in time, as if it had been rotated `secondsAgo` s ago.
+async function ageUse(refreshToken, secondsAgo) {
+  await RefreshToken.updateOne({ tokenHash: sha256(refreshToken) }, { usedAt: new Date(Date.now() - secondsAgo * 1000) });
+}
+
+async function liveUnused(familyId) {
+  return RefreshToken.find({ familyId, usedAt: null, revokedAt: null }).lean();
+}
+
 describe('Refresh token rotation (FIX-34)', () => {
   let mongoServer;
 
@@ -46,6 +55,144 @@ describe('Refresh token rotation (FIX-34)', () => {
   test('jwtRefreshExpiresIn is a numeric placeholder defaulting to 24 h', () => {
     assert.equal(config.jwtRefreshExpiresIn, 86400);
   });
+
+  test('jwtRefreshReuseGraceSeconds defaults to 30 s', () => {
+    assert.equal(config.jwtRefreshReuseGraceSeconds, 30);
+  });
+
+  describe('reuse grace window (FIX-34 L9)', () => {
+    let originalGrace;
+    before(() => { originalGrace = config.jwtRefreshReuseGraceSeconds; });
+    afterEach(() => { config.jwtRefreshReuseGraceSeconds = originalGrace; });
+
+    test('reusing a token inside the grace window returns a working new pair and revokes the lost successor', async () => {
+      const login = await AuthService.register('grace_retry', 'password123');
+      const sid = jwt.decode(login.token).sid;
+      const lost = await AuthService.refresh(login.refreshToken); // response never reached the client
+
+      const retried = await AuthService.refresh(login.refreshToken);
+      assert.notEqual(retried.refreshToken, lost.refreshToken);
+      assert.notEqual(retried.token, lost.token);
+      assert.equal(retried.expiresIn, parseInt(config.jwtExpiresIn, 10));
+      assert.equal(retried.refreshExpiresIn, config.jwtRefreshExpiresIn);
+      assert.equal(jwt.decode(retried.token).sid, sid);
+      const { req, error } = await runAuthenticate(retried.token);
+      assert.equal(error, undefined);
+      assert.equal(String(req.accountId), jwt.decode(login.token).sub);
+
+      const live = await liveUnused(sid);
+      assert.equal(live.length, 1, 'exactly one live unused successor');
+      assert.equal(live[0].tokenHash, sha256(retried.refreshToken));
+      const lostDoc = await RefreshToken.findOne({ tokenHash: sha256(lost.refreshToken) }).lean();
+      assert.ok(lostDoc.revokedAt, 'the lost successor is revoked');
+      assert.equal(lostDoc.usedAt ?? null, null);
+      const parent = await RefreshToken.findOne({ tokenHash: sha256(login.refreshToken) }).lean();
+      assert.equal(parent.revokedAt ?? null, null, 'the family is not revoked');
+
+      // The lost successor is dead, without taking the family with it.
+      await assertRefreshInvalid(AuthService.refresh(lost.refreshToken));
+      const chained = await AuthService.refresh(retried.refreshToken);
+      assert.equal(jwt.decode(chained.token).sid, sid);
+    });
+
+    test('repeated retries inside the window keep exactly one live successor', async () => {
+      const login = await AuthService.register('grace_repeat', 'password123');
+      const sid = jwt.decode(login.token).sid;
+      await AuthService.refresh(login.refreshToken);
+      await AuthService.refresh(login.refreshToken);
+      const last = await AuthService.refresh(login.refreshToken);
+
+      const live = await liveUnused(sid);
+      assert.equal(live.length, 1);
+      assert.equal(live[0].tokenHash, sha256(last.refreshToken));
+      assert.equal(await RefreshToken.countDocuments({ familyId: sid, revokedAt: null }), 2, 'parent (used) and the live successor');
+    });
+
+    test('a successor already used is not revoked by a later retry of its parent', async () => {
+      const login = await AuthService.register('grace_used_child', 'password123');
+      const first = await AuthService.refresh(login.refreshToken);
+      await AuthService.refresh(first.refreshToken); // the client did receive `first`
+
+      const retried = await AuthService.refresh(login.refreshToken);
+      assert.ok(retried.refreshToken);
+      const firstDoc = await RefreshToken.findOne({ tokenHash: sha256(first.refreshToken) }).lean();
+      assert.ok(firstDoc.usedAt);
+      assert.equal(firstDoc.revokedAt ?? null, null);
+    });
+
+    test('reuse just inside the window succeeds, just outside revokes the family and the newest token dies too', async () => {
+      const grace = config.jwtRefreshReuseGraceSeconds;
+      const login = await AuthService.register('grace_boundary', 'password123');
+      const sid = jwt.decode(login.token).sid;
+      const newest = await AuthService.refresh(login.refreshToken);
+
+      await ageUse(login.refreshToken, grace - 5);
+      const inside = await AuthService.refresh(login.refreshToken);
+      assert.ok(inside.refreshToken);
+
+      await ageUse(login.refreshToken, grace + 1);
+      const before = await RefreshToken.countDocuments({ familyId: sid });
+      await assertRefreshInvalid(AuthService.refresh(login.refreshToken));
+      assert.equal(await RefreshToken.countDocuments({ familyId: sid }), before, 'a rejected reuse issues nothing');
+      const family = await RefreshToken.find({ familyId: sid }).lean();
+      assert.ok(family.every((doc) => doc.revokedAt), 'the whole family is revoked');
+      await assertRefreshInvalid(AuthService.refresh(inside.refreshToken));
+      await assertRefreshInvalid(AuthService.refresh(newest.refreshToken));
+    });
+
+    test('a retry does not extend the window: it is measured from the first use', async () => {
+      const grace = config.jwtRefreshReuseGraceSeconds;
+      const login = await AuthService.register('grace_fixed_window', 'password123');
+      await AuthService.refresh(login.refreshToken);
+      await ageUse(login.refreshToken, grace - 5);
+      await AuthService.refresh(login.refreshToken);
+      const parent = await RefreshToken.findOne({ tokenHash: sha256(login.refreshToken) }).lean();
+      const ageMs = Date.now() - parent.usedAt.getTime();
+      assert.ok(ageMs >= (grace - 6) * 1000, 'usedAt keeps the original time');
+    });
+
+    test('grace 0 keeps the strict behavior: immediate reuse revokes the family', async () => {
+      config.jwtRefreshReuseGraceSeconds = 0;
+      const login = await AuthService.register('grace_zero', 'password123');
+      const sid = jwt.decode(login.token).sid;
+      const rotated = await AuthService.refresh(login.refreshToken);
+
+      await assertRefreshInvalid(AuthService.refresh(login.refreshToken));
+      const family = await RefreshToken.find({ familyId: sid }).lean();
+      assert.equal(family.length, 2);
+      assert.ok(family.every((doc) => doc.revokedAt));
+      await assertRefreshInvalid(AuthService.refresh(rotated.refreshToken));
+    });
+
+    test('a used token of a revoked family or an expired token is REFRESH_INVALID even inside the window', async () => {
+      const revoked = await AuthService.register('grace_revoked', 'password123');
+      await AuthService.refresh(revoked.refreshToken);
+      await AuthService.logout(jwt.decode(revoked.token).sub, revoked.token);
+      await assertRefreshInvalid(AuthService.refresh(revoked.refreshToken));
+
+      const expired = await AuthService.register('grace_expired', 'password123');
+      const sid = jwt.decode(expired.token).sid;
+      await AuthService.refresh(expired.refreshToken);
+      await RefreshToken.updateOne({ tokenHash: sha256(expired.refreshToken) }, { expiresAt: new Date(Date.now() - 1000) });
+      const before = await RefreshToken.countDocuments({ familyId: sid });
+      await assertRefreshInvalid(AuthService.refresh(expired.refreshToken));
+      assert.equal(await RefreshToken.countDocuments({ familyId: sid }), before);
+    });
+
+    test('logout after a grace retry revokes every token of the family', async () => {
+      const login = await AuthService.register('grace_logout', 'password123');
+      const sid = jwt.decode(login.token).sid;
+      await AuthService.refresh(login.refreshToken);
+      const retried = await AuthService.refresh(login.refreshToken);
+
+      assert.equal(await AuthService.logout(jwt.decode(retried.token).sub, retried.token), true);
+      const family = await RefreshToken.find({ familyId: sid }).lean();
+      assert.ok(family.every((doc) => doc.revokedAt));
+      await assertRefreshInvalid(AuthService.refresh(retried.refreshToken));
+      await assertRefreshInvalid(AuthService.refresh(login.refreshToken));
+    });
+  });
+
 
   test('register and login return refresh fields and a sid claim; only the hash is stored', async () => {
     const reg = await AuthService.register('refresh_issue', 'password123');
@@ -102,10 +249,11 @@ describe('Refresh token rotation (FIX-34)', () => {
     assert.equal(jwt.decode(second.token).sid, sid);
   });
 
-  test('reusing a rotated refresh token is REFRESH_INVALID and revokes the whole family', async () => {
+  test('reusing a rotated refresh token after the grace window is REFRESH_INVALID and revokes the whole family', async () => {
     const login = await AuthService.register('refresh_reuse', 'password123');
     const sid = jwt.decode(login.token).sid;
     const rotated = await AuthService.refresh(login.refreshToken);
+    await ageUse(login.refreshToken, config.jwtRefreshReuseGraceSeconds + 1);
 
     await assertRefreshInvalid(AuthService.refresh(login.refreshToken));
 
@@ -120,6 +268,7 @@ describe('Refresh token rotation (FIX-34)', () => {
     const a = await AuthService.login('refresh_families', 'password123');
     const b = await AuthService.login('refresh_families', 'password123');
     await AuthService.refresh(a.refreshToken);
+    await ageUse(a.refreshToken, config.jwtRefreshReuseGraceSeconds + 1);
     await assertRefreshInvalid(AuthService.refresh(a.refreshToken));
 
     const rotatedB = await AuthService.refresh(b.refreshToken);

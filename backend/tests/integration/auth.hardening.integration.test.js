@@ -242,11 +242,23 @@ test('E2E Session Revocation and Backend Hardening (US-60 / SEC-60.4)', async (t
     assert.strictEqual(meRes.status, 200);
     assert.strictEqual(meRes.body.name, 'SirRefresh');
 
-    // Reuse of the rotated token: rejected and the family's newest token dies with it.
+    // Reuse inside the grace window (a lost response retried): 200 with a new pair, the lost successor dies.
+    const retry = await request(app).post('/auth/refresh').send({ refreshToken: loginRes.body.refreshToken });
+    assert.strictEqual(retry.status, 200);
+    assert.notStrictEqual(retry.body.refreshToken, refreshRes.body.refreshToken);
+    const lost = await request(app).post('/auth/refresh').send({ refreshToken: refreshRes.body.refreshToken });
+    assert.strictEqual(lost.status, 401);
+    assert.strictEqual(lost.body.error, 'REFRESH_INVALID');
+
+    // Reuse after the grace window: rejected and the family's newest token dies with it.
+    await RefreshToken.updateOne(
+      { tokenHash: crypto.createHash('sha256').update(loginRes.body.refreshToken).digest('hex') },
+      { usedAt: new Date(Date.now() - (env.jwtRefreshReuseGraceSeconds + 1) * 1000) }
+    );
     const reuse = await request(app).post('/auth/refresh').send({ refreshToken: loginRes.body.refreshToken });
     assert.strictEqual(reuse.status, 401);
     assert.strictEqual(reuse.body.error, 'REFRESH_INVALID');
-    const newest = await request(app).post('/auth/refresh').send({ refreshToken: refreshRes.body.refreshToken });
+    const newest = await request(app).post('/auth/refresh').send({ refreshToken: retry.body.refreshToken });
     assert.strictEqual(newest.status, 401);
     assert.strictEqual(newest.body.error, 'REFRESH_INVALID');
   });
@@ -311,15 +323,21 @@ test('E2E Session Revocation and Backend Hardening (US-60 / SEC-60.4)', async (t
     assert.strictEqual(other.status, 200);
   });
 
-  await t.test('13. Concurrent refresh with one token yields exactly one 200', async () => {
+  await t.test('13. Concurrent refresh with one token inside the grace window leaves exactly one live successor', async () => {
     const login = (await request(app).post('/auth/login').send({ username: 'refreshHero', password })).body;
     const responses = await Promise.all(Array.from({ length: 6 }, () =>
       request(app).post('/auth/refresh').send({ refreshToken: login.refreshToken })));
-    assert.strictEqual(responses.filter((r) => r.status === 200).length, 1);
-    for (const res of responses.filter((r) => r.status !== 200)) {
-      assert.strictEqual(res.status, 401);
-      assert.strictEqual(res.body.error, 'REFRESH_INVALID');
+    // Simultaneous requests are indistinguishable from retries of a lost response: all may answer 200.
+    for (const res of responses) {
+      assert.strictEqual(res.status, 200);
     }
+    let exchangeable = 0;
+    for (const res of responses) {
+      const next = await request(app).post('/auth/refresh').send({ refreshToken: res.body.refreshToken });
+      if (next.status === 200) exchangeable++;
+      else assert.strictEqual(next.body.error, 'REFRESH_INVALID');
+    }
+    assert.strictEqual(exchangeable, 1, 'exactly one issued refresh token stays live');
   });
 
   await t.test('14. Refresh endpoint is IP rate limited with 429 and Retry-After', async () => {

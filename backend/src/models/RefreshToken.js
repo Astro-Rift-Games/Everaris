@@ -29,6 +29,12 @@ const RefreshTokenSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  // Hash of the newest token issued from this one. A reuse inside the grace window swaps it
+  // atomically and revokes the token it replaced, so one live successor remains.
+  successorHash: {
+    type: String,
+    default: null
+  },
   // Set on logout or reuse detection; the whole family is revoked together.
   revokedAt: {
     type: Date,

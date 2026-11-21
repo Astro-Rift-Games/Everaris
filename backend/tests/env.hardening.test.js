@@ -265,3 +265,18 @@ test('startup rejects a non-positive or non-numeric JWT_REFRESH_EXPIRES_IN', () 
     assert.match(result.stderr, /JWT_REFRESH_EXPIRES_IN/);
   }
 });
+
+test('JWT_REFRESH_REUSE_GRACE_SECONDS defaults to 30 and accepts 0 or a positive integer', () => {
+  const last = (r) => JSON.parse(r.stdout.trim().split(String.fromCharCode(10)).at(-1));
+  assert.equal(last(loadEnv({})).jwtRefreshReuseGraceSeconds, 30);
+  assert.equal(last(loadEnv({ JWT_REFRESH_REUSE_GRACE_SECONDS: '0' })).jwtRefreshReuseGraceSeconds, 0);
+  assert.equal(last(loadEnv({ JWT_REFRESH_REUSE_GRACE_SECONDS: '120' })).jwtRefreshReuseGraceSeconds, 120);
+});
+
+test('startup rejects a negative or non-numeric JWT_REFRESH_REUSE_GRACE_SECONDS', () => {
+  for (const value of ['-1', 'abc']) {
+    const result = loadEnv({ JWT_REFRESH_REUSE_GRACE_SECONDS: value });
+    assert.notEqual(result.status, 0, value + ' must fail closed');
+    assert.match(result.stderr, /JWT_REFRESH_REUSE_GRACE_SECONDS/);
+  }
+});

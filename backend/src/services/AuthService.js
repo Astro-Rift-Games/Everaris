@@ -133,19 +133,30 @@ class AuthService {
 
   /**
    * Exchanges a refresh token for a new access/refresh pair of the same family (FIX-34).
-   * A refresh token is single use; presenting a used one revokes the whole family.
+   * A refresh token is single use. Presenting a used one again within the reuse grace window
+   * (`jwtRefreshReuseGraceSeconds`, measured from its first use) is a retry of a lost response:
+   * the unused successor issued earlier is revoked and a new one is issued. Outside the window
+   * (or with a 0 grace) it is reuse and revokes the whole family.
    * @throws 401 REFRESH_INVALID for unknown, expired, revoked or reused tokens.
    */
   static async refresh(refreshToken) {
+    const graceMs = config.jwtRefreshReuseGraceSeconds * 1000;
     const current = await RefreshToken.findOne({ tokenHash: hashToken(refreshToken) });
     if (!current) {
       throw refreshInvalidError();
     }
+
+    const now = Date.now();
     if (current.usedAt) {
-      await revokeRefreshFamily(current.familyId);
-      throw refreshInvalidError();
-    }
-    if (current.revokedAt || current.expiresAt.getTime() <= Date.now()) {
+      const withinGrace = graceMs > 0
+        && !current.revokedAt
+        && current.expiresAt.getTime() > now
+        && now - current.usedAt.getTime() <= graceMs;
+      if (!withinGrace) {
+        await revokeRefreshFamily(current.familyId);
+        throw refreshInvalidError();
+      }
+    } else if (current.revokedAt || current.expiresAt.getTime() <= now) {
       throw refreshInvalidError();
     }
 
@@ -154,17 +165,36 @@ class AuthService {
     const successor = buildRefreshToken(current.accountId, current.familyId);
     await RefreshToken.create(successor.document);
 
-    const claimed = await RefreshToken.findOneAndUpdate(
-      { _id: current._id, usedAt: null, revokedAt: null, expiresAt: { $gt: new Date() } },
-      { $set: { usedAt: new Date() } }
+    // One atomic step either consumes the token (first use) or, inside the grace window, keeps its
+    // original usedAt; in both cases the new successor replaces the previous one as the parent's
+    // successor. Concurrent requests serialize on this document, so each one learns exactly which
+    // successor it displaced and no more than one stays live.
+    const reusableUse = graceMs > 0 ? [{ usedAt: { $gte: new Date(now - graceMs) } }] : [];
+    const previous = await RefreshToken.findOneAndUpdate(
+      {
+        _id: current._id,
+        revokedAt: null,
+        expiresAt: { $gt: new Date() },
+        $or: [{ usedAt: null }, ...reusableUse]
+      },
+      [{ $set: { usedAt: { $ifNull: ['$usedAt', new Date()] }, successorHash: successor.document.tokenHash } }],
+      { returnDocument: 'before', updatePipeline: true }
     );
-    if (!claimed) {
+    if (!previous) {
       await RefreshToken.deleteOne({ tokenHash: successor.document.tokenHash });
       const latest = await RefreshToken.findById(current._id);
       if (latest && latest.usedAt) {
         await revokeRefreshFamily(current.familyId);
       }
       throw refreshInvalidError();
+    }
+
+    if (previous.successorHash) {
+      // The lost successor, unless the client did receive and use it.
+      await RefreshToken.updateOne(
+        { tokenHash: previous.successorHash, usedAt: null, revokedAt: null },
+        { $set: { revokedAt: new Date() } }
+      );
     }
 
     return sessionResponse(signAccessToken(current.accountId, current.familyId), successor.refreshToken);
