@@ -252,3 +252,16 @@ describe('Environment Hardening and Error Sanitization (US-60 / SEC-60.3)', () =
     assert.match(mongoPlaceholderResult.stderr, /MONGODB_URI contains an unresolved placeholder/);
   });
 });
+
+test('JWT_REFRESH_EXPIRES_IN defaults to 86400 and accepts a positive integer', () => {
+  assert.equal(JSON.parse(loadEnv({}).stdout.trim().split(String.fromCharCode(10)).at(-1)).jwtRefreshExpiresIn, 86400);
+  assert.equal(JSON.parse(loadEnv({ JWT_REFRESH_EXPIRES_IN: '120' }).stdout.trim().split(String.fromCharCode(10)).at(-1)).jwtRefreshExpiresIn, 120);
+});
+
+test('startup rejects a non-positive or non-numeric JWT_REFRESH_EXPIRES_IN', () => {
+  for (const value of ['0', '-5', 'abc']) {
+    const result = loadEnv({ JWT_REFRESH_EXPIRES_IN: value });
+    assert.notEqual(result.status, 0, value + ' must fail closed');
+    assert.match(result.stderr, /JWT_REFRESH_EXPIRES_IN/);
+  }
+});

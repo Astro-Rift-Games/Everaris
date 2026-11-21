@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 // We must require the exact modules used by AuthService to mock them properly.
 const Account = require('../src/models/Account');
+const RefreshToken = require('../src/models/RefreshToken');
 const AuthService = require('../src/services/AuthService');
 
 test('AuthService', async (t) => {
@@ -13,6 +14,10 @@ test('AuthService', async (t) => {
   const originalCompare = bcrypt.compare;
   const originalSign = jwt.sign;
   const originalHash = bcrypt.hash;
+  // Refresh persistence is covered against a real MongoDB in auth.refresh.test.js.
+  const originalCreateRefresh = RefreshToken.create;
+  RefreshToken.create = async (doc) => doc;
+  t.after(() => { RefreshToken.create = originalCreateRefresh; });
 
     t.afterEach(() => {
     Account.findOne = originalFindOne;

@@ -66,11 +66,20 @@ if (rawTrustProxy && rawTrustProxy !== 'false') {
   trustProxy = Number(rawTrustProxy);
 }
 
+// FIX-34: PLACEHOLDER. Game Design has not defined the refresh token lifetime;
+// edit JWT_REFRESH_EXPIRES_IN (or this default, seconds) once it does.
+const jwtRefreshExpiresIn = parseInt(process.env.JWT_REFRESH_EXPIRES_IN || '86400', 10);
+if (!Number.isSafeInteger(jwtRefreshExpiresIn) || jwtRefreshExpiresIn <= 0) {
+  console.error('[Config] JWT_REFRESH_EXPIRES_IN must be a positive integer number of seconds.');
+  process.exit(1);
+}
+
 module.exports = {
   port: parseInt(process.env.PORT, 10),
   mongodbUri: process.env.MONGODB_URI,
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '3600',
+  jwtRefreshExpiresIn,
   nodeEnv: nodeEnv,
   webhookSecret: webhookSecret,
   allowDevWebhookSecret: allowDevWebhookSecret,

@@ -50,4 +50,25 @@ const registerValidator = [
   }
 ];
 
-module.exports = { loginValidator, registerValidator };
+// Validates the refresh request body. The token is opaque; only its shape is bounded here.
+const refreshValidator = [
+  body('refreshToken')
+    .isString().withMessage('must be a string')
+    .notEmpty().withMessage('cannot be empty')
+    .isLength({ max: 512 }).withMessage('must be at most 512 characters'),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return next({
+        statusCode: 400,
+        errorCode: 'VALIDATION_FAILED',
+        message: 'Invalid input parameters.',
+        details: errors.array().map(err => ({ field: err.path, msg: err.msg }))
+      });
+    }
+    next();
+  }
+];
+
+module.exports = { loginValidator, registerValidator, refreshValidator };

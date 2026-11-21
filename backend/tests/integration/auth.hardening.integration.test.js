@@ -6,6 +6,9 @@ const app = require('../../src/app');
 const testDb = require('./testDb');
 const authRoutes = require('../../src/routes/auth.routes');
 const env = require('../../src/config/env');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const RefreshToken = require('../../src/models/RefreshToken');
 
 test('E2E Session Revocation and Backend Hardening (US-60 / SEC-60.4)', async (t) => {
   await testDb.connect();
@@ -205,5 +208,133 @@ test('E2E Session Revocation and Backend Hardening (US-60 / SEC-60.4)', async (t
       .set('Authorization', 'Bearer invalid.token.payload');
     assert.strictEqual(badTokenRes.status, 401);
     assert.strictEqual(badTokenRes.body.error, 'UNAUTHORIZED');
+  });
+
+  // FIX-34: access token renewal through a rotating refresh token.
+  await t.test('9. Login and register return refresh credentials; refresh rotates and the new JWT works', async () => {
+    authRoutes.ipRateLimiter.reset();
+    const refreshUser = 'refreshHero';
+    const regRes = await request(app).post('/auth/register').send({ username: refreshUser, password });
+    assert.strictEqual(regRes.status, 201);
+    assert.strictEqual(typeof regRes.body.refreshToken, 'string');
+    assert.strictEqual(regRes.body.refreshExpiresIn, env.jwtRefreshExpiresIn);
+    assert.strictEqual(regRes.body.expiresIn, parseInt(env.jwtExpiresIn, 10));
+
+    const loginRes = await request(app).post('/auth/login').send({ username: refreshUser, password });
+    assert.strictEqual(loginRes.status, 200);
+    assert.strictEqual(typeof loginRes.body.refreshToken, 'string');
+    assert.strictEqual(loginRes.body.refreshExpiresIn, env.jwtRefreshExpiresIn);
+    assert.notStrictEqual(loginRes.body.refreshToken, regRes.body.refreshToken);
+
+    const charRes = await request(app).post('/character/me')
+      .set('Authorization', `Bearer ${loginRes.body.token}`).send({ name: 'SirRefresh' });
+    assert.strictEqual(charRes.status, 201);
+
+    const refreshRes = await request(app).post('/auth/refresh').send({ refreshToken: loginRes.body.refreshToken });
+    assert.strictEqual(refreshRes.status, 200);
+    assert.notStrictEqual(refreshRes.body.token, loginRes.body.token);
+    assert.notStrictEqual(refreshRes.body.refreshToken, loginRes.body.refreshToken);
+    assert.strictEqual(refreshRes.body.expiresIn, parseInt(env.jwtExpiresIn, 10));
+    assert.strictEqual(refreshRes.body.refreshExpiresIn, env.jwtRefreshExpiresIn);
+
+    const meRes = await request(app).get('/character/me')
+      .set('Authorization', `Bearer ${refreshRes.body.token}`);
+    assert.strictEqual(meRes.status, 200);
+    assert.strictEqual(meRes.body.name, 'SirRefresh');
+
+    // Reuse of the rotated token: rejected and the family's newest token dies with it.
+    const reuse = await request(app).post('/auth/refresh').send({ refreshToken: loginRes.body.refreshToken });
+    assert.strictEqual(reuse.status, 401);
+    assert.strictEqual(reuse.body.error, 'REFRESH_INVALID');
+    const newest = await request(app).post('/auth/refresh').send({ refreshToken: refreshRes.body.refreshToken });
+    assert.strictEqual(newest.status, 401);
+    assert.strictEqual(newest.body.error, 'REFRESH_INVALID');
+  });
+
+  await t.test('10. Expired access token is 401 TOKEN_EXPIRED; invalid or revoked stay UNAUTHORIZED', async () => {
+    const loginRes = await request(app).post('/auth/login').send({ username: 'refreshHero', password });
+    assert.strictEqual(loginRes.status, 200);
+    const claims = jwt.decode(loginRes.body.token);
+    const expired = jwt.sign(
+      { sub: claims.sub, jti: claims.jti, sid: claims.sid, exp: Math.floor(Date.now() / 1000) - 10 },
+      env.jwtSecret
+    );
+    const expiredRes = await request(app).get('/character/me').set('Authorization', `Bearer ${expired}`);
+    assert.strictEqual(expiredRes.status, 401);
+    assert.strictEqual(expiredRes.body.error, 'TOKEN_EXPIRED');
+
+    const tampered = loginRes.body.token.slice(0, -6) + 'abcdef';
+    const tamperedRes = await request(app).get('/character/me').set('Authorization', `Bearer ${tampered}`);
+    assert.strictEqual(tamperedRes.status, 401);
+    assert.strictEqual(tamperedRes.body.error, 'UNAUTHORIZED');
+    assert.strictEqual(tamperedRes.body.message, 'Token is invalid or expired.');
+
+    const noHeader = await request(app).get('/character/me');
+    assert.strictEqual(noHeader.status, 401);
+    assert.strictEqual(noHeader.body.error, 'UNAUTHORIZED');
+  });
+
+  await t.test('11. Refresh validates its body and rejects unknown or expired tokens', async () => {
+    authRoutes.refreshRateLimiter.reset();
+    for (const body of [{}, { refreshToken: '' }, { refreshToken: 42 }, { refreshToken: 'x'.repeat(513) }]) {
+      const res = await request(app).post('/auth/refresh').send(body);
+      assert.strictEqual(res.status, 400);
+      assert.strictEqual(res.body.error, 'VALIDATION_FAILED');
+    }
+
+    const unknown = await request(app).post('/auth/refresh').send({ refreshToken: 'unknown-refresh-token' });
+    assert.strictEqual(unknown.status, 401);
+    assert.strictEqual(unknown.body.error, 'REFRESH_INVALID');
+
+    const loginRes = await request(app).post('/auth/login').send({ username: 'refreshHero', password });
+    await RefreshToken.updateOne(
+      { tokenHash: crypto.createHash('sha256').update(loginRes.body.refreshToken).digest('hex') },
+      { expiresAt: new Date(Date.now() - 1000) }
+    );
+    const expired = await request(app).post('/auth/refresh').send({ refreshToken: loginRes.body.refreshToken });
+    assert.strictEqual(expired.status, 401);
+    assert.strictEqual(expired.body.error, 'REFRESH_INVALID');
+  });
+
+  await t.test('12. Logout revokes the refresh token of the session only', async () => {
+    const a = (await request(app).post('/auth/login').send({ username: 'refreshHero', password })).body;
+    const b = (await request(app).post('/auth/login').send({ username: 'refreshHero', password })).body;
+
+    const logoutRes = await request(app).post('/auth/logout').set('Authorization', `Bearer ${a.token}`);
+    assert.strictEqual(logoutRes.status, 204);
+
+    const revoked = await request(app).post('/auth/refresh').send({ refreshToken: a.refreshToken });
+    assert.strictEqual(revoked.status, 401);
+    assert.strictEqual(revoked.body.error, 'REFRESH_INVALID');
+
+    const other = await request(app).post('/auth/refresh').send({ refreshToken: b.refreshToken });
+    assert.strictEqual(other.status, 200);
+  });
+
+  await t.test('13. Concurrent refresh with one token yields exactly one 200', async () => {
+    const login = (await request(app).post('/auth/login').send({ username: 'refreshHero', password })).body;
+    const responses = await Promise.all(Array.from({ length: 6 }, () =>
+      request(app).post('/auth/refresh').send({ refreshToken: login.refreshToken })));
+    assert.strictEqual(responses.filter((r) => r.status === 200).length, 1);
+    for (const res of responses.filter((r) => r.status !== 200)) {
+      assert.strictEqual(res.status, 401);
+      assert.strictEqual(res.body.error, 'REFRESH_INVALID');
+    }
+  });
+
+  await t.test('14. Refresh endpoint is IP rate limited with 429 and Retry-After', async () => {
+    authRoutes.refreshRateLimiter.reset();
+    try {
+      for (let i = 0; i < env.rateLimitIpMax; i++) {
+        const res = await request(app).post('/auth/refresh').send({ refreshToken: 'unknown-refresh-token' });
+        assert.strictEqual(res.status, 401);
+      }
+      const blocked = await request(app).post('/auth/refresh').send({ refreshToken: 'unknown-refresh-token' });
+      assert.strictEqual(blocked.status, 429);
+      assert.strictEqual(blocked.body.error, 'TOO_MANY_REQUESTS');
+      assert.ok(Number(blocked.headers['retry-after']) > 0);
+    } finally {
+      authRoutes.refreshRateLimiter.reset();
+    }
   });
 });

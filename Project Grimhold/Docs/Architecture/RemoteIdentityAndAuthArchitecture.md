@@ -18,6 +18,35 @@ The backend Node.js + MongoDB infrastructure is the sole authority over player a
     *   The `sub` claim contains the internal `AccountId`.
     *   Tokens are passed in the `Authorization: Bearer <token>` header for all authenticated requests.
     *   Unity treats the JWT as an opaque string. It never attempts to decode or validate the signature client-side.
+    *   The JWT also carries `jti` (unique per token) and `sid` (the refresh-token family it belongs to; see *Access Token Renewal*). Tokens issued before FIX-34 have no `sid` and remain valid until they expire.
+5.  **Renewal**: `/auth/login` and `/auth/register` also return a rotating refresh token, exchanged through `POST /auth/refresh` (FIX-34, below).
+
+### Access Token Renewal (FIX-34)
+
+A long Town + Raid session must outlive the short-lived JWT without interrupting the player or destroying local services. The decision is a **rotating refresh token** (not silent re-login, which would require keeping the password, nor a longer JWT lifetime, which would widen the exposure of a leaked token).
+
+**Backend contract**
+
+*   `POST /auth/login` and `POST /auth/register` return `{ token, expiresIn, refreshToken, refreshExpiresIn }`; both expirations are in seconds.
+*   **Refresh token**: opaque random value. The backend stores only its SHA-256 hash in the `RefreshToken` collection (`accountId`, `familyId`, `tokenHash`, `expiresAt`, `usedAt`, `revokedAt`); the raw value is never persisted or logged. Lifetime is `JWT_REFRESH_EXPIRES_IN` seconds (placeholder default `86400`, 24 h; Game Design has not defined it). A MongoDB TTL index on `expiresAt` prunes expired records.
+*   **Family**: every login/register starts a new family (`familyId`). The access JWT carries it as `sid`. Rotation keeps the family; separate logins are independent families, so revoking one device never affects another.
+*   `POST /auth/refresh` (unauthenticated, IP rate limited; body `{ refreshToken }`, non-empty string of bounded length):
+    *   Valid, unused, unexpired and unrevoked token: it is marked used with an atomic conditional update (`usedAt: null` → now), so it is **single use**, and the response is `200 { token, expiresIn, refreshToken, refreshExpiresIn }` with a new JWT and a new refresh token of the same family (each rotation grants a fresh lifetime).
+    *   Unknown, expired or revoked token: `401 REFRESH_INVALID`.
+    *   **Reuse detection**: presenting an already-used token revokes the whole family (including its newest token) and returns `401 REFRESH_INVALID`.
+    *   **Concurrency**: of several simultaneous requests with the same token exactly one succeeds; the others are treated as reuse, so the family is revoked and the winner's new refresh token becomes unusable. Clients must therefore refresh single-flight.
+*   `authenticate` error codes (HTTP 401, other behavior unchanged):
+    *   `TOKEN_EXPIRED`: a correctly signed access JWT whose `exp` has passed. This is the only code that triggers a refresh.
+    *   `UNAUTHORIZED`: missing/malformed header, invalid signature, malformed token or revoked token. Not recoverable by refreshing.
+    *   `REFRESH_INVALID`: returned only by `POST /auth/refresh`.
+*   **Logout** additionally revokes the family of the presented JWT's `sid`, so its refresh tokens can no longer be exchanged. A JWT without `sid` (pre-FIX-34) logs out as before.
+*   **Residual window**: revoking a family does not revoke access JWTs already issued from it other than the one presented at logout; they stop working at their natural `exp` (short-lived) and cannot be renewed.
+
+**Unity client contract**
+
+*   `ApplicationAuthContext` keeps the refresh token in memory only, beside the access token. It is never written to disk, PlayerPrefs, logs or UI, and is discarded with the access token on logout or reset.
+*   At the shared authenticated HTTP choke point, `401 TOKEN_EXPIRED` triggers **one single-flight refresh** shared by all concurrent requests; the original request is retried **once** with the new token. Requests issued while a refresh is in flight wait for it (this is also how inventory synchronization is deferred until credentials are valid again). The refresh does **not** run `HandleUnauthorizedSession` and does **not** reset identity or stash.
+*   `401 REFRESH_INVALID`, a failed refresh, a second `TOKEN_EXPIRED` after a refresh, or `401 UNAUTHORIZED` follow the existing unauthorized path (`HandleUnauthorizedSession` → `ResetForLogout`) with a clear Spanish message. A transport failure of the refresh is a retryable backend failure, not an authentication invalidation.
 
 ### Data Model & Boundaries
 
@@ -79,12 +108,12 @@ The session lifecycle is completed by allowing the user to explicitly log out fr
 1.  **UI Trigger**: The player clicks "Logout" in the Town menu or MainMenu.
 2.  **Session Disconnect**: The `SessionConnectionCoordinator` cleanly tears down the active network runner (e.g. disconnecting from the Town) and returns the application state to the MainMenu.
 3.  **Client-Side Teardown & Backend Revocation**: `LoginFlowController.ExecuteLogoutAsync()` is called, which:
-    *   Calls the backend `POST /auth/logout` endpoint with the active JWT (`Authorization: Bearer <token>`).
+    *   Calls the backend `POST /auth/logout` endpoint with the active JWT (`Authorization: Bearer <token>`). The backend also revokes the refresh-token family of the JWT's `sid` (see *Access Token Renewal*).
     *   **Authoritative Revocation**: The backend computes a SHA-256 hash of the token (`tokenHash`), extracts its `jti` (unique UUID embedded upon issuance) and natural expiration (`exp`), and stores a record in the MongoDB `RevokedToken` collection.
     *   **Automated Pruning**: A MongoDB TTL index on `expiresAt` (`expireAfterSeconds: 0`) ensures revoked tokens are automatically deleted once they naturally expire, preventing unbounded database growth.
     *   **Rejection of Revoked Tokens**: The `authenticate` middleware checks incoming token hashes against `RevokedToken.exists({ tokenHash })`. Any request presenting a revoked token is rejected with `401 UNAUTHORIZED` ("Token has been revoked."). Other concurrent sessions remain unaffected because tokens are hashed individually.
     *   Invokes `ApplicationStashServiceBootstrapper.ResetForLogout()` to tear down the in-memory Stash and Loadout state for the previous user. The context GameObject is kept alive to support subsequent logins without a process restart.
-    *   Clears the local `ApplicationAuthContext` (discarding the JWT).
+    *   Clears the local `ApplicationAuthContext` (discarding the JWT and the refresh token).
     *   Clears the `LocalProfileProvider` (discarding the remote `CharacterId`).
 4.  **Re-authentication**: The player is returned to the `LoginPanelView` and can authenticate with a different account. A successful new login will re-initialize the `ApplicationStashServiceBootstrapper` with the new account's `ProfileId`.
 
@@ -110,7 +139,7 @@ To protect the authentication and gameplay infrastructure in staging and product
     - **Residual Trust (Shared Mode)**: The Town State Authority peer (master client) still receives the tickets delivered to it, and a peer holding a genuine copy of another player's ticket can own that profile if it registers first. Binding the ticket to the Photon session (custom authentication) is future work; moving Town to Host/Server mode is out of scope.
     - **Authoritative Raid Admission**: Clients obtain an `AuthoritativeRaidAdmissionTicket` via `POST /character/me/raid/admission-ticket`, binding their connection to an active backend `pendingReservation` (`reservationId`, `raidCode`, `characterAttributes`, `level`, `experience`, `preparedAbilities`, `items`, `preparedEquipment`). The Raid Host verifies the ticket via `IRaidAdmissionVerifier` and spawns the avatar using exclusively the backend-verified snapshot, rejecting client-fabricated attributes or unreserved items.
     - **Authenticated launch gate (FIX-55)**: Before either a Host or Client creates its fresh Raid runner, the backend reservation save must succeed and an authoritative admission ticket must be obtained and decoded. Rejection, Unauthorized, transport failure or an unusable ticket aborts the launch; there is no authenticated local-snapshot fallback. The same authentication predicate is used before the Town preparation ACK: authenticated session, backend configuration and non-empty token. A missing remote inventory service rejects preparation. Offline/Editor without that backend session preserves the existing local-snapshot path (`TicketSkipped`). This gate does not change the Host's own admission data or introduce ticket-based hydration of its seat.
-    - **Unauthorized recovery (FIX-55)**: Existing authentication invalidation order is unchanged, including identity/stash reset. Networking aborts without starting a runner and ends in a defined `Failed` state with a consumable `LoadoutReservationFailed`; it does not attempt Town startup with the reset identity/store. The pending reservation is retained for the existing login orphan resolution. Consistency under Unauthorized or an unreachable backend is deferred until the next login/backend access, not guaranteed immediately by the abort.
+    - **Unauthorized recovery (FIX-55, amended by FIX-34)**: An expired access token (`TOKEN_EXPIRED`) is not an authentication invalidation: the client refreshes it and retries once without any reset (see *Access Token Renewal*). Only `UNAUTHORIZED`, `REFRESH_INVALID` or a failed refresh keep the existing invalidation order, including identity/stash reset. Networking aborts without starting a runner and ends in a defined `Failed` state with a consumable `LoadoutReservationFailed`; it does not attempt Town startup with the reset identity/store. The pending reservation is retained for the existing login orphan resolution. Consistency under Unauthorized or an unreachable backend is deferred until the next login/backend access, not guaranteed immediately by the abort.
     - **Issuer Secrets Isolation**: Neither `JWT_SECRET` nor backend private keys are compiled into client builds. Verification is performed through backend endpoints or decoupled verifier interfaces.
 *   **HTTPS**: Development currently occurs over HTTP. Production deployments must enforce HTTPS for all backend communication to secure credentials and JWTs in transit.
 *   **Temporary Persistence**: While `customNote` and `lastSeen` persist remotely, core gameplay state (Stash, Loadout, Receipts) currently remains local and temporary per process (as defined in `LocalPlayerPersistenceArchitecture.md`). Subsequent roadmap stages will migrate these to the authoritative backend.

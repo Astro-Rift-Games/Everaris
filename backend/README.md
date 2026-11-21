@@ -22,6 +22,7 @@ Node.js + Express + Mongoose backend para Project Grimhold.
 | `MONGODB_URI`    | Sí                         | Connection string de MongoDB (sin placeholders en producción)               |
 | `JWT_SECRET`     | Sí                         | Secreto HMAC-SHA256 para firmar JWT (mín. 32 caracteres de alta entropía en prod) |
 | `JWT_EXPIRES_IN` | No                         | Duración del token en segundos (default: `3600`)                            |
+| `JWT_REFRESH_EXPIRES_IN` | No                 | Duración del refresh token en segundos, entero positivo (default: `86400`; **placeholder**, Game Design no la definió) |
 | `WEBHOOK_SECRET` | Sí en `production`         | Secreto compartido para endpoints internos/webhooks (mín. 32 caracteres en prod) |
 | `INVENTORY_PROTOCOL_GATE` | No (default `false`) | Sólo `true` exige protocolo 2 y documentos v2/v3, salvo que el gate de instancias esté activo |
 | `INVENTORY_INSTANCE_PROTOCOL_GATE` | No (default `false`) | Sólo `true` exige protocolo 3 y documentos v3; tiene precedencia sobre el gate v2. No migra datos |
@@ -683,6 +684,28 @@ No usar `syncIndexes` ni borrar otros índices/colecciones. Una advertencia de a
 corrección del dueño antes de considerar desplegada la garantía. Ejecutar esto en Render u
 otro entorno desplegado requiere autorización explícita; esta entrega no lo ejecuta.
 
+## Autenticación y renovación del JWT (FIX-34)
+
+`POST /auth/login` y `POST /auth/register` devuelven `{ token, expiresIn, refreshToken, refreshExpiresIn }`
+(segundos). El refresh token es opaco, de un solo uso y rota en cada renovación; sólo se guarda su hash
+SHA-256 (`RefreshToken`, índice TTL sobre `expiresAt`). El JWT lleva `sid` (familia del refresh token).
+
+`POST /auth/refresh` (sin `Authorization`, límite por IP independiente de login/register, 429 al excederlo):
+cuerpo `{ "refreshToken": "..." }` (string no vacío, máx. 512 caracteres; si no, `400 VALIDATION_FAILED`).
+
+| Resultado | Respuesta |
+|-----------|-----------|
+| Válido, sin usar, no vencido ni revocado | `200 { token, expiresIn, refreshToken, refreshExpiresIn }`; el anterior queda usado |
+| Desconocido, vencido o revocado | `401 REFRESH_INVALID` |
+| Ya usado (reuso) | `401 REFRESH_INVALID` y se revoca toda la familia |
+
+Sólo una de varias peticiones simultáneas con el mismo refresh token tiene éxito (las demás cuentan como reuso).
+`POST /auth/logout` revoca además la familia del `sid` del JWT presentado.
+
+En rutas autenticadas un JWT con firma válida pero vencido responde `401 TOKEN_EXPIRED` (el cliente debe
+renovar); firma inválida, token malformado o revocado siguen respondiendo `401 UNAUTHORIZED`.
+Contrato completo: `Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md`.
+
 ## Atlas Network Access
 
 Si se usa MongoDB Atlas, agregar la IP del equipo en **Network Access** antes de iniciar el servidor.
@@ -697,6 +720,7 @@ Si se usa MongoDB Atlas, agregar la IP del equipo en **Network Access** antes de
    - `JWT_SECRET` (Fuerte, único y de al menos 32 caracteres)
    - `WEBHOOK_SECRET` (Fuerte, único y de al menos 32 caracteres)
    - `JWT_EXPIRES_IN` (Opcional, por ej. `3600`)
+   - `JWT_REFRESH_EXPIRES_IN` (Opcional, por ej. `86400`)
    - **NO configurar `PORT`**, Railway lo inyecta automáticamente.
 4. En **MongoDB Atlas Network Access**, agregar `0.0.0.0/0` (Allow from anywhere) para que Railway pueda conectarse a la DB.
 5. Ir a Settings -> Deploy en Railway y configurar el Healthcheck:

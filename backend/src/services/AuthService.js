@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Account = require('../models/Account');
 const RevokedToken = require('../models/RevokedToken');
+const RefreshToken = require('../models/RefreshToken');
 const config = require('../config/env');
 const { isDuplicateKeyError } = require('../utils/mongoErrors');
 
@@ -35,6 +36,62 @@ function usernameTakenError() {
   };
 }
 
+function refreshInvalidError() {
+  return {
+    statusCode: 401,
+    errorCode: 'REFRESH_INVALID',
+    message: 'Refresh token is invalid, expired or has been revoked.'
+  };
+}
+
+function hashToken(value) {
+  return crypto.createHash('sha256').update(value).digest('hex');
+}
+
+// 'sub' contains the account ID, 'jti' uniquely identifies the token and 'sid' its refresh family.
+function signAccessToken(accountId, familyId) {
+  const jti = crypto.randomUUID();
+  return jwt.sign({ sub: accountId, jti, sid: familyId }, config.jwtSecret, {
+    expiresIn: config.jwtExpiresIn + 's'
+  });
+}
+
+function buildRefreshToken(accountId, familyId) {
+  const refreshToken = crypto.randomBytes(32).toString('base64url');
+  return {
+    refreshToken,
+    document: {
+      accountId,
+      familyId,
+      tokenHash: hashToken(refreshToken),
+      expiresAt: new Date(Date.now() + config.jwtRefreshExpiresIn * 1000)
+    }
+  };
+}
+
+function sessionResponse(token, refreshToken) {
+  return {
+    token,
+    expiresIn: parseInt(config.jwtExpiresIn, 10),
+    refreshToken,
+    refreshExpiresIn: config.jwtRefreshExpiresIn
+  };
+}
+
+// Starts a new refresh family and returns the access/refresh pair of a login or register.
+async function issueSession(accountId) {
+  const familyId = crypto.randomUUID();
+  const { refreshToken, document } = buildRefreshToken(accountId, familyId);
+  await RefreshToken.create(document);
+  return sessionResponse(signAccessToken(accountId, familyId), refreshToken);
+}
+
+function revokeRefreshFamily(familyId, accountId) {
+  const filter = { familyId, revokedAt: null };
+  if (accountId) filter.accountId = accountId;
+  return RefreshToken.updateMany(filter, { $set: { revokedAt: new Date() } });
+}
+
 class AuthService {
   /**
    * Authenticates a user and returns a JWT token with unique jti.
@@ -56,12 +113,7 @@ class AuthService {
       throw error;
     }
 
-    const jti = crypto.randomUUID();
-    const token = jwt.sign({ sub: account._id, jti }, config.jwtSecret, {
-      expiresIn: config.jwtExpiresIn + 's'
-    });
-
-    return { token, expiresIn: parseInt(config.jwtExpiresIn, 10) };
+    return issueSession(account._id);
   }
 
   static async login(username, password) {
@@ -76,13 +128,46 @@ class AuthService {
       throw invalidCredentialsError();
     }
 
-    // Generate JWT. 'sub' contains the account ID, 'jti' uniquely identifies this session.
-    const jti = crypto.randomUUID();
-    const token = jwt.sign({ sub: account._id, jti }, config.jwtSecret, {
-      expiresIn: config.jwtExpiresIn + 's'
-    });
+    return issueSession(account._id);
+  }
 
-    return { token, expiresIn: parseInt(config.jwtExpiresIn, 10) };
+  /**
+   * Exchanges a refresh token for a new access/refresh pair of the same family (FIX-34).
+   * A refresh token is single use; presenting a used one revokes the whole family.
+   * @throws 401 REFRESH_INVALID for unknown, expired, revoked or reused tokens.
+   */
+  static async refresh(refreshToken) {
+    const current = await RefreshToken.findOne({ tokenHash: hashToken(refreshToken) });
+    if (!current) {
+      throw refreshInvalidError();
+    }
+    if (current.usedAt) {
+      await revokeRefreshFamily(current.familyId);
+      throw refreshInvalidError();
+    }
+    if (current.revokedAt || current.expiresAt.getTime() <= Date.now()) {
+      throw refreshInvalidError();
+    }
+
+    // The successor exists before the claim: a concurrent reuse that revokes the family right
+    // after the claim also covers it, so no live token survives a revoked family.
+    const successor = buildRefreshToken(current.accountId, current.familyId);
+    await RefreshToken.create(successor.document);
+
+    const claimed = await RefreshToken.findOneAndUpdate(
+      { _id: current._id, usedAt: null, revokedAt: null, expiresAt: { $gt: new Date() } },
+      { $set: { usedAt: new Date() } }
+    );
+    if (!claimed) {
+      await RefreshToken.deleteOne({ tokenHash: successor.document.tokenHash });
+      const latest = await RefreshToken.findById(current._id);
+      if (latest && latest.usedAt) {
+        await revokeRefreshFamily(current.familyId);
+      }
+      throw refreshInvalidError();
+    }
+
+    return sessionResponse(signAccessToken(current.accountId, current.familyId), successor.refreshToken);
   }
 
   /**
@@ -97,12 +182,14 @@ class AuthService {
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
     let expiresAt;
     let jti = null;
+    let sid = null;
 
     try {
       const decoded = jwt.decode(token);
       if (decoded && decoded.exp) {
         expiresAt = new Date(decoded.exp * 1000);
         jti = decoded.jti || null;
+        sid = typeof decoded.sid === 'string' ? decoded.sid : null;
       }
     } catch (_err) {
       // ignore decode error, will use fallback expiry
@@ -124,6 +211,11 @@ class AuthService {
       },
       { upsert: true, returnDocument: 'after' }
     );
+
+    // FIX-34: the session's refresh tokens die with it. Tokens issued before FIX-34 have no sid.
+    if (sid) {
+      await revokeRefreshFamily(sid, accountId);
+    }
 
     return true;
   }
