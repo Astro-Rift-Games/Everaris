@@ -32,6 +32,9 @@ const { getWeeklyRotation, isAllowedByMerchant, getMerchantOffers } = require('.
 
 const { INSTANCE_ID, invalidInventory, createEquipment, validateResultItems, resultEquipmentToInstances,
   equipmentToResult } = require('./ItemInstances');
+const { UPGRADE_OPERATIONS, planUpgrade, objectValue } = require('./ItemUpgrades');
+
+const UPGRADE_MERCHANTS = Object.freeze(['general', 'blacksmith', 'arcanist']);
 
 function inventoryItems(character, list) {
   return serializeItems(character.inventory[list], inventoryVersion(character) >= 2);
@@ -276,6 +279,41 @@ function applyShopSale(loadout, version, lootId, amount, sourceSlot, weeklyDeman
 
 function shopPurchaseCost(lootId, amount) {
   const offer = getBuyOffer(lootId);
+// Removes each material from Inventory stacks in slot order; Stash is never read (Doc 23 §9).
+function consumeLoadoutMaterials(loadout, materials) {
+  for (const [lootId, amount] of Object.entries(materials)) {
+    const stacks = loadout.filter(item => matchesLootId(item, lootId)).sort((a, b) => a.slot - b.slot);
+    if (stacks.reduce((sum, item) => sum + item.amount, 0) < amount) {
+      throw { statusCode: 409, errorCode: 'INSUFFICIENT_MATERIALS', message: `Inventory does not hold ${amount} unit(s) of '${lootId}'.` };
+    }
+    let remaining = amount;
+    for (const item of stacks) {
+      const taken = Math.min(item.amount, remaining);
+      item.amount -= taken; remaining -= taken;
+      if (item.amount === 0) loadout.splice(loadout.indexOf(item), 1);
+      if (remaining === 0) break;
+    }
+  }
+}
+
+// Replay of an applied upgrade: the recorded outcome for the same intent, null when the id is unused.
+function recordedUpgrade(character, transactionId, intent) {
+  const receipt = (character.appliedShopReceipts || []).find(entry => entry.transactionId === transactionId);
+  if (!receipt) return null;
+  if (receipt.type !== 'upgrade' || JSON.stringify(receipt.intent) !== JSON.stringify(intent)) {
+    throw { statusCode: 409, errorCode: 'TRANSACTION_ID_REUSED', message: 'Transaction ID was previously applied with a different operation or parameters.' };
+  }
+  return { ...shopSnapshot(character), upgrade: copyEntry(receipt.outcome), alreadySecured: true };
+}
+
+function validUpgradeTicket({ transactionId, expectedRevision, merchant, operation, instanceId, location, slot }) {
+  return typeof transactionId === 'string' && transactionId.trim().length > 0 && transactionId.length <= 128 &&
+    Number.isSafeInteger(expectedRevision) && expectedRevision >= 0 && UPGRADE_MERCHANTS.includes(merchant) &&
+    UPGRADE_OPERATIONS.includes(operation) && typeof instanceId === 'string' && INSTANCE_ID.test(instanceId) &&
+    ((location === 'loadout' && Number.isSafeInteger(slot) && slot >= 0) ||
+     (location === 'equipment' && EQUIPMENT_SLOTS.includes(slot)));
+}
+
   if (!offer) throw { statusCode: 404, errorCode: 'ITEM_NOT_OFFERED', message: `Item '${lootId}' is not offered in the shop.` };
   const cost = offer.buyPrice * amount;
   if (!Number.isSafeInteger(cost)) throw { statusCode: 400, errorCode: 'INTEGER_OVERFLOW', message: 'Calculated transaction cost causes integer overflow.' };
@@ -500,6 +538,57 @@ class InventoryService {
 
   /** Reorders one inventory list without changing item identity or amounts. */
   static async updateOrder(accountId, list, lootIds, expectedRevision, slotOrder) {
+  /**
+   * Town NPC upgrade (Doc 23 §9). The item stays where it is (Inventory slot or equipped slot) with the same
+   * InstanceID; gold and Inventory materials are debited once in the same revision-guarded write as the receipt.
+   */
+  static async upgradeItem(accountId, body = {}) {
+    if (!validUpgradeTicket(body)) throw { statusCode: 400, errorCode: 'VALIDATION_FAILED', message: 'Invalid upgrade parameters.' };
+    const { transactionId, expectedRevision, merchant, operation, instanceId, location, slot } = body;
+    const character = await Character.findOne({ accountId });
+    if (!character) throw { statusCode: 404, errorCode: 'CHARACTER_NOT_FOUND', message: 'No character found for this account.' };
+    requireSlotInventory(character);
+    if (inventoryVersion(character) !== 3) throw { statusCode: 409, errorCode: 'INVENTORY_MIGRATION_REQUIRED', message: 'Inventory migration is required.' };
+    const intent = { merchant, operation, instanceId, location, slot };
+    const recorded = recordedUpgrade(character, transactionId, intent);
+    if (recorded) return recorded;
+    assertWithinRetention(character, transactionId);
+    if (character.revision !== expectedRevision) throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict.' };
+    rejectPendingReservation(character, 'Cannot upgrade equipment while a raid reservation is pending.');
+
+    const loadout = inventoryItems(character, 'loadout');
+    const preparedEquipment = serializePreparedEquipment(character.inventory.preparedEquipment, 3);
+    const target = location === 'loadout' ? loadout.find(item => item.slot === slot) : preparedEquipment[slot];
+    if (!target?.instance || target.instance.instanceId !== instanceId) {
+      throw { statusCode: 409, errorCode: 'INSTANCE_MISMATCH', message: 'The location does not contain the equipment instance.' };
+    }
+    const plan = planUpgrade({ merchant, operation, lootId: target.lootId, instance: target.instance });
+    const currency = character.inventory.currency || 0;
+    if (currency < plan.gold) throw { statusCode: 409, errorCode: 'INSUFFICIENT_FUNDS', message: 'Not enough currency for this upgrade.' };
+    consumeLoadoutMaterials(loadout, plan.materials);
+    target.instance.modifiers = plan.modifiers;
+
+    const outcome = { operation, location, slot, lootId: target.lootId, instance: copyEntry(target.instance),
+      gold: plan.gold, materials: plan.materials, objectValue: objectValue(target.lootId, target.instance) };
+    const updated = await Character.findOneAndUpdate(
+      { accountId, revision: expectedRevision, 'inventory.pendingReservation': null },
+      { $set: { 'inventory.loadout': loadout, 'inventory.preparedEquipment': preparedEquipment, 'inventory.currency': currency - plan.gold },
+        $inc: { revision: 1 }, ...watermarkUpdate(character),
+        $push: { appliedShopReceipts: receiptPush({ transactionId, type: 'upgrade', intent, outcome, totalAmount: plan.gold, timestamp: new Date() }) } },
+      { returnDocument: 'after' }
+    );
+    if (!updated) {
+      // Lost the guarded write: a concurrent retry of this very request is already committed and is answered
+      // with its recorded outcome; any other loser reports why it lost without having changed anything.
+      const latest = await Character.findOne({ accountId });
+      const committed = latest && recordedUpgrade(latest, transactionId, intent);
+      if (committed) return committed;
+      if (latest) rejectPendingReservation(latest, 'Cannot upgrade equipment while a raid reservation is pending.');
+      throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict during equipment upgrade.' };
+    }
+    return { ...shopSnapshot(updated), upgrade: outcome, alreadySecured: false };
+  }
+
     const character = await Character.findOne({ accountId });
     if (!character) {
       throw { statusCode: 404, errorCode: 'CHARACTER_NOT_FOUND', message: 'No character found for this account.' };

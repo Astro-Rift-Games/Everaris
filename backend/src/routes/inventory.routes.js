@@ -51,6 +51,14 @@ router.post('/me/inventory/gems/install', inventoryProtocol, async (req, res, ne
   catch (err) { next(err); }
 });
 
+// POST /character/me/inventory/upgrades (v3 only; Doc 23 §9, TASK-302)
+// Body: { transactionId, expectedRevision, merchant, operation: primary_scaling|first_socket|armor_level,
+//         instanceId, location: loadout|equipment, slot: loadout slot number or equipment slot name }
+router.post('/me/inventory/upgrades', inventoryProtocol, async (req, res, next) => {
+  try { res.json(await InventoryService.upgradeItem(req.accountId, req.body)); }
+  catch (err) { next(err); }
+});
+
 // PUT /character/me/inventory/order
 // Body v1: { list, lootIds, expectedRevision }; v2: { list, slotOrder, expectedRevision }
 router.put('/me/inventory/order', inventoryProtocol, inventoryOrderValidator, async (req, res, next) => {
