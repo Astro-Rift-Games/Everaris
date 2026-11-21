@@ -21,11 +21,11 @@ Town commerce is distributed across three specialized merchants and one combat t
 2. **Herrero:**
    - **Vende:** Armas físicas rotativas (del pool de 7 armas físicas), armaduras rotativas (del pool de 24 piezas) y arma especial física semanal (con 1 modificación inicial).
    - **Compra:** Armas físicas y todas las armaduras.
-   - **Servicios:** Comercio y acceso a la recompra compartida (servicios de mejora de armas y armaduras en US-84; contrato backend en `ItemInstanceArchitecture.md` §5.1, TASK-302; la UI es TASK-303).
+   - **Servicios:** Comercio y acceso a la recompra compartida (servicios de mejora de armas físicas y de todas las armaduras en US-84; contrato backend en `ItemInstanceArchitecture.md` §5.1, TASK-302; pestaña «Mejoras» en §Mejoras tab, TASK-303).
 3. **Arcanista:**
    - **Vende:** Armas mágicas rotativas (del pool de 5 armas mágicas) y arma especial mágica semanal (con 1 modificación inicial).
    - **Compra:** Armas mágicas.
-   - **Servicios:** Comercio y acceso a la recompra compartida (servicios de mejora arcana en US-84; contrato backend en `ItemInstanceArchitecture.md` §5.1, TASK-302; la UI es TASK-303).
+   - **Servicios:** Comercio y acceso a la recompra compartida (mejora de armas mágicas en US-84; contrato backend en `ItemInstanceArchitecture.md` §5.1, TASK-302; pestaña «Mejoras» en §Mejoras tab, TASK-303).
 4. **Entrenador:**
    - No compra ni vende objetos. Provee armas de entrenamiento gratuitas (`Tradable = false`, `ObjectValue = 0`).
 
@@ -156,6 +156,24 @@ the draft holds a line for that item, and selection; name, description and prope
 in the center panel. It raises only its selection; slots have no immediate buy or sell action. It is
 not `RaidInventorySlotView`, whose drag, context and tooltip responsibilities do not apply here.
 None of them holds services, the network controller or economy rules.
+
+### Mejoras tab (TASK-303)
+
+The Blacksmith and the Arcanist show a "Comerciar | Mejoras" tab bar inside `MerchantShopUI` (a direct
+child of the root, never in the header or footer; hidden for the General Merchant). It is internal to the
+merchant panel, not a `TownMenuTabRegistration`.
+
+- `MerchantUpgradePanel` only renders `MerchantUpgradeViewModel` and forwards intentions
+  (`IMerchantUpgradeIntentions`: select target, select operation, confirm, cancel); it holds no services.
+- `TownUpgradePresentation` (presenter-owned) wraps `TownUpgradeSession`: targets are equipped pieces and
+  Inventory instances eligible for that merchant (never the Stash); blocked operations stay visible and
+  selectable with their reason (Doc 23 §9.4); only Confirm is gated. Preview lines show current →
+  projected state, gold and Inventory materials with an "en Stash, no se usan" hint (Doc 23 §11).
+- `TownMerchantPresenter` creates the session and presentation for Blacksmith/Arcanist when
+  `TownMerchantProfileSource.SupportsUpgrades` (store, transfer coordinator, loot catalog supplied by
+  `TownInventoryBinder`) and disposes them on close. Upgrades respect the Ready lock (`CanMutateBuild`)
+  and wait for a trade in flight; trades wait for an upgrade in flight.
+- The shop font has no arrow glyph: upgrade copy uses `->`.
 
 ### TownMerchantPresenter
 

@@ -19,7 +19,7 @@ containers or corpses. This document is the technical contract for that split.
 | Weapon modifiers: optional primary/secondary scaling, 0-2 gem sockets | Modifiers on shields |
 | Armor modifier: `upgradeLevel` 0-3 only (§4.4) | Any other armor modifier |
 | Town-only gem incrustation ("Incrustar gema") | Gem removal/extraction, artisan NPCs (GD-25) |
-| NPC equipment upgrades (§5.1, TASK-302) | Upgrade UI and Unity armor parsing (TASK-303); B/A/S NPC upgrades |
+| NPC equipment upgrades: backend (§5.1, TASK-302) and Unity flow (§5.2, TASK-303) | B/A/S NPC upgrades; armor level carried through the Raid (follow-up) |
 | Raid transport of modifiers, extraction re-issue | Server-side Raid registry, signed host results |
 | Equipment buy-back keeps the instance (§4.3) | Buy-back redesign (Game Design follow-up) |
 
@@ -35,7 +35,9 @@ weapons count, and reservation/admission retain that exact selection and its mod
 EquipmentInstance
   instanceId   backend-issued opaque id (24 lowercase hex, Mongo ObjectId)   Town/backend only
   lootId       immutable Template reference
-  modifiers    WeaponInstanceModifiers (weapons only; absent for shields/armor)
+  modifiers    WeaponInstanceModifiers (weapons) or { upgradeLevel 0..3 } (armor pieces, §4.4);
+               absent for shields and plain (+0) armor. Unity: EquipmentInstance.Modifiers /
+               EquipmentInstance.ArmorUpgradeLevel
                  primary   { attribute, grade E..S } | none
                  secondary { attribute, grade E..S } | none
                  gemSocketCount 0..2
@@ -191,7 +193,7 @@ pending state, and applies the returned snapshot; it never mutates locally first
 ### 5.1 NPC equipment upgrades (TASK-302)
 
 Backend contract for the Town NPC upgrade services of Doc 23 §9 (weapon primary scaling, first gem
-socket, armor +0 → +3). Unity UI and parsing are TASK-303.
+socket, armor +0 → +3). The Unity flow is §5.2.
 
 `POST /character/me/inventory/upgrades` (schema v3 only)
 
@@ -245,9 +247,25 @@ upgrade { operation, location, slot, lootId, instance, gold, materials, objectVa
 The C / +3 limit is the MVP value (Doc 23 §9.1, `WeaponNpcMaxScaling`). Limits come from the step
 tables in `ItemUpgrades.js`, so extending the NPC to S means adding rows, not changing the contract.
 
-**Unity compatibility gap (TASK-303).** `EquipmentInstanceData` currently rejects armor modifiers, so
-an upgraded armor cannot round-trip through Unity (Inventory parse, Raid results) until TASK-303
-adapts the parser to accept `modifiers.upgradeLevel` and computes the final defense per §4.4.
+### 5.2 Unity upgrade flow (TASK-303)
+
+- **Armor shape.** `WeaponInstanceModifiersData` also carries the armor shape `{ upgradeLevel }`
+  (`IsArmorShape`); weapon JSON is unchanged (`upgradeLevel` omitted, `ShouldSerialize*` keeps the weapon
+  keys). v3 hydration, the local cache codec and the publish body round-trip the level
+  (`EquipmentInstance.ArmorUpgradeLevel`). Raid admission validates the armor shape but does **not**
+  carry the level into the Raid yet: an upgraded armor taken to a Raid returns +0 after extraction
+  (follow-up; the Raid network word is weapon-only).
+- **Defense.** `ArmorUpgradeDefense.Apply` is the single Unity formula (§4.4); the Town character sheet
+  (`TownCharacterStatisticsBuilder`) applies it per piece. The Raid avatar still uses +0.
+- **Preview.** `NpcUpgradeRules` mirrors `ItemUpgrades.js` for previews only (eligibility incl.
+  upgrade-only `zweihander`/`long_bow`, step costs, Inventory-only materials, limits). The backend stays
+  authoritative; `backend/tests/item.upgrades.parity.test.js` keeps the tables in parity.
+- **Confirm.** `TownUpgradeSession` builds one request with a `ShopTransactionId`, confirms once through
+  `StashTransferCoordinator` (shared Town queue and `RemoteInventoryService` lock) and
+  `LocalProfileStore.ApplyConfirmedUpgrade` applies the response snapshot (gold, lists and prepared
+  equipment) behind a revision guard, so an equipped item keeps its slot. Every non-success code that does
+  not prove "nothing was applied" rereads the backend once and is never resent; messages follow the
+  outcome status, then the backend code. UI: `CommerceArchitecture.md` §Mejoras tab.
 
 ## 6. Unity runtime
 
