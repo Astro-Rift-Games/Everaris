@@ -35,6 +35,15 @@ namespace Grimhold.Backend
 
         public static string Encode<T>(T body)
         {
+            if (body is UpgradeItemRequest upgrade)
+                return new JObject
+                {
+                    ["transactionId"] = upgrade.transactionId, ["expectedRevision"] = upgrade.expectedRevision,
+                    ["merchant"] = upgrade.merchant, ["operation"] = upgrade.operation, ["instanceId"] = upgrade.instanceId,
+                    ["location"] = upgrade.location,
+                    ["slot"] = upgrade.location == UpgradeItemRequest.EquipmentLocation
+                        ? PreparedEquipmentJsonConverter.Name(upgrade.equipmentSlot) : (JToken)upgrade.loadoutSlot
+                }.ToString(Formatting.None);
             if (body is InstallGemRequest install)
                 return new JObject
                 {
