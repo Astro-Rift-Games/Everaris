@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1191,
-  "canonicalEntries": 1188,
+  "rawCommits": 1194,
+  "canonicalEntries": 1191,
   "before": {
-    "Features": 420,
-    "Bug Fixes": 184,
+    "Tests": 47,
+    "Features": 421,
+    "Bug Fixes": 185,
     "Documentation": 127,
     "Other Changes": 374,
-    "Tests": 46,
     "Refactoring": 16,
     "Architecture & Infrastructure": 24
   },
   "after": {
-    "Features": 559,
-    "Bug Fixes": 200,
+    "Tests": 52,
+    "Features": 560,
+    "Bug Fixes": 201,
     "Documentation": 143,
-    "Tests": 51,
     "Refactoring": 29,
     "Other Changes": 181,
     "Maintenance": 22,
@@ -23,17 +23,17 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Networking & Sessions": 353,
-    "UI": 347,
-    "Persistence & Backend": 302,
-    "Build & Tooling": 617,
-    "Tests": 755,
+    "Tests": 758,
+    "Inventory & Loot": 482,
+    "Networking & Sessions": 355,
+    "UI": 348,
+    "Persistence & Backend": 303,
+    "Build & Tooling": 618,
+    "Documentation": 440,
+    "World & Visibility": 168,
     "Combat": 401,
-    "Inventory & Loot": 481,
-    "Documentation": 439,
     "Extraction": 176,
     "Unassigned": 43,
-    "World & Visibility": 167,
     "Audio": 42,
     "Art & Animation": 261,
     "Abilities": 139,
@@ -42,27 +42,27 @@
   },
   "canonical": {
     "sections": {
-      "Features": 558,
-      "Bug Fixes": 199,
+      "Tests": 52,
+      "Features": 559,
+      "Bug Fixes": 200,
       "Documentation": 143,
-      "Tests": 51,
       "Refactoring": 29,
       "Other Changes": 180,
       "Maintenance": 22,
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Networking & Sessions": 353,
-      "UI": 346,
-      "Persistence & Backend": 302,
-      "Build & Tooling": 615,
-      "Tests": 753,
+      "Tests": 756,
+      "Inventory & Loot": 482,
+      "Networking & Sessions": 355,
+      "UI": 347,
+      "Persistence & Backend": 303,
+      "Build & Tooling": 616,
+      "Documentation": 438,
+      "World & Visibility": 166,
       "Combat": 399,
-      "Inventory & Loot": 481,
-      "Documentation": 437,
       "Extraction": 176,
       "Unassigned": 43,
-      "World & Visibility": 165,
       "Audio": 42,
       "Art & Animation": 258,
       "Abilities": 137,
@@ -74437,8 +74437,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 314,
-      "canonicalEntries": 314
+      "originalCommits": 317,
+      "canonicalEntries": 317
     },
     {
       "key": "v0.5.0",
@@ -74482,6 +74482,273 @@
     }
   ],
   "commits": [
+    {
+      "sha": "a2bcb5a412761ca12e6ea131f1ac240452513ee8",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a2bcb5a412761ca12e6ea131f1ac240452513ee8",
+      "subject": "test(merchant): compare the Ready-lock trade test with the seeded profile",
+      "body": "ReadyLockedPlayer_CannotBuyOrSellWithTheMerchant asserted the profile\nagainst the merchant's first live stock item. With weekly merchant\nrotation the live stock no longer matches the prefab stock the fixture\nseeds from, so the test now snapshots the seeded loadout and asserts it\nand the currency stay unchanged while Ready.\n\nRefs: TASK-293\n",
+      "date": "2026-11-21T00:38:49-03:00",
+      "files": [
+        "Project Grimhold/Assets/Tests/PlayMode/TownMerchantTradePlayModeTests.cs"
+      ],
+      "originalType": "test",
+      "originalScope": "merchant",
+      "originalSection": "Tests",
+      "breaking": false,
+      "reverts": null,
+      "section": "Tests",
+      "confidence": "explicit",
+      "systems": [
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "test",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/TownMerchantTradePlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "2bdad9a644406a8bc62f8d33f2ded7fd6cbcf68e",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2bdad9a644406a8bc62f8d33f2ded7fd6cbcf68e",
+      "subject": "feat(merchant): lock merchant trades while Ready with a narrative dialogue",
+      "body": "Ready locks the Town build (Game Design 02 7.2), and merchant trades now\nfollow the same TownEquipmentMutationGate. TownInventoryBinder passes\nCanMutateEquipment through TownMerchantProfileSource to the merchant\npresenter and trade session: while Ready, ConfirmTrade sends no\npurchase, sale or buyback, CanConfirm is false and Tick re-presents the\nopen shop when the gate flips. Planning a draft stays allowed.\n\nInstead of a UI notice, a Ready player who talks to the merchant hears a\ndedicated Merchant dialogue and the shop stays closed:\n- IDialogueTrigger.LockedSequence (TownNpcDialogueTrigger\n  _lockedSequence; DialogueInteractable returns null);\n- DialogueSequenceSelection picks the locked sequence when the build is\n  locked, otherwise the existing primary/secondary rule;\n- TownMerchantPresenter forwards the gate to DialoguePresenter and does\n  not open the shop when that dialogue completes;\n- new TownMerchantNpcReadyDialogue asset assigned on\n  TownMerchantNPC.prefab (one serialized line). Other NPCs unchanged.\n\nTests:\n- TownMerchantTradeSessionTests: Ready rejects purchase/sale and\n  buyback without submitting or persisting; gate follows Tick.\n- TownMerchantTradePlayModeTests: Ready player cannot trade with the\n  real merchant authority.\n- DialogueSequenceSelectionTests: locked, unlocked and repeat visits.\n- TownNpcPresentationConfigurationTests: merchant Ready dialogue lines;\n  no other Town NPC has a locked sequence.\n- TownMerchantReadyDialoguePlayModeTests: Ready dialogue keeps the shop\n  closed; not Ready opens it.\n\nDocs: TownRaidQueueArchitecture lists merchant trades in the Ready lock\nand Create/Join/Ready/Start in the awaiting-party rejections.\n\nRefs: TASK-293\nPlayer-Added: While you are Ready for an expedition, the merchant tells you to unpack before trading and will not buy or sell until you cancel Ready.\n",
+      "date": "2026-11-18T01:18:49-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/TownMerchantNPC.prefab",
+        "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownMerchantNpcReadyDialogue.asset",
+        "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownMerchantNpcReadyDialogue.asset.meta",
+        "Project Grimhold/Assets/Scripts/Core/IDialogueTrigger.cs",
+        "Project Grimhold/Assets/Scripts/Dialogue/DialogueInteractable.cs",
+        "Project Grimhold/Assets/Scripts/Dialogue/DialoguePresenter.cs",
+        "Project Grimhold/Assets/Scripts/Dialogue/DialogueSequenceSelection.cs",
+        "Project Grimhold/Assets/Scripts/Dialogue/DialogueSequenceSelection.cs.meta",
+        "Project Grimhold/Assets/Scripts/Dialogue/TownNpcDialogueTrigger.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantProfileSource.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantTradeSession.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownMerchantTradeSessionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Dialogue.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Dialogue/DialogueSequenceSelectionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Dialogue/DialogueSequenceSelectionTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcPresentationConfigurationTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/TownMerchantReadyDialoguePlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/TownMerchantReadyDialoguePlayModeTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/TownMerchantTradePlayModeTests.cs",
+        "Project Grimhold/Docs/Architecture/TownRaidQueueArchitecture.md",
+        "odd/tasks/task-293-ready-lock-party-wait.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "merchant",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "UI",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantTradeSession.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownMerchantTradeSessionTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcPresentationConfigurationTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/TownRaidQueueArchitecture.md",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "message-term",
+          "value": "UI",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantProfileSource.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownMerchantTradeSessionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Dialogue.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Dialogue/DialogueSequenceSelectionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Dialogue/DialogueSequenceSelectionTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcPresentationConfigurationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/TownRaidQueueArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownMerchantTradeSessionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Dialogue.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Dialogue/DialogueSequenceSelectionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Dialogue/DialogueSequenceSelectionTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcPresentationConfigurationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/TownMerchantReadyDialoguePlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/TownMerchantReadyDialoguePlayModeTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/TownMerchantTradePlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "e25d64b4b0f642af508892df55f367df73f34f8c",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e25d64b4b0f642af508892df55f367df73f34f8c",
+      "subject": "fix(raid): reject raid creation while awaiting party completion",
+      "body": "RPC_RequestCreate now refuses, silently and before generating a code,\nrecording the sender or spawning a preparation, a player whose Duo\npartner is still in the Dungeon (IsAwaitingPartyCompletion), matching\nthe existing Join, SetReady and Start guards. The panel already locked\nCreate client-side; this closes the State Authority path for clients\nthat skip it.\n\nTests:\n- TownRaidPreparationDirectoryTests (PlayMode, real Single runner):\n  Create spawns a preparation when not awaiting, and is rejected with\n  no preparation while awaiting party completion.\n\nRefs: TASK-293\n",
+      "date": "2026-11-18T01:18:22-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/TownRaidPreparationDirectoryTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/TownRaidPreparationDirectoryTests.cs.meta"
+      ],
+      "originalType": "fix",
+      "originalScope": "raid",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Networking & Sessions",
+        "World & Visibility",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "message-term",
+          "value": "Dungeon",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/TownRaidPreparationDirectoryTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/TownRaidPreparationDirectoryTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "a08d1f801acf2c35854c146649590a7da0e53168",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a08d1f801acf2c35854c146649590a7da0e53168",

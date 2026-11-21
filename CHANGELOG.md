@@ -34,6 +34,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Other players' weapon hits and bomb explosions can now be heard by everyone nearby.
 - Town merchants now offer a weekly rotating stock, demand buy bonuses, and a shared buyback ledger.
 - Town now features Blacksmith and Arcanist merchants with specialized stocks alongside the General Merchant, plus a reset countdown timer in the shop.
+- While you are Ready for an expedition, the merchant tells you to unpack before trading and will not buy or sell until you cancel Ready.
 
 ### Improved
 
