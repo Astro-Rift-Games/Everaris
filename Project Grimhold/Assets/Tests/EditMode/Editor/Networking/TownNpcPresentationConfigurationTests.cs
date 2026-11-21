@@ -219,6 +219,41 @@ public sealed class TownNpcPresentationConfigurationTests
     }
 
     [Test]
+    public void MerchantPrefab_LockedSequenceIsTheReadyDialogue()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/TownMerchantNPC.prefab");
+        TownNpcDialogueTrigger trigger = prefab.GetComponent<TownNpcDialogueTrigger>();
+        DialogueSequence locked = trigger.LockedSequence;
+
+        Assert.That(locked, Is.Not.Null, "The merchant prefab must assign the Ready-lock dialogue.");
+        Assert.That(locked.name, Is.EqualTo("TownMerchantNpcReadyDialogue"));
+        Assert.That(locked, Is.Not.SameAs(trigger.PrimarySequence));
+        Assert.That(locked.Lines.Select(line => line.SpeakerName), Is.EqualTo(new[] { "Merchant", "Merchant" }));
+        Assert.That(locked.Lines.Select(line => line.Text), Is.EqualTo(new[]
+        {
+            "Your pack's already strapped tight for the descent, friend.",
+            "Unbuckle it first if you mean to haggle — I don't trade with those halfway out the gate."
+        }));
+        Assert.That(locked.Lines.Select(line => line.AutoAdvance), Is.All.False);
+        Assert.That(locked.CharactersPerSecond, Is.EqualTo(trigger.PrimarySequence.CharactersPerSecond));
+        Assert.That(JsonUtility.ToJson(locked.TypingSound), Is.EqualTo(JsonUtility.ToJson(trigger.PrimarySequence.TypingSound)));
+    }
+
+    [Test]
+    public void OtherTownNpcTriggers_HaveNoLockedSequence()
+    {
+        string[] others = { "TownStashNpc", "TownRaidNpc", "TownTrainerNpc" };
+        foreach (string name in others)
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/Prefabs/{name}.prefab");
+            Assert.That(prefab, Is.Not.Null, name);
+            TownNpcDialogueTrigger trigger = prefab.GetComponent<TownNpcDialogueTrigger>();
+            Assert.That(trigger, Is.Not.Null, name);
+            Assert.That(trigger.LockedSequence, Is.Null, name + " keeps its dialogue unchanged while Ready.");
+        }
+    }
+
+    [Test]
     public void DirectionalView_UpdatesAndRestoresAnimatorParameters()
     {
         GameObject npc = new GameObject("NPC");

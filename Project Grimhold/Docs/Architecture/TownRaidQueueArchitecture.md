@@ -55,9 +55,10 @@ contains the code, Raid Host and up to 16 frozen profiles.
 
 Ready locks the member's Town build (Game Design 02 §7.2). `TownRaidPreparationRules.CanMutateTownBuild`
 is the single rule: a Waiting member who is not Ready may change attributes, abilities, Equipment and
-Stash selection; Ready, a frozen launch, a non-member or an invalid observation is locked.
-`TownEquipmentMutationGate` applies it to every Town screen (Attributes, Abilities, Inventory Equipment
-and Stash transfers/splits/gem installs); Stash Sort and Quick Slot bindings stay available. Town
+Stash selection, and may buy or sell with the merchant; Ready, a frozen launch, a non-member or an
+invalid observation is locked. `TownEquipmentMutationGate` applies it to every Town screen (Attributes,
+Abilities, Inventory Equipment, Stash transfers/splits/gem installs and merchant purchases, sales and
+buybacks); Stash Sort, Quick Slot bindings and planning a merchant draft stay available. Town
 inventory is written through `LocalProfileStore` and the backend HTTP clients, not Fusion RPCs, so the
 lock is enforced at those client mutation endpoints; the backend does not observe Ready.
 `TownRaidPreparationSnapshot.FriendlyFireEnabled` is also frozen into immutable `RaidLaunchContext.FriendlyFireEnabled` (Host default: `false`). `SessionConnectionCoordinator` remains
@@ -107,8 +108,8 @@ unresolved Duo continuation is the signal: `TownPartyRules.IsAwaitingPartyComple
 local `TownPartyContinuationContext` has two members and has not been restored, which happens only
 when the partner returns. `SessionConnectionCoordinator.IsAwaitingPartyCompletion` exposes it,
 `SocialPlayerIdentity.IsAwaitingPartyCompletion` replicates it and `TownPartyDirectory` reads it per
-player. `TownRaidPreparationDirectory` rejects Ready (cancelling Ready stays allowed) and Start from such
-a player, and the panel locks Ready, Start, Create and Join with the notice
+player. `TownRaidPreparationDirectory` rejects Create, Join, Ready (cancelling Ready stays allowed) and
+Start from such a player, and the panel locks Ready, Start, Create and Join with the notice
 "Tu compañero sigue en la Dungeon. Espera a que finalice su expedición". The lock lifts automatically
 when the restored Party clears the continuation. A claim whose other member already belongs to a Town
 Party (`TownPartyRules.IsContinuationSuperseded`, for example a partner who went through the main menu)

@@ -13,13 +13,20 @@ public sealed class TownMerchantProfileSource
     public IPlayerCurrencyService Currency { get; }
     public IShopTransactionService ShopTransactionService { get; }
 
+    /// <summary>
+    /// The Town build gate (<see cref="TownEquipmentMutationGate"/>): false while the player is Ready,
+    /// which blocks every purchase, sale and buyback. Null means no preparation can lock the build.
+    /// </summary>
+    public Func<bool> CanMutateBuild { get; }
+
     public TownMerchantProfileSource(
         ProfileId profileId,
         IInventoryReadSource inventory,
         IPlayerCurrencyService currency,
         IShopTransactionService shopTransactionService,
         BuybackLedger buybackLedger = null,
-        IBuybackService buybackService = null)
+        IBuybackService buybackService = null,
+        Func<bool> canMutateBuild = null)
     {
         if (!profileId.IsValid)
         {
@@ -28,6 +35,7 @@ public sealed class TownMerchantProfileSource
 
         BuybackLedger = buybackLedger;
         BuybackService = buybackService;
+        CanMutateBuild = canMutateBuild;
         ProfileId = profileId;
         Inventory = inventory ?? throw new ArgumentNullException(nameof(inventory));
         Currency = currency ?? throw new ArgumentNullException(nameof(currency));

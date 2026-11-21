@@ -8,7 +8,9 @@ public sealed class TownNpcDialogueTrigger : MonoBehaviour, IDialogueTrigger
 {
     [SerializeField] private DialogueSequence _primarySequence;
     [SerializeField] private DialogueSequence _secondarySequence;
+    [SerializeField] private DialogueSequence _lockedSequence;
 
     public DialogueSequence PrimarySequence => _primarySequence;
     public DialogueSequence SecondarySequence => _secondarySequence;
+    public DialogueSequence LockedSequence => _lockedSequence;
 }

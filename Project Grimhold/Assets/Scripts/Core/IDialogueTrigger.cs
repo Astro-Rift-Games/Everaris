@@ -20,4 +20,10 @@ public interface IDialogueTrigger
     /// May be null; the presenter falls back to PrimarySequence when null.
     /// </summary>
     DialogueSequence SecondarySequence { get; }
+
+    /// <summary>
+    /// Sequence shown instead of Primary/Secondary while the presenter's build gate reports the
+    /// local player locked (Ready). May be null; the regular selection applies when null.
+    /// </summary>
+    DialogueSequence LockedSequence { get; }
 }

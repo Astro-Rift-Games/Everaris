@@ -43,7 +43,8 @@ public sealed class TownMerchantTradePlayModeTests
         _profile?.Dispose();
     }
 
-    private IEnumerator Start(long gold = 10000, bool seedSale = false, LootId ownedOverride = default)
+    private IEnumerator Start(long gold = 10000, bool seedSale = false, LootId ownedOverride = default,
+        Func<bool> canMutateBuild = null)
     {
         _completed = _commits = 0;
         var merchantPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/TownMerchantNPC.prefab");
@@ -81,7 +82,8 @@ public sealed class TownMerchantTradePlayModeTests
         Assert.That(_feedback, Is.Not.Null, "Real merchant UI must wire its feedback label");
         _session = new TownMerchantTradeSession(_profile.ProfileId, _endpoint, _profile.Shop,
             _profile.Inventory, () => _profile.Currency.GetCurrency(_profile.ProfileId), _ui.Present, () => 0, 35,
-            buybackLedger: _profile.BuybackLedger, buybackService: _profile.Shop);
+            buybackLedger: _profile.BuybackLedger, buybackService: _profile.Shop,
+            canMutateBuild: canMutateBuild);
         _ui.Bind(_session);
         _session.TradeCompleted += _ui.PresentResult;
         _session.TradeCompleted += result => { _completed++; _result = result; };
@@ -135,6 +137,35 @@ public sealed class TownMerchantTradePlayModeTests
             Assert.That(loadout[0].LootId, Is.EqualTo(Item));
             Assert.That(loadout[0].Amount, Is.EqualTo(units));
         }
+    }
+
+    [UnityTest]
+    public IEnumerator ReadyLockedPlayer_CannotBuyOrSellWithTheMerchant()
+    {
+        yield return Start(seedSale: true, canMutateBuild: () => false);
+        int stockBefore = Stock;
+        // Compare against the seeded profile itself: live merchant stock may differ from the prefab stock.
+        var loadoutBefore = _profile.Store.GetLoadout();
+        Assert.That(loadoutBefore.Count, Is.EqualTo(1), "The fixture seeds one owned stack to sell.");
+        LootId owned = loadoutBefore[0].LootId;
+        int ownedAmount = loadoutBefore[0].Amount;
+        Assert.That(_session.AddPurchase(Item, 1), Is.True);
+        Assert.That(_session.AddSale(owned, 1), Is.True);
+
+        Assert.That(_session.Current.CanConfirm, Is.False, "The real shop UI is presented as not confirmable while Ready.");
+        Assert.That(_session.ConfirmTrade(), Is.False);
+        for (int frame = 0; frame < 10; frame++) yield return null;
+
+        Assert.That(_endpoint.Ticket, Is.Null, "No trade request reaches the merchant State Authority while Ready.");
+        Assert.That(Stock, Is.EqualTo(stockBefore));
+        Assert.That(_completed, Is.EqualTo(0));
+        Assert.That(_commits, Is.EqualTo(0), "The profile is not written while Ready.");
+        Assert.That(_profile.Store.GetCurrency(), Is.EqualTo(10000));
+        var loadoutAfter = _profile.Store.GetLoadout();
+        Assert.That(loadoutAfter.Count, Is.EqualTo(1));
+        Assert.That(loadoutAfter[0].LootId, Is.EqualTo(owned));
+        Assert.That(loadoutAfter[0].Amount, Is.EqualTo(ownedAmount));
+        Assert.That(_session.IsSubmissionInFlight, Is.False);
     }
 
     [UnityTest]
