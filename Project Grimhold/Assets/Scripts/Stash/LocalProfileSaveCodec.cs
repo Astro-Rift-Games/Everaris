@@ -1158,13 +1158,8 @@ public static class LocalProfileSaveCodec
                         error = $"{label} contains an invalid equipment instance or amount.";
                         return false;
                     }
-                    WeaponInstanceModifiers? modifiers = null;
-                    if (item.instance.modifiers != null)
-                    {
-                        if (!item.instance.modifiers.TryToTransportModifiers(out var parsed, out error)) return false;
-                        modifiers = parsed;
-                    }
-                    instance = new EquipmentInstance(item.instance.instanceId, modifiers);
+                    if (!EquipmentInstanceData.TryToTransportInstance(item.instance.instanceId, item.instance.modifiers,
+                        out instance, out error)) return false;
                 }
             }
             destination.Add(new StashItem(lootId, item.amount, aggregate ? -1 : slot, instance, item.expeditionId ?? string.Empty, item.origin ?? string.Empty));

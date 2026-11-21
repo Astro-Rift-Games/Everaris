@@ -22,12 +22,7 @@ public static class RaidAdmissionSnapshotMapper
         items = new LootEntry[source.Length];
         for (int index = 0; index < source.Length; index++)
         {
-            WeaponInstanceModifiers? modifiers = null;
-            if (source[index].modifiers != null)
-            {
-                if (!source[index].modifiers.TryToTransportModifiers(out var parsed, out _)) return false;
-                modifiers = parsed;
-            }
+            if (!TryProjectWeaponModifiers(source[index].modifiers, out var modifiers)) return false;
             items[index] = new LootEntry(new LootId(source[index].lootId), source[index].amount, modifiers);
             if (!items[index].IsValid) return false;
         }
@@ -37,13 +32,20 @@ public static class RaidAdmissionSnapshotMapper
             if (string.IsNullOrEmpty(id)) continue;
             WeaponInstanceModifiers? modifiers = null;
             bool isUnit = snapshot.preparedEquipment.Units != null && snapshot.preparedEquipment.Units.ContainsKey(slot);
-            if (isUnit && snapshot.preparedEquipment.Units[slot] != null)
-            {
-                if (!snapshot.preparedEquipment.Units[slot].TryToTransportModifiers(out var parsed, out _)) return false;
-                modifiers = parsed;
-            }
+            if (isUnit && !TryProjectWeaponModifiers(snapshot.preparedEquipment.Units[slot], out modifiers)) return false;
             equipment = equipment.With(slot, new LootId(id), isUnit ? new EquipmentInstance(null, modifiers) : null);
         }
+        return true;
+    }
+
+    // Armor upgrade levels are validated but not carried into the Raid yet (TASK-303 L6 follow-up).
+    private static bool TryProjectWeaponModifiers(WeaponInstanceModifiersData data, out WeaponInstanceModifiers? modifiers)
+    {
+        modifiers = null;
+        if (data == null) return true;
+        if (data.IsArmorShape) return data.TryToArmorLevel(out _, out _);
+        if (!data.TryToTransportModifiers(out var parsed, out _)) return false;
+        modifiers = parsed;
         return true;
     }
 }

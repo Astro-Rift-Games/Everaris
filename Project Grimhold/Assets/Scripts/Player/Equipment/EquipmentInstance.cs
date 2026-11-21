@@ -3,15 +3,27 @@ using System;
 /// <summary>Immutable Town/cache identity. Only the backend issues IDs; legacy cache entries have no ID.</summary>
 public sealed class EquipmentInstance : IEquatable<EquipmentInstance>
 {
+    public const int MaxArmorUpgradeLevel = 3;
+
     public string InstanceId { get; }
     public WeaponInstanceModifiers? Modifiers { get; }
+
+    /// <summary>Town NPC armor level +0..+3 (Doc 23 §9.2); always 0 for weapons and shields.</summary>
+    public int ArmorUpgradeLevel { get; }
     public bool HasIdentity => IsValidId(InstanceId);
 
-    public EquipmentInstance(string instanceId, WeaponInstanceModifiers? modifiers = null)
+    public EquipmentInstance(string instanceId, WeaponInstanceModifiers? modifiers = null, int armorUpgradeLevel = 0)
     {
+        if (armorUpgradeLevel < 0 || armorUpgradeLevel > MaxArmorUpgradeLevel)
+            throw new ArgumentOutOfRangeException(nameof(armorUpgradeLevel), armorUpgradeLevel, "Armor upgrade level must be 0..3.");
         InstanceId = instanceId;
         Modifiers = modifiers?.Normalize();
+        ArmorUpgradeLevel = armorUpgradeLevel;
     }
+
+    public static bool IsArmorPiece(LootDefinition definition) => definition != null &&
+        (definition.Category == LootCategory.Helmet || definition.Category == LootCategory.Armor ||
+         definition.Category == LootCategory.Gloves || definition.Category == LootCategory.Boots);
 
     public static bool IsValidId(string value)
     {
@@ -51,7 +63,8 @@ public sealed class EquipmentInstance : IEquatable<EquipmentInstance>
     }
 
     public bool Equals(EquipmentInstance other) => other != null &&
-        string.Equals(InstanceId, other.InstanceId, StringComparison.Ordinal) && Nullable.Equals(Modifiers, other.Modifiers);
+        string.Equals(InstanceId, other.InstanceId, StringComparison.Ordinal) && Nullable.Equals(Modifiers, other.Modifiers) &&
+        ArmorUpgradeLevel == other.ArmorUpgradeLevel;
     public override bool Equals(object obj) => obj is EquipmentInstance other && Equals(other);
-    public override int GetHashCode() => (InstanceId?.GetHashCode() ?? 0) ^ (Modifiers?.GetHashCode() ?? 0);
+    public override int GetHashCode() => (InstanceId?.GetHashCode() ?? 0) ^ (Modifiers?.GetHashCode() ?? 0) ^ (ArmorUpgradeLevel * 397);
 }

@@ -175,6 +175,8 @@ namespace Grimhold.Backend
 
         private static JObject ModifiersJson(WeaponInstanceModifiersData modifiers)
         {
+            // Armor pieces carry only their level (ItemInstanceArchitecture §4.4).
+            if (modifiers.IsArmorShape) return new JObject { ["upgradeLevel"] = modifiers.upgradeLevel.Value };
             var json = new JObject();
             if (modifiers.primary != null) json["primary"] = ScalingJson(modifiers.primary);
             if (modifiers.secondary != null) json["secondary"] = ScalingJson(modifiers.secondary);
