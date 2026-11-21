@@ -144,8 +144,13 @@ public sealed class TownMerchantTradePlayModeTests
     {
         yield return Start(seedSale: true, canMutateBuild: () => false);
         int stockBefore = Stock;
+        // Compare against the seeded profile itself: live merchant stock may differ from the prefab stock.
+        var loadoutBefore = _profile.Store.GetLoadout();
+        Assert.That(loadoutBefore.Count, Is.EqualTo(1), "The fixture seeds one owned stack to sell.");
+        LootId owned = loadoutBefore[0].LootId;
+        int ownedAmount = loadoutBefore[0].Amount;
         Assert.That(_session.AddPurchase(Item, 1), Is.True);
-        Assert.That(_session.AddSale(Item, 1), Is.True);
+        Assert.That(_session.AddSale(owned, 1), Is.True);
 
         Assert.That(_session.Current.CanConfirm, Is.False, "The real shop UI is presented as not confirmable while Ready.");
         Assert.That(_session.ConfirmTrade(), Is.False);
@@ -155,7 +160,11 @@ public sealed class TownMerchantTradePlayModeTests
         Assert.That(Stock, Is.EqualTo(stockBefore));
         Assert.That(_completed, Is.EqualTo(0));
         Assert.That(_commits, Is.EqualTo(0), "The profile is not written while Ready.");
-        AssertProfile(10000, 2);
+        Assert.That(_profile.Store.GetCurrency(), Is.EqualTo(10000));
+        var loadoutAfter = _profile.Store.GetLoadout();
+        Assert.That(loadoutAfter.Count, Is.EqualTo(1));
+        Assert.That(loadoutAfter[0].LootId, Is.EqualTo(owned));
+        Assert.That(loadoutAfter[0].Amount, Is.EqualTo(ownedAmount));
         Assert.That(_session.IsSubmissionInFlight, Is.False);
     }
 
