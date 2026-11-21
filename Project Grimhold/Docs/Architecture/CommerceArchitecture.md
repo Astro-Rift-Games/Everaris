@@ -21,11 +21,11 @@ Town commerce is distributed across three specialized merchants and one combat t
 2. **Herrero:**
    - **Vende:** Armas físicas rotativas (del pool de 7 armas físicas), armaduras rotativas (del pool de 24 piezas) y arma especial física semanal (con 1 modificación inicial).
    - **Compra:** Armas físicas y todas las armaduras.
-   - **Servicios:** Comercio y acceso a la recompra compartida (servicios de mejora de armas y armaduras en US-84).
+   - **Servicios:** Comercio y acceso a la recompra compartida (servicios de mejora de armas y armaduras en US-84; contrato backend en `ItemInstanceArchitecture.md` §5.1, TASK-302; la UI es TASK-303).
 3. **Arcanista:**
    - **Vende:** Armas mágicas rotativas (del pool de 5 armas mágicas) y arma especial mágica semanal (con 1 modificación inicial).
    - **Compra:** Armas mágicas.
-   - **Servicios:** Comercio y acceso a la recompra compartida (servicios de mejora arcana en US-84).
+   - **Servicios:** Comercio y acceso a la recompra compartida (servicios de mejora arcana en US-84; contrato backend en `ItemInstanceArchitecture.md` §5.1, TASK-302; la UI es TASK-303).
 4. **Entrenador:**
    - No compra ni vende objetos. Provee armas de entrenamiento gratuitas (`Tradable = false`, `ObjectValue = 0`).
 
@@ -47,7 +47,7 @@ The backend is the sole authority for commerce catalog generation, individual st
   - Generates: 3 distinct normal weapons (from pool of 12), 1 special weapon (from remaining 9) with exactly 1 initial modifier (Scaling E 30% / +20 OV, Scaling D 25% / +35 OV, Scaling C 15% / +50 OV, or 1 empty socket 30% / +60 OV), 3 distinct armor pieces (from pool of 24), 2 distinct utilities (from the 3 available: Lockpick stock 3, Rune Compass stock 1, Arcane Detector stock 1), and 3 distinct eligible resources/treasures with weekly demand bonus (+20%).
 - **Individual Player Stock (Doc 23 §5.2 & §8.2):** Stock is tracked and consumed individually per player per weekly cycle in the backend (resetting automatically at Monday 00:00 UTC), not shared in a competitive pool across players in the Town instance.
 - **Atomic Mixed Cart Transaction:** `POST /character/me/inventory/shop/trade` (and `/api/commerce/transaction`) accepts a unified cart containing purchases, sales (with demand awareness) and buybacks. Validates final Gold >= 0, final slot capacity (accounting for sold and bought items), current player stock, and catalog freshness (rejecting with `ROTATION_EXPIRED` if the weekly cycle rotated while the cart was open, requiring client re-confirmation).
-- **Shared Buyback (FIFO 16, Doc 23 §8.3):** A single 16-entry FIFO list per player shared between General Merchant, Blacksmith, and Arcanist. Retains exact instance attributes (InstanceID, scalings, sockets, gems, armor level) and special consumable stacks. Cleared on raid start (`TownRaidQueue`) or logout.
+- **Shared Buyback (FIFO 16, Doc 23 §8.3):** A single 16-entry FIFO list per player shared between General Merchant, Blacksmith, and Arcanist. Retains exact instance attributes (InstanceID, scalings, sockets, gems, armor `upgradeLevel`) and special consumable stacks. Cleared on raid start (`TownRaidQueue`) or logout.
 - **MaxTransportable = 1 Enforcement (Doc 23 §8.2):** The player is allowed to store multiple units of restricted utilities (Rune Compass, Arcane Detector, Self-Revive) in their Town Stash. The raid admission system (`TownRaidQueue` / `RaidAdmissionValidator`) strictly blocks entry if the outbound inventory exceeds `MaxTransportable = 1`.
 - **Supersedes FIX-24 (#694):** The legacy universal BUY_CATALOG and Fusion-replicated stock reservation are replaced by authoritative backend individual weekly stock and weekly rotation.
 
@@ -304,11 +304,12 @@ single authoritative 16-entry FIFO list per player:
   endpoint `POST /character/me/inventory/shop/trade` (as well as dedicated `POST /character/me/inventory/shop/buyback`).
   Unity's application-owned `BuybackLedger` is a memory read model hydrated from backend state.
 - **Eligibility:** Normal equipment (weapons and armor, including upgraded instances with modifiers, gem slots,
-  installed gems, and armor defense levels) and special tradable consumables (e.g. explosive/smoke bombs, throwing daggers,
+  installed gems, and armor upgrade levels; the backend part is TASK-302, see `ItemInstanceArchitecture.md` §4.3/§5.1) and special tradable consumables (e.g. explosive/smoke bombs, throwing daggers,
   self-revive) sold to the General Merchant enter the shared buyback list.
   Sold equipment and items do NOT enter regular NPC stock or weekly rotation.
 - **Price:** `ceil(1.5 * goldReceived)`, frozen per unit at sale time based on the gold actually paid to the player.
-  The frozen unit price drives both preview and backend execution.
+  The frozen unit price drives both preview and backend execution. For equipment, the gold received is based on
+  the instance ObjectValue including upgrade bonuses (`ItemInstanceArchitecture.md` §4.3; sale-price part in TASK-302 T3).
 - **Capacity:** At most **16 entries**, FIFO eviction (the 17th entry displaces the oldest). Partial buyback
   consumes units of the selected entry; purchasing all units removes the entry.
 - **Lifetime:** The buyback history persists between opening and closing the merchant UI. It is explicitly cleared
