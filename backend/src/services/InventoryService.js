@@ -262,7 +262,9 @@ function applyShopSale(loadout, version, lootId, amount, sourceSlot, weeklyDeman
   if (!source || source.amount < amount) throw { statusCode: 409, errorCode: 'INSUFFICIENT_ITEMS', message: `Loadout does not hold ${amount} unit(s) of '${lootId}'.` };
 
   const isDemand = (weeklyDemandItems || []).some(d => matchesLootId({ lootId: d.lootId || d }, lootId));
-  const baseSellValue = isDemand ? Math.floor(sellOffer.sellValue * 1.2) : sellOffer.sellValue;
+  // v3 equipment sells for its ObjectValue (template value + upgrade bonuses, Doc 23 §9.3); other items for the catalog value.
+  const listedValue = version === 3 && getEquipmentTemplate(lootId) ? objectValue(lootId, source.instance) : sellOffer.sellValue;
+  const baseSellValue = isDemand ? Math.floor(listedValue * 1.2) : listedValue;
 
   const unitSellValue = baseSellValue + (version === 3 ? (source?.instance?.modifiers?.gems || [])
     .reduce((sum, gem) => sum + (gem ? GEM_CATALOG[gem].sellValue : 0), 0) : 0);
@@ -277,8 +279,6 @@ function applyShopSale(loadout, version, lootId, amount, sourceSlot, weeklyDeman
   } : null };
 }
 
-function shopPurchaseCost(lootId, amount) {
-  const offer = getBuyOffer(lootId);
 // Removes each material from Inventory stacks in slot order; Stash is never read (Doc 23 §9).
 function consumeLoadoutMaterials(loadout, materials) {
   for (const [lootId, amount] of Object.entries(materials)) {
@@ -314,6 +314,8 @@ function validUpgradeTicket({ transactionId, expectedRevision, merchant, operati
      (location === 'equipment' && EQUIPMENT_SLOTS.includes(slot)));
 }
 
+function shopPurchaseCost(lootId, amount) {
+  const offer = getBuyOffer(lootId);
   if (!offer) throw { statusCode: 404, errorCode: 'ITEM_NOT_OFFERED', message: `Item '${lootId}' is not offered in the shop.` };
   const cost = offer.buyPrice * amount;
   if (!Number.isSafeInteger(cost)) throw { statusCode: 400, errorCode: 'INTEGER_OVERFLOW', message: 'Calculated transaction cost causes integer overflow.' };
@@ -536,8 +538,6 @@ class InventoryService {
       { transactionId, type: 'install_gem', intent, outcome, timestamp: new Date() });
   }
 
-  /** Reorders one inventory list without changing item identity or amounts. */
-  static async updateOrder(accountId, list, lootIds, expectedRevision, slotOrder) {
   /**
    * Town NPC upgrade (Doc 23 §9). The item stays where it is (Inventory slot or equipped slot) with the same
    * InstanceID; gold and Inventory materials are debited once in the same revision-guarded write as the receipt.
@@ -589,6 +589,8 @@ class InventoryService {
     return { ...shopSnapshot(updated), upgrade: outcome, alreadySecured: false };
   }
 
+  /** Reorders one inventory list without changing item identity or amounts. */
+  static async updateOrder(accountId, list, lootIds, expectedRevision, slotOrder) {
     const character = await Character.findOne({ accountId });
     if (!character) {
       throw { statusCode: 404, errorCode: 'CHARACTER_NOT_FOUND', message: 'No character found for this account.' };
