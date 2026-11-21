@@ -61,10 +61,10 @@ public static class TownCharacterStatisticsBuilder
         }
 
         if (!EquipmentStatisticsCalculator.TryCalculate(
-                ArmorFor(definitions, EquipmentSlot.Helmet),
-                ArmorFor(definitions, EquipmentSlot.Armor),
-                ArmorFor(definitions, EquipmentSlot.Gloves),
-                ArmorFor(definitions, EquipmentSlot.Boots),
+                ArmorFor(definitions, equipment, EquipmentSlot.Helmet),
+                ArmorFor(definitions, equipment, EquipmentSlot.Armor),
+                ArmorFor(definitions, equipment, EquipmentSlot.Gloves),
+                ArmorFor(definitions, equipment, EquipmentSlot.Boots),
                 out EquipmentStatisticsModifiers modifiers,
                 out EquipmentStatisticsCalculationFailure equipmentFailure))
         {
@@ -116,13 +116,14 @@ public static class TownCharacterStatisticsBuilder
     private static LootDefinition Resolve(Func<LootId, LootDefinition> resolveLoot, LootId lootId) =>
         resolveLoot != null && lootId.IsValid ? resolveLoot(lootId) : null;
 
-    private static ArmorDefinition ArmorFor(
+    private static ArmorPieceStatistics ArmorFor(
         Dictionary<EquipmentSlot, LootDefinition> definitions,
+        in PreparedEquipmentLoadout equipment,
         EquipmentSlot slot) =>
         definitions.TryGetValue(slot, out LootDefinition definition) &&
         EquipmentSlotRules.IsCompatible(definition.Category, slot)
-            ? definition.ArmorDefinition
-            : null;
+            ? new ArmorPieceStatistics(definition.ArmorDefinition, equipment.GetInstance(slot)?.ArmorUpgradeLevel ?? 0)
+            : default;
 
     private static float MitigationPercent(int defense, float constant)
     {
