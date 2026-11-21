@@ -305,6 +305,129 @@ namespace Tests.EditMode.Presentation
             Assert.That(session.Message, Is.EqualTo("La mejora se confirmó; el inventario se sincronizó con el servidor"));
         }
 
+        [Test]
+        public async Task ReadyLock_BlocksSelectAndConfirm_WithoutCallingTheBackend()
+        {
+            bool canMutate = true;
+            using var session = new TownUpgradeSession(_store, _coordinator, _catalog, TownMerchantType.Blacksmith, () => canMutate);
+            canMutate = false;
+            Assert.That(session.Select(session.Targets().Single(t => t.LootId == _armor), NpcUpgradeOperation.ArmorLevel), Is.False);
+            Assert.That(session.Message, Is.EqualTo(TownUpgradeSession.BuildLockedMessage));
+
+            canMutate = true;
+            Assert.That(session.Select(session.Targets().Single(t => t.LootId == _armor), NpcUpgradeOperation.ArmorLevel), Is.True);
+            canMutate = false;
+            await session.ConfirmAsync();
+            Assert.That(_remote.Calls, Is.Zero);
+            Assert.That(session.Message, Is.EqualTo(TownUpgradeSession.BuildLockedMessage));
+            Assert.That(session.IsConfirming || session.IsPending, Is.False);
+            AssertUnchanged();
+        }
+
+        [Test]
+        public async Task TradeInFlight_BlocksSelectAndConfirm()
+        {
+            bool trading = false;
+            using var session = new TownUpgradeSession(_store, _coordinator, _catalog, TownMerchantType.Blacksmith,
+                isTradeInFlight: () => trading);
+            Assert.That(session.Select(session.Targets().Single(t => t.LootId == _armor), NpcUpgradeOperation.ArmorLevel), Is.True);
+            trading = true;
+            await session.ConfirmAsync();
+            Assert.That(_remote.Calls, Is.Zero);
+            Assert.That(session.Message, Is.EqualTo(TownUpgradeSession.TradeInFlightMessage));
+            Assert.That(session.Select(session.Targets().Single(t => t.LootId == _armor), NpcUpgradeOperation.ArmorLevel), Is.False);
+            AssertUnchanged();
+        }
+
+        [Test]
+        public void Presentation_ListsTargets_AndPreviewsSelectionWithoutMutating()
+        {
+            using var presentation = new TownUpgradePresentation(_session, _catalog);
+            var model = presentation.Current;
+            Assert.That(model.Rows.Select(r => r.Title), Is.EqualTo(new[]
+            {
+                $"{Name(_armor)} (Equipado)", Name(_rapier)
+            }));
+            Assert.That(model.HasSelection, Is.False);
+            Assert.That(model.CanConfirm, Is.False);
+
+            int changes = 0;
+            presentation.Changed += _ => changes++;
+            presentation.SelectTarget(0);
+            model = presentation.Current;
+            Assert.That(changes, Is.EqualTo(1));
+            Assert.That(model.Rows[0].IsSelected, Is.True);
+            Assert.That(model.SelectedTitle, Is.EqualTo($"{Name(_armor)} (Equipado)"));
+            Assert.That(model.Operations.Select(o => o.Label), Is.EqualTo(new[] { "Reforzar armadura" }));
+            Assert.That(model.SelectedOperation, Is.EqualTo(NpcUpgradeOperation.ArmorLevel));
+            Assert.That(model.PreviewLines[0], Is.EqualTo("Nivel: +0 -> +1"));
+            Assert.That(model.PreviewLines, Does.Contain("Oro: 40 (tienes 100)"));
+            Assert.That(model.CanConfirm, Is.True);
+            AssertUnchanged();
+        }
+
+        [Test]
+        public async Task Presentation_ConfirmsOnce_ThenShowsResultAndUpgradedRow()
+        {
+            using var presentation = new TownUpgradePresentation(_session, _catalog);
+            presentation.SelectTarget(0);
+            _remote.Result = SuccessResult();
+            var pending = presentation.ConfirmAsync();
+            Assert.That(presentation.Current.IsPending, Is.True);
+            Assert.That(presentation.Current.CanConfirm, Is.False);
+            await presentation.ConfirmAsync();
+            _remote.Gate.SetResult(true);
+            await pending;
+
+            Assert.That(_remote.Calls, Is.EqualTo(1));
+            var model = presentation.Current;
+            Assert.That(model.Message, Is.EqualTo("Mejora aplicada"));
+            Assert.That(model.Rows[0].Title, Is.EqualTo($"{Name(_armor)} +1 (Equipado)"));
+            Assert.That(model.Rows[0].IsSelected, Is.True, "the upgraded item stays selected for the next step");
+            Assert.That(model.PreviewLines[0], Is.EqualTo("Nivel: +1 -> +2"));
+        }
+
+        [Test]
+        public async Task Presentation_BlockedOperation_IsDisabledWithReason_AndConfirmSendsNothing()
+        {
+            using var presentation = new TownUpgradePresentation(_session, _catalog);
+            presentation.SelectTarget(1);
+            var model = presentation.Current;
+            Assert.That(model.Operations.Select(o => o.Operation),
+                Is.EqualTo(new[] { NpcUpgradeOperation.PrimaryScaling, NpcUpgradeOperation.FirstSocket }));
+            Assert.That(model.Operations[0].Enabled, Is.False);
+            Assert.That(model.Operations[0].Reason, Is.EqualTo(NpcUpgradeMessages.MissingMaterialsStash));
+            Assert.That(model.CanConfirm, Is.False);
+            await presentation.ConfirmAsync();
+            Assert.That(_remote.Calls, Is.Zero);
+
+            presentation.SelectOperation(NpcUpgradeOperation.FirstSocket);
+            Assert.That(presentation.Current.SelectedOperation, Is.EqualTo(NpcUpgradeOperation.FirstSocket));
+            Assert.That(presentation.Current.PreviewLines[0], Is.EqualTo("Ranuras: 0 -> 1"));
+            AssertUnchanged();
+        }
+
+        [Test]
+        public async Task Presentation_SelectingAnotherTarget_ClearsThePreviousResultMessage()
+        {
+            using var presentation = new TownUpgradePresentation(_session, _catalog);
+            presentation.SelectTarget(0);
+            _remote.Result = SuccessResult();
+            var pending = presentation.ConfirmAsync();
+            _remote.Gate.SetResult(true);
+            await pending;
+            Assert.That(presentation.Current.Message, Is.EqualTo("Mejora aplicada"));
+
+            presentation.SelectTarget(1);
+            Assert.That(presentation.Current.Message, Is.Empty);
+        }
+
+        [Test]
+        public void BuildLockedMessage_NamesTheReadyButton() =>
+            Assert.That(TownUpgradeSession.BuildLockedMessage, Is.EqualTo("Cancela Ready para mejorar equipamiento"));
+
+        private string Name(LootId id) => _catalog.TryGet(id.Value, out var d) ? d.DisplayName : id.Value;
+
         private sealed class FakeReconcile : IProfileReconciliation
         {
             public int Calls;

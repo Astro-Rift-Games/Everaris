@@ -19,6 +19,12 @@ public sealed class TownMerchantProfileSource
     /// </summary>
     public Func<bool> CanMutateBuild { get; }
 
+    /// <summary>Blacksmith/Arcanist upgrade dependencies (TASK-303); null disables the Mejoras tab.</summary>
+    public LocalProfileStore Store { get; }
+    public StashTransferCoordinator TransferCoordinator { get; }
+    public LootDefinitionCatalog LootCatalog { get; }
+    public bool SupportsUpgrades => Store != null && TransferCoordinator != null && LootCatalog != null;
+
     public TownMerchantProfileSource(
         ProfileId profileId,
         IInventoryReadSource inventory,
@@ -26,7 +32,10 @@ public sealed class TownMerchantProfileSource
         IShopTransactionService shopTransactionService,
         BuybackLedger buybackLedger = null,
         IBuybackService buybackService = null,
-        Func<bool> canMutateBuild = null)
+        Func<bool> canMutateBuild = null,
+        LocalProfileStore store = null,
+        StashTransferCoordinator transferCoordinator = null,
+        LootDefinitionCatalog lootCatalog = null)
     {
         if (!profileId.IsValid)
         {
@@ -36,6 +45,9 @@ public sealed class TownMerchantProfileSource
         BuybackLedger = buybackLedger;
         BuybackService = buybackService;
         CanMutateBuild = canMutateBuild;
+        Store = store;
+        TransferCoordinator = transferCoordinator;
+        LootCatalog = lootCatalog;
         ProfileId = profileId;
         Inventory = inventory ?? throw new ArgumentNullException(nameof(inventory));
         Currency = currency ?? throw new ArgumentNullException(nameof(currency));

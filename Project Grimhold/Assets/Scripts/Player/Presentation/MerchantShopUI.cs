@@ -65,6 +65,17 @@ public sealed class MerchantShopUI : MonoBehaviour
     [SerializeField] private Button _clearButton;
     [SerializeField] private Button _confirmButton;
 
+    [Header("Tabs - Blacksmith/Arcanist upgrades (TASK-303)")]
+    [SerializeField] private GameObject _tabBar;
+    [SerializeField] private Button _tradeTabButton;
+    [SerializeField] private Button _upgradesTabButton;
+    [Tooltip("Trade columns and footer, hidden while the Mejoras tab is shown.")]
+    [SerializeField] private GameObject[] _tradeContent = new GameObject[0];
+    [SerializeField] private MerchantUpgradePanel _upgradePanel;
+
+    private bool _showingUpgrades;
+    private bool _hasUpgrades;
+
     // The shop font has no arrow glyph.
     private const string Projection = " -> ";
 
@@ -91,8 +102,11 @@ public sealed class MerchantShopUI : MonoBehaviour
         if (_removeLineButton != null) _removeLineButton.onClick.AddListener(OnRemoveLineClicked);
         if (_confirmButton != null) _confirmButton.onClick.AddListener(OnConfirmClicked);
         if (_clearButton != null) _clearButton.onClick.AddListener(OnClearClicked);
+        if (_tradeTabButton != null) _tradeTabButton.onClick.AddListener(ShowTradeTab);
+        if (_upgradesTabButton != null) _upgradesTabButton.onClick.AddListener(ShowUpgradesTab);
 
         Render();
+        RenderTabs();
     }
 
     private void OnDestroy()
@@ -105,6 +119,45 @@ public sealed class MerchantShopUI : MonoBehaviour
         if (_removeLineButton != null) _removeLineButton.onClick.RemoveListener(OnRemoveLineClicked);
         if (_confirmButton != null) _confirmButton.onClick.RemoveListener(OnConfirmClicked);
         if (_clearButton != null) _clearButton.onClick.RemoveListener(OnClearClicked);
+        if (_tradeTabButton != null) _tradeTabButton.onClick.RemoveListener(ShowTradeTab);
+        if (_upgradesTabButton != null) _upgradesTabButton.onClick.RemoveListener(ShowUpgradesTab);
+    }
+
+    /// <summary>
+    /// Connects the Mejoras tab for the Blacksmith or Arcanist; null hides the tabs (General Merchant).
+    /// The trade tab is always shown first when a merchant opens.
+    /// </summary>
+    public void BindUpgrades(IMerchantUpgradeIntentions intentions)
+    {
+        _hasUpgrades = intentions != null && _upgradePanel != null;
+        _showingUpgrades = false;
+        if (_upgradePanel != null) _upgradePanel.Bind(_hasUpgrades ? intentions : null);
+        RenderTabs();
+    }
+
+    public bool IsShowingUpgrades => _showingUpgrades;
+
+    public void ShowTradeTab()
+    {
+        _showingUpgrades = false;
+        RenderTabs();
+        Render();
+    }
+
+    public void ShowUpgradesTab()
+    {
+        if (!_hasUpgrades) return;
+        _showingUpgrades = true;
+        RenderTabs();
+    }
+
+    private void RenderTabs()
+    {
+        if (_tabBar != null) _tabBar.SetActive(_hasUpgrades);
+        foreach (GameObject content in _tradeContent) if (content != null) content.SetActive(!_showingUpgrades);
+        if (_upgradePanel != null) _upgradePanel.gameObject.SetActive(_showingUpgrades);
+        if (_tradeTabButton != null) _tradeTabButton.interactable = _showingUpgrades;
+        if (_upgradesTabButton != null) _upgradesTabButton.interactable = !_showingUpgrades;
     }
 
     /// <summary>
@@ -121,6 +174,7 @@ public sealed class MerchantShopUI : MonoBehaviour
 
     public void Unbind()
     {
+        BindUpgrades(null);
         _interaction = null;
         _viewModel = MerchantShopViewModel.Unavailable;
         _resultMessage = string.Empty;
@@ -273,6 +327,7 @@ public sealed class MerchantShopUI : MonoBehaviour
 
     private void RenderSelection()
     {
+        if (_showingUpgrades) return;
         if (_interaction == null || !_interaction.HasSelection)
         {
             if (_centerPanelRoot != null) _centerPanelRoot.SetActive(false);

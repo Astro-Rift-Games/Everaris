@@ -31,6 +31,7 @@ public class MerchantShopUIBoundaryTests
     [TestCase(typeof(MerchantShopUI))]
     [TestCase(typeof(StoreItemUI))]
     [TestCase(typeof(MerchantShopInteraction))]
+    [TestCase(typeof(MerchantUpgradePanel))]
     public void Ui_HoldsNoServicesControllerOrTradeState(Type uiType)
     {
         foreach (FieldInfo field in uiType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
