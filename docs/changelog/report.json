@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1195,
-  "canonicalEntries": 1192,
+  "rawCommits": 1201,
+  "canonicalEntries": 1198,
   "before": {
-    "Features": 422,
+    "Documentation": 130,
+    "Features": 425,
     "Tests": 47,
     "Bug Fixes": 185,
-    "Documentation": 127,
     "Other Changes": 374,
     "Refactoring": 16,
     "Architecture & Infrastructure": 24
   },
   "after": {
-    "Features": 561,
+    "Documentation": 146,
+    "Features": 564,
     "Tests": 52,
     "Bug Fixes": 201,
-    "Documentation": 143,
     "Refactoring": 29,
     "Other Changes": 181,
     "Maintenance": 22,
@@ -23,49 +23,49 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Inventory & Loot": 483,
+    "Unassigned": 46,
+    "Persistence & Backend": 306,
+    "Documentation": 442,
+    "Tests": 762,
+    "Abilities": 140,
+    "Inventory & Loot": 484,
+    "Networking & Sessions": 356,
+    "Build & Tooling": 620,
     "UI": 349,
     "World & Visibility": 169,
     "Art & Animation": 262,
-    "Build & Tooling": 619,
-    "Tests": 759,
-    "Networking & Sessions": 355,
-    "Persistence & Backend": 303,
-    "Documentation": 440,
     "Combat": 401,
     "Extraction": 176,
-    "Unassigned": 43,
     "Audio": 42,
-    "Abilities": 139,
     "Movement": 102,
     "Input": 32
   },
   "canonical": {
     "sections": {
-      "Features": 560,
+      "Documentation": 146,
+      "Features": 563,
       "Tests": 52,
       "Bug Fixes": 200,
-      "Documentation": 143,
       "Refactoring": 29,
       "Other Changes": 180,
       "Maintenance": 22,
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Inventory & Loot": 483,
+      "Unassigned": 46,
+      "Persistence & Backend": 306,
+      "Documentation": 440,
+      "Tests": 760,
+      "Abilities": 138,
+      "Inventory & Loot": 484,
+      "Networking & Sessions": 356,
+      "Build & Tooling": 618,
       "UI": 348,
       "World & Visibility": 167,
       "Art & Animation": 259,
-      "Build & Tooling": 617,
-      "Tests": 757,
-      "Networking & Sessions": 355,
-      "Persistence & Backend": 303,
-      "Documentation": 438,
       "Combat": 399,
       "Extraction": 176,
-      "Unassigned": 43,
       "Audio": 42,
-      "Abilities": 137,
       "Movement": 102,
       "Input": 32
     }
@@ -74437,8 +74437,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 318,
-      "canonicalEntries": 318
+      "originalCommits": 324,
+      "canonicalEntries": 324
     },
     {
       "key": "v0.5.0",
@@ -74482,6 +74482,611 @@
     }
   ],
   "commits": [
+    {
+      "sha": "65732670d9b1955b00ba2a4688833bc56070223b",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/65732670d9b1955b00ba2a4688833bc56070223b",
+      "subject": "docs(odd): record FIX-34 Unity EditMode evidence",
+      "body": "",
+      "date": "2026-11-21T15:53:27-03:00",
+      "files": [
+        "odd/tasks/fix-34-jwt-refresh.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "odd",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "unassigned-system",
+          "message": "No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system."
+        }
+      ],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "c0db72eb509da2f6f495ed4898795a5a0b9a5cea",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c0db72eb509da2f6f495ed4898795a5a0b9a5cea",
+      "subject": "docs(odd): record FIX-34 verification evidence",
+      "body": "",
+      "date": "2026-11-21T15:46:09-03:00",
+      "files": [
+        "odd/tasks/fix-34-jwt-refresh.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "odd",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "unassigned-system",
+          "message": "No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system."
+        }
+      ],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "fc3a6e45a6fe298d55d3618e9a10430458248501",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/fc3a6e45a6fe298d55d3618e9a10430458248501",
+      "subject": "feat(auth): tolerate a lost refresh response within a reuse grace window",
+      "body": "FIX-34: reusing a just-rotated refresh token within JWT_REFRESH_REUSE_GRACE_SECONDS (default 30) issues a new pair and revokes the displaced successor; later reuse still revokes the family.\n",
+      "date": "2026-11-21T15:41:17-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md",
+        "backend/README.md",
+        "backend/src/config/env.js",
+        "backend/src/models/RefreshToken.js",
+        "backend/src/services/AuthService.js",
+        "backend/tests/auth.refresh.test.js",
+        "backend/tests/concurrency/auth.refresh.real.test.js",
+        "backend/tests/env.hardening.test.js",
+        "backend/tests/integration/auth.hardening.integration.test.js",
+        "odd/tasks/fix-34-jwt-refresh.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "auth",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Persistence & Backend",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/README.md",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/env.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/RefreshToken.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/AuthService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/auth.refresh.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/auth.refresh.real.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/env.hardening.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/auth.hardening.integration.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "auth",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/auth.refresh.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/auth.refresh.real.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/env.hardening.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/auth.hardening.integration.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "01c65f2466aab249bd83674872aa29f303879c8c",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/01c65f2466aab249bd83674872aa29f303879c8c",
+      "subject": "feat(backend): refresh an expired session once without resetting services",
+      "body": "FIX-34: shared AuthorizedRequest layer refreshes single-flight on TOKEN_EXPIRED and replays the request once; revoked or failed refresh keeps the unauthorized reset.\n",
+      "date": "2026-11-21T15:31:45-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Application/ApplicationAuthContext.cs",
+        "Project Grimhold/Assets/Scripts/Backend/AuthenticationClient.cs",
+        "Project Grimhold/Assets/Scripts/Backend/AuthorizedRequest.cs",
+        "Project Grimhold/Assets/Scripts/Backend/AuthorizedRequest.cs.meta",
+        "Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs",
+        "Project Grimhold/Assets/Scripts/Backend/BackendErrorUtility.cs",
+        "Project Grimhold/Assets/Scripts/Backend/CharacterClient.cs",
+        "Project Grimhold/Assets/Scripts/Backend/DataTransferObjects.cs",
+        "Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs",
+        "Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs",
+        "Project Grimhold/Assets/Scripts/Backend/ProgressionClient.cs",
+        "Project Grimhold/Assets/Scripts/Backend/TokenRefreshResult.cs",
+        "Project Grimhold/Assets/Scripts/Backend/TokenRefreshResult.cs.meta",
+        "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionVerifier.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownSessionTicketVerifier.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs"
+      ],
+      "originalType": "feat",
+      "originalScope": "backend",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Abilities",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/BackendErrorUtility.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionVerifier.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownSessionTicketVerifier.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Application/ApplicationAuthContext.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/AuthenticationClient.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/AuthorizedRequest.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/AuthorizedRequest.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/BackendErrorUtility.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/CharacterClient.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/DataTransferObjects.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/ProgressionClient.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/TokenRefreshResult.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/TokenRefreshResult.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "4597b104a58dec7aa34de51905188e03bf4700f7",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/4597b104a58dec7aa34de51905188e03bf4700f7",
+      "subject": "feat(auth): renew access tokens with rotating refresh tokens",
+      "body": "FIX-34: POST /auth/refresh with single-use rotation and family revocation on reuse/logout, TOKEN_EXPIRED distinct from UNAUTHORIZED, JWT_REFRESH_EXPIRES_IN placeholder 24 h; architecture contract and FIX-55 invalidation order amended.\n",
+      "date": "2026-11-21T15:31:45-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md",
+        "backend/README.md",
+        "backend/src/config/env.js",
+        "backend/src/middleware/authenticate.js",
+        "backend/src/models/RefreshToken.js",
+        "backend/src/routes/auth.routes.js",
+        "backend/src/services/AuthService.js",
+        "backend/src/validators/auth.validators.js",
+        "backend/tests/auth.refresh.test.js",
+        "backend/tests/auth.service.test.js",
+        "backend/tests/concurrency/auth.refresh.real.test.js",
+        "backend/tests/env.hardening.test.js",
+        "backend/tests/integration/auth.hardening.integration.test.js",
+        "odd/tasks/fix-34-jwt-refresh.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "auth",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Persistence & Backend",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/README.md",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/env.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/middleware/authenticate.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/RefreshToken.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/routes/auth.routes.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/AuthService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/validators/auth.validators.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/auth.refresh.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/auth.service.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/auth.refresh.real.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/env.hardening.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/auth.hardening.integration.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "auth",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/auth.refresh.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/auth.service.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/auth.refresh.real.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/env.hardening.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/auth.hardening.integration.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "143a6e4c5b5f003d537b16744910d7a35fb21f96",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/143a6e4c5b5f003d537b16744910d7a35fb21f96",
+      "subject": "docs(odd): track FIX-34 JWT refresh",
+      "body": "",
+      "date": "2026-11-20T01:09:09-03:00",
+      "files": [
+        "odd/tasks/fix-34-jwt-refresh.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "odd",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "unassigned-system",
+          "message": "No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system."
+        }
+      ],
+      "generic": false,
+      "secondary": true
+    },
     {
       "sha": "bdb3e623721f631a357d97852ea960fae9a52e21",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bdb3e623721f631a357d97852ea960fae9a52e21",

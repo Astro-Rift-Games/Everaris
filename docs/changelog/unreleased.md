@@ -4,32 +4,351 @@
 
 Release: Unreleased
 
-318 original commits; 318 canonical entries.
+324 original commits; 324 canonical entries.
 
 ## Canonical classification
 
-101 features; 107 bug fixes; 3 refactoring; 1 architecture & infrastructure; 53 documentation; 23 tests; 11 maintenance; 19 other changes
+104 features; 107 bug fixes; 3 refactoring; 1 architecture & infrastructure; 56 documentation; 23 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Abilities | 12 | 11 | 1 | 0 | 10 | 1 |
+| Abilities | 13 | 11 | 1 | 0 | 10 | 1 |
 | Art & Animation | 21 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 72 | 71 | 3 | 1 | 25 | 6 |
+| Build & Tooling | 73 | 71 | 3 | 1 | 25 | 6 |
 | Combat | 47 | 20 | 2 | 0 | 15 | 1 |
-| Documentation | 37 | 44 | 0 | 0 | 16 | 0 |
+| Documentation | 39 | 44 | 0 | 0 | 16 | 0 |
 | Extraction | 18 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 69 | 62 | 3 | 1 | 27 | 5 |
+| Inventory & Loot | 70 | 62 | 3 | 1 | 27 | 5 |
 | Movement | 6 | 5 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 35 | 43 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 37 | 55 | 2 | 1 | 20 | 3 |
-| Tests | 96 | 101 | 3 | 1 | 33 | 4 |
+| Networking & Sessions | 36 | 43 | 0 | 0 | 19 | 2 |
+| Persistence & Backend | 40 | 55 | 2 | 1 | 20 | 3 |
+| Tests | 99 | 101 | 3 | 1 | 33 | 4 |
 | UI | 41 | 23 | 1 | 0 | 12 | 3 |
-| Unassigned | 0 | 1 | 0 | 0 | 24 | 0 |
+| Unassigned | 0 | 1 | 0 | 0 | 27 | 0 |
 | World & Visibility | 28 | 16 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 65732670d9b1955b00ba2a4688833bc56070223b
+
+[65732670d9b1955b00ba2a4688833bc56070223b](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/65732670d9b1955b00ba2a4688833bc56070223b)
+
+Date: 2026-11-21T15:53:27-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record FIX-34 Unity EditMode evidence
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-34-jwt-refresh.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### c0db72eb509da2f6f495ed4898795a5a0b9a5cea
+
+[c0db72eb509da2f6f495ed4898795a5a0b9a5cea](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c0db72eb509da2f6f495ed4898795a5a0b9a5cea)
+
+Date: 2026-11-21T15:46:09-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record FIX-34 verification evidence
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-34-jwt-refresh.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### fc3a6e45a6fe298d55d3618e9a10430458248501
+
+[fc3a6e45a6fe298d55d3618e9a10430458248501](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/fc3a6e45a6fe298d55d3618e9a10430458248501)
+
+Date: 2026-11-21T15:41:17-03:00 · Classification: Features (explicit) · Systems: Persistence & Backend, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(auth): tolerate a lost refresh response within a reuse grace window
+```
+
+#### Original body
+
+```text
+FIX-34: reusing a just-rotated refresh token within JWT_REFRESH_REUSE_GRACE_SECONDS (default 30) issues a new pair and revokes the displaced successor; later reuse still revokes the family.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+backend/README.md
+backend/src/config/env.js
+backend/src/models/RefreshToken.js
+backend/src/services/AuthService.js
+backend/tests/auth.refresh.test.js
+backend/tests/concurrency/auth.refresh.real.test.js
+backend/tests/env.hardening.test.js
+backend/tests/integration/auth.hardening.integration.test.js
+odd/tasks/fix-34-jwt-refresh.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+- path → Persistence &amp; Backend: backend/README.md
+- path → Persistence &amp; Backend: backend/src/config/env.js
+- path → Persistence &amp; Backend: backend/src/models/RefreshToken.js
+- path → Persistence &amp; Backend: backend/src/services/AuthService.js
+- path → Persistence &amp; Backend: backend/tests/auth.refresh.test.js
+- path → Persistence &amp; Backend: backend/tests/concurrency/auth.refresh.real.test.js
+- path → Persistence &amp; Backend: backend/tests/env.hardening.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/auth.hardening.integration.test.js
+- scope → Persistence &amp; Backend: auth
+- path → Documentation: Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+- path → Tests: backend/tests/auth.refresh.test.js
+- path → Tests: backend/tests/concurrency/auth.refresh.real.test.js
+- path → Tests: backend/tests/env.hardening.test.js
+- path → Tests: backend/tests/integration/auth.hardening.integration.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 01c65f2466aab249bd83674872aa29f303879c8c
+
+[01c65f2466aab249bd83674872aa29f303879c8c](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/01c65f2466aab249bd83674872aa29f303879c8c)
+
+Date: 2026-11-21T15:31:45-03:00 · Classification: Features (explicit) · Systems: Abilities, Inventory & Loot, Networking & Sessions, Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(backend): refresh an expired session once without resetting services
+```
+
+#### Original body
+
+```text
+FIX-34: shared AuthorizedRequest layer refreshes single-flight on TOKEN_EXPIRED and replays the request once; revoked or failed refresh keeps the unauthorized reset.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Application/ApplicationAuthContext.cs
+Project Grimhold/Assets/Scripts/Backend/AuthenticationClient.cs
+Project Grimhold/Assets/Scripts/Backend/AuthorizedRequest.cs
+Project Grimhold/Assets/Scripts/Backend/AuthorizedRequest.cs.meta
+Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+Project Grimhold/Assets/Scripts/Backend/BackendErrorUtility.cs
+Project Grimhold/Assets/Scripts/Backend/CharacterClient.cs
+Project Grimhold/Assets/Scripts/Backend/DataTransferObjects.cs
+Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs
+Project Grimhold/Assets/Scripts/Backend/ProgressionClient.cs
+Project Grimhold/Assets/Scripts/Backend/TokenRefreshResult.cs
+Project Grimhold/Assets/Scripts/Backend/TokenRefreshResult.cs.meta
+Project Grimhold/Assets/Scripts/Networking/RaidAdmissionVerifier.cs
+Project Grimhold/Assets/Scripts/Networking/TownSessionTicketVerifier.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Abilities: Project Grimhold/Assets/Scripts/Backend/BackendErrorUtility.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidAdmissionVerifier.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownSessionTicketVerifier.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Application/ApplicationAuthContext.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/AuthenticationClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/AuthorizedRequest.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/AuthorizedRequest.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendErrorMessages.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendErrorUtility.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/CharacterClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/DataTransferObjects.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/ProgressionClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/TokenRefreshResult.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/TokenRefreshResult.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs
+- scope → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendErrorMessagesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/RefreshSessionContractTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/TokenRefreshTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/LoopbackBackendServer.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 4597b104a58dec7aa34de51905188e03bf4700f7
+
+[4597b104a58dec7aa34de51905188e03bf4700f7](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/4597b104a58dec7aa34de51905188e03bf4700f7)
+
+Date: 2026-11-21T15:31:45-03:00 · Classification: Features (explicit) · Systems: Persistence & Backend, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(auth): renew access tokens with rotating refresh tokens
+```
+
+#### Original body
+
+```text
+FIX-34: POST /auth/refresh with single-use rotation and family revocation on reuse/logout, TOKEN_EXPIRED distinct from UNAUTHORIZED, JWT_REFRESH_EXPIRES_IN placeholder 24 h; architecture contract and FIX-55 invalidation order amended.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+backend/README.md
+backend/src/config/env.js
+backend/src/middleware/authenticate.js
+backend/src/models/RefreshToken.js
+backend/src/routes/auth.routes.js
+backend/src/services/AuthService.js
+backend/src/validators/auth.validators.js
+backend/tests/auth.refresh.test.js
+backend/tests/auth.service.test.js
+backend/tests/concurrency/auth.refresh.real.test.js
+backend/tests/env.hardening.test.js
+backend/tests/integration/auth.hardening.integration.test.js
+odd/tasks/fix-34-jwt-refresh.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+- path → Persistence &amp; Backend: backend/README.md
+- path → Persistence &amp; Backend: backend/src/config/env.js
+- path → Persistence &amp; Backend: backend/src/middleware/authenticate.js
+- path → Persistence &amp; Backend: backend/src/models/RefreshToken.js
+- path → Persistence &amp; Backend: backend/src/routes/auth.routes.js
+- path → Persistence &amp; Backend: backend/src/services/AuthService.js
+- path → Persistence &amp; Backend: backend/src/validators/auth.validators.js
+- path → Persistence &amp; Backend: backend/tests/auth.refresh.test.js
+- path → Persistence &amp; Backend: backend/tests/auth.service.test.js
+- path → Persistence &amp; Backend: backend/tests/concurrency/auth.refresh.real.test.js
+- path → Persistence &amp; Backend: backend/tests/env.hardening.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/auth.hardening.integration.test.js
+- scope → Persistence &amp; Backend: auth
+- path → Documentation: Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+- path → Tests: backend/tests/auth.refresh.test.js
+- path → Tests: backend/tests/auth.service.test.js
+- path → Tests: backend/tests/concurrency/auth.refresh.real.test.js
+- path → Tests: backend/tests/env.hardening.test.js
+- path → Tests: backend/tests/integration/auth.hardening.integration.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 143a6e4c5b5f003d537b16744910d7a35fb21f96
+
+[143a6e4c5b5f003d537b16744910d7a35fb21f96](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/143a6e4c5b5f003d537b16744910d7a35fb21f96)
+
+Date: 2026-11-20T01:09:09-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): track FIX-34 JWT refresh
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-34-jwt-refresh.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
 
 ### bdb3e623721f631a357d97852ea960fae9a52e21
 
