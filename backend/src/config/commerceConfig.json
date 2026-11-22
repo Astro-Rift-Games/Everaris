@@ -6,6 +6,9 @@
     "buybackPriceMultiplier": 1.5,
     "maxBuybackEntries": 16
   },
+  "services": {
+    "respecGoldCost": 100
+  },
   "rotationCounts": {
     "normalWeapons": 3,
     "specialWeapons": 1,

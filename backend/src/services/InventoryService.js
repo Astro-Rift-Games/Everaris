@@ -22,7 +22,8 @@ const {
 
 const { inventoryVersion, copyEntry, serializeItems, requireMigratedInventory,
   requireSlotInventory, requireSplitEnabled, requireSourceSlot, assertUnambiguousItems, matchesLootId,
-  CAPACITIES, inventoryFull, assertSlot, lowestItemIndex, receiveItem, restoreEntries, addAmount } = require('./InventoryEntries');
+  CAPACITIES, inventoryFull, assertSlot, lowestItemIndex, receiveItem, restoreEntries, addAmount,
+  inventoryItems, serializePreparedEquipment } = require('./InventoryEntries');
 
 const { TRAINING_WEAPONS, isTrainingWeapon } = require('./TrainingWeapons');
 const { validatePreparedAbilities } = require('./PreparedAbilityValidation');
@@ -35,10 +36,6 @@ const { INSTANCE_ID, invalidInventory, createEquipment, validateResultItems, res
 const { UPGRADE_OPERATIONS, planUpgrade, objectValue } = require('./ItemUpgrades');
 
 const UPGRADE_MERCHANTS = Object.freeze(['general', 'blacksmith', 'arcanist']);
-
-function inventoryItems(character, list) {
-  return serializeItems(character.inventory[list], inventoryVersion(character) >= 2);
-}
 
 function listsSnapshot(character) {
   return { stash: inventoryItems(character, 'stash'), loadout: inventoryItems(character, 'loadout'), revision: character.revision };
@@ -139,20 +136,6 @@ function restoreReservation(character) {
     character.inventory.loadout = loadout;
   }
   character.inventory.preparedEquipment = equipment;
-}
-
-/**
- * Serializes the preparedEquipment subdocument to a plain object.
- * Iterates over EQUIPMENT_SLOTS so new slots are covered automatically.
- */
-function serializePreparedEquipment(eq, version = 2) {
-  const clean = (val) => (!val || val === 'null' ? (version === 3 ? null : '') :
-    typeof val === 'object' ? copyEntry(val) : val);
-  const result = {};
-  for (const slot of EQUIPMENT_SLOTS) {
-    result[slot] = clean(eq ? eq[slot] : undefined);
-  }
-  return result;
 }
 
 /**
