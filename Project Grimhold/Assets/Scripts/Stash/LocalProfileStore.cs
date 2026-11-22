@@ -87,6 +87,17 @@ public sealed class LocalProfileStore : IMissionClaimService
     public int RemoteRevision =>
         _repository.Snapshot != null ? _repository.Snapshot.RemoteRevision : 0;
     public int InventorySchemaVersion => _repository.Snapshot?.InventorySchemaVersion ?? 1;
+
+    /// <summary>
+    /// Gold the server charges for an attribute respec (TASK-304), or null until the backend reported it.
+    /// Runtime-only: it is never persisted, so a stale local value cannot outlive a server configuration change.
+    /// </summary>
+    public int? RespecCost { get; private set; }
+
+    public void SetRespecCost(int cost)
+    {
+        if (cost >= 0) RespecCost = cost;
+    }
     public bool RequiresEquipmentHydration => _repository.Snapshot?.RequiresEquipmentHydration ?? true;
 
     public IReadOnlyList<MissionInstanceState> GetActiveMissions() =>
@@ -1183,6 +1194,67 @@ public sealed class LocalProfileStore : IMissionClaimService
         }
     }
 
+    /// <summary>
+    /// Applies a respec's authoritative snapshot (TASK-304, Doc 04 §11) as one commit: attributes, gold, both lists,
+    /// prepared equipment and prepared abilities all come from the response, so a weapon or ability the reset build
+    /// no longer qualifies for is already unequipped. A replayed transaction (<c>alreadySecured</c>) carries the same
+    /// snapshot and applies identically: the balance is assigned, never debited, so it cannot charge twice.
+    /// Unlike <see cref="ForceCharacterAttributeState"/> a prepared ability is never revalidated locally, because the
+    /// server already decided which slots stay. Anything older than the local revision, or that fails validation,
+    /// leaves the profile untouched.
+    /// </summary>
+    public StashOperationResult ApplyConfirmedRespec(Grimhold.Backend.RespecResult result)
+    {
+        lock (_sync)
+        {
+            var current = _repository.Snapshot;
+            if (!IsAvailable || current == null || current.ProfileId != _profileId ||
+                current.RequiresEquipmentHydration || current.PendingReservation != null ||
+                current.PendingExtractionCommit != null || current.PendingDefeatCommit != null ||
+                result.stash == null || result.loadout == null || result.revision < current.RemoteRevision ||
+                !CharacterAttributeState.TryCreate(
+                    result.characterAttributes.vitality, result.characterAttributes.resistance,
+                    result.characterAttributes.strength, result.characterAttributes.dexterity,
+                    result.characterAttributes.intelligence, result.characterAttributes.luck,
+                    result.characterAttributes.availablePoints, out CharacterAttributeState attributes))
+                return StashOperationResult.InvalidInventory;
+
+            LocalProfileSnapshot next = current.Clone();
+            if (!ApplicationStashServiceBootstrapper.HydrateSnapshot(_profileId, next, new Grimhold.Backend.InventoryData
+            {
+                inventorySchemaVersion = current.InventorySchemaVersion, stash = result.stash, loadout = result.loadout,
+                preparedEquipment = result.preparedEquipment, currency = result.currency, revision = result.revision
+            }, null, _lootCatalog, _abilityCatalog))
+                return StashOperationResult.HydrationFailed;
+
+            if (!TryReadPreparedAbilities(result.preparedAbilities, next.UnlockedAbilities, attributes, out PreparedAbilityLoadout abilities))
+                return StashOperationResult.InvalidInventory;
+
+            next.CharacterAttributes = attributes;
+            next.PreparedAbilities = abilities;
+            StashOperationResult committed = Commit(next);
+            if (committed == StashOperationResult.Success) SetRespecCost(result.cost);
+            return committed;
+        }
+    }
+
+    private bool TryReadPreparedAbilities(
+        Grimhold.Backend.PreparedAbilitiesDto dto,
+        IReadOnlyList<AbilityId> unlocked,
+        in CharacterAttributeState attributes,
+        out PreparedAbilityLoadout loadout)
+    {
+        loadout = default;
+        AbilityId slot1 = default, slot2 = default;
+        if ((!string.IsNullOrEmpty(dto.slot1) && !AbilityId.TryCreate(dto.slot1, out slot1)) ||
+            (!string.IsNullOrEmpty(dto.slot2) && !AbilityId.TryCreate(dto.slot2, out slot2)))
+            return false;
+        var candidate = new PreparedAbilityLoadout(slot1, slot2);
+        if (!PreparedAbilityLoadout.TryValidate(candidate, unlocked, attributes, _abilityCatalog, out _)) return false;
+        loadout = candidate;
+        return true;
+    }
+
     public void SetRemoteRevision(int revision)
     {
         lock (_sync)
@@ -1231,7 +1303,10 @@ public sealed class LocalProfileStore : IMissionClaimService
                 if (inventoryData.HasValue)   next.RemoteRevision = inventoryData.Value.revision;
                 if (progressionData.HasValue) next.RemoteRevision = progressionData.Value.revision;
 
-                return Commit(next);
+                StashOperationResult committed = Commit(next);
+                if (committed == StashOperationResult.Success && progressionData.HasValue)
+                    SetRespecCost(progressionData.Value.respecCost);
+                return committed;
             }
             return StashOperationResult.PersistenceFailed;
         }
