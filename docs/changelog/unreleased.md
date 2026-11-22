@@ -4,32 +4,794 @@
 
 Release: Unreleased
 
-324 original commits; 324 canonical entries.
+336 original commits; 336 canonical entries.
 
 ## Canonical classification
 
-104 features; 107 bug fixes; 3 refactoring; 1 architecture & infrastructure; 56 documentation; 23 tests; 11 maintenance; 19 other changes
+112 features; 108 bug fixes; 3 refactoring; 1 architecture & infrastructure; 59 documentation; 23 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 13 | 11 | 1 | 0 | 10 | 1 |
 | Art & Animation | 21 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 73 | 71 | 3 | 1 | 25 | 6 |
-| Combat | 47 | 20 | 2 | 0 | 15 | 1 |
-| Documentation | 39 | 44 | 0 | 0 | 16 | 0 |
+| Build & Tooling | 78 | 72 | 3 | 1 | 25 | 6 |
+| Combat | 50 | 21 | 2 | 0 | 16 | 1 |
+| Documentation | 39 | 44 | 0 | 0 | 18 | 0 |
 | Extraction | 18 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 70 | 62 | 3 | 1 | 27 | 5 |
+| Inventory & Loot | 77 | 63 | 3 | 1 | 29 | 5 |
 | Movement | 6 | 5 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 36 | 43 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 40 | 55 | 2 | 1 | 20 | 3 |
-| Tests | 99 | 101 | 3 | 1 | 33 | 4 |
-| UI | 41 | 23 | 1 | 0 | 12 | 3 |
+| Networking & Sessions | 38 | 44 | 0 | 0 | 19 | 2 |
+| Persistence & Backend | 47 | 56 | 2 | 1 | 21 | 3 |
+| Tests | 107 | 102 | 3 | 1 | 34 | 4 |
+| UI | 43 | 23 | 1 | 0 | 14 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 27 | 0 |
 | World & Visibility | 28 | 16 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 6a83dd512ffa3dd7b65095984c921aca791c6ec2
+
+[6a83dd512ffa3dd7b65095984c921aca791c6ec2](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6a83dd512ffa3dd7b65095984c921aca791c6ec2)
+
+Date: 2026-11-21T21:36:47-03:00 · Classification: Documentation (explicit) · Systems: Combat, UI, Persistence & Backend
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): record TASK-303 manual Town validation
+```
+
+#### Original body
+
+```text
+Owner validated weapon and armor upgrades against the local backend; T6 closed.
+
+Refs: TASK-303
+```
+
+#### Changed paths
+
+```text
+odd/tasks/task-303-upgrade-ui.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- message-term → Combat: weapon
+- path → UI: odd/tasks/task-303-upgrade-ui.md
+- message-term → Persistence &amp; Backend: backend
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### c2409b198056638ec2142ff48f679e7bf02a9b52
+
+[c2409b198056638ec2142ff48f679e7bf02a9b52](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c2409b198056638ec2142ff48f679e7bf02a9b52)
+
+Date: 2026-11-21T21:36:46-03:00 · Classification: Features (explicit) · Systems: Inventory & Loot, Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(tools): add dev grant tool for local test characters
+```
+
+#### Original body
+
+```text
+Developer-only tool to give the local character upgrade materials, test
+gear, catalog items and gold without raiding, for testing Town upgrades.
+
+- tools/dev-grant/grant.js writes to the local MongoDB only (refuses any
+  non-local or mongodb+srv URI), reusing backend modules read-only for
+  catalog validation, v3 instances and Inventory placement in one
+  revision-guarded write. No backend file changes.
+- Unity Editor window Grimhold/Dev/Grant Items: one-click buttons for the
+  Play Mode character, optional loose items/gold/username, and a profile
+  reread afterwards. Editor-only; never ships.
+
+Refs: TASK-303
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Editor/DevTools.meta
+Project Grimhold/Assets/Editor/DevTools/DevGrantOutcome.cs
+Project Grimhold/Assets/Editor/DevTools/DevGrantOutcome.cs.meta
+Project Grimhold/Assets/Editor/DevTools/DevGrantTool.cs
+Project Grimhold/Assets/Editor/DevTools/DevGrantTool.cs.meta
+Project Grimhold/Assets/Editor/DevTools/DevGrantToolWindow.cs
+Project Grimhold/Assets/Editor/DevTools/DevGrantToolWindow.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Testing/DevGrantToolTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Testing/DevGrantToolTests.cs.meta
+odd/tasks/dev-grant-tools.md
+tools/dev-grant/README.md
+tools/dev-grant/grant.js
+tools/dev-grant/grant.test.js
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- message-term → Inventory &amp; Loot: Inventory
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/DevTools.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/DevTools/DevGrantOutcome.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/DevTools/DevGrantOutcome.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/DevTools/DevGrantTool.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/DevTools/DevGrantTool.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/DevTools/DevGrantToolWindow.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/DevTools/DevGrantToolWindow.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Testing/DevGrantToolTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Testing/DevGrantToolTests.cs.meta
+- path → Build &amp; Tooling: odd/tasks/dev-grant-tools.md
+- path → Build &amp; Tooling: tools/dev-grant/README.md
+- path → Build &amp; Tooling: tools/dev-grant/grant.js
+- path → Build &amp; Tooling: tools/dev-grant/grant.test.js
+- scope → Build &amp; Tooling: tools
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Testing/DevGrantToolTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Testing/DevGrantToolTests.cs.meta
+- path → Tests: tools/dev-grant/grant.test.js
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 024050cc957bf7add5af75d3f64312d43ab9df95
+
+[024050cc957bf7add5af75d3f64312d43ab9df95](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/024050cc957bf7add5af75d3f64312d43ab9df95)
+
+Date: 2026-11-21T18:26:09-03:00 · Classification: Documentation (explicit) · Systems: Inventory & Loot, UI, Documentation, Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(architecture): document the Unity equipment upgrade flow
+```
+
+#### Original body
+
+```text
+ItemInstanceArchitecture §5.2 replaces the TASK-303 gap note with the
+Unity flow (armor shape, Town defense, preview mirror and parity test,
+confirm and reconcile rules, Raid +0 follow-up). CommerceArchitecture
+documents the Mejoras tab. The ODD tracker records evidence and commits.
+
+Refs: TASK-303
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/CommerceArchitecture.md
+Project Grimhold/Docs/Architecture/ItemInstanceArchitecture.md
+odd/tasks/task-303-upgrade-ui.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- message-term → Inventory &amp; Loot: equipment
+- path → UI: odd/tasks/task-303-upgrade-ui.md
+- path → Documentation: Project Grimhold/Docs/Architecture/CommerceArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/ItemInstanceArchitecture.md
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 37e7a45b8d119bf586afcc5c61994d1241150f38
+
+[37e7a45b8d119bf586afcc5c61994d1241150f38](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/37e7a45b8d119bf586afcc5c61994d1241150f38)
+
+Date: 2026-11-21T18:26:09-03:00 · Classification: Features (explicit) · Systems: Combat, Inventory & Loot, Networking & Sessions, UI, Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(commerce): add Mejoras tab to Blacksmith and Arcanist
+```
+
+#### Original body
+
+```text
+The Blacksmith and Arcanist merchant panel gains a "Comerciar | Mejoras"
+tab. It lists equipped and Inventory items the merchant can upgrade,
+keeps blocked operations visible with their reason, previews current and
+projected state, gold and Inventory materials (with a Stash hint), and
+confirms once through TownUpgradeSession. Upgrades respect the Ready
+lock and wait for a trade in flight; trades wait for an upgrade in
+flight. The tab reuses the existing Charcoal widgets (no new art).
+
+Refs: TASK-303
+
+Player-Added: The Blacksmith and the Arcanist can now upgrade weapon scaling, add a first gem socket and reinforce armor from a new Mejoras tab.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/UI/MerchantShopUI.prefab
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/TownUpgradeOperationViewModel.cs
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/TownUpgradeOperationViewModel.cs.meta
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/TownUpgradeViewModel.cs
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/TownUpgradeViewModel.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/IMerchantUpgradeIntentions.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/IMerchantUpgradeIntentions.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopUI.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/MerchantUpgradePanel.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/MerchantUpgradePanel.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/MerchantUpgradeRowViewModel.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/MerchantUpgradeRowViewModel.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/MerchantUpgradeViewModel.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/MerchantUpgradeViewModel.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantProfileSource.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradePresentation.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradePresentation.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeSession.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUIBoundaryTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUpgradeTabPrefabTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUpgradeTabPrefabTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownUpgradeViewModelTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownUpgradeViewModelTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- message-term → Combat: weapon
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs
+- message-term → Inventory &amp; Loot: Inventory
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeSession.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs
+- path → UI: Project Grimhold/Assets/Prefabs/UI/MerchantShopUI.prefab
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopUI.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantProfileSource.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUIBoundaryTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUpgradeTabPrefabTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUpgradeTabPrefabTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownUpgradeViewModelTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownUpgradeViewModelTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUIBoundaryTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUpgradeTabPrefabTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUpgradeTabPrefabTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownUpgradeViewModelTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownUpgradeViewModelTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 0ebe2727f1716cfa3d4b0283b16ecb144a8e70f8
+
+[0ebe2727f1716cfa3d4b0283b16ecb144a8e70f8](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0ebe2727f1716cfa3d4b0283b16ecb144a8e70f8)
+
+Date: 2026-11-21T18:01:12-03:00 · Classification: Features (explicit) · Systems: Inventory & Loot, Networking & Sessions, UI, Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(commerce): confirm Town equipment upgrades against the backend
+```
+
+#### Original body
+
+```text
+TownUpgradeSession lists equipped and Inventory upgrade targets,
+previews without mutating, and confirms once through the shared Town
+queue. The store applies the authoritative snapshot (gold, lists and
+prepared equipment) behind a revision guard, so an equipped item keeps
+its slot with its new level. Lost, conflicting or unreadable responses
+reread the backend once and never resend; messages follow the outcome
+status and backend code.
+
+Refs: TASK-303
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs
+Project Grimhold/Assets/Scripts/Backend/UpgradeItemRequest.cs
+Project Grimhold/Assets/Scripts/Backend/UpgradeItemRequest.cs.meta
+Project Grimhold/Assets/Scripts/Backend/UpgradeItemResult.cs
+Project Grimhold/Assets/Scripts/Backend/UpgradeItemResult.cs.meta
+Project Grimhold/Assets/Scripts/Backend/UpgradeOutcomeData.cs
+Project Grimhold/Assets/Scripts/Backend/UpgradeOutcomeData.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeSession.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeSession.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeTarget.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeTarget.cs.meta
+Project Grimhold/Assets/Scripts/Stash/IRemoteUpgradeService.cs
+Project Grimhold/Assets/Scripts/Stash/IRemoteUpgradeService.cs.meta
+Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+Project Grimhold/Assets/Scripts/Stash/StashTransferCoordinator.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs.meta
+odd/tasks/task-303-upgrade-ui.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+- message-term → Inventory &amp; Loot: equipment
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeSession.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeSession.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs.meta
+- path → UI: odd/tasks/task-303-upgrade-ui.md
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/UpgradeItemRequest.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/UpgradeItemRequest.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/UpgradeItemResult.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/UpgradeItemResult.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/UpgradeOutcomeData.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/UpgradeOutcomeData.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 199240466688e554ab0b6b0106b05bdc31bc1478
+
+[199240466688e554ab0b6b0106b05bdc31bc1478](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/199240466688e554ab0b6b0106b05bdc31bc1478)
+
+Date: 2026-11-21T18:01:12-03:00 · Classification: Features (explicit) · Systems: Inventory & Loot, Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(commerce): preview Blacksmith and Arcanist upgrades
+```
+
+#### Original body
+
+```text
+Client mirror of the Town NPC upgrade rules (Doc 23 §9) for previews
+only: merchant eligibility (incl. upgrade-only zweihander and long_bow),
+current and projected grade, socket, armor level, defense and
+ObjectValue, gold and Inventory-only materials with a Stash hint, and
+explicit limit messages. The backend stays authoritative; a parity
+test keeps the tables aligned with ItemUpgrades.js.
+
+Refs: TASK-303
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Commerce/Upgrades.meta
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeBlockReason.cs
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeBlockReason.cs.meta
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeMaterialCost.cs
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeMaterialCost.cs.meta
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeMaterialLine.cs
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeMaterialLine.cs.meta
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeMessages.cs
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeMessages.cs.meta
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeOperation.cs
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeOperation.cs.meta
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradePreview.cs
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradePreview.cs.meta
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeRules.cs
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeRules.cs.meta
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeSubject.cs
+Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeSubject.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/NpcUpgradePreviewTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/NpcUpgradePreviewTests.cs.meta
+backend/tests/item.upgrades.parity.test.js
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- message-term → Inventory &amp; Loot: Inventory
+- path → Persistence &amp; Backend: backend/tests/item.upgrades.parity.test.js
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/NpcUpgradePreviewTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/NpcUpgradePreviewTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/NpcUpgradePreviewTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/NpcUpgradePreviewTests.cs.meta
+- path → Tests: backend/tests/item.upgrades.parity.test.js
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 55d160ba2cb38617362526e400d8909abbac42b1
+
+[55d160ba2cb38617362526e400d8909abbac42b1](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/55d160ba2cb38617362526e400d8909abbac42b1)
+
+Date: 2026-11-21T18:01:12-03:00 · Classification: Features (explicit) · Systems: Inventory & Loot, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(equipment): apply armor upgrade defense to Town statistics
+```
+
+#### Original body
+
+```text
+Upgraded armor pieces contribute floor(base x (1 + 5/10/15 %)) defense
+per piece (Doc 23 §9.2) in the Town character sheet. The previous
+calculator signature stays +0 for the Raid avatar.
+
+Refs: TASK-303
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/Equipment/ArmorPieceStatistics.cs
+Project Grimhold/Assets/Scripts/Player/Equipment/ArmorPieceStatistics.cs.meta
+Project Grimhold/Assets/Scripts/Player/Equipment/ArmorUpgradeDefense.cs
+Project Grimhold/Assets/Scripts/Player/Equipment/ArmorUpgradeDefense.cs.meta
+Project Grimhold/Assets/Scripts/Player/Equipment/EquipmentStatisticsCalculator.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownCharacterStatisticsBuilder.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownCharacterStatisticsBuilderTests.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Equipment/ArmorPieceStatistics.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Equipment/ArmorPieceStatistics.cs.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Equipment/ArmorUpgradeDefense.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Equipment/ArmorUpgradeDefense.cs.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Equipment/EquipmentStatisticsCalculator.cs
+- scope → Inventory &amp; Loot: equipment
+- message-term → Inventory &amp; Loot: equipment
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownCharacterStatisticsBuilderTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownCharacterStatisticsBuilderTests.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### b384c05f4be39cdc54c49bb7e2b40aaa15fdc2b7
+
+[b384c05f4be39cdc54c49bb7e2b40aaa15fdc2b7](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/b384c05f4be39cdc54c49bb7e2b40aaa15fdc2b7)
+
+Date: 2026-11-21T18:01:11-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Inventory & Loot, Networking & Sessions, Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(equipment): round-trip armor upgrade level in Unity
+```
+
+#### Original body
+
+```text
+TASK-302 stores armor instances as modifiers { upgradeLevel: 0..3 }.
+Unity rejected that shape, so an upgraded armor broke v3 hydration and
+Raid admission.
+
+- EquipmentInstance carries ArmorUpgradeLevel (0..3, part of equality).
+- WeaponInstanceModifiersData accepts the armor shape; weapon JSON is
+  unchanged (upgradeLevel omitted, ShouldSerialize keeps weapon keys).
+- Local cache, publish body and Raid admission accept and validate the
+  armor shape; the Raid does not carry the level yet (TASK-303 L6).
+
+Refs: TASK-303
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Backend/EquipmentInstanceData.cs
+Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs
+Project Grimhold/Assets/Scripts/Networking/RaidAdmissionSnapshotMapper.cs
+Project Grimhold/Assets/Scripts/Player/Equipment/EquipmentInstance.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Combat: weapon
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/EquipmentInstanceData.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Equipment/EquipmentInstance.cs
+- scope → Inventory &amp; Loot: equipment
+- message-term → Inventory &amp; Loot: equipment
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidAdmissionSnapshotMapper.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/EquipmentInstanceData.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 9a05b2a6b9b6f60a4b2e94edef343a51c5d3b242
+
+[9a05b2a6b9b6f60a4b2e94edef343a51c5d3b242](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/9a05b2a6b9b6f60a4b2e94edef343a51c5d3b242)
+
+Date: 2026-11-21T16:45:16-03:00 · Classification: Documentation (explicit) · Systems: Inventory & Loot, Documentation
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(architecture): document NPC equipment upgrades
+```
+
+#### Original body
+
+```text
+Describe the armor upgradeLevel contract (§4.4), ObjectValue-based
+equipment pricing (§4.3) and the upgrade endpoint, receipts and error
+codes (new §5.1) in ItemInstanceArchitecture; point the Blacksmith and
+Arcanist services in CommerceArchitecture to it. Add the TASK-302 ODD
+tracker with specs, evidence and open follow-ups (TASK-303 Unity
+parser, pre-existing failing integration suites).
+
+Refs: TASK-302
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/CommerceArchitecture.md
+Project Grimhold/Docs/Architecture/ItemInstanceArchitecture.md
+odd/tasks/task-302-equipment-upgrades.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Inventory &amp; Loot: odd/tasks/task-302-equipment-upgrades.md
+- message-term → Inventory &amp; Loot: equipment
+- path → Documentation: Project Grimhold/Docs/Architecture/CommerceArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/ItemInstanceArchitecture.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### b7c524d7dfb692f1ab3b6e44a1c1a21cd4aa80cf
+
+[b7c524d7dfb692f1ab3b6e44a1c1a21cd4aa80cf](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/b7c524d7dfb692f1ab3b6e44a1c1a21cd4aa80cf)
+
+Date: 2026-11-21T16:45:16-03:00 · Classification: Features (explicit) · Systems: Combat, Inventory & Loot, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(commerce): price equipment sales by upgraded ObjectValue
+```
+
+#### Original body
+
+```text
+Sell v3 equipment at its instance ObjectValue (template value plus
+scaling, socket and armor level bonuses) plus installed gems, as Doc 23
+§7 and §9.3 require; buyback stays ceil(received * 1.5) and keeps the
+upgraded instance. Non-equipment, v1/v2 and plain equipment prices are
+unchanged (differential check against the previous commit).
+
+The first-socket +60 bonus remains once a gem is installed, so the
+gem-sale expectation in inventory.instances.test.js now includes it.
+
+Tests: integration/item.upgrades.economy.test.js (upgraded weapon and
+armor sales, buyback, plain-equipment pin, ECO-03, ECO-04).
+
+Refs: TASK-302
+```
+
+#### Changed paths
+
+```text
+backend/src/services/InventoryService.js
+backend/tests/integration/item.upgrades.economy.test.js
+backend/tests/inventory.instances.test.js
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- message-term → Combat: weapon
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- path → Inventory &amp; Loot: backend/tests/inventory.instances.test.js
+- message-term → Inventory &amp; Loot: equipment
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/tests/integration/item.upgrades.economy.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.instances.test.js
+- path → Tests: backend/tests/integration/item.upgrades.economy.test.js
+- path → Tests: backend/tests/inventory.instances.test.js
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 32d7cbc1d707d42bb798a1492a29d791c654248a
+
+[32d7cbc1d707d42bb798a1492a29d791c654248a](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/32d7cbc1d707d42bb798a1492a29d791c654248a)
+
+Date: 2026-11-21T16:45:16-03:00 · Classification: Features (explicit) · Systems: Inventory & Loot, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(backend): serve authoritative equipment upgrades
+```
+
+#### Original body
+
+```text
+Add POST /character/me/inventory/upgrades (InventoryService.upgradeItem)
+so Blacksmith and Arcanist upgrades commit once and atomically.
+
+- The item is addressed by Inventory slot or equipped slot and keeps
+  its location and InstanceID; Stash items are rejected.
+- Gold and materials are taken only from the Inventory, in slot
+  order, in the same revision-guarded write as a new `upgrade`
+  receipt; any rejection leaves the document unchanged.
+- Replays return the recorded outcome with alreadySecured; a lost
+  write re-reads and replays a matching receipt so concurrent retries
+  debit once.
+- Error codes: INSTANCE_MISMATCH, UPGRADE_NOT_ELIGIBLE,
+  UPGRADE_WRONG_MERCHANT, UPGRADE_LIMIT_REACHED, UPGRADE_GRADE_LOCKED,
+  UPGRADE_SOCKET_EXISTS, INSUFFICIENT_FUNDS, INSUFFICIENT_MATERIALS.
+
+Tests: integration/item.upgrades.test.js (UPG-01..08, Stash-only and
+split materials, wrong NPC, replay, validation),
+concurrency/item.upgrades.real.test.js (same-id retries, competing
+tickets, races with other writes).
+
+Refs: TASK-302
+```
+
+#### Changed paths
+
+```text
+backend/src/models/Character.js
+backend/src/routes/inventory.routes.js
+backend/src/services/InventoryService.js
+backend/tests/concurrency/item.upgrades.real.test.js
+backend/tests/integration/item.upgrades.test.js
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Inventory &amp; Loot: backend/src/routes/inventory.routes.js
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- message-term → Inventory &amp; Loot: equipment
+- path → Persistence &amp; Backend: backend/src/models/Character.js
+- path → Persistence &amp; Backend: backend/src/routes/inventory.routes.js
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/tests/concurrency/item.upgrades.real.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/item.upgrades.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/concurrency/item.upgrades.real.test.js
+- path → Tests: backend/tests/integration/item.upgrades.test.js
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### d8b0dc86266e43151543327bc7871005ec4b6846
+
+[d8b0dc86266e43151543327bc7871005ec4b6846](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/d8b0dc86266e43151543327bc7871005ec4b6846)
+
+Date: 2026-11-21T16:45:16-03:00 · Classification: Features (explicit) · Systems: Combat, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(backend): add NPC upgrade rules and armor upgrade level
+```
+
+#### Original body
+
+```text
+Add pure Town NPC upgrade rules for Doc 23 §9 (TASK-302): weapon
+primary scaling none -> E -> D -> C, first empty gem socket, and armor
++0 -> +3, with step tables that let NPC limits grow past C later.
+
+- Costs: E 60+2 rune, D 100+3 rune+1 ether, C 160+4 rune+2 ether;
+  socket 180+1 attunement gem+2 rune; armor 40/80/140 gold with the
+  family basic material (black iron/tanned leather/ether dust) and
+  1/2 ancient armor fragments at +2/+3.
+- ObjectValue: E+20/D+35/C+50 replace each other, socket +60,
+  armor +15/+35/+60. B/A/S and second-socket bonuses stay 0 (GD-09).
+- upgradedDefense = floor(base * (1 + 5/10/15%)), integer math.
+- Blacksmith: physical weapons (rotation pool plus zweihander and
+  long_bow) and all armor; Arcanist: magical weapons.
+- Instance contract: armor pieces accept modifiers { upgradeLevel
+  0..3 } only; shields and weapons reject it.
+
+Tests: tests/item.upgrades.test.js (costs, limits, merchants,
+ObjectValue, defense, value gain below gold cost, armor contract).
+
+Refs: TASK-302
+```
+
+#### Changed paths
+
+```text
+backend/src/services/ItemInstances.js
+backend/src/services/ItemUpgrades.js
+backend/tests/item.upgrades.test.js
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- message-term → Combat: weapon
+- path → Persistence &amp; Backend: backend/src/services/ItemInstances.js
+- path → Persistence &amp; Backend: backend/src/services/ItemUpgrades.js
+- path → Persistence &amp; Backend: backend/tests/item.upgrades.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/item.upgrades.test.js
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 65732670d9b1955b00ba2a4688833bc56070223b
 

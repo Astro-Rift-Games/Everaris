@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1201,
-  "canonicalEntries": 1198,
+  "rawCommits": 1213,
+  "canonicalEntries": 1210,
   "before": {
-    "Documentation": 130,
-    "Features": 425,
+    "Documentation": 133,
+    "Features": 433,
+    "Bug Fixes": 186,
     "Tests": 47,
-    "Bug Fixes": 185,
     "Other Changes": 374,
     "Refactoring": 16,
     "Architecture & Infrastructure": 24
   },
   "after": {
-    "Documentation": 146,
-    "Features": 564,
+    "Documentation": 149,
+    "Features": 572,
+    "Bug Fixes": 202,
     "Tests": 52,
-    "Bug Fixes": 201,
     "Refactoring": 29,
     "Other Changes": 181,
     "Maintenance": 22,
@@ -23,18 +23,18 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Combat": 406,
+    "UI": 353,
+    "Persistence & Backend": 315,
+    "Inventory & Loot": 494,
+    "Build & Tooling": 626,
+    "Tests": 772,
+    "Documentation": 444,
+    "Networking & Sessions": 359,
     "Unassigned": 46,
-    "Persistence & Backend": 306,
-    "Documentation": 442,
-    "Tests": 762,
     "Abilities": 140,
-    "Inventory & Loot": 484,
-    "Networking & Sessions": 356,
-    "Build & Tooling": 620,
-    "UI": 349,
     "World & Visibility": 169,
     "Art & Animation": 262,
-    "Combat": 401,
     "Extraction": 176,
     "Audio": 42,
     "Movement": 102,
@@ -42,28 +42,28 @@
   },
   "canonical": {
     "sections": {
-      "Documentation": 146,
-      "Features": 563,
+      "Documentation": 149,
+      "Features": 571,
+      "Bug Fixes": 201,
       "Tests": 52,
-      "Bug Fixes": 200,
       "Refactoring": 29,
       "Other Changes": 180,
       "Maintenance": 22,
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Combat": 404,
+      "UI": 352,
+      "Persistence & Backend": 315,
+      "Inventory & Loot": 494,
+      "Build & Tooling": 624,
+      "Tests": 770,
+      "Documentation": 442,
+      "Networking & Sessions": 359,
       "Unassigned": 46,
-      "Persistence & Backend": 306,
-      "Documentation": 440,
-      "Tests": 760,
       "Abilities": 138,
-      "Inventory & Loot": 484,
-      "Networking & Sessions": 356,
-      "Build & Tooling": 618,
-      "UI": 348,
       "World & Visibility": 167,
       "Art & Animation": 259,
-      "Combat": 399,
       "Extraction": 176,
       "Audio": 42,
       "Movement": 102,
@@ -74437,8 +74437,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 324,
-      "canonicalEntries": 324
+      "originalCommits": 336,
+      "canonicalEntries": 336
     },
     {
       "key": "v0.5.0",
@@ -74482,6 +74482,1202 @@
     }
   ],
   "commits": [
+    {
+      "sha": "6a83dd512ffa3dd7b65095984c921aca791c6ec2",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6a83dd512ffa3dd7b65095984c921aca791c6ec2",
+      "subject": "docs(odd): record TASK-303 manual Town validation",
+      "body": "Owner validated weapon and armor upgrades against the local backend; T6 closed.\n\nRefs: TASK-303\n",
+      "date": "2026-11-21T21:36:47-03:00",
+      "files": [
+        "odd/tasks/task-303-upgrade-ui.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "odd",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "UI",
+        "Persistence & Backend"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/task-303-upgrade-ui.md",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "c2409b198056638ec2142ff48f679e7bf02a9b52",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c2409b198056638ec2142ff48f679e7bf02a9b52",
+      "subject": "feat(tools): add dev grant tool for local test characters",
+      "body": "Developer-only tool to give the local character upgrade materials, test\ngear, catalog items and gold without raiding, for testing Town upgrades.\n\n- tools/dev-grant/grant.js writes to the local MongoDB only (refuses any\n  non-local or mongodb+srv URI), reusing backend modules read-only for\n  catalog validation, v3 instances and Inventory placement in one\n  revision-guarded write. No backend file changes.\n- Unity Editor window Grimhold/Dev/Grant Items: one-click buttons for the\n  Play Mode character, optional loose items/gold/username, and a profile\n  reread afterwards. Editor-only; never ships.\n\nRefs: TASK-303\n",
+      "date": "2026-11-21T21:36:46-03:00",
+      "files": [
+        "Project Grimhold/Assets/Editor/DevTools.meta",
+        "Project Grimhold/Assets/Editor/DevTools/DevGrantOutcome.cs",
+        "Project Grimhold/Assets/Editor/DevTools/DevGrantOutcome.cs.meta",
+        "Project Grimhold/Assets/Editor/DevTools/DevGrantTool.cs",
+        "Project Grimhold/Assets/Editor/DevTools/DevGrantTool.cs.meta",
+        "Project Grimhold/Assets/Editor/DevTools/DevGrantToolWindow.cs",
+        "Project Grimhold/Assets/Editor/DevTools/DevGrantToolWindow.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Testing/DevGrantToolTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Testing/DevGrantToolTests.cs.meta",
+        "odd/tasks/dev-grant-tools.md",
+        "tools/dev-grant/README.md",
+        "tools/dev-grant/grant.js",
+        "tools/dev-grant/grant.test.js"
+      ],
+      "originalType": "feat",
+      "originalScope": "tools",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "message-term",
+          "value": "Inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/DevTools.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/DevTools/DevGrantOutcome.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/DevTools/DevGrantOutcome.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/DevTools/DevGrantTool.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/DevTools/DevGrantTool.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/DevTools/DevGrantToolWindow.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/DevTools/DevGrantToolWindow.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Testing/DevGrantToolTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Testing/DevGrantToolTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/dev-grant-tools.md",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "tools/dev-grant/README.md",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "tools/dev-grant/grant.js",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "tools/dev-grant/grant.test.js",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "scope",
+          "value": "tools",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Testing/DevGrantToolTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Testing/DevGrantToolTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "tools/dev-grant/grant.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "024050cc957bf7add5af75d3f64312d43ab9df95",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/024050cc957bf7add5af75d3f64312d43ab9df95",
+      "subject": "docs(architecture): document the Unity equipment upgrade flow",
+      "body": "ItemInstanceArchitecture §5.2 replaces the TASK-303 gap note with the\nUnity flow (armor shape, Town defense, preview mirror and parity test,\nconfirm and reconcile rules, Raid +0 follow-up). CommerceArchitecture\ndocuments the Mejoras tab. The ODD tracker records evidence and commits.\n\nRefs: TASK-303\n",
+      "date": "2026-11-21T18:26:09-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/CommerceArchitecture.md",
+        "Project Grimhold/Docs/Architecture/ItemInstanceArchitecture.md",
+        "odd/tasks/task-303-upgrade-ui.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "architecture",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "UI",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/task-303-upgrade-ui.md",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/CommerceArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ItemInstanceArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "37e7a45b8d119bf586afcc5c61994d1241150f38",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/37e7a45b8d119bf586afcc5c61994d1241150f38",
+      "subject": "feat(commerce): add Mejoras tab to Blacksmith and Arcanist",
+      "body": "The Blacksmith and Arcanist merchant panel gains a \"Comerciar | Mejoras\"\ntab. It lists equipped and Inventory items the merchant can upgrade,\nkeeps blocked operations visible with their reason, previews current and\nprojected state, gold and Inventory materials (with a Stash hint), and\nconfirms once through TownUpgradeSession. Upgrades respect the Ready\nlock and wait for a trade in flight; trades wait for an upgrade in\nflight. The tab reuses the existing Charcoal widgets (no new art).\n\nRefs: TASK-303\n\nPlayer-Added: The Blacksmith and the Arcanist can now upgrade weapon scaling, add a first gem socket and reinforce armor from a new Mejoras tab.\n",
+      "date": "2026-11-21T18:26:09-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/UI/MerchantShopUI.prefab",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/TownUpgradeOperationViewModel.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/TownUpgradeOperationViewModel.cs.meta",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/TownUpgradeViewModel.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/TownUpgradeViewModel.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/IMerchantUpgradeIntentions.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/IMerchantUpgradeIntentions.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopUI.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantUpgradePanel.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantUpgradePanel.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantUpgradeRowViewModel.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantUpgradeRowViewModel.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantUpgradeViewModel.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantUpgradeViewModel.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantProfileSource.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradePresentation.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradePresentation.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeSession.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUIBoundaryTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUpgradeTabPrefabTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUpgradeTabPrefabTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownUpgradeViewModelTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownUpgradeViewModelTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs"
+      ],
+      "originalType": "feat",
+      "originalScope": "commerce",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "UI",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "Inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeSession.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/UI/MerchantShopUI.prefab",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/MerchantShopUI.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantProfileSource.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUIBoundaryTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUpgradeTabPrefabTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUpgradeTabPrefabTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownUpgradeViewModelTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownUpgradeViewModelTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUIBoundaryTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUpgradeTabPrefabTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MerchantShopUpgradeTabPrefabTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownUpgradeViewModelTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/TownUpgradeViewModelTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "0ebe2727f1716cfa3d4b0283b16ecb144a8e70f8",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0ebe2727f1716cfa3d4b0283b16ecb144a8e70f8",
+      "subject": "feat(commerce): confirm Town equipment upgrades against the backend",
+      "body": "TownUpgradeSession lists equipped and Inventory upgrade targets,\npreviews without mutating, and confirms once through the shared Town\nqueue. The store applies the authoritative snapshot (gold, lists and\nprepared equipment) behind a revision guard, so an equipped item keeps\nits slot with its new level. Lost, conflicting or unreadable responses\nreread the backend once and never resend; messages follow the outcome\nstatus and backend code.\n\nRefs: TASK-303\n",
+      "date": "2026-11-21T18:01:12-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs",
+        "Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs",
+        "Project Grimhold/Assets/Scripts/Backend/UpgradeItemRequest.cs",
+        "Project Grimhold/Assets/Scripts/Backend/UpgradeItemRequest.cs.meta",
+        "Project Grimhold/Assets/Scripts/Backend/UpgradeItemResult.cs",
+        "Project Grimhold/Assets/Scripts/Backend/UpgradeItemResult.cs.meta",
+        "Project Grimhold/Assets/Scripts/Backend/UpgradeOutcomeData.cs",
+        "Project Grimhold/Assets/Scripts/Backend/UpgradeOutcomeData.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeSession.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeSession.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeTarget.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeTarget.cs.meta",
+        "Project Grimhold/Assets/Scripts/Stash/IRemoteUpgradeService.cs",
+        "Project Grimhold/Assets/Scripts/Stash/IRemoteUpgradeService.cs.meta",
+        "Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs",
+        "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs",
+        "Project Grimhold/Assets/Scripts/Stash/StashTransferCoordinator.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs.meta",
+        "odd/tasks/task-303-upgrade-ui.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "commerce",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "UI",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeSession.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownUpgradeSession.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/task-303-upgrade-ui.md",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryClient.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/UpgradeItemRequest.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/UpgradeItemRequest.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/UpgradeItemResult.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/UpgradeItemResult.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/UpgradeOutcomeData.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/UpgradeOutcomeData.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownUpgradeSessionTests.cs.meta",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "199240466688e554ab0b6b0106b05bdc31bc1478",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/199240466688e554ab0b6b0106b05bdc31bc1478",
+      "subject": "feat(commerce): preview Blacksmith and Arcanist upgrades",
+      "body": "Client mirror of the Town NPC upgrade rules (Doc 23 §9) for previews\nonly: merchant eligibility (incl. upgrade-only zweihander and long_bow),\ncurrent and projected grade, socket, armor level, defense and\nObjectValue, gold and Inventory-only materials with a Stash hint, and\nexplicit limit messages. The backend stays authoritative; a parity\ntest keeps the tables aligned with ItemUpgrades.js.\n\nRefs: TASK-303\n",
+      "date": "2026-11-21T18:01:12-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades.meta",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeBlockReason.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeBlockReason.cs.meta",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeMaterialCost.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeMaterialCost.cs.meta",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeMaterialLine.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeMaterialLine.cs.meta",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeMessages.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeMessages.cs.meta",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeOperation.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeOperation.cs.meta",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradePreview.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradePreview.cs.meta",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeRules.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeRules.cs.meta",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeSubject.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/Upgrades/NpcUpgradeSubject.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/NpcUpgradePreviewTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/NpcUpgradePreviewTests.cs.meta",
+        "backend/tests/item.upgrades.parity.test.js"
+      ],
+      "originalType": "feat",
+      "originalScope": "commerce",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "message-term",
+          "value": "Inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/item.upgrades.parity.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/NpcUpgradePreviewTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/NpcUpgradePreviewTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/NpcUpgradePreviewTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/NpcUpgradePreviewTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/item.upgrades.parity.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "55d160ba2cb38617362526e400d8909abbac42b1",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/55d160ba2cb38617362526e400d8909abbac42b1",
+      "subject": "feat(equipment): apply armor upgrade defense to Town statistics",
+      "body": "Upgraded armor pieces contribute floor(base x (1 + 5/10/15 %)) defense\nper piece (Doc 23 §9.2) in the Town character sheet. The previous\ncalculator signature stays +0 for the Raid avatar.\n\nRefs: TASK-303\n",
+      "date": "2026-11-21T18:01:12-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Player/Equipment/ArmorPieceStatistics.cs",
+        "Project Grimhold/Assets/Scripts/Player/Equipment/ArmorPieceStatistics.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Equipment/ArmorUpgradeDefense.cs",
+        "Project Grimhold/Assets/Scripts/Player/Equipment/ArmorUpgradeDefense.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Equipment/EquipmentStatisticsCalculator.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownCharacterStatisticsBuilder.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownCharacterStatisticsBuilderTests.cs"
+      ],
+      "originalType": "feat",
+      "originalScope": "equipment",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Equipment/ArmorPieceStatistics.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Equipment/ArmorPieceStatistics.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Equipment/ArmorUpgradeDefense.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Equipment/ArmorUpgradeDefense.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Equipment/EquipmentStatisticsCalculator.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "scope",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownCharacterStatisticsBuilderTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownCharacterStatisticsBuilderTests.cs",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "b384c05f4be39cdc54c49bb7e2b40aaa15fdc2b7",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/b384c05f4be39cdc54c49bb7e2b40aaa15fdc2b7",
+      "subject": "fix(equipment): round-trip armor upgrade level in Unity",
+      "body": "TASK-302 stores armor instances as modifiers { upgradeLevel: 0..3 }.\nUnity rejected that shape, so an upgraded armor broke v3 hydration and\nRaid admission.\n\n- EquipmentInstance carries ArmorUpgradeLevel (0..3, part of equality).\n- WeaponInstanceModifiersData accepts the armor shape; weapon JSON is\n  unchanged (upgradeLevel omitted, ShouldSerialize keeps weapon keys).\n- Local cache, publish body and Raid admission accept and validate the\n  armor shape; the Raid does not carry the level yet (TASK-303 L6).\n\nRefs: TASK-303\n",
+      "date": "2026-11-21T18:01:11-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Backend/EquipmentInstanceData.cs",
+        "Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs",
+        "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionSnapshotMapper.cs",
+        "Project Grimhold/Assets/Scripts/Player/Equipment/EquipmentInstance.cs",
+        "Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs.meta"
+      ],
+      "originalType": "fix",
+      "originalScope": "equipment",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/EquipmentInstanceData.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Equipment/EquipmentInstance.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "scope",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionSnapshotMapper.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/EquipmentInstanceData.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryRequestJson.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/ArmorUpgradeLevelRoundTripTests.cs.meta",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "9a05b2a6b9b6f60a4b2e94edef343a51c5d3b242",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/9a05b2a6b9b6f60a4b2e94edef343a51c5d3b242",
+      "subject": "docs(architecture): document NPC equipment upgrades",
+      "body": "Describe the armor upgradeLevel contract (§4.4), ObjectValue-based\nequipment pricing (§4.3) and the upgrade endpoint, receipts and error\ncodes (new §5.1) in ItemInstanceArchitecture; point the Blacksmith and\nArcanist services in CommerceArchitecture to it. Add the TASK-302 ODD\ntracker with specs, evidence and open follow-ups (TASK-303 Unity\nparser, pre-existing failing integration suites).\n\nRefs: TASK-302\n",
+      "date": "2026-11-21T16:45:16-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/CommerceArchitecture.md",
+        "Project Grimhold/Docs/Architecture/ItemInstanceArchitecture.md",
+        "odd/tasks/task-302-equipment-upgrades.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "architecture",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Documentation"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/task-302-equipment-upgrades.md",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/CommerceArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ItemInstanceArchitecture.md",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "b7c524d7dfb692f1ab3b6e44a1c1a21cd4aa80cf",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/b7c524d7dfb692f1ab3b6e44a1c1a21cd4aa80cf",
+      "subject": "feat(commerce): price equipment sales by upgraded ObjectValue",
+      "body": "Sell v3 equipment at its instance ObjectValue (template value plus\nscaling, socket and armor level bonuses) plus installed gems, as Doc 23\n§7 and §9.3 require; buyback stays ceil(received * 1.5) and keeps the\nupgraded instance. Non-equipment, v1/v2 and plain equipment prices are\nunchanged (differential check against the previous commit).\n\nThe first-socket +60 bonus remains once a gem is installed, so the\ngem-sale expectation in inventory.instances.test.js now includes it.\n\nTests: integration/item.upgrades.economy.test.js (upgraded weapon and\narmor sales, buyback, plain-equipment pin, ECO-03, ECO-04).\n\nRefs: TASK-302\n",
+      "date": "2026-11-21T16:45:16-03:00",
+      "files": [
+        "backend/src/services/InventoryService.js",
+        "backend/tests/integration/item.upgrades.economy.test.js",
+        "backend/tests/inventory.instances.test.js"
+      ],
+      "originalType": "feat",
+      "originalScope": "commerce",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.instances.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/item.upgrades.economy.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.instances.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/item.upgrades.economy.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.instances.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "32d7cbc1d707d42bb798a1492a29d791c654248a",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/32d7cbc1d707d42bb798a1492a29d791c654248a",
+      "subject": "feat(backend): serve authoritative equipment upgrades",
+      "body": "Add POST /character/me/inventory/upgrades (InventoryService.upgradeItem)\nso Blacksmith and Arcanist upgrades commit once and atomically.\n\n- The item is addressed by Inventory slot or equipped slot and keeps\n  its location and InstanceID; Stash items are rejected.\n- Gold and materials are taken only from the Inventory, in slot\n  order, in the same revision-guarded write as a new `upgrade`\n  receipt; any rejection leaves the document unchanged.\n- Replays return the recorded outcome with alreadySecured; a lost\n  write re-reads and replays a matching receipt so concurrent retries\n  debit once.\n- Error codes: INSTANCE_MISMATCH, UPGRADE_NOT_ELIGIBLE,\n  UPGRADE_WRONG_MERCHANT, UPGRADE_LIMIT_REACHED, UPGRADE_GRADE_LOCKED,\n  UPGRADE_SOCKET_EXISTS, INSUFFICIENT_FUNDS, INSUFFICIENT_MATERIALS.\n\nTests: integration/item.upgrades.test.js (UPG-01..08, Stash-only and\nsplit materials, wrong NPC, replay, validation),\nconcurrency/item.upgrades.real.test.js (same-id retries, competing\ntickets, races with other writes).\n\nRefs: TASK-302\n",
+      "date": "2026-11-21T16:45:16-03:00",
+      "files": [
+        "backend/src/models/Character.js",
+        "backend/src/routes/inventory.routes.js",
+        "backend/src/services/InventoryService.js",
+        "backend/tests/concurrency/item.upgrades.real.test.js",
+        "backend/tests/integration/item.upgrades.test.js"
+      ],
+      "originalType": "feat",
+      "originalScope": "backend",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/routes/inventory.routes.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/Character.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/routes/inventory.routes.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/item.upgrades.real.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/item.upgrades.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/item.upgrades.real.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/item.upgrades.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "d8b0dc86266e43151543327bc7871005ec4b6846",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/d8b0dc86266e43151543327bc7871005ec4b6846",
+      "subject": "feat(backend): add NPC upgrade rules and armor upgrade level",
+      "body": "Add pure Town NPC upgrade rules for Doc 23 §9 (TASK-302): weapon\nprimary scaling none -> E -> D -> C, first empty gem socket, and armor\n+0 -> +3, with step tables that let NPC limits grow past C later.\n\n- Costs: E 60+2 rune, D 100+3 rune+1 ether, C 160+4 rune+2 ether;\n  socket 180+1 attunement gem+2 rune; armor 40/80/140 gold with the\n  family basic material (black iron/tanned leather/ether dust) and\n  1/2 ancient armor fragments at +2/+3.\n- ObjectValue: E+20/D+35/C+50 replace each other, socket +60,\n  armor +15/+35/+60. B/A/S and second-socket bonuses stay 0 (GD-09).\n- upgradedDefense = floor(base * (1 + 5/10/15%)), integer math.\n- Blacksmith: physical weapons (rotation pool plus zweihander and\n  long_bow) and all armor; Arcanist: magical weapons.\n- Instance contract: armor pieces accept modifiers { upgradeLevel\n  0..3 } only; shields and weapons reject it.\n\nTests: tests/item.upgrades.test.js (costs, limits, merchants,\nObjectValue, defense, value gain below gold cost, armor contract).\n\nRefs: TASK-302\n",
+      "date": "2026-11-21T16:45:16-03:00",
+      "files": [
+        "backend/src/services/ItemInstances.js",
+        "backend/src/services/ItemUpgrades.js",
+        "backend/tests/item.upgrades.test.js"
+      ],
+      "originalType": "feat",
+      "originalScope": "backend",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ItemInstances.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ItemUpgrades.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/item.upgrades.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/item.upgrades.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "65732670d9b1955b00ba2a4688833bc56070223b",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/65732670d9b1955b00ba2a4688833bc56070223b",

@@ -35,6 +35,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Town merchants now offer a weekly rotating stock, demand buy bonuses, and a shared buyback ledger.
 - Town now features Blacksmith and Arcanist merchants with specialized stocks alongside the General Merchant, plus a reset countdown timer in the shop.
 - While you are Ready for an expedition, the merchant tells you to unpack before trading and will not buy or sell until you cancel Ready.
+- The Blacksmith and the Arcanist can now upgrade weapon scaling, add a first gem socket and reinforce armor from a new Mejoras tab.
 
 ### Improved
 
