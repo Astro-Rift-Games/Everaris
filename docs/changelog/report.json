@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1216,
-  "canonicalEntries": 1213,
+  "rawCommits": 1221,
+  "canonicalEntries": 1218,
   "before": {
-    "Documentation": 134,
-    "Features": 435,
+    "Features": 439,
+    "Documentation": 135,
     "Bug Fixes": 186,
     "Tests": 47,
     "Other Changes": 374,
@@ -12,8 +12,8 @@
     "Architecture & Infrastructure": 24
   },
   "after": {
-    "Documentation": 150,
-    "Features": 574,
+    "Features": 578,
+    "Documentation": 151,
     "Bug Fixes": 202,
     "Tests": 52,
     "Refactoring": 29,
@@ -23,18 +23,18 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Networking & Sessions": 361,
+    "Build & Tooling": 631,
+    "Documentation": 446,
+    "Tests": 778,
+    "Persistence & Backend": 318,
+    "Abilities": 142,
+    "Inventory & Loot": 496,
+    "Combat": 407,
     "Unassigned": 47,
     "World & Visibility": 171,
     "Art & Animation": 263,
-    "Build & Tooling": 628,
-    "Tests": 774,
-    "Combat": 406,
     "UI": 353,
-    "Persistence & Backend": 315,
-    "Inventory & Loot": 494,
-    "Documentation": 444,
-    "Networking & Sessions": 359,
-    "Abilities": 140,
     "Extraction": 176,
     "Audio": 42,
     "Movement": 102,
@@ -42,8 +42,8 @@
   },
   "canonical": {
     "sections": {
-      "Documentation": 150,
-      "Features": 573,
+      "Features": 577,
+      "Documentation": 151,
       "Bug Fixes": 201,
       "Tests": 52,
       "Refactoring": 29,
@@ -52,18 +52,18 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Networking & Sessions": 361,
+      "Build & Tooling": 629,
+      "Documentation": 444,
+      "Tests": 776,
+      "Persistence & Backend": 318,
+      "Abilities": 140,
+      "Inventory & Loot": 496,
+      "Combat": 405,
       "Unassigned": 47,
       "World & Visibility": 169,
       "Art & Animation": 260,
-      "Build & Tooling": 626,
-      "Tests": 772,
-      "Combat": 404,
       "UI": 352,
-      "Persistence & Backend": 315,
-      "Inventory & Loot": 494,
-      "Documentation": 442,
-      "Networking & Sessions": 359,
-      "Abilities": 138,
       "Extraction": 176,
       "Audio": 42,
       "Movement": 102,
@@ -74437,8 +74437,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 339,
-      "canonicalEntries": 339
+      "originalCommits": 344,
+      "canonicalEntries": 344
     },
     {
       "key": "v0.5.0",
@@ -74482,6 +74482,809 @@
     }
   ],
   "commits": [
+    {
+      "sha": "5faad871f6db36944c265b3ba75182e967d01e3a",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/5faad871f6db36944c265b3ba75182e967d01e3a",
+      "subject": "feat(progression): move attribute respec to the Mentor NPC",
+      "body": "Respec is now offered by a dedicated interactable Town NPC (provisional\nname \"Mentor\") instead of the attribute panel, per user decision and\nDoc 04 §11 (\"en Pueblo mediante un NPC\"). Interacting plays one short\ndialogue line, then TownRespecNpcPresenter opens a panel with the\ncurrent attributes, the points that return to the pool, the server\ngold cost and the existing Confirmar/Cancelar confirmation, all driven\nby the unchanged TownRespecSession.\n\n- TownAttributeAssignmentGate shares the Ready lock and busy interlock\n  between the attribute panel and the Mentor panel.\n- TownRespecNpc prefab uses the player's modular base body on the\n  shared idle controller as placeholder art; one instance in\n  Lobby-Town at (-4.0, -0.5).\n- The respec section, fields and events are removed from\n  TownAttributeAssignmentView; the panel is assignment-only again.\n- ProgressionArchitecture.md documents the Mentor Town flow.\n\nTests: TownRespecNpcPrefab, TownRespecNpcPresenter, TownRespecPanelView,\nTownRespecPanelPresentation, TownAttributeAssignmentGate (EditMode);\nattribute panel and NPC presentation configuration tests updated.\nRefs: TASK-304\nPlayer-Improved: Resetting your attribute points is now done by talking to the Mentor in town instead of from the attributes panel.\n",
+      "date": "2026-11-21T23:43:39-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/SocialPlayer.prefab",
+        "Project Grimhold/Assets/Prefabs/TownAttributeAssignmentView.prefab",
+        "Project Grimhold/Assets/Prefabs/TownRespecNpc.prefab",
+        "Project Grimhold/Assets/Prefabs/TownRespecNpc.prefab.meta",
+        "Project Grimhold/Assets/Prefabs/TownRespecPanel.prefab",
+        "Project Grimhold/Assets/Prefabs/TownRespecPanel.prefab.meta",
+        "Project Grimhold/Assets/Scenes/Lobby-Town.unity",
+        "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownRespecNpcDialogue.asset",
+        "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownRespecNpcDialogue.asset.meta",
+        "Project Grimhold/Assets/Scripts/Networking/TownRespecNpcInteractable.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownRespecNpcInteractable.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownAttributeAssignmentGate.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownAttributeAssignmentGate.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownAttributeAssignmentPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownAttributeAssignmentView.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecNpcPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecNpcPresenter.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecPanelPresentation.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecPanelPresentation.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecPanelView.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecPanelView.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcPresentationConfigurationTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentGateTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentGateTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentViewRespecTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecNpcPresenterTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecNpcPresenterTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecPanelPresentationTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecPanelPresentationTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecPanelViewTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecPanelViewTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/TownAttributeAssignmentConfigurationTests.cs",
+        "Project Grimhold/Docs/Architecture/ProgressionArchitecture.md",
+        "odd/tasks/task-304-attribute-respec.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "progression",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Networking & Sessions",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/Lobby-Town.unity",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRespecNpcInteractable.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRespecNpcInteractable.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcPresentationConfigurationTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "message-term",
+          "value": "Lobby",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcPresentationConfigurationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentGateTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentGateTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentViewRespecTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecNpcPresenterTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecNpcPresenterTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecPanelPresentationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecPanelPresentationTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecPanelViewTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecPanelViewTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/TownAttributeAssignmentConfigurationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ProgressionArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcPresentationConfigurationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentGateTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentGateTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentViewRespecTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecNpcPresenterTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecNpcPresenterTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecPanelPresentationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecPanelPresentationTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecPanelViewTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecPanelViewTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/TownAttributeAssignmentConfigurationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "7f3161cf0cb2ab5fa1fab6b905ac1a2bf6c75f88",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7f3161cf0cb2ab5fa1fab6b905ac1a2bf6c75f88",
+      "subject": "docs(architecture): document the attribute respec contract",
+      "body": "Add \"Attribute respec (TASK-304)\" to ProgressionArchitecture.md: rule,\nendpoint request/response, error codes, idempotency and receipt\nwindow, cost configuration and the requirement mirror. Point to it\nfrom LocalPlayerPersistenceArchitecture.md and add the ODD execution\ntracker with decisions and verification evidence.\n\nRefs: TASK-304\n",
+      "date": "2026-11-21T23:03:10-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md",
+        "Project Grimhold/Docs/Architecture/ProgressionArchitecture.md",
+        "odd/tasks/task-304-attribute-respec.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "architecture",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Persistence & Backend",
+        "Documentation"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/LocalPlayerPersistenceArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ProgressionArchitecture.md",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "9d5d9f3c81f8aead8efe93f75a01d52c06e03c6b",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/9d5d9f3c81f8aead8efe93f75a01d52c06e03c6b",
+      "subject": "feat(progression): add respec controls to the attribute panel",
+      "body": "Author the respec section (button, cost, message) under the six\nattribute rows of TownAttributeAssignmentView.prefab and an inactive\nconfirmation panel with Confirmar/Cancelar, wiring the seven optional\nview fields. The Rows container is now top-anchored with a fixed\nheight so it no longer runs under the new block. The Editor save also\nre-serialized m_ActiveFontFeatures and LayoutElement max sizes on\nexisting objects.\n\nTests: TownAttributeAssignmentConfigurationTests covers wiring,\ndefault-inactive confirmation and preserved widgets.\nRefs: TASK-304\nPlayer-Added: You can now reset all your attribute points in town for a gold fee and spend them again.\n",
+      "date": "2026-11-21T23:03:10-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/TownAttributeAssignmentView.prefab",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/TownAttributeAssignmentConfigurationTests.cs"
+      ],
+      "originalType": "feat",
+      "originalScope": "progression",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/TownAttributeAssignmentConfigurationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/TownAttributeAssignmentConfigurationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "0e6bb2a6e979c7ef2ed74542c01c8f3da8d9b312",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0e6bb2a6e979c7ef2ed74542c01c8f3da8d9b312",
+      "subject": "feat(progression): confirm attribute respec from the Town panel",
+      "body": "Unity client for TASK-304. ProgressionClient.RespecAsync and the\nRemoteInventoryService/AttributeRespecService path send one\nShopTransactionId per confirmed intent and reuse it only until a\nfinal outcome or any later profile commit. LocalProfileStore\n.ApplyConfirmedRespec applies the authoritative snapshot (attributes,\ngold, lists, prepared equipment and abilities, revision) in a single\ncommit, so derived statistics refresh immediately.\n\nTownRespecSession/Presentation block the respec while Ready, with a\npending reservation, while busy, without assigned points or without\nenough gold, with Spanish messages for every block and backend error\ncode. The cost shown is always the server value. The view gets\noptional respec fields and events, wired by the presenter.\n\nTests: AttributeRespecService, LocalProfileStoreRespec,\nRespecContract, TownRespecSession, TownRespecBinding,\nTownAttributeAssignmentViewRespec (EditMode).\nRefs: TASK-304\n",
+      "date": "2026-11-21T23:03:09-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Backend/ProgressionClient.cs",
+        "Project Grimhold/Assets/Scripts/Backend/ProgressionDataTransferObjects.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownAttributeAssignmentPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownAttributeAssignmentView.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecBlockReason.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecBlockReason.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecMessages.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecMessages.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecPresentation.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecPresentation.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecSession.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecSession.cs.meta",
+        "Project Grimhold/Assets/Scripts/Progression/AttributeRespecOutcome.cs",
+        "Project Grimhold/Assets/Scripts/Progression/AttributeRespecOutcome.cs.meta",
+        "Project Grimhold/Assets/Scripts/Progression/AttributeRespecService.cs",
+        "Project Grimhold/Assets/Scripts/Progression/AttributeRespecService.cs.meta",
+        "Project Grimhold/Assets/Scripts/Progression/AttributeRespecStatus.cs",
+        "Project Grimhold/Assets/Scripts/Progression/AttributeRespecStatus.cs.meta",
+        "Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs",
+        "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentViewRespecTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentViewRespecTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecBindingTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecBindingTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecSessionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecSessionTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeRespecServiceTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeRespecServiceTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/LocalProfileStoreRespecTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/LocalProfileStoreRespecTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecContractTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecContractTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecTestProfile.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecTestProfile.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "progression",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Abilities",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "message-term",
+          "value": "abilities",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecSession.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownRespecSession.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecSessionTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecSessionTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/ProgressionClient.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/ProgressionDataTransferObjects.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/LocalProfileStoreRespecTests.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/LocalProfileStoreRespecTests.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecTestProfile.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecTestProfile.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentViewRespecTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentViewRespecTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecBindingTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecBindingTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecSessionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecSessionTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeRespecServiceTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeRespecServiceTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/LocalProfileStoreRespecTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/LocalProfileStoreRespecTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecContractTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecContractTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecTestProfile.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecTestProfile.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentViewRespecTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownAttributeAssignmentViewRespecTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecBindingTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecBindingTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecSessionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRespecSessionTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeRespecServiceTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeRespecServiceTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/LocalProfileStoreRespecTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/LocalProfileStoreRespecTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecContractTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecContractTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecTestProfile.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/RespecTestProfile.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "0871dc4ddbaafbb9ed97c79c55359cd6a35bd3bc",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0871dc4ddbaafbb9ed97c79c55359cd6a35bd3bc",
+      "subject": "feat(backend): serve authoritative attribute respec for gold",
+      "body": "Add POST /character/me/progression/respec (TASK-304, Doc 04 §11,\nDoc 22 §6). One guarded update debits the configured gold cost, sets\nthe six attributes to 0 with every owned point back in the pool, and\nunequips prepared weapons and ability slots that stop meeting their\nrequirements (unmet weapons move to the loadout keeping their\ninstance). Rejections never mutate; a replayed or concurrent duplicate\ntransactionId returns alreadySecured and never charges twice.\n\n- Cost lives in commerceConfig.json services.respecGoldCost\n  (provisional 100) via config/respecConfig.js; GET progression\n  exposes respecCost.\n- config/attributeRequirements.js mirrors Unity weapon minimums and\n  ability requirements; a parity test reads the Unity assets.\n- inventoryItems/serializePreparedEquipment moved unchanged to\n  InventoryEntries.js for reuse.\n\nTests: progression.respec.integration (18), progression.real\nconcurrency (+2), attribute.requirements.parity (3),\nprogression.respec.config (3).\nRefs: TASK-304\n",
+      "date": "2026-11-21T23:03:09-03:00",
+      "files": [
+        "backend/src/config/attributeRequirements.js",
+        "backend/src/config/commerceConfig.json",
+        "backend/src/config/respecConfig.js",
+        "backend/src/models/Character.js",
+        "backend/src/routes/progression.routes.js",
+        "backend/src/services/InventoryEntries.js",
+        "backend/src/services/InventoryService.js",
+        "backend/src/services/ProgressionService.js",
+        "backend/src/services/RespecEquipment.js",
+        "backend/src/validators/progression.validators.js",
+        "backend/tests/attribute.requirements.parity.test.js",
+        "backend/tests/concurrency/progression.real.test.js",
+        "backend/tests/integration/progression.respec.integration.test.js",
+        "backend/tests/progression.respec.config.test.js"
+      ],
+      "originalType": "feat",
+      "originalScope": "backend",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Abilities",
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "message-term",
+          "value": "weapons",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "ability",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryEntries.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/RespecEquipment.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/attributeRequirements.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/commerceConfig.json",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/respecConfig.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/Character.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/routes/progression.routes.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryEntries.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ProgressionService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/RespecEquipment.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/validators/progression.validators.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/attribute.requirements.parity.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/progression.real.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/progression.respec.integration.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/progression.respec.config.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/attribute.requirements.parity.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/progression.real.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/progression.respec.integration.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/progression.respec.config.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "83103ca9f523eefb28287b8e9b6a3503184136ce",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/83103ca9f523eefb28287b8e9b6a3503184136ce",
