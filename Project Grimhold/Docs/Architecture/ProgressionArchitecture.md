@@ -318,6 +318,86 @@ The attribute panel is a tab of the Town player menu (`TownPlayerMenuArchitectur
 its hotkey, Escape handling and input-suppression token; the presenter only registers the tab and keeps
 the binding and assignment flow described above.
 
+## Attribute respec (TASK-304)
+
+GD 04 §11 and GD 22 §6 own the Respec rule and its gold sink; this section defines only the
+technical contract. Respec is backend-authoritative: the backend resolves the cost, debits gold,
+resets attributes and re-evaluates equipment in one guarded update. Unity sends the request and
+applies the authoritative response; it never computes the cost, the pool or the unequipped items.
+
+As with attribute assignment, Unity enforces the Town Ready gate: Respec is available only while
+the player is No Listo, checked at the Unity mutation boundary (see
+[Town progression presentation](#town-progression-presentation)). Backend Ready validation remains
+a follow-up. The backend independently rejects Respec while an expedition reservation is pending,
+matching ability purchase.
+
+### Rule
+
+- All six attributes become 0 (the GD minimum per attribute) and `availablePoints` becomes every
+  owned point: previously assigned points plus the existing pool. Level and Experience are unchanged
+  and no point is created or destroyed.
+- Requirements are re-evaluated against the reset attributes in the same atomic update. Prepared
+  weapons that no longer meet their minimums return to the loadout, preserving their instance on
+  inventory v3 (see [Item Instances §4.1](ItemInstanceArchitecture.md#41-schema-v3)), and their
+  prepared slots clear. Prepared ability slots that no longer meet their requirements become `''`.
+  `unlockedAbilities` is never touched.
+- A loadout without room for every unequipped weapon rejects the whole Respec with
+  `409 INVENTORY_FULL` before any write; gold, attributes and equipment are unchanged. Moving a
+  weapon also requires a migrated inventory (`409 INVENTORY_MIGRATION_REQUIRED` otherwise).
+- Rejections (no assigned points, insufficient gold, pending reservation, stale revision, full
+  loadout) never modify gold, attributes or equipment.
+
+### Endpoint
+
+| Route | Request | Success |
+| --- | --- | --- |
+| `POST /character/me/progression/respec` | `{ transactionId, expectedRevision }` | `200 { alreadySecured, transactionId, cost, currency, characterAttributes, level, experience, preparedEquipment, preparedAbilities, stash, loadout, revision }` |
+| `GET /character/me/progression` | none | Existing payload plus `respecCost` (the configured cost, for display) |
+
+`currency` is the remaining gold, `cost` the amount debited, and `revision` the new revision
+(incremented once). `preparedEquipment`, `preparedAbilities`, `stash` and `loadout` carry the
+authoritative post-Respec state so Unity can replace its local copy without a second fetch.
+
+Errors use the standard backend body, with the code in the `error` field:
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 400 | `VALIDATION_FAILED` | Missing/empty `transactionId` or invalid `expectedRevision` (rejected by the route validator) |
+| 400 | `INVALID_TRANSACTION_ID` | `transactionId` is not a non-blank string when it reaches the service |
+| 400 | `INVALID_REVISION` | `expectedRevision` is not a non-negative integer number when it reaches the service; e.g. over HTTP the string `"1"` passes the validator's integer check, but the service requires a JSON number |
+| 404 | `CHARACTER_NOT_FOUND` | The account has no character |
+| 422 | `NO_ASSIGNED_POINTS` | All six attributes are already 0 |
+| 422 | `INSUFFICIENT_FUNDS` | Gold is below the configured cost |
+| 409 | `RESERVATION_PENDING` | An expedition reservation is pending |
+| 409 | `REVISION_CONFLICT` | `expectedRevision` is stale |
+| 409 | `TRANSACTION_ID_REUSED` | The `transactionId` belongs to a receipt of another operation |
+| 409 | `TRANSACTION_RETENTION_EXCEEDED` | A timestamped id is older than the receipt window |
+| 409 | `INVENTORY_FULL` | The loadout cannot take an unequipped weapon |
+| 409 | `INVENTORY_MIGRATION_REQUIRED` | A weapon must be unequipped but the inventory is not migrated for the active protocol gate, so it cannot be moved to the loadout |
+
+### Idempotency
+
+A successful Respec records a receipt of `type: 'respec'` (with the debited cost) in
+`appliedShopReceipts`, in the same update as the debit. It shares the 64-receipt window and the
+`shopReceiptWatermark` with the other receipt writers (`ShopReceiptRetention`). Replaying a
+`transactionId` that has a receipt, including a concurrent duplicate that lost the guarded update,
+returns `200` with `alreadySecured: true` and the recorded `cost`, and never charges twice. The
+replay response reports the character's current attributes, equipment and revision, not a snapshot
+frozen at the first call. Receipt classification precedes the reservation, revision and funds
+checks, so a replay succeeds even after the revision advanced.
+
+### Configuration and requirement mirror
+
+- The cost lives in `backend/src/config/commerceConfig.json` as `services.respecGoldCost`
+  (provisional `100`; the final value is balanceable per GD 22 §13) and is resolved by
+  `backend/src/config/respecConfig.js`. An absent value falls back to the default; a value that is
+  not a non-negative safe integer fails at load. Changing the cost requires no change to the rule
+  or the flow. Unity displays the server value (`respecCost`) and never hardcodes a cost.
+- `backend/src/config/attributeRequirements.js` mirrors the Unity `WeaponDefinition` and
+  `AbilityDefinition` attribute requirements so the backend can re-evaluate equipment.
+  `backend/tests/attribute.requirements.parity.test.js` fails when the mirror drifts from the Unity
+  assets. Items and abilities without an entry have no requirements.
+
 ## Producer idempotency
 
 The ledger receives only a reward that its authoritative producer has already recognized

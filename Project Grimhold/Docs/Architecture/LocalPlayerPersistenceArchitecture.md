@@ -26,7 +26,9 @@ and unsent fields across restarts; it is not a backend acknowledgement.
 `CharacterAttributeState` is part of that same character aggregate. New profiles initialize it
 from `ProgressionBalanceDefaults.InitialCharacterAttributeState`; assigned values and available
 points survive consumer, scene and runner replacement. Login hydrates attributes from backend
-progression; the local aggregate is also encoded in the file cache.
+progression; the local aggregate is also encoded in the file cache. The backend-authoritative attribute
+respec, which resets attributes, debits gold and unequips unmet items in one update, is specified in
+[ProgressionArchitecture.md](ProgressionArchitecture.md#attribute-respec-task-304).
 
 ```text
 IPlayerStashService / IPlayerLoadoutService
