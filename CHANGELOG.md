@@ -65,6 +65,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Health Potions across chests, enemies, and the Town Merchant now stack together with matching sprites.
 - Combat and world sounds now get quieter with distance.
 - Resources now display distinct world sprites and inventory icons.
+- Magic weapons now glow while charging, leave a trail and light up the dungeon on impact.
 
 ### Fixed
 

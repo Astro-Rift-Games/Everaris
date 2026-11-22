@@ -4,32 +4,227 @@
 
 Release: Unreleased
 
-347 original commits; 347 canonical entries.
+349 original commits; 349 canonical entries.
 
 ## Canonical classification
 
-119 features; 109 bug fixes; 3 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 19 other changes
+121 features; 109 bug fixes; 3 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Abilities | 15 | 11 | 1 | 0 | 10 | 1 |
-| Art & Animation | 22 | 12 | 3 | 0 | 9 | 7 |
+| Abilities | 16 | 11 | 1 | 0 | 10 | 1 |
+| Art & Animation | 23 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 83 | 72 | 3 | 1 | 25 | 6 |
-| Combat | 51 | 21 | 2 | 0 | 16 | 1 |
-| Documentation | 40 | 44 | 0 | 0 | 20 | 0 |
+| Build & Tooling | 85 | 72 | 3 | 1 | 25 | 6 |
+| Combat | 52 | 21 | 2 | 0 | 16 | 1 |
+| Documentation | 41 | 44 | 0 | 0 | 20 | 0 |
 | Extraction | 19 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 80 | 63 | 3 | 1 | 29 | 5 |
+| Inventory & Loot | 81 | 63 | 3 | 1 | 29 | 5 |
 | Movement | 6 | 6 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 40 | 44 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 50 | 56 | 2 | 1 | 22 | 3 |
-| Tests | 114 | 103 | 3 | 1 | 34 | 4 |
-| UI | 43 | 23 | 1 | 0 | 14 | 3 |
+| Tests | 116 | 103 | 3 | 1 | 34 | 4 |
+| UI | 44 | 23 | 1 | 0 | 14 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 28 | 0 |
-| World & Visibility | 30 | 16 | 0 | 0 | 3 | 12 |
+| World & Visibility | 31 | 16 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 33946a8dc8a613272100e5ac8cfcc3e188b0dc9e
+
+[33946a8dc8a613272100e5ac8cfcc3e188b0dc9e](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/33946a8dc8a613272100e5ac8cfcc3e188b0dc9e)
+
+Date: 2026-11-22T16:20:42-03:00 · Classification: Features (explicit) · Systems: Combat, Abilities, Inventory & Loot, UI, World & Visibility, Art & Animation, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(combat): give magic weapons charge, trail, impact and light
+```
+
+#### Original body
+
+```text
+The optional magic feel fields added earlier were never assigned, so
+magic weapons still looked flat. This wires them with procedural
+prefabs that need no new art, each carrying an arcane 2D light.
+
+- MagicStaff, MagicWand and TrainingWand charge at the casting tip
+  during the windup, and their bolts leave a trail, burst on impact
+  and fizzle when they expire.
+- MagicSword and MagicCinquedea throw sparks on release; the
+  Cinquedea fan follows the thrust axis.
+- MagicProjectile.prefab gains the ProjectileTrailDetacher so trails
+  finish after the projectile despawns. Bows and the crossbow share
+  the prefab and are unaffected without a trail in their profile.
+- The tint palette is assigned to weapon impact particles and to
+  damage numbers, so magical damage reads violet.
+
+No gameplay values change. Arrow profiles stay sprite-only. Particle
+and light values are a first pass.
+
+Tests:
+- MagicWeaponFeelAssignmentTests (13)
+- ProjectileVisualAssignmentTests: magic profiles expect trail,
+  impact and fizzle
+- PlayerPresentationStateSeamTests.Charge: the unconfigured rig clears
+  its clone now that shipped weapons carry charge data
+
+Not verified: four PlayMode projectile tests fail in this tree
+(ArcaneProjectile x2, ProtectiveOrbs, WeaponProjectile_RoundTripsTag)
+and were not compared against a baseline. Full suites were not run.
+
+Player-Improved: Magic weapons now glow while charging, leave a trail and light up the dungeon on impact.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/MagicProjectile.prefab
+Project Grimhold/Assets/Prefabs/NetworkPlayer.prefab
+Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab
+Project Grimhold/Assets/Prefabs/VFX/Magic.meta
+Project Grimhold/Assets/Prefabs/VFX/Magic/MagicCinquedeaReleaseBurst.prefab
+Project Grimhold/Assets/Prefabs/VFX/Magic/MagicCinquedeaReleaseBurst.prefab.meta
+Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileFizzle.prefab
+Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileFizzle.prefab.meta
+Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileImpact.prefab
+Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileImpact.prefab.meta
+Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab
+Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab.meta
+Project Grimhold/Assets/Prefabs/VFX/Magic/MagicSwordReleaseBurst.prefab
+Project Grimhold/Assets/Prefabs/VFX/Magic/MagicSwordReleaseBurst.prefab.meta
+Project Grimhold/Assets/Prefabs/VFX/Magic/MagicWindupCharge.prefab
+Project Grimhold/Assets/Prefabs/VFX/Magic/MagicWindupCharge.prefab.meta
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicStaffProjectileVisual.asset
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicWandProjectileVisual.asset
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/TrainingWandProjectileVisual.asset
+Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge.meta
+Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicStaffWindupCharge.asset
+Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicStaffWindupCharge.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicWandWindupCharge.asset
+Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicWandWindupCharge.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicCinquedeaWeaponDefinition.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaffWeaponDefinition.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicSwordWeaponDefinition.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWandWeaponDefinition.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TrainingWandWeaponDefinition.asset
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs
+Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md
+odd/tasks/magic-weapon-feel.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Prefabs/MagicProjectile.prefab
+- path → Combat: Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileFizzle.prefab
+- path → Combat: Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileFizzle.prefab.meta
+- path → Combat: Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileImpact.prefab
+- path → Combat: Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileImpact.prefab.meta
+- path → Combat: Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab
+- path → Combat: Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab.meta
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicStaffProjectileVisual.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicWandProjectileVisual.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/TrainingWandProjectileVisual.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge.meta
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicStaffWindupCharge.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicStaffWindupCharge.asset.meta
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicWandWindupCharge.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicWandWindupCharge.asset.meta
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicCinquedeaWeaponDefinition.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaffWeaponDefinition.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicSwordWeaponDefinition.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWandWeaponDefinition.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TrainingWandWeaponDefinition.asset
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs.meta
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs
+- path → Combat: odd/tasks/magic-weapon-feel.md
+- scope → Combat: combat
+- message-term → Combat: combat
+- message-term → Abilities: casting
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicCinquedeaWeaponDefinition.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaffWeaponDefinition.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicSwordWeaponDefinition.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWandWeaponDefinition.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TrainingWandWeaponDefinition.asset
+- path → UI: Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab
+- message-term → World &amp; Visibility: dungeon
+- message-term → Art &amp; Animation: sprite
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### afbaac0b430c0589d413614df8d440878a358fd3
+
+[afbaac0b430c0589d413614df8d440878a358fd3](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/afbaac0b430c0589d413614df8d440878a358fd3)
+
+Date: 2026-11-22T16:20:26-03:00 · Classification: Features (explicit) · Systems: Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(vfx): add a 2D light that follows a particle emitter
+```
+
+#### Original body
+
+```text
+Magic effects had no way to light their surroundings. ParticleDrivenLight2D
+drives a Light2D from a ParticleSystem: the light starts dark, fades in
+while the system is emitting and fades out when it stops, with the
+authored intensity as its peak. The fade itself is the pure
+ParticleLightLevel step so it can be tested without a scene.
+
+The component is visual only and owns no gameplay or network state.
+
+Tests:
+- ParticleDrivenLight2DTests (6)
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Presentation/ParticleDrivenLight2D.cs
+Project Grimhold/Assets/Scripts/Presentation/ParticleDrivenLight2D.cs.meta
+Project Grimhold/Assets/Scripts/Presentation/ParticleLightLevel.cs
+Project Grimhold/Assets/Scripts/Presentation/ParticleLightLevel.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ParticleDrivenLight2DTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ParticleDrivenLight2DTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ParticleDrivenLight2DTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ParticleDrivenLight2DTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ParticleDrivenLight2DTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ParticleDrivenLight2DTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### bbb26afc62f85550dc1b2ea9ff7f1ea668d42b8a
 

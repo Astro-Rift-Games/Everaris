@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1224,
-  "canonicalEntries": 1221,
+  "rawCommits": 1226,
+  "canonicalEntries": 1223,
   "before": {
+    "Features": 442,
     "Bug Fixes": 187,
     "Documentation": 136,
-    "Features": 440,
     "Tests": 47,
     "Other Changes": 374,
     "Refactoring": 16,
     "Architecture & Infrastructure": 24
   },
   "after": {
+    "Features": 581,
     "Bug Fixes": 203,
     "Documentation": 152,
-    "Features": 579,
     "Tests": 52,
     "Refactoring": 29,
     "Other Changes": 181,
@@ -23,28 +23,28 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Combat": 408,
+    "Abilities": 143,
+    "Inventory & Loot": 498,
+    "UI": 354,
+    "World & Visibility": 172,
+    "Art & Animation": 264,
+    "Build & Tooling": 633,
+    "Documentation": 448,
+    "Tests": 782,
     "Movement": 103,
-    "Tests": 780,
-    "Documentation": 447,
     "Extraction": 177,
-    "Inventory & Loot": 497,
     "Persistence & Backend": 319,
     "Networking & Sessions": 361,
-    "Build & Tooling": 631,
-    "Abilities": 142,
-    "Combat": 407,
     "Unassigned": 47,
-    "World & Visibility": 171,
-    "Art & Animation": 263,
-    "UI": 353,
     "Audio": 42,
     "Input": 32
   },
   "canonical": {
     "sections": {
+      "Features": 580,
       "Bug Fixes": 202,
       "Documentation": 152,
-      "Features": 578,
       "Tests": 52,
       "Refactoring": 29,
       "Other Changes": 180,
@@ -52,20 +52,20 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Combat": 406,
+      "Abilities": 141,
+      "Inventory & Loot": 498,
+      "UI": 353,
+      "World & Visibility": 170,
+      "Art & Animation": 261,
+      "Build & Tooling": 631,
+      "Documentation": 446,
+      "Tests": 780,
       "Movement": 103,
-      "Tests": 778,
-      "Documentation": 445,
       "Extraction": 177,
-      "Inventory & Loot": 497,
       "Persistence & Backend": 319,
       "Networking & Sessions": 361,
-      "Build & Tooling": 629,
-      "Abilities": 140,
-      "Combat": 405,
       "Unassigned": 47,
-      "World & Visibility": 169,
-      "Art & Animation": 260,
-      "UI": 352,
       "Audio": 42,
       "Input": 32
     }
@@ -74437,8 +74437,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 347,
-      "canonicalEntries": 347
+      "originalCommits": 349,
+      "canonicalEntries": 349
     },
     {
       "key": "v0.5.0",
@@ -74482,6 +74482,364 @@
     }
   ],
   "commits": [
+    {
+      "sha": "33946a8dc8a613272100e5ac8cfcc3e188b0dc9e",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/33946a8dc8a613272100e5ac8cfcc3e188b0dc9e",
+      "subject": "feat(combat): give magic weapons charge, trail, impact and light",
+      "body": "The optional magic feel fields added earlier were never assigned, so\nmagic weapons still looked flat. This wires them with procedural\nprefabs that need no new art, each carrying an arcane 2D light.\n\n- MagicStaff, MagicWand and TrainingWand charge at the casting tip\n  during the windup, and their bolts leave a trail, burst on impact\n  and fizzle when they expire.\n- MagicSword and MagicCinquedea throw sparks on release; the\n  Cinquedea fan follows the thrust axis.\n- MagicProjectile.prefab gains the ProjectileTrailDetacher so trails\n  finish after the projectile despawns. Bows and the crossbow share\n  the prefab and are unaffected without a trail in their profile.\n- The tint palette is assigned to weapon impact particles and to\n  damage numbers, so magical damage reads violet.\n\nNo gameplay values change. Arrow profiles stay sprite-only. Particle\nand light values are a first pass.\n\nTests:\n- MagicWeaponFeelAssignmentTests (13)\n- ProjectileVisualAssignmentTests: magic profiles expect trail,\n  impact and fizzle\n- PlayerPresentationStateSeamTests.Charge: the unconfigured rig clears\n  its clone now that shipped weapons carry charge data\n\nNot verified: four PlayMode projectile tests fail in this tree\n(ArcaneProjectile x2, ProtectiveOrbs, WeaponProjectile_RoundTripsTag)\nand were not compared against a baseline. Full suites were not run.\n\nPlayer-Improved: Magic weapons now glow while charging, leave a trail and light up the dungeon on impact.\n",
+      "date": "2026-11-22T16:20:42-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/MagicProjectile.prefab",
+        "Project Grimhold/Assets/Prefabs/NetworkPlayer.prefab",
+        "Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic.meta",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicCinquedeaReleaseBurst.prefab",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicCinquedeaReleaseBurst.prefab.meta",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileFizzle.prefab",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileFizzle.prefab.meta",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileImpact.prefab",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileImpact.prefab.meta",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab.meta",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicSwordReleaseBurst.prefab",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicSwordReleaseBurst.prefab.meta",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicWindupCharge.prefab",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicWindupCharge.prefab.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicStaffProjectileVisual.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicWandProjectileVisual.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/TrainingWandProjectileVisual.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicStaffWindupCharge.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicStaffWindupCharge.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicWandWindupCharge.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicWandWindupCharge.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicCinquedeaWeaponDefinition.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaffWeaponDefinition.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicSwordWeaponDefinition.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWandWeaponDefinition.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TrainingWandWeaponDefinition.asset",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs",
+        "Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md",
+        "odd/tasks/magic-weapon-feel.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "combat",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Abilities",
+        "Inventory & Loot",
+        "UI",
+        "World & Visibility",
+        "Art & Animation",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/MagicProjectile.prefab",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileFizzle.prefab",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileFizzle.prefab.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileImpact.prefab",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileImpact.prefab.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicStaffProjectileVisual.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/MagicWandProjectileVisual.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/TrainingWandProjectileVisual.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicStaffWindupCharge.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicStaffWindupCharge.asset.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicWandWindupCharge.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Combat/WindupCharge/MagicWandWindupCharge.asset.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicCinquedeaWeaponDefinition.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaffWeaponDefinition.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicSwordWeaponDefinition.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWandWeaponDefinition.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TrainingWandWeaponDefinition.asset",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/magic-weapon-feel.md",
+          "supports": "Combat"
+        },
+        {
+          "source": "scope",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "casting",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicCinquedeaWeaponDefinition.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicStaffWeaponDefinition.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicSwordWeaponDefinition.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/MagicWandWeaponDefinition.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/TrainingWandWeaponDefinition.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "dungeon",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "sprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MagicWeaponFeelAssignmentTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/Presentation/PlayerPresentationStateSeamTests.Charge.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "afbaac0b430c0589d413614df8d440878a358fd3",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/afbaac0b430c0589d413614df8d440878a358fd3",
+      "subject": "feat(vfx): add a 2D light that follows a particle emitter",
+      "body": "Magic effects had no way to light their surroundings. ParticleDrivenLight2D\ndrives a Light2D from a ParticleSystem: the light starts dark, fades in\nwhile the system is emitting and fades out when it stops, with the\nauthored intensity as its peak. The fade itself is the pure\nParticleLightLevel step so it can be tested without a scene.\n\nThe component is visual only and owns no gameplay or network state.\n\nTests:\n- ParticleDrivenLight2DTests (6)\n",
+      "date": "2026-11-22T16:20:26-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Presentation/ParticleDrivenLight2D.cs",
+        "Project Grimhold/Assets/Scripts/Presentation/ParticleDrivenLight2D.cs.meta",
+        "Project Grimhold/Assets/Scripts/Presentation/ParticleLightLevel.cs",
+        "Project Grimhold/Assets/Scripts/Presentation/ParticleLightLevel.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ParticleDrivenLight2DTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ParticleDrivenLight2DTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "vfx",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ParticleDrivenLight2DTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ParticleDrivenLight2DTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ParticleDrivenLight2DTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ParticleDrivenLight2DTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "bbb26afc62f85550dc1b2ea9ff7f1ea668d42b8a",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bbb26afc62f85550dc1b2ea9ff7f1ea668d42b8a",
