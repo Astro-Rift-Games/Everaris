@@ -1,6 +1,7 @@
 'use strict';
 
 const { normalizeLootId } = require('./InventoryLootIdNormalizer');
+const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
 const { getEquipmentTemplate } = require('../config/shopCatalog');
 const { validInventory, invalidInventory, createEquipment } = require('./ItemInstances');
 
@@ -17,6 +18,25 @@ function copyEntry(item) {
 function serializeItems(items, sorted = false) {
   const entries = (items || []).map(copyEntry);
   return sorted ? entries.sort((a, b) => a.slot - b.slot) : entries;
+}
+
+// Loadout/stash as plain entries, sorted by slot for slot-addressed inventories (version >= 2).
+function inventoryItems(character, list) {
+  return serializeItems(character.inventory[list], inventoryVersion(character) >= 2);
+}
+
+/**
+ * Serializes the preparedEquipment subdocument to a plain object.
+ * Iterates over EQUIPMENT_SLOTS so new slots are covered automatically.
+ */
+function serializePreparedEquipment(eq, version = 2) {
+  const clean = (val) => (!val || val === 'null' ? (version === 3 ? null : '') :
+    typeof val === 'object' ? copyEntry(val) : val);
+  const result = {};
+  for (const slot of EQUIPMENT_SLOTS) {
+    result[slot] = clean(eq ? eq[slot] : undefined);
+  }
+  return result;
 }
 
 function requireMigratedInventory(character) {
@@ -154,6 +174,6 @@ function matchesLootId(item, lootId) {
   return normalizeLootId(item.lootId) === normalizeLootId(lootId);
 }
 
-module.exports = { inventoryVersion, copyEntry, serializeItems, requireMigratedInventory, requireSplitEnabled,
+module.exports = { inventoryVersion, copyEntry, serializeItems, inventoryItems, serializePreparedEquipment, requireMigratedInventory, requireSplitEnabled,
   requireSlotInventory, requireSourceSlot, assertUnambiguousItems, matchesLootId,
   CAPACITIES, inventoryFull, assertSlot, lowestItemIndex, receiveItem, restoreEntries, addAmount };

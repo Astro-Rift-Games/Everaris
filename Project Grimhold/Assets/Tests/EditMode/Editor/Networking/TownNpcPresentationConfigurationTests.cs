@@ -242,7 +242,7 @@ public sealed class TownNpcPresentationConfigurationTests
     [Test]
     public void OtherTownNpcTriggers_HaveNoLockedSequence()
     {
-        string[] others = { "TownStashNpc", "TownRaidNpc", "TownTrainerNpc" };
+        string[] others = { "TownStashNpc", "TownRaidNpc", "TownTrainerNpc", "TownRespecNpc" };
         foreach (string name in others)
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/Prefabs/{name}.prefab");
@@ -288,6 +288,34 @@ public sealed class TownNpcPresentationConfigurationTests
             Assert.That(animator.GetFloat("MoveY"), Is.EqualTo(-1f));
             npc.SetActive(false);
             Assert.That(view.CurrentFacing, Is.EqualTo(CharacterVisualDirection.South));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(npc);
+        }
+    }
+
+    [Test]
+    public void RespecNpcPrefab_SharedController_DrivesTheDirectionalViewAndRestoresItsFacing()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/TownRespecNpc.prefab");
+        Assert.That(prefab, Is.Not.Null);
+        GameObject npc = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        try
+        {
+            TownNpcDirectionalView view = npc.GetComponent<TownNpcDirectionalView>();
+            Animator animator = npc.GetComponentInChildren<Animator>(true);
+            Assert.That(animator.runtimeAnimatorController, Is.SameAs(AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath)));
+
+            Vector2 north = CharacterVisualDirectionResolver.GetCanonicalVector(CharacterVisualDirection.North);
+            view.FaceTarget(npc.transform.position + (Vector3)north);
+            Assert.That(view.CurrentFacing, Is.EqualTo(CharacterVisualDirection.North));
+            Assert.That(animator.GetFloat("MoveX"), Is.EqualTo(north.x).Within(0.0001f));
+            Assert.That(animator.GetFloat("MoveY"), Is.EqualTo(north.y).Within(0.0001f));
+
+            view.RestoreInitialFacing();
+            Assert.That(view.CurrentFacing, Is.EqualTo(CharacterVisualDirection.South));
+            Assert.That(animator.GetFloat("MoveY"), Is.EqualTo(-1f));
         }
         finally
         {

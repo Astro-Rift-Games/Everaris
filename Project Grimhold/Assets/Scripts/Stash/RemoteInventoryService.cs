@@ -224,6 +224,41 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
     }
 
     /// <summary>
+    /// One idempotent attribute respec (TASK-304). Serialized with every other mutation; the caller applies the
+    /// returned snapshot atomically and reuses <paramref name="transactionId"/> when the outcome is unknown.
+    /// </summary>
+    public async Task<(bool success, RespecResult data, BackendError error)> RespecAsync(string transactionId, int expectedRevision)
+    {
+        if (string.IsNullOrEmpty(AuthToken))
+            return (false, default, new BackendError { error = "UNAUTHORIZED", message = "Not authenticated" });
+
+        await _mutationLock.WaitAsync();
+        try
+        {
+            if (_store == null || _store.RequiresEquipmentHydration)
+                return (false, default, new BackendError { error = "INVENTORY_MIGRATION_REQUIRED", message = "Equipment hydration required" });
+            var result = await ProgressionClient.RespecAsync(_backendConfig, AuthToken, transactionId, expectedRevision);
+            if (!result.success && result.error.error == BackendErrorUtility.Unauthorized)
+                ApplicationAuthContext.Instance?.HandleUnauthorizedSession();
+            return result;
+        }
+        finally
+        {
+            _mutationLock.Release();
+        }
+    }
+
+    /// <summary>The server's respec price from the progression read, or null when it cannot be read.</summary>
+    public async Task<int?> GetRespecCostAsync()
+    {
+        if (string.IsNullOrEmpty(AuthToken)) return null;
+        var (success, data, error) = await ProgressionClient.GetProgressionAsync(_backendConfig, AuthToken);
+        if (!success && error.error == BackendErrorUtility.Unauthorized)
+            ApplicationAuthContext.Instance?.HandleUnauthorizedSession();
+        return success && data.respecCost >= 0 ? data.respecCost : (int?)null;
+    }
+
+    /// <summary>
     /// Persists a move from stash to loadout.
     /// </summary>
     public Task<(bool success, BackendError error)> MoveToLoadoutAsync(LootId lootId, int amount) =>

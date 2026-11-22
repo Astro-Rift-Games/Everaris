@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using Fusion;
 using NUnit.Framework;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using Assert = NUnit.Framework.Assert;
 
 namespace Tests.EditMode.Progression
@@ -50,6 +52,48 @@ namespace Tests.EditMode.Progression
             }
 
             Assert.That(attributes, Is.EquivalentTo(System.Enum.GetValues(typeof(CharacterAttribute))));
+        }
+
+        [Test]
+        public void ViewPrefab_HasNoRespecSectionOrConfirmation_TheMentorOwnsTheRespec()
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ViewPath);
+            Assert.That(prefab, Is.Not.Null);
+
+            foreach (Transform child in prefab.GetComponentsInChildren<Transform>(true))
+            {
+                Assert.That(child.name, Does.Not.Contain("Respec"), "the attribute panel returns to assignment only");
+            }
+        }
+
+        [Test]
+        public void ViewPrefab_RowsContainerFillsTheColumnBelowTheTitleAgain()
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ViewPath);
+            TownAttributeAssignmentView view = prefab.GetComponent<TownAttributeAssignmentView>();
+            var rows = (RectTransform)view.Rows[0].transform.parent;
+
+            Assert.That(rows.name, Is.EqualTo("Rows"));
+            Assert.That(rows.anchorMin, Is.EqualTo(Vector2.zero));
+            Assert.That(rows.anchorMax, Is.EqualTo(Vector2.one));
+            Assert.That(rows.anchoredPosition, Is.EqualTo(new Vector2(0f, -45f)));
+            Assert.That(rows.sizeDelta, Is.EqualTo(new Vector2(-60f, -150f)));
+            Assert.That(rows.pivot, Is.EqualTo(new Vector2(0.5f, 0.5f)));
+        }
+
+        [Test]
+        public void ViewPrefab_ExistingAttributeWidgetsStayWired()
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ViewPath);
+            TownAttributeAssignmentView view = prefab.GetComponent<TownAttributeAssignmentView>();
+
+            Assert.That(view.AvailablePointsText.text, Is.EqualTo("Available Points: 0"));
+            Assert.That(view.CloseButton.GetComponentInChildren<TMP_Text>().text, Is.EqualTo("X"));
+            Assert.That(view.Rows.Count, Is.EqualTo(6));
+            foreach (TownAttributeAssignmentRowView row in view.Rows)
+            {
+                Assert.That(row.AddButton.onClick.GetPersistentEventCount(), Is.Zero);
+            }
         }
 
         [Test]

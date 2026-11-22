@@ -14,6 +14,8 @@ namespace Grimhold.Backend
         public int  lastAppliedProgressionResultSequence;
         public CharacterAttributesData characterAttributes;
         public string[] unlockedAbilities;
+        /// <summary>Gold the server charges for a respec (TASK-304); the client only displays it.</summary>
+        public int  respecCost;
         public int  revision;
     }
 
@@ -48,6 +50,27 @@ namespace Grimhold.Backend
         public int revision;
     }
 
+    /// <summary>
+    /// Authoritative snapshot after a respec (TASK-304). Also returned unchanged when the transaction is replayed
+    /// (<see cref="alreadySecured"/>), so the client applies it the same way both times.
+    /// </summary>
+    [Serializable]
+    public struct RespecResult
+    {
+        public bool alreadySecured;
+        public string transactionId;
+        public int cost;
+        public long currency;
+        public CharacterAttributesData characterAttributes;
+        public int level;
+        public long experience;
+        public PreparedEquipmentData preparedEquipment;
+        public PreparedAbilitiesDto preparedAbilities;
+        public InventoryItemData[] stash;
+        public InventoryItemData[] loadout;
+        public int revision;
+    }
+
     // ---------------------------------------------------------------------------
     // Outbound DTOs (requests to the backend)
     // ---------------------------------------------------------------------------
@@ -64,6 +87,13 @@ namespace Grimhold.Backend
     {
         public string transactionId;
         public string abilityId;
+        public int expectedRevision;
+    }
+
+    [Serializable]
+    public struct RespecRequest
+    {
+        public string transactionId;
         public int expectedRevision;
     }
 }

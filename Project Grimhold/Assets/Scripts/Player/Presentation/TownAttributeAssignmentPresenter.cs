@@ -17,10 +17,17 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
     private ApplicationStashContext _profileContext;
     private LocalProfileStore _store;
     private TownAttributeMutationEndpoint _endpoint;
+    private TownAttributeAssignmentGate _gate;
     private TownRaidPreparationDirectory _preparationDirectory;
     private ProfileId _localProfileId;
     private PlayerInputReader _inputReader;
     private IDisposable _inputSuppression;
+
+    /// <summary>
+    /// The Ready lock and busy flags of this player's build changes, shared with the Mentor respec so the two never
+    /// run at once. Null until the presenter is bound to the confirmed local profile.
+    /// </summary>
+    public TownAttributeAssignmentGate Gate => _gate;
 
     public override void Spawned() => TryBind();
 
@@ -93,6 +100,7 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
         _localProfileId = localProfileId;
         _preparationDirectory = FindAnyObjectByType<TownRaidPreparationDirectory>();
         _endpoint = new TownAttributeMutationEndpoint(_store, CanMutate);
+        _gate = new TownAttributeAssignmentGate(CanMutate);
 
         _view = Instantiate(_viewPrefab, transform, false);
         _view.name = _viewPrefab.name;
@@ -227,11 +235,11 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
         return true;
     }
 
-    private bool _isCommitInFlight = false;
-
     private async void AssignAttribute(CharacterAttribute attribute)
     {
-        if (_endpoint == null || _isCommitInFlight) return;
+        // Another assignment or a Mentor respec in flight owns the build until the backend answers.
+        TownAttributeAssignmentGate gate = _gate;
+        if (_endpoint == null || gate == null || gate.IsAssignmentBlocked) return;
 
         if (!_endpoint.TryAssign(attribute, out _))
         {
@@ -249,7 +257,7 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
             return;
         }
 
-        _isCommitInFlight = true;
+        gate.IsCommitInFlight = true;
         try
         {
             var attributeName = attribute.ToString();
@@ -277,12 +285,15 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
         }
         finally
         {
-            _isCommitInFlight = false;
+            // The presenter may have been torn down while the backend answered; the captured gate is still ours.
+            gate.IsCommitInFlight = false;
         }
     }
 
-    private void Present(TownAttributeAssignmentPresentation presentation) =>
+    private void Present(TownAttributeAssignmentPresentation presentation)
+    {
         _view?.Present(presentation);
+    }
 
     private void PresentUnavailable() => _view?.PresentUnavailable();
 
@@ -332,6 +343,7 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
         _profileContext = null;
         _store = null;
         _endpoint = null;
+        _gate = null;
         _preparationDirectory = null;
         _localProfileId = default;
         _inputReader = null;

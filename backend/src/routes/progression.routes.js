@@ -4,7 +4,7 @@ const router = express.Router();
 const ProgressionService = require('../services/ProgressionService');
 const authenticate = require('../middleware/authenticate');
 
-const { commitProgressionValidator } = require('../validators/progression.validators');
+const { commitProgressionValidator, respecValidator } = require('../validators/progression.validators');
 
 // All progression routes require a valid JWT token.
 router.use(authenticate);
@@ -24,6 +24,17 @@ router.get('/me/progression', async (req, res, next) => {
 router.post('/me/progression/commit', commitProgressionValidator, async (req, res, next) => {
   try {
     const result = await ProgressionService.commitProgression(req.accountId, req.body);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /character/me/progression/respec (TASK-304)
+// Redistributes every owned attribute point for the configured gold cost; idempotent by transactionId.
+router.post('/me/progression/respec', respecValidator, async (req, res, next) => {
+  try {
+    const result = await ProgressionService.respec(req.accountId, req.body);
     res.json(result);
   } catch (err) {
     next(err);

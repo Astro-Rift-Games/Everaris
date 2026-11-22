@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -51,6 +52,61 @@ namespace Grimhold.Backend
                 expectedRevision = expectedRevision
             };
             return await PostJson<PurchaseAbilityRequest, PurchaseAbilityResult>(config, token, url, request);
+        }
+
+        // ------------------------------------------------------------------
+        // Respec attributes (TASK-304)
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// One idempotent respec. The same <paramref name="transactionId"/> is replayed by the backend with
+        /// <c>alreadySecured</c>, so a lost response is retried with the id it was first sent with.
+        /// </summary>
+        public static async Task<(bool success, RespecResult data, BackendError error)>
+            RespecAsync(BackendConfiguration config, string token, string transactionId, int expectedRevision)
+        {
+            var baseUrl = config.BaseUrl.TrimEnd('/');
+            var url = $"{baseUrl}/character/me/progression/respec";
+            var json = JsonUtility.ToJson(new RespecRequest { transactionId = transactionId, expectedRevision = expectedRevision });
+            return await AuthorizedRequest.SendAsync<RespecResult>(config, token, () =>
+            {
+                var webRequest = InventoryProtocol.Create(url, "POST");
+                webRequest.uploadHandler   = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json));
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                return webRequest;
+            }, ProcessRespecResponse);
+        }
+
+        /// <summary>
+        /// The body carries prepared equipment instances, which only Newtonsoft reads
+        /// (<see cref="PreparedEquipmentData"/> has a converter), unlike the other progression bodies.
+        /// </summary>
+        public static bool TryParseRespecResult(string body, out RespecResult result)
+        {
+            result = default;
+            if (string.IsNullOrWhiteSpace(body)) return false;
+            try
+            {
+                result = JsonConvert.DeserializeObject<RespecResult>(body);
+                return true;
+            }
+            catch (JsonException)
+            {
+                return false;
+            }
+        }
+
+        private static (bool success, RespecResult data, BackendError error) ProcessRespecResponse(UnityWebRequest request)
+        {
+            if (request.result != UnityWebRequest.Result.Success)
+                return (false, default, BackendRetrySchedule.WithRetryAfter(ParseError(request),
+                    request.GetResponseHeader("Retry-After"), System.DateTimeOffset.UtcNow));
+
+            // An unreadable 200 may follow a committed respec: report it as unconfirmed, never as a rejection.
+            return TryParseRespecResult(request.downloadHandler.text, out var result)
+                ? (true, result, default)
+                : (false, default, new BackendError { error = "INVALID_INVENTORY", message = "Invalid respec response." });
         }
 
         // ------------------------------------------------------------------
