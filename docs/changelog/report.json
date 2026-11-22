@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1223,
-  "canonicalEntries": 1220,
+  "rawCommits": 1224,
+  "canonicalEntries": 1221,
   "before": {
+    "Bug Fixes": 187,
     "Documentation": 136,
     "Features": 440,
-    "Bug Fixes": 186,
     "Tests": 47,
     "Other Changes": 374,
     "Refactoring": 16,
     "Architecture & Infrastructure": 24
   },
   "after": {
+    "Bug Fixes": 203,
     "Documentation": 152,
     "Features": 579,
-    "Bug Fixes": 202,
     "Tests": 52,
     "Refactoring": 29,
     "Other Changes": 181,
@@ -23,11 +23,12 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Movement": 103,
+    "Tests": 780,
     "Documentation": 447,
     "Extraction": 177,
     "Inventory & Loot": 497,
     "Persistence & Backend": 319,
-    "Tests": 779,
     "Networking & Sessions": 361,
     "Build & Tooling": 631,
     "Abilities": 142,
@@ -37,14 +38,13 @@
     "Art & Animation": 263,
     "UI": 353,
     "Audio": 42,
-    "Movement": 102,
     "Input": 32
   },
   "canonical": {
     "sections": {
+      "Bug Fixes": 202,
       "Documentation": 152,
       "Features": 578,
-      "Bug Fixes": 201,
       "Tests": 52,
       "Refactoring": 29,
       "Other Changes": 180,
@@ -52,11 +52,12 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Movement": 103,
+      "Tests": 778,
       "Documentation": 445,
       "Extraction": 177,
       "Inventory & Loot": 497,
       "Persistence & Backend": 319,
-      "Tests": 777,
       "Networking & Sessions": 361,
       "Build & Tooling": 629,
       "Abilities": 140,
@@ -66,7 +67,6 @@
       "Art & Animation": 260,
       "UI": 352,
       "Audio": 42,
-      "Movement": 102,
       "Input": 32
     }
   },
@@ -74437,8 +74437,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 346,
-      "canonicalEntries": 346
+      "originalCommits": 347,
+      "canonicalEntries": 347
     },
     {
       "key": "v0.5.0",
@@ -74482,6 +74482,53 @@
     }
   ],
   "commits": [
+    {
+      "sha": "bbb26afc62f85550dc1b2ea9ff7f1ea668d42b8a",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bbb26afc62f85550dc1b2ea9ff7f1ea668d42b8a",
+      "subject": "fix(town): stop the loss notice from freezing Town movement in builds",
+      "body": "TownRaidLossNoticeView derived IsOpen from its Root's activeSelf. The\nprefab serializes Root as active and the view only hides it in Awake.\nCross-object Awake/OnEnable order is unspecified, and in release\nbuilds the presenter enabled first, saw an \"open\" notice that was never\npresented and acquired a gameplay input suppression that nothing\nreleased, so the Town avatar could not move.\n\nThe view now tracks an explicit open state that only Present and Hide\nchange, and Awake hides Root only when the notice was not presented\nbefore the view initialized.\n\nTests:\n- PresenterEnabledBeforeTheViewAwakes_DoesNotSuppressGameplayInput\n\nPlayer-Fixed: Your character can move again after entering Town in the released game.\n",
+      "date": "2026-11-22T15:09:16-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidLossNoticeView.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/TownRaidLossNoticePresenterPlayModeTests.cs"
+      ],
+      "originalType": "fix",
+      "originalScope": "town",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Movement",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "message-term",
+          "value": "movement",
+          "supports": "Movement"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/TownRaidLossNoticePresenterPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "a418c3f02db365efa235d7d16592b65938261e36",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a418c3f02db365efa235d7d16592b65938261e36",

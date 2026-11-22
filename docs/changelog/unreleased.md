@@ -4,11 +4,11 @@
 
 Release: Unreleased
 
-346 original commits; 346 canonical entries.
+347 original commits; 347 canonical entries.
 
 ## Canonical classification
 
-119 features; 108 bug fixes; 3 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 19 other changes
+119 features; 109 bug fixes; 3 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -21,15 +21,67 @@ Release: Unreleased
 | Extraction | 19 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
 | Inventory & Loot | 80 | 63 | 3 | 1 | 29 | 5 |
-| Movement | 6 | 5 | 0 | 0 | 2 | 0 |
+| Movement | 6 | 6 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 40 | 44 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 50 | 56 | 2 | 1 | 22 | 3 |
-| Tests | 114 | 102 | 3 | 1 | 34 | 4 |
+| Tests | 114 | 103 | 3 | 1 | 34 | 4 |
 | UI | 43 | 23 | 1 | 0 | 14 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 28 | 0 |
 | World & Visibility | 30 | 16 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### bbb26afc62f85550dc1b2ea9ff7f1ea668d42b8a
+
+[bbb26afc62f85550dc1b2ea9ff7f1ea668d42b8a](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bbb26afc62f85550dc1b2ea9ff7f1ea668d42b8a)
+
+Date: 2026-11-22T15:09:16-03:00 · Classification: Bug Fixes (explicit) · Systems: Movement, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(town): stop the loss notice from freezing Town movement in builds
+```
+
+#### Original body
+
+```text
+TownRaidLossNoticeView derived IsOpen from its Root's activeSelf. The
+prefab serializes Root as active and the view only hides it in Awake.
+Cross-object Awake/OnEnable order is unspecified, and in release
+builds the presenter enabled first, saw an "open" notice that was never
+presented and acquired a gameplay input suppression that nothing
+released, so the Town avatar could not move.
+
+The view now tracks an explicit open state that only Present and Hide
+change, and Awake hides Root only when the notice was not presented
+before the view initialized.
+
+Tests:
+- PresenterEnabledBeforeTheViewAwakes_DoesNotSuppressGameplayInput
+
+Player-Fixed: Your character can move again after entering Town in the released game.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidLossNoticeView.cs
+Project Grimhold/Assets/Tests/PlayMode/Presentation/TownRaidLossNoticePresenterPlayModeTests.cs
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Movement: movement
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/TownRaidLossNoticePresenterPlayModeTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### a418c3f02db365efa235d7d16592b65938261e36
 
