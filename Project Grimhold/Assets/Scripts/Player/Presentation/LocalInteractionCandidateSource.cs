@@ -32,10 +32,33 @@ public sealed class LocalInteractionCandidateSource : NetworkBehaviour
     private NetworkDoor _door;
     private string _metadataPromptText;
     private string _currentPromptText;
+    private Transform _promptAnchor;
+    private Vector3 _promptLocalAnchor;
 
     public bool HasCandidate { get; private set; }
     public InteractionTarget CurrentCandidate { get; private set; }
     public string CurrentPromptText => _currentPromptText;
+
+    /// <summary>Network object of the current candidate for local presentation, or null without one.</summary>
+    public NetworkObject CurrentCandidateObject => HasCandidate ? _metadataNetworkObject : null;
+
+    /// <summary>
+    /// World point the local prompt hangs from for the current candidate. Presentation only; false without a
+    /// candidate.
+    /// </summary>
+    public bool TryGetPromptWorldAnchor(out Vector3 worldAnchor)
+    {
+        if (!HasCandidate || _metadataNetworkObject == null)
+        {
+            worldAnchor = default;
+            return false;
+        }
+
+        worldAnchor = _promptAnchor != null
+            ? _promptAnchor.position
+            : _metadataNetworkObject.transform.TransformPoint(_promptLocalAnchor);
+        return true;
+    }
 
     private void Awake()
     {
@@ -145,6 +168,8 @@ public sealed class LocalInteractionCandidateSource : NetworkBehaviour
         _reviveInteractable = networkObject.GetComponent<DownedReviveInteractable>();
         _door = networkObject.GetComponent<NetworkDoor>();
         _metadataPromptText = metadata != null ? metadata.PromptText : null;
+        _promptAnchor = metadata != null ? metadata.PromptAnchor : null;
+        _promptLocalAnchor = ResolvePromptLocalAnchor(networkObject);
         _currentPromptText = _socialPlayerInteractable != null
             ? _socialPlayerInteractable.PromptText
             : _reviveInteractable != null && _reviveInteractable.IsTargetDowned
@@ -163,6 +188,24 @@ public sealed class LocalInteractionCandidateSource : NetworkBehaviour
         _door = null;
         _metadataPromptText = null;
         _currentPromptText = null;
+        _promptAnchor = null;
+        _promptLocalAnchor = default;
+    }
+
+    /// <summary>
+    /// Measured once per target change and kept in the target's local space, so the prompt follows a moving
+    /// target without bobbing with its animation frames.
+    /// </summary>
+    private static Vector3 ResolvePromptLocalAnchor(NetworkObject networkObject)
+    {
+        Transform target = networkObject.transform;
+        return InteractionPromptPlacement.TryResolveWorldAnchor(
+            null,
+            networkObject.GetComponentsInChildren<SpriteRenderer>(),
+            target,
+            out Vector3 worldAnchor)
+            ? target.InverseTransformPoint(worldAnchor)
+            : Vector3.zero;
     }
 
     private void CacheDependencies()

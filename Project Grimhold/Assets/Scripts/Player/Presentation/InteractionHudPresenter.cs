@@ -37,6 +37,19 @@ public sealed class InteractionHudPresenter : MonoBehaviour
     [SerializeField]
     private Color _rejectionColor = new(1f, 0.35f, 0.2f, 1f);
 
+    [Header("Prompt placement")]
+    [SerializeField, Min(0f), Tooltip("Screen pixels between the interactable's top and the prompt's bottom edge.")]
+    private float _promptGap = 8f;
+
+    [SerializeField, Min(0f), Tooltip("Screen pixels the prompt keeps from every screen edge.")]
+    private float _promptScreenMargin = 12f;
+
+    private static readonly Vector3[] PromptCorners = new Vector3[4];
+
+    private RectTransform _promptRect;
+    private Canvas _promptCanvas;
+    private Camera _worldCamera;
+    private Vector2 _promptRestingPosition;
     private LocalInteractionCandidateSource _candidateSource;
     private PlayerInteractionNetworkController _interactionController;
     private NetworkRunner _runner;
@@ -213,6 +226,111 @@ public sealed class InteractionHudPresenter : MonoBehaviour
         {
             _promptText.text = InteractionPromptText.Format(_candidateSource?.CurrentPromptText);
         }
+
+        if (!showPrompt)
+        {
+            return;
+        }
+
+        if (_candidateSource.TryGetPromptWorldAnchor(out Vector3 worldAnchor))
+        {
+            PlacePromptAbove(worldAnchor);
+        }
+        else
+        {
+            RestPrompt();
+        }
+    }
+
+    /// <summary>
+    /// Hangs the prompt above a world point. Without a world camera, or with the point behind it, the prompt
+    /// falls back to its authored HUD position so it never disappears.
+    /// </summary>
+    private void PlacePromptAbove(Vector3 worldAnchor)
+    {
+        RectTransform promptRect = ResolvePromptRect();
+        if (promptRect == null)
+        {
+            return;
+        }
+
+        Camera worldCamera = ResolveWorldCamera();
+        if (worldCamera == null)
+        {
+            RestPrompt();
+            return;
+        }
+
+        Vector3 anchorOnScreen = worldCamera.WorldToScreenPoint(worldAnchor);
+        if (anchorOnScreen.z < 0f)
+        {
+            RestPrompt();
+            return;
+        }
+
+        Camera canvasCamera = _promptCanvas != null && _promptCanvas.renderMode != RenderMode.ScreenSpaceOverlay
+            ? _promptCanvas.worldCamera
+            : null;
+        promptRect.GetWorldCorners(PromptCorners);
+        Vector2 promptSize =
+            RectTransformUtility.WorldToScreenPoint(canvasCamera, PromptCorners[2]) -
+            RectTransformUtility.WorldToScreenPoint(canvasCamera, PromptCorners[0]);
+
+        Vector2 screenPosition = InteractionPromptPlacement.ResolveScreenPosition(
+            anchorOnScreen,
+            promptSize,
+            promptRect.pivot,
+            _promptGap,
+            new Vector2(Screen.width, Screen.height),
+            _promptScreenMargin);
+
+        if (canvasCamera == null)
+        {
+            // Screen Space Overlay: canvas world units are screen pixels.
+            promptRect.position = new Vector3(screenPosition.x, screenPosition.y, promptRect.position.z);
+        }
+        else if (promptRect.parent is RectTransform parentRect &&
+                 RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                     parentRect, screenPosition, canvasCamera, out Vector3 worldPosition))
+        {
+            promptRect.position = worldPosition;
+        }
+    }
+
+    private void RestPrompt()
+    {
+        RectTransform promptRect = ResolvePromptRect();
+        if (promptRect != null)
+        {
+            promptRect.anchoredPosition = _promptRestingPosition;
+        }
+    }
+
+    private RectTransform ResolvePromptRect()
+    {
+        if (_promptRoot == null)
+        {
+            return null;
+        }
+
+        if (_promptRect == null || _promptRect.gameObject != _promptRoot)
+        {
+            _promptRect = _promptRoot.transform as RectTransform;
+            _promptCanvas = _promptRoot.GetComponentInParent<Canvas>(true);
+            _promptRestingPosition = _promptRect != null ? _promptRect.anchoredPosition : default;
+        }
+
+        return _promptRect;
+    }
+
+    private Camera ResolveWorldCamera()
+    {
+        if (_worldCamera == null || !_worldCamera.isActiveAndEnabled)
+        {
+            _worldCamera = Camera.main;
+        }
+
+        return _worldCamera;
     }
 
     private void ShowFeedback(string message)
