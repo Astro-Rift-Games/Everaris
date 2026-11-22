@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1213,
-  "canonicalEntries": 1210,
+  "rawCommits": 1216,
+  "canonicalEntries": 1213,
   "before": {
-    "Documentation": 133,
-    "Features": 433,
+    "Documentation": 134,
+    "Features": 435,
     "Bug Fixes": 186,
     "Tests": 47,
     "Other Changes": 374,
@@ -12,8 +12,8 @@
     "Architecture & Infrastructure": 24
   },
   "after": {
-    "Documentation": 149,
-    "Features": 572,
+    "Documentation": 150,
+    "Features": 574,
     "Bug Fixes": 202,
     "Tests": 52,
     "Refactoring": 29,
@@ -23,18 +23,18 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Unassigned": 47,
+    "World & Visibility": 171,
+    "Art & Animation": 263,
+    "Build & Tooling": 628,
+    "Tests": 774,
     "Combat": 406,
     "UI": 353,
     "Persistence & Backend": 315,
     "Inventory & Loot": 494,
-    "Build & Tooling": 626,
-    "Tests": 772,
     "Documentation": 444,
     "Networking & Sessions": 359,
-    "Unassigned": 46,
     "Abilities": 140,
-    "World & Visibility": 169,
-    "Art & Animation": 262,
     "Extraction": 176,
     "Audio": 42,
     "Movement": 102,
@@ -42,8 +42,8 @@
   },
   "canonical": {
     "sections": {
-      "Documentation": 149,
-      "Features": 571,
+      "Documentation": 150,
+      "Features": 573,
       "Bug Fixes": 201,
       "Tests": 52,
       "Refactoring": 29,
@@ -52,18 +52,18 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Unassigned": 47,
+      "World & Visibility": 169,
+      "Art & Animation": 260,
+      "Build & Tooling": 626,
+      "Tests": 772,
       "Combat": 404,
       "UI": 352,
       "Persistence & Backend": 315,
       "Inventory & Loot": 494,
-      "Build & Tooling": 624,
-      "Tests": 770,
       "Documentation": 442,
       "Networking & Sessions": 359,
-      "Unassigned": 46,
       "Abilities": 138,
-      "World & Visibility": 167,
-      "Art & Animation": 259,
       "Extraction": 176,
       "Audio": 42,
       "Movement": 102,
@@ -74437,8 +74437,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 336,
-      "canonicalEntries": 336
+      "originalCommits": 339,
+      "canonicalEntries": 339
     },
     {
       "key": "v0.5.0",
@@ -74482,6 +74482,483 @@
     }
   ],
   "commits": [
+    {
+      "sha": "83103ca9f523eefb28287b8e9b6a3503184136ce",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/83103ca9f523eefb28287b8e9b6a3503184136ce",
+      "subject": "docs(pressure): add ODD execution tracker for TASK-307 collapse rifts",
+      "body": "Record scope, acceptance criteria, work breakdown, and verified EditMode\nand CatacombsMap validation evidence for TASK-307 (#839).\n\nRefs: TASK-307 (#839)\n",
+      "date": "2026-11-21T23:05:49-03:00",
+      "files": [
+        "odd/tasks/task-307-collapse-rifts.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "pressure",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "unassigned-system",
+          "message": "No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system."
+        }
+      ],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "ed368fe924b789b922f1501fb885296c1fe16203",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ed368fe924b789b922f1501fb885296c1fe16203",
+      "subject": "feat(pressure): integrate collapse rift visuals in CatacombsMap",
+      "body": "Wire floor and wall collapse rift spritesheets, emissive URP 2D material,\nlocal turquoise point lights, prefabs, configuration asset, and scene\npresentation into CatacombsMap.unity for TASK-307.\n\nNormalize FloorRifts-Stage1 and WallRifts-Stage1 sprite rects to 48x48\ncentered (preserving GUIDs and internalIDs) so Stage0-Spawn transitions\ninto Stage1 with zero pixel shift. Add CollapseRiftEmissive.shader so\nturquoise energy pixels remain clearly legible when global Collapse\nlighting shifts dark crimson and torches extinguish, paired with\nphase-synced local Light2D and optional subtle eruption particles.\nConfigure FloorRift on sorting layer Floor (order 2, below characters\nand cursor) and WallRift on Walls (order 3, over the 32 px wall face)\nwithout Collider2D so navigation is unaffected. Wire\nDungeonPressureAmbientPresenter and CollapseRiftPresenter on Global\nLight 2D in CatacombsMap.unity, link Edit Mode preview buttons, and\nguard same-frame root regeneration against deferred Destroy().\n\nTests added:\n- CollapseRiftPresenterTests (phase lifecycle, sorting, no colliders,\n  wall interval override, late-join, reset, seed regeneration, asset and\n  CatacombsMap.unity serialized config checks)\n\nPlayer-Added: Floor and wall rifts now crack open across Catacombs as the dungeon collapses, glowing and erupting with turquoise energy.\nRefs: TASK-307 (#839)\n",
+      "date": "2026-11-21T23:05:48-03:00",
+      "files": [
+        "Project Grimhold/Assets/Art/Materials/CollapseRiftEmissive.mat",
+        "Project Grimhold/Assets/Art/Materials/CollapseRiftEmissive.mat.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png.meta",
+        "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png.meta",
+        "Project Grimhold/Assets/Art/Shaders/CollapseRiftEmissive.shader",
+        "Project Grimhold/Assets/Art/Shaders/CollapseRiftEmissive.shader.meta",
+        "Project Grimhold/Assets/Prefabs/Collapse.meta",
+        "Project Grimhold/Assets/Prefabs/Collapse/FloorRift.prefab",
+        "Project Grimhold/Assets/Prefabs/Collapse/FloorRift.prefab.meta",
+        "Project Grimhold/Assets/Prefabs/Collapse/WallRift.prefab",
+        "Project Grimhold/Assets/Prefabs/Collapse/WallRift.prefab.meta",
+        "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+        "Project Grimhold/Assets/Scriptable Objects/DefaultCollapseRiftConfig.asset",
+        "Project Grimhold/Assets/Scriptable Objects/DefaultCollapseRiftConfig.asset.meta",
+        "Project Grimhold/Assets/Scripts/Editor/DungeonPressureAmbientPresenterEditor.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseFloorRiftVisual.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseFloorRiftVisual.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftConfig.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftConfig.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPresenter.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseWallRiftVisual.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseWallRiftVisual.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftPresenterTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftPresenterTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "pressure",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "World & Visibility",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Editor/DungeonPressureAmbientPresenterEditor.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseFloorRiftVisual.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseFloorRiftVisual.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftConfig.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftConfig.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPresenter.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPresenter.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseWallRiftVisual.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseWallRiftVisual.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "Catacombs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Materials/CollapseRiftEmissive.mat",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Materials/CollapseRiftEmissive.mat.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Floor/Catacombs-FloorRifts-Stage1.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Collapse/Wall/Catacombs-WallRifts-Stage1.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Shaders/CollapseRiftEmissive.shader",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Shaders/CollapseRiftEmissive.shader.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "sprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Editor/DungeonPressureAmbientPresenterEditor.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftPresenterTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftPresenterTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftPresenterTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftPresenterTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "d080fbe59da89b8ce1c107f40762a53465188022",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/d080fbe59da89b8ce1c107f40762a53465188022",
+      "subject": "feat(pressure): add collapse rift state machine and placement rules",
+      "body": "Add deterministic pure C# presentation rules for floor and wall collapse\nrifts so stage progression, frame stepping, and surface-bounded random\nplacement work consistently across Host, Clients, late-joiners, and Host\nMigration without extra networked state.\n\nFloor rifts stay hidden in Normal, spawn batch 1 dormant in\nReinforcements, activate batch 1 and spawn batch 2 in CriticalPressure,\nand activate all spawned rifts in Collapse. Wall rifts remain hidden in\nNormal, play Stage0-Spawn into Stage1 in Reinforcements, loop\nStage1+Stage2 in CriticalPressure, and loop Stage2+Stage3+Stage4 in\nCollapse using a configurable frame interval. Placement enforces tilemap\nsurface margins for 16x16 floor rifts and 32x32 south-facing wall faces,\navoiding obstacles, stairs/access tiles, sanctuaries, and wall props\nusing an FNV-1a seed derived from RaidGenerationId.\n\nTests added:\n- CollapseRiftStateMachineTests (stage rules, cycles, offsets, late-join)\n- CollapseWallRiftStepperTests (Stage1..Stage4 progression and interval)\n- CollapseRiftPlacementServiceTests (margins, exclusions, determinism)\n\nRefs: TASK-307 (#839)\n",
+      "date": "2026-11-21T23:05:48-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftBatch.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftBatch.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPhaseRules.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPhaseRules.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacement.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacement.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacementService.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacementService.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacementSettings.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacementSettings.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftStateMachine.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftStateMachine.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftSurfaceType.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftSurfaceType.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftTimingSettings.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftTimingSettings.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftVisualState.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftVisualState.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseWallRiftStepper.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseWallRiftStepper.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/ICollapseSurfaceGrid.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/ICollapseSurfaceGrid.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/TilemapCollapseSurfaceGrid.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/TilemapCollapseSurfaceGrid.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftPlacementServiceTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftPlacementServiceTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftStateMachineTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftStateMachineTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseWallRiftStepperTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseWallRiftStepperTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "pressure",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "World & Visibility",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftBatch.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftBatch.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPhaseRules.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPhaseRules.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacement.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacement.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacementService.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacementService.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacementSettings.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacementSettings.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftStateMachine.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftStateMachine.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftSurfaceType.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftSurfaceType.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftTimingSettings.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftTimingSettings.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftVisualState.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftVisualState.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseWallRiftStepper.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseWallRiftStepper.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/ICollapseSurfaceGrid.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/ICollapseSurfaceGrid.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/TilemapCollapseSurfaceGrid.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/TilemapCollapseSurfaceGrid.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "tilemap",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftPlacementServiceTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftPlacementServiceTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftStateMachineTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftStateMachineTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseWallRiftStepperTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseWallRiftStepperTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftPlacementServiceTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftPlacementServiceTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftStateMachineTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseRiftStateMachineTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseWallRiftStepperTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/CollapseWallRiftStepperTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "6a83dd512ffa3dd7b65095984c921aca791c6ec2",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6a83dd512ffa3dd7b65095984c921aca791c6ec2",
