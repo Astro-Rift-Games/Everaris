@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1226,
-  "canonicalEntries": 1223,
+  "rawCommits": 1229,
+  "canonicalEntries": 1226,
   "before": {
-    "Features": 442,
-    "Bug Fixes": 187,
+    "Features": 444,
+    "Bug Fixes": 188,
     "Documentation": 136,
     "Tests": 47,
     "Other Changes": 374,
@@ -12,8 +12,8 @@
     "Architecture & Infrastructure": 24
   },
   "after": {
-    "Features": 581,
-    "Bug Fixes": 203,
+    "Features": 583,
+    "Bug Fixes": 204,
     "Documentation": 152,
     "Tests": 52,
     "Refactoring": 29,
@@ -23,27 +23,27 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Abilities": 144,
+    "Inventory & Loot": 500,
+    "Networking & Sessions": 362,
+    "Build & Tooling": 636,
+    "Tests": 785,
+    "UI": 355,
+    "World & Visibility": 173,
+    "Art & Animation": 265,
     "Combat": 408,
-    "Abilities": 143,
-    "Inventory & Loot": 498,
-    "UI": 354,
-    "World & Visibility": 172,
-    "Art & Animation": 264,
-    "Build & Tooling": 633,
     "Documentation": 448,
-    "Tests": 782,
     "Movement": 103,
     "Extraction": 177,
     "Persistence & Backend": 319,
-    "Networking & Sessions": 361,
     "Unassigned": 47,
     "Audio": 42,
     "Input": 32
   },
   "canonical": {
     "sections": {
-      "Features": 580,
-      "Bug Fixes": 202,
+      "Features": 582,
+      "Bug Fixes": 203,
       "Documentation": 152,
       "Tests": 52,
       "Refactoring": 29,
@@ -52,19 +52,19 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Abilities": 142,
+      "Inventory & Loot": 500,
+      "Networking & Sessions": 362,
+      "Build & Tooling": 634,
+      "Tests": 783,
+      "UI": 354,
+      "World & Visibility": 171,
+      "Art & Animation": 262,
       "Combat": 406,
-      "Abilities": 141,
-      "Inventory & Loot": 498,
-      "UI": 353,
-      "World & Visibility": 170,
-      "Art & Animation": 261,
-      "Build & Tooling": 631,
       "Documentation": 446,
-      "Tests": 780,
       "Movement": 103,
       "Extraction": 177,
       "Persistence & Backend": 319,
-      "Networking & Sessions": 361,
       "Unassigned": 47,
       "Audio": 42,
       "Input": 32
@@ -74437,8 +74437,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 349,
-      "canonicalEntries": 349
+      "originalCommits": 352,
+      "canonicalEntries": 352
     },
     {
       "key": "v0.5.0",
@@ -74482,6 +74482,482 @@
     }
   ],
   "commits": [
+    {
+      "sha": "7e5232bdef2060ac69c5d12be3b0a07cec61a361",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7e5232bdef2060ac69c5d12be3b0a07cec61a361",
+      "subject": "feat(town): make Town NPCs acknowledge, face and block the player",
+      "body": "Town NPC interactions felt flat: a huge interaction range, NPCs that\nignored the player or talked with their back turned, two NPCs with no\ngreeting, and characters that walked through and blended into each other.\n\n- Approach facing: TownNpcApproachFacingPresenter on the Town avatar\n  turns the NPC that is the local interaction candidate towards the\n  player and restores its authored facing when they leave. Local only.\n- Front-biased facing: TownNpcDirectionalView now uses\n  TownNpcFacingResolver. Town NPCs have no side-on pose, so the back\n  poses are used only when the target is clearly behind (above 35\n  degrees, back to front below 20), with the same margin between centre\n  and diagonal poses to avoid flipping at a limit. The shared\n  CharacterVisualDirectionResolver is unchanged.\n- Range: Town has its own TownPlayerInteractionConfig (reach 0.75) used\n  by every interaction config reference on SocialPlayer; the Raid keeps\n  PlayerInteractionConfig at 2. NPC interaction areas shrink from radius\n  1 to 0.6.\n- Intro dialogue: the Ability Vendor and Mission NPCs get a placeholder\n  one-line dialogue so every Town NPC greets the player before its panel.\n- Overlap: the Town avatar and every Town NPC get a root SortingGroup\n  matching the Raid avatar, so characters sort as units on the Y axis,\n  and each NPC gets a solid MovementBlocker on WorldCollision. The Town\n  avatar footprint is resized to match.\n\nReviewers: saving the NPC prefabs in Unity 6000.6 also rewrote cached\nvalues (m_SortingLayer index, suffixes on m_ActiveFontFeatures and the\nFusion RawGuidValue). TownMerchantNPC's serialized stock, which its\nOnValidate regenerates on save, was kept at its committed content.\n\nTests: TownNpcApproachFacingTests, TownNpcFacingResolverTests,\nTownInteractionRangeConfigurationTests, TownNpcIntroDialoguePrefabTests,\nTownCharacterOverlapConfigurationTests; TownRespecNpcPrefabTests updated\nfor the new radius and the Mentor's own blocker.\n\nPlayer-Improved: Town characters turn to face you when you walk up to them and no longer talk with their back turned.\nPlayer-Improved: You now need to stand next to a Town character to interact with it.\nPlayer-Fixed: You can no longer walk through Town characters, and overlapping characters no longer blend into each other.\n",
+      "date": "2026-11-22T18:59:28-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/SocialPlayer.prefab",
+        "Project Grimhold/Assets/Prefabs/TownAbilityVendorNPC.prefab",
+        "Project Grimhold/Assets/Prefabs/TownMerchantNPC.prefab",
+        "Project Grimhold/Assets/Prefabs/TownMissionNPC.prefab",
+        "Project Grimhold/Assets/Prefabs/TownRaidNpc.prefab",
+        "Project Grimhold/Assets/Prefabs/TownRespecNpc.prefab",
+        "Project Grimhold/Assets/Prefabs/TownStashNpc.prefab",
+        "Project Grimhold/Assets/Prefabs/TownTrainerNpc.prefab",
+        "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownAbilityVendorNpcDialogue.asset",
+        "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownAbilityVendorNpcDialogue.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownMissionNpcDialogue.asset",
+        "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownMissionNpcDialogue.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/TownPlayerInteractionConfig.asset",
+        "Project Grimhold/Assets/Scriptable Objects/TownPlayerInteractionConfig.asset.meta",
+        "Project Grimhold/Assets/Scripts/Dialogue/TownNpcApproachFacing.cs",
+        "Project Grimhold/Assets/Scripts/Dialogue/TownNpcApproachFacing.cs.meta",
+        "Project Grimhold/Assets/Scripts/Dialogue/TownNpcDirectionalView.cs",
+        "Project Grimhold/Assets/Scripts/Dialogue/TownNpcFacingResolver.cs",
+        "Project Grimhold/Assets/Scripts/Dialogue/TownNpcFacingResolver.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownNpcApproachFacingPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownNpcApproachFacingPresenter.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcApproachFacingTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcApproachFacingTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcFacingResolverTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcFacingResolverTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "town",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Abilities",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/TownAbilityVendorNPC.prefab",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownAbilityVendorNpcDialogue.asset",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownAbilityVendorNpcDialogue.asset.meta",
+          "supports": "Abilities"
+        },
+        {
+          "source": "message-term",
+          "value": "Ability",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/TownPlayerInteractionConfig.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/TownPlayerInteractionConfig.asset.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "interaction",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcApproachFacingTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcApproachFacingTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcFacingResolverTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcFacingResolverTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcApproachFacingTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcApproachFacingTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcFacingResolverTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcFacingResolverTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "343ac74a73e8ea33e815e7fb021e903264132da2",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/343ac74a73e8ea33e815e7fb021e903264132da2",
+      "subject": "fix(town): animate the Trainer panel like the other Town panels",
+      "body": "The Trainer panel is built at runtime, so it never received the shared\nUiPanelTransition that every other Town panel carries on its prefab and\nit popped in and out instantly. Its panel root now adds the CanvasGroup\nand UiPanelTransition itself.\n\nTests: TownTrainerViewTransitionTests.\n\nPlayer-Improved: The Trainer panel now fades in and out like the other Town panels.\n",
+      "date": "2026-11-22T18:59:05-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownTrainerView.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownTrainerViewTransitionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownTrainerViewTransitionTests.cs.meta"
+      ],
+      "originalType": "fix",
+      "originalScope": "town",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownTrainerViewTransitionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownTrainerViewTransitionTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownTrainerViewTransitionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownTrainerViewTransitionTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "e9dd15a0261bb25b3c1900977315a39427bbd7e9",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e9dd15a0261bb25b3c1900977315a39427bbd7e9",
+      "subject": "feat(interaction): hang the interaction prompt above its interactable",
+      "body": "The prompt no longer rests at a fixed HUD position. It is placed above\nthe current interaction candidate in Town and Raid, so the player reads\nthe action on the object it belongs to.\n\n- InteractionPromptPlacement holds the pure rules: the anchor is the\n  prefab's explicit anchor, else the top-centre of the visible sprite\n  artwork, else the target position. Sprite mesh outlines are measured\n  instead of renderer bounds because character frames are 96 px squares\n  with wide transparent padding.\n- LocalInteractionCandidateSource resolves the anchor once per target\n  change and keeps it in the target's local space, so the prompt follows\n  the target without bobbing with its idle frames.\n- InteractionHudPresenter keeps the prompt on screen, snaps its corner to\n  whole pixels and falls back to the authored HUD position without a\n  world camera. Rejection feedback and the lockpick bar stay in the HUD.\n- InteractionPromptMetadata gains an optional prompt anchor.\n\nTests: InteractionPromptPlacementTests (EditMode) and\nInteractionPromptWorldPlacementPlayModeTests (PlayMode).\n\nPlayer-Improved: The interaction prompt now appears above the character or object you can interact with instead of at the bottom of the screen.\n",
+      "date": "2026-11-22T18:59:05-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptMetadata.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptPlacement.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptPlacement.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/LocalInteractionCandidateSource.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "interaction",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "UI",
+        "World & Visibility",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptMetadata.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptPlacement.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptPlacement.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/LocalInteractionCandidateSource.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "scope",
+          "value": "interaction",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "interaction",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "HUD",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "sprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "33946a8dc8a613272100e5ac8cfcc3e188b0dc9e",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/33946a8dc8a613272100e5ac8cfcc3e188b0dc9e",

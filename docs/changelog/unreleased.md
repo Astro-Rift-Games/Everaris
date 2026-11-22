@@ -4,32 +4,305 @@
 
 Release: Unreleased
 
-349 original commits; 349 canonical entries.
+352 original commits; 352 canonical entries.
 
 ## Canonical classification
 
-121 features; 109 bug fixes; 3 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 19 other changes
+123 features; 110 bug fixes; 3 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Abilities | 16 | 11 | 1 | 0 | 10 | 1 |
-| Art & Animation | 23 | 12 | 3 | 0 | 9 | 7 |
+| Abilities | 17 | 11 | 1 | 0 | 10 | 1 |
+| Art & Animation | 24 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 85 | 72 | 3 | 1 | 25 | 6 |
+| Build & Tooling | 87 | 73 | 3 | 1 | 25 | 6 |
 | Combat | 52 | 21 | 2 | 0 | 16 | 1 |
 | Documentation | 41 | 44 | 0 | 0 | 20 | 0 |
 | Extraction | 19 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 81 | 63 | 3 | 1 | 29 | 5 |
+| Inventory & Loot | 83 | 63 | 3 | 1 | 29 | 5 |
 | Movement | 6 | 6 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 40 | 44 | 0 | 0 | 19 | 2 |
+| Networking & Sessions | 41 | 44 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 50 | 56 | 2 | 1 | 22 | 3 |
-| Tests | 116 | 103 | 3 | 1 | 34 | 4 |
-| UI | 44 | 23 | 1 | 0 | 14 | 3 |
+| Tests | 118 | 104 | 3 | 1 | 34 | 4 |
+| UI | 45 | 23 | 1 | 0 | 14 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 28 | 0 |
-| World & Visibility | 31 | 16 | 0 | 0 | 3 | 12 |
+| World & Visibility | 32 | 16 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 7e5232bdef2060ac69c5d12be3b0a07cec61a361
+
+[7e5232bdef2060ac69c5d12be3b0a07cec61a361](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7e5232bdef2060ac69c5d12be3b0a07cec61a361)
+
+Date: 2026-11-22T18:59:28-03:00 · Classification: Features (explicit) · Systems: Abilities, Inventory & Loot, Networking & Sessions, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(town): make Town NPCs acknowledge, face and block the player
+```
+
+#### Original body
+
+```text
+Town NPC interactions felt flat: a huge interaction range, NPCs that
+ignored the player or talked with their back turned, two NPCs with no
+greeting, and characters that walked through and blended into each other.
+
+- Approach facing: TownNpcApproachFacingPresenter on the Town avatar
+  turns the NPC that is the local interaction candidate towards the
+  player and restores its authored facing when they leave. Local only.
+- Front-biased facing: TownNpcDirectionalView now uses
+  TownNpcFacingResolver. Town NPCs have no side-on pose, so the back
+  poses are used only when the target is clearly behind (above 35
+  degrees, back to front below 20), with the same margin between centre
+  and diagonal poses to avoid flipping at a limit. The shared
+  CharacterVisualDirectionResolver is unchanged.
+- Range: Town has its own TownPlayerInteractionConfig (reach 0.75) used
+  by every interaction config reference on SocialPlayer; the Raid keeps
+  PlayerInteractionConfig at 2. NPC interaction areas shrink from radius
+  1 to 0.6.
+- Intro dialogue: the Ability Vendor and Mission NPCs get a placeholder
+  one-line dialogue so every Town NPC greets the player before its panel.
+- Overlap: the Town avatar and every Town NPC get a root SortingGroup
+  matching the Raid avatar, so characters sort as units on the Y axis,
+  and each NPC gets a solid MovementBlocker on WorldCollision. The Town
+  avatar footprint is resized to match.
+
+Reviewers: saving the NPC prefabs in Unity 6000.6 also rewrote cached
+values (m_SortingLayer index, suffixes on m_ActiveFontFeatures and the
+Fusion RawGuidValue). TownMerchantNPC's serialized stock, which its
+OnValidate regenerates on save, was kept at its committed content.
+
+Tests: TownNpcApproachFacingTests, TownNpcFacingResolverTests,
+TownInteractionRangeConfigurationTests, TownNpcIntroDialoguePrefabTests,
+TownCharacterOverlapConfigurationTests; TownRespecNpcPrefabTests updated
+for the new radius and the Mentor's own blocker.
+
+Player-Improved: Town characters turn to face you when you walk up to them and no longer talk with their back turned.
+Player-Improved: You now need to stand next to a Town character to interact with it.
+Player-Fixed: You can no longer walk through Town characters, and overlapping characters no longer blend into each other.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/SocialPlayer.prefab
+Project Grimhold/Assets/Prefabs/TownAbilityVendorNPC.prefab
+Project Grimhold/Assets/Prefabs/TownMerchantNPC.prefab
+Project Grimhold/Assets/Prefabs/TownMissionNPC.prefab
+Project Grimhold/Assets/Prefabs/TownRaidNpc.prefab
+Project Grimhold/Assets/Prefabs/TownRespecNpc.prefab
+Project Grimhold/Assets/Prefabs/TownStashNpc.prefab
+Project Grimhold/Assets/Prefabs/TownTrainerNpc.prefab
+Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownAbilityVendorNpcDialogue.asset
+Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownAbilityVendorNpcDialogue.asset.meta
+Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownMissionNpcDialogue.asset
+Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownMissionNpcDialogue.asset.meta
+Project Grimhold/Assets/Scriptable Objects/TownPlayerInteractionConfig.asset
+Project Grimhold/Assets/Scriptable Objects/TownPlayerInteractionConfig.asset.meta
+Project Grimhold/Assets/Scripts/Dialogue/TownNpcApproachFacing.cs
+Project Grimhold/Assets/Scripts/Dialogue/TownNpcApproachFacing.cs.meta
+Project Grimhold/Assets/Scripts/Dialogue/TownNpcDirectionalView.cs
+Project Grimhold/Assets/Scripts/Dialogue/TownNpcFacingResolver.cs
+Project Grimhold/Assets/Scripts/Dialogue/TownNpcFacingResolver.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/TownNpcApproachFacingPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownNpcApproachFacingPresenter.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcApproachFacingTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcApproachFacingTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcFacingResolverTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcFacingResolverTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Abilities: Project Grimhold/Assets/Prefabs/TownAbilityVendorNPC.prefab
+- path → Abilities: Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownAbilityVendorNpcDialogue.asset
+- path → Abilities: Project Grimhold/Assets/Scriptable Objects/DialogueSequences/TownAbilityVendorNpcDialogue.asset.meta
+- message-term → Abilities: Ability
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/TownPlayerInteractionConfig.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/TownPlayerInteractionConfig.asset.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs.meta
+- message-term → Inventory &amp; Loot: interaction
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcApproachFacingTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcApproachFacingTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcFacingResolverTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcFacingResolverTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownCharacterOverlapConfigurationTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownInteractionRangeConfigurationTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownNpcIntroDialoguePrefabTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownRespecNpcPrefabTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcApproachFacingTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcApproachFacingTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcFacingResolverTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownNpcFacingResolverTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 343ac74a73e8ea33e815e7fb021e903264132da2
+
+[343ac74a73e8ea33e815e7fb021e903264132da2](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/343ac74a73e8ea33e815e7fb021e903264132da2)
+
+Date: 2026-11-22T18:59:05-03:00 · Classification: Bug Fixes (explicit) · Systems: Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(town): animate the Trainer panel like the other Town panels
+```
+
+#### Original body
+
+```text
+The Trainer panel is built at runtime, so it never received the shared
+UiPanelTransition that every other Town panel carries on its prefab and
+it popped in and out instantly. Its panel root now adds the CanvasGroup
+and UiPanelTransition itself.
+
+Tests: TownTrainerViewTransitionTests.
+
+Player-Improved: The Trainer panel now fades in and out like the other Town panels.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/Presentation/TownTrainerView.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownTrainerViewTransitionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownTrainerViewTransitionTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownTrainerViewTransitionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownTrainerViewTransitionTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownTrainerViewTransitionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownTrainerViewTransitionTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### e9dd15a0261bb25b3c1900977315a39427bbd7e9
+
+[e9dd15a0261bb25b3c1900977315a39427bbd7e9](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e9dd15a0261bb25b3c1900977315a39427bbd7e9)
+
+Date: 2026-11-22T18:59:05-03:00 · Classification: Features (explicit) · Systems: Inventory & Loot, UI, World & Visibility, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(interaction): hang the interaction prompt above its interactable
+```
+
+#### Original body
+
+```text
+The prompt no longer rests at a fixed HUD position. It is placed above
+the current interaction candidate in Town and Raid, so the player reads
+the action on the object it belongs to.
+
+- InteractionPromptPlacement holds the pure rules: the anchor is the
+  prefab's explicit anchor, else the top-centre of the visible sprite
+  artwork, else the target position. Sprite mesh outlines are measured
+  instead of renderer bounds because character frames are 96 px squares
+  with wide transparent padding.
+- LocalInteractionCandidateSource resolves the anchor once per target
+  change and keeps it in the target's local space, so the prompt follows
+  the target without bobbing with its idle frames.
+- InteractionHudPresenter keeps the prompt on screen, snaps its corner to
+  whole pixels and falls back to the authored HUD position without a
+  world camera. Rejection feedback and the lockpick bar stay in the HUD.
+- InteractionPromptMetadata gains an optional prompt anchor.
+
+Tests: InteractionPromptPlacementTests (EditMode) and
+InteractionPromptWorldPlacementPlayModeTests (PlayMode).
+
+Player-Improved: The interaction prompt now appears above the character or object you can interact with instead of at the bottom of the screen.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptMetadata.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptPlacement.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptPlacement.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/LocalInteractionCandidateSource.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs.meta
+Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs
+Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptMetadata.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptPlacement.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptPlacement.cs.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/LocalInteractionCandidateSource.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs.meta
+- scope → Inventory &amp; Loot: interaction
+- message-term → Inventory &amp; Loot: interaction
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs
+- message-term → UI: HUD
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs.meta
+- message-term → Art &amp; Animation: sprite
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 33946a8dc8a613272100e5ac8cfcc3e188b0dc9e
 

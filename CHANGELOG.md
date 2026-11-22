@@ -66,6 +66,10 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Combat and world sounds now get quieter with distance.
 - Resources now display distinct world sprites and inventory icons.
 - Magic weapons now glow while charging, leave a trail and light up the dungeon on impact.
+- The interaction prompt now appears above the character or object you can interact with instead of at the bottom of the screen.
+- The Trainer panel now fades in and out like the other Town panels.
+- Town characters turn to face you when you walk up to them and no longer talk with their back turned.
+- You now need to stand next to a Town character to interact with it.
 
 ### Fixed
 
@@ -136,6 +140,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Characters with extra Vitality now start a raid with their full, correct health.
 - Items you took into a raid no longer reappear in your stash after a connection problem and logging back in.
 - Your character can move again after entering Town in the released game.
+- You can no longer walk through Town characters, and overlapping characters no longer blend into each other.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08
