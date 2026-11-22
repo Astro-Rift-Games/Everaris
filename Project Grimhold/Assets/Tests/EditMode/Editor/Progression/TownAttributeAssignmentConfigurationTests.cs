@@ -55,58 +55,30 @@ namespace Tests.EditMode.Progression
         }
 
         [Test]
-        public void ViewPrefab_WiresEverySerializedRespecWidget()
+        public void ViewPrefab_HasNoRespecSectionOrConfirmation_TheMentorOwnsTheRespec()
         {
-            var serialized = LoadSerializedView();
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ViewPath);
+            Assert.That(prefab, Is.Not.Null);
 
-            Assert.That(RespecReference<Button>(serialized, "_respecButton"), Is.Not.Null);
-            Assert.That(RespecReference<TMP_Text>(serialized, "_respecCostText"), Is.Not.Null);
-            Assert.That(RespecReference<TMP_Text>(serialized, "_respecMessageText"), Is.Not.Null);
-            Assert.That(RespecReference<GameObject>(serialized, "_respecConfirmationPanel"), Is.Not.Null);
-            Assert.That(RespecReference<TMP_Text>(serialized, "_respecConfirmationText"), Is.Not.Null);
-            Assert.That(RespecReference<Button>(serialized, "_respecConfirmButton"), Is.Not.Null);
-            Assert.That(RespecReference<Button>(serialized, "_respecCancelButton"), Is.Not.Null);
-        }
-
-        [Test]
-        public void ViewPrefab_RespecConfirmationPanelStartsInactiveAndOwnsConfirmationControls()
-        {
-            var serialized = LoadSerializedView();
-            GameObject panel = RespecReference<GameObject>(serialized, "_respecConfirmationPanel");
-            Button confirm = RespecReference<Button>(serialized, "_respecConfirmButton");
-            Button cancel = RespecReference<Button>(serialized, "_respecCancelButton");
-            TMP_Text confirmationText = RespecReference<TMP_Text>(serialized, "_respecConfirmationText");
-
-            Assert.That(panel, Is.Not.Null);
-            Assert.That(panel.activeSelf, Is.False);
-            Assert.That(confirm.transform.IsChildOf(panel.transform), Is.True);
-            Assert.That(cancel.transform.IsChildOf(panel.transform), Is.True);
-            Assert.That(confirmationText.transform.IsChildOf(panel.transform), Is.True);
-            Assert.That(confirm, Is.Not.SameAs(cancel));
-        }
-
-        [Test]
-        public void ViewPrefab_RespecEntryPointStaysOutsideTheAttributeRowsAndTheConfirmationPanel()
-        {
-            var serialized = LoadSerializedView();
-            GameObject panel = RespecReference<GameObject>(serialized, "_respecConfirmationPanel");
-            Button respecButton = RespecReference<Button>(serialized, "_respecButton");
-            TMP_Text costText = RespecReference<TMP_Text>(serialized, "_respecCostText");
-            TMP_Text messageText = RespecReference<TMP_Text>(serialized, "_respecMessageText");
-            TownAttributeAssignmentView view = (TownAttributeAssignmentView)serialized.targetObject;
-
-            Assert.That(panel, Is.Not.Null);
-            foreach (Component entryPoint in new Component[] { respecButton, costText, messageText })
+            foreach (Transform child in prefab.GetComponentsInChildren<Transform>(true))
             {
-                Assert.That(entryPoint, Is.Not.Null);
-                Assert.That(entryPoint.transform.IsChildOf(panel.transform), Is.False);
-                Assert.That(entryPoint.transform.IsChildOf(view.transform), Is.True);
-                foreach (TownAttributeAssignmentRowView row in view.Rows)
-                {
-                    Assert.That(entryPoint.transform.IsChildOf(row.transform), Is.False);
-                    Assert.That(entryPoint.transform.IsChildOf(view.Rows[0].transform.parent), Is.False);
-                }
+                Assert.That(child.name, Does.Not.Contain("Respec"), "the attribute panel returns to assignment only");
             }
+        }
+
+        [Test]
+        public void ViewPrefab_RowsContainerFillsTheColumnBelowTheTitleAgain()
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ViewPath);
+            TownAttributeAssignmentView view = prefab.GetComponent<TownAttributeAssignmentView>();
+            var rows = (RectTransform)view.Rows[0].transform.parent;
+
+            Assert.That(rows.name, Is.EqualTo("Rows"));
+            Assert.That(rows.anchorMin, Is.EqualTo(Vector2.zero));
+            Assert.That(rows.anchorMax, Is.EqualTo(Vector2.one));
+            Assert.That(rows.anchoredPosition, Is.EqualTo(new Vector2(0f, -45f)));
+            Assert.That(rows.sizeDelta, Is.EqualTo(new Vector2(-60f, -150f)));
+            Assert.That(rows.pivot, Is.EqualTo(new Vector2(0.5f, 0.5f)));
         }
 
         [Test]
@@ -122,28 +94,6 @@ namespace Tests.EditMode.Progression
             {
                 Assert.That(row.AddButton.onClick.GetPersistentEventCount(), Is.Zero);
             }
-        }
-
-        private static SerializedObject LoadSerializedView()
-        {
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ViewPath);
-            Assert.That(prefab, Is.Not.Null);
-            TownAttributeAssignmentView view = prefab.GetComponent<TownAttributeAssignmentView>();
-            Assert.That(view, Is.Not.Null);
-            return new SerializedObject(view);
-        }
-
-        private static T RespecReference<T>(SerializedObject serialized, string field) where T : Object
-        {
-            SerializedProperty property = serialized.FindProperty(field);
-            Assert.That(property, Is.Not.Null, $"{field} is not a serialized field");
-            Object value = property.objectReferenceValue;
-            if (value is Component component && typeof(T) == typeof(GameObject))
-            {
-                return component.gameObject as T;
-            }
-
-            return value as T;
         }
 
         [Test]

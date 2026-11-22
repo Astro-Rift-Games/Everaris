@@ -786,6 +786,56 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!1 &452671847
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 452671849}
+  - component: {fileID: 452671848}
+  m_Layer: 0
+  m_Name: Camera Map Bounds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &452671848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 452671847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2186ce20d99a91049a68c872f18c6fb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraMapBounds
+  _worldBounds:
+    serializedVersion: 2
+    x: -18
+    y: -11
+    width: 27
+    height: 23
+--- !u!4 &452671849
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 452671847}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &471751191
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1761,6 +1811,67 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 681869ae7696cbc46904e4fc80906b92, type: 3}
+--- !u!1001 &1267066276
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4189353657973925103, guid: 07325718a65a69446b6a00e7ae4ccd5e, type: 3}
+      propertyPath: m_Name
+      value: TownRespecNpc
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589423681852761069, guid: 07325718a65a69446b6a00e7ae4ccd5e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589423681852761069, guid: 07325718a65a69446b6a00e7ae4ccd5e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589423681852761069, guid: 07325718a65a69446b6a00e7ae4ccd5e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589423681852761069, guid: 07325718a65a69446b6a00e7ae4ccd5e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589423681852761069, guid: 07325718a65a69446b6a00e7ae4ccd5e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589423681852761069, guid: 07325718a65a69446b6a00e7ae4ccd5e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589423681852761069, guid: 07325718a65a69446b6a00e7ae4ccd5e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589423681852761069, guid: 07325718a65a69446b6a00e7ae4ccd5e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589423681852761069, guid: 07325718a65a69446b6a00e7ae4ccd5e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4589423681852761069, guid: 07325718a65a69446b6a00e7ae4ccd5e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9118661391159479962, guid: 07325718a65a69446b6a00e7ae4ccd5e, type: 3}
+      propertyPath: SortKey
+      value: 58298704
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 07325718a65a69446b6a00e7ae4ccd5e, type: 3}
 --- !u!1 &1303399162
 GameObject:
   m_ObjectHideFlags: 0
@@ -2234,10 +2345,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8952480835185729331, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
-      propertyPath: m_Name
-      value: TownMerchantNPC
-      objectReference: {fileID: 0}
     - target: {fileID: 3015574458341859285, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
       propertyPath: _merchantType
       value: 0
@@ -2245,6 +2352,10 @@ PrefabInstance:
     - target: {fileID: 4641527976176063025, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
       propertyPath: _promptText
       value: Comerciar (Mercader General)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8952480835185729331, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
+      propertyPath: m_Name
+      value: TownMerchantNPC
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2261,7 +2372,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 620366243544692904, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
       propertyPath: SortKey
-      value: 4043559636
+      value: 3234213009
       objectReference: {fileID: 0}
     - target: {fileID: 1616410886425643938, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2303,10 +2414,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8952480835185729331, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
-      propertyPath: m_Name
-      value: TownBlacksmithNPC
-      objectReference: {fileID: 0}
+    - target: {fileID: 2573862561549897884, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
+      propertyPath: _primarySequence
+      value: 
+      objectReference: {fileID: 11400000, guid: 4a8b7c6d5e4f3a2b1c0d9e8f7a6b5c01, type: 2}
     - target: {fileID: 3015574458341859285, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
       propertyPath: _merchantType
       value: 1
@@ -2315,10 +2426,10 @@ PrefabInstance:
       propertyPath: _promptText
       value: Comerciar (Herrero)
       objectReference: {fileID: 0}
-    - target: {fileID: 2573862561549897884, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
-      propertyPath: _primarySequence
-      value: 
-      objectReference: {fileID: 11400000, guid: 4a8b7c6d5e4f3a2b1c0d9e8f7a6b5c01, type: 2}
+    - target: {fileID: 8952480835185729331, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
+      propertyPath: m_Name
+      value: TownBlacksmithNPC
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2334,7 +2445,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 620366243544692904, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
       propertyPath: SortKey
-      value: 4043559637
+      value: 2424866383
       objectReference: {fileID: 0}
     - target: {fileID: 1616410886425643938, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2376,10 +2487,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8952480835185729331, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
-      propertyPath: m_Name
-      value: TownArcanistNPC
-      objectReference: {fileID: 0}
+    - target: {fileID: 2573862561549897884, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
+      propertyPath: _primarySequence
+      value: 
+      objectReference: {fileID: 11400000, guid: 4a8b7c6d5e4f3a2b1c0d9e8f7a6b5c02, type: 2}
     - target: {fileID: 3015574458341859285, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
       propertyPath: _merchantType
       value: 2
@@ -2388,10 +2499,10 @@ PrefabInstance:
       propertyPath: _promptText
       value: Comerciar (Arcanista)
       objectReference: {fileID: 0}
-    - target: {fileID: 2573862561549897884, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
-      propertyPath: _primarySequence
-      value: 
-      objectReference: {fileID: 11400000, guid: 4a8b7c6d5e4f3a2b1c0d9e8f7a6b5c02, type: 2}
+    - target: {fileID: 8952480835185729331, guid: 2b48446013b1f154b878ae1793dab811, type: 3}
+      propertyPath: m_Name
+      value: TownArcanistNPC
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2535,6 +2646,63 @@ Transform:
   - {fileID: 1591340984}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &2024985271
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 5.60262
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 16.15298
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7407442194074608642, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
+      propertyPath: m_Name
+      value: AudioManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
 --- !u!1 &2042887226
 GameObject:
   m_ObjectHideFlags: 0
@@ -9942,113 +10110,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c1a24a7b8d64c0d9e4f1a2b3c5d7e81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TownStashNpcInteractable
---- !u!1 &452671847
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 452671849}
-  - component: {fileID: 452671848}
-  m_Layer: 0
-  m_Name: Camera Map Bounds
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &452671848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 452671847}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2186ce20d99a91049a68c872f18c6fb0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraMapBounds
-  _worldBounds:
-    serializedVersion: 2
-    x: -18
-    y: -11
-    width: 27
-    height: 23
---- !u!4 &452671849
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 452671847}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &2024985271
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 5.60262
-      objectReference: {fileID: 0}
-    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 16.15298
-      objectReference: {fileID: 0}
-    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2497498001371744322, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7407442194074608642, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-      propertyPath: m_Name
-      value: AudioManager
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -10072,3 +10133,6 @@ SceneRoots:
   - {fileID: 1981645093}
   - {fileID: 452671849}
   - {fileID: 2024985271}
+  - {fileID: 1916949132}
+  - {fileID: 1916949130}
+  - {fileID: 1267066276}

@@ -17,15 +17,6 @@ public sealed class TownAttributeAssignmentView : MonoBehaviour
     [SerializeField] private TownStatLineView _statLineTemplate;
     [SerializeField] private TownStatLineView _noteLineTemplate;
 
-    [Header("Respec (TASK-304) — optional until the prefab is wired")]
-    [SerializeField] private Button _respecButton;
-    [SerializeField] private TMP_Text _respecCostText;
-    [SerializeField] private TMP_Text _respecMessageText;
-    [SerializeField] private GameObject _respecConfirmationPanel;
-    [SerializeField] private TMP_Text _respecConfirmationText;
-    [SerializeField] private Button _respecConfirmButton;
-    [SerializeField] private Button _respecCancelButton;
-
     private readonly List<GameObject> _spawnedLines = new();
 
     public TMP_Text AvailablePointsText => _availablePointsText;
@@ -35,9 +26,6 @@ public sealed class TownAttributeAssignmentView : MonoBehaviour
 
     public event Action<CharacterAttribute> AssignmentRequested;
     public event Action CloseRequested;
-    public event Action RespecRequested;
-    public event Action RespecConfirmed;
-    public event Action RespecCancelled;
 
     private void Awake()
     {
@@ -45,10 +33,6 @@ public sealed class TownAttributeAssignmentView : MonoBehaviour
         {
             _closeButton.onClick.AddListener(RequestClose);
         }
-
-        AddRespecListener(_respecButton, RequestRespec);
-        AddRespecListener(_respecConfirmButton, ConfirmRespec);
-        AddRespecListener(_respecCancelButton, CancelRespec);
 
         if (_rows == null)
         {
@@ -70,10 +54,6 @@ public sealed class TownAttributeAssignmentView : MonoBehaviour
         {
             _closeButton.onClick.RemoveListener(RequestClose);
         }
-
-        RemoveRespecListener(_respecButton, RequestRespec);
-        RemoveRespecListener(_respecConfirmButton, ConfirmRespec);
-        RemoveRespecListener(_respecCancelButton, CancelRespec);
 
         if (_rows == null)
         {
@@ -109,48 +89,6 @@ public sealed class TownAttributeAssignmentView : MonoBehaviour
         foreach (TownAttributeAssignmentRowView row in _rows)
         {
             row?.PresentUnavailable();
-        }
-    }
-
-    /// <summary>
-    /// Shows the respec cost, availability, confirmation and result. Every respec widget is optional, so a prefab
-    /// that does not author them keeps working and simply shows nothing.
-    /// </summary>
-    public void PresentRespec(in TownRespecPresentation presentation)
-    {
-        if (_respecCostText != null)
-        {
-            _respecCostText.text = presentation.CostText;
-        }
-
-        if (_respecButton != null)
-        {
-            _respecButton.interactable = presentation.CanRespec && !presentation.IsConfirming;
-        }
-
-        if (_respecMessageText != null)
-        {
-            _respecMessageText.text = presentation.DisplayMessage ?? string.Empty;
-        }
-
-        if (_respecConfirmationPanel != null)
-        {
-            _respecConfirmationPanel.SetActive(presentation.IsConfirming);
-        }
-
-        if (_respecConfirmationText != null)
-        {
-            _respecConfirmationText.text = presentation.ConfirmationText ?? string.Empty;
-        }
-
-        if (_respecConfirmButton != null)
-        {
-            _respecConfirmButton.interactable = presentation.IsConfirming && presentation.CanRespec;
-        }
-
-        if (_respecCancelButton != null)
-        {
-            _respecCancelButton.interactable = !presentation.IsPending;
         }
     }
 
@@ -267,23 +205,4 @@ public sealed class TownAttributeAssignmentView : MonoBehaviour
         AssignmentRequested?.Invoke(attribute);
 
     private void RequestClose() => CloseRequested?.Invoke();
-    private void RequestRespec() => RespecRequested?.Invoke();
-    private void ConfirmRespec() => RespecConfirmed?.Invoke();
-    private void CancelRespec() => RespecCancelled?.Invoke();
-
-    private static void AddRespecListener(Button button, UnityEngine.Events.UnityAction action)
-    {
-        if (button != null)
-        {
-            button.onClick.AddListener(action);
-        }
-    }
-
-    private static void RemoveRespecListener(Button button, UnityEngine.Events.UnityAction action)
-    {
-        if (button != null)
-        {
-            button.onClick.RemoveListener(action);
-        }
-    }
 }

@@ -17,11 +17,17 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
     private ApplicationStashContext _profileContext;
     private LocalProfileStore _store;
     private TownAttributeMutationEndpoint _endpoint;
-    private TownRespecSession _respecSession;
+    private TownAttributeAssignmentGate _gate;
     private TownRaidPreparationDirectory _preparationDirectory;
     private ProfileId _localProfileId;
     private PlayerInputReader _inputReader;
     private IDisposable _inputSuppression;
+
+    /// <summary>
+    /// The Ready lock and busy flags of this player's build changes, shared with the Mentor respec so the two never
+    /// run at once. Null until the presenter is bound to the confirmed local profile.
+    /// </summary>
+    public TownAttributeAssignmentGate Gate => _gate;
 
     public override void Spawned() => TryBind();
 
@@ -94,8 +100,7 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
         _localProfileId = localProfileId;
         _preparationDirectory = FindAnyObjectByType<TownRaidPreparationDirectory>();
         _endpoint = new TownAttributeMutationEndpoint(_store, CanMutate);
-        _respecSession = new TownRespecSession(_store, CreateRespecService(), CanMutate, () => _isCommitInFlight);
-        _respecSession.Changed += PresentRespec;
+        _gate = new TownAttributeAssignmentGate(CanMutate);
 
         _view = Instantiate(_viewPrefab, transform, false);
         _view.name = _viewPrefab.name;
@@ -103,9 +108,6 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
         _view.Close();
         _view.AssignmentRequested += AssignAttribute;
         _view.CloseRequested += ClosePanel;
-        _view.RespecRequested += RequestRespec;
-        _view.RespecConfirmed += ConfirmRespec;
-        _view.RespecCancelled += CancelRespec;
         if (_menu != null)
         {
             // The Town player menu owns the hotkey, Escape and the input-suppression token.
@@ -138,26 +140,6 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
             PresentStatistics,
             PresentStatisticsUnavailable,
             CanMutate);
-    }
-
-    /// <summary>
-    /// Wires the respec to the profile's remote services; without them the session reports it as unavailable
-    /// instead of guessing a cost or sending anything.
-    /// </summary>
-    private AttributeRespecService CreateRespecService()
-    {
-        var remoteService = _profileContext.GetComponent<RemoteInventoryService>();
-        if (remoteService == null)
-        {
-            return null;
-        }
-
-        var reconciliationService = _profileContext.GetComponent<ProfileReconciliationService>();
-        return new AttributeRespecService(
-            _store,
-            remoteService.RespecAsync,
-            reconciliationService != null ? reconciliationService.ReconcileAsync : null,
-            remoteService.GetRespecCostAsync);
     }
 
     /// <summary>
@@ -240,51 +222,6 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
         _presentedCanMutate = CanMutate();
         _binding?.Refresh();
         _view.Open();
-        _ = RefreshRespecCostAsync();
-    }
-
-    private async System.Threading.Tasks.Task RefreshRespecCostAsync()
-    {
-        try
-        {
-            if (_respecSession != null)
-            {
-                await _respecSession.RefreshCostAsync();
-            }
-        }
-        catch (Exception exception)
-        {
-            Debug.LogWarning($"[{nameof(TownAttributeAssignmentPresenter)}] The respec cost refresh failed: {exception.Message}", this);
-        }
-    }
-
-    private void RequestRespec() => _respecSession?.RequestRespec();
-
-    private void CancelRespec() => _respecSession?.Cancel();
-
-    private async void ConfirmRespec()
-    {
-        if (_respecSession == null)
-        {
-            return;
-        }
-
-        try
-        {
-            await _respecSession.ConfirmAsync();
-        }
-        catch (Exception exception)
-        {
-            Debug.LogError($"[{nameof(TownAttributeAssignmentPresenter)}] The respec failed unexpectedly: {exception}", this);
-        }
-    }
-
-    private void PresentRespec()
-    {
-        if (_respecSession != null)
-        {
-            _view?.PresentRespec(_respecSession.Presentation);
-        }
     }
 
     private bool TryClosePanelFromInput()
@@ -298,11 +235,11 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
         return true;
     }
 
-    private bool _isCommitInFlight = false;
-
     private async void AssignAttribute(CharacterAttribute attribute)
     {
-        if (_endpoint == null || _isCommitInFlight || (_respecSession != null && _respecSession.IsPending)) return;
+        // Another assignment or a Mentor respec in flight owns the build until the backend answers.
+        TownAttributeAssignmentGate gate = _gate;
+        if (_endpoint == null || gate == null || gate.IsAssignmentBlocked) return;
 
         if (!_endpoint.TryAssign(attribute, out _))
         {
@@ -320,8 +257,7 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
             return;
         }
 
-        _isCommitInFlight = true;
-        PresentRespec();
+        gate.IsCommitInFlight = true;
         try
         {
             var attributeName = attribute.ToString();
@@ -349,23 +285,20 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
         }
         finally
         {
-            _isCommitInFlight = false;
-            PresentRespec();
+            // The presenter may have been torn down while the backend answered; the captured gate is still ours.
+            gate.IsCommitInFlight = false;
         }
     }
 
     private void Present(TownAttributeAssignmentPresentation presentation)
     {
         _view?.Present(presentation);
-        // Gold, attributes and the Ready gate all feed the respec availability, so it follows every refresh.
-        PresentRespec();
     }
 
     private void PresentUnavailable() => _view?.PresentUnavailable();
 
     private void ClosePanel()
     {
-        _respecSession?.Cancel();
         _view?.Close();
         _inputSuppression?.Dispose();
         _inputSuppression = null;
@@ -393,13 +326,8 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
         {
             _view.AssignmentRequested -= AssignAttribute;
             _view.CloseRequested -= ClosePanel;
-            _view.RespecRequested -= RequestRespec;
-            _view.RespecConfirmed -= ConfirmRespec;
-            _view.RespecCancelled -= CancelRespec;
         }
 
-        _respecSession?.Dispose();
-        _respecSession = null;
         ClosePanel();
         if (_view != null)
         {
@@ -415,7 +343,7 @@ public sealed class TownAttributeAssignmentPresenter : NetworkBehaviour
         _profileContext = null;
         _store = null;
         _endpoint = null;
-        _respecSession = null;
+        _gate = null;
         _preparationDirectory = null;
         _localProfileId = default;
         _inputReader = null;

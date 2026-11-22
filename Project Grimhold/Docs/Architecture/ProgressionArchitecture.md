@@ -331,6 +331,33 @@ the player is No Listo, checked at the Unity mutation boundary (see
 a follow-up. The backend independently rejects Respec while an expedition reservation is pending,
 matching ability purchase.
 
+### Town flow: the Mentor NPC
+
+The Town entry point is a dedicated interactable NPC, the Mentor (provisional display name, owned
+by Game Design). The attribute panel only assigns points and carries no respec widget.
+
+- `TownRespecNpc.prefab` has a `NetworkObject`, `TownRespecNpcInteractable`, `InteractionPromptMetadata`,
+  `TownNpcDirectionalView` and a `TownNpcDialogueTrigger` with one short line. Like the other
+  Town NPCs, the interactable registers in the runner's `EntityRegistry` and its `Interact` only
+  confirms the interaction; it never changes the profile. The art is a placeholder: the modular
+  base body on the shared `TownNpcIdle` controller, with no NPC-exclusive set.
+- `TownRespecNpcPresenter` lives on `SocialPlayer` and acts only for Input Authority, because
+  `InteractionResolved` and the dialogue completion are raised on the owning client alone. After a
+  confirmed interaction and the NPC's dialogue it opens `TownRespecPanelView`: the six current
+  attributes, the points that will return to the pool, the cost (the server value `respecCost`,
+  read through the existing cost refresh when the profile does not know it yet), the block or
+  result message, and Confirmar / Cancelar with the explicit confirmation text. Opening offers the
+  confirmation straight away; a blocked state shows its reason and only Cancelar remains.
+- Confirmar sends one request through `TownRespecSession` and `AttributeRespecService`; only the
+  authoritative response reaches the profile, through `LocalProfileStore.ApplyConfirmedRespec`. The
+  rule, the endpoint and the idempotency below are unchanged by the entry point.
+- The presenter and the attribute presenter share one `TownAttributeAssignmentGate` per local
+  player: the Ready lock (`TownEquipmentMutationGate`, as every Town build change), a respec waits
+  for an attribute commit in flight, and assignment waits for a pending respec.
+- While the panel is open the presenter owns the gameplay input suppression, closes on the close
+  key, the interact key or when the player moves away, restores the NPC's facing, and keeps a
+  request that is still awaiting the backend (and its interlock) when the panel is closed.
+
 ### Rule
 
 - All six attributes become 0 (the GD minimum per attribute) and `availablePoints` becomes every
