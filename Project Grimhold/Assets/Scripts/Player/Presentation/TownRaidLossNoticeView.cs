@@ -17,12 +17,19 @@ public sealed class TownRaidLossNoticeView : MonoBehaviour
 
     public event Action ContinueRequested;
 
-    public bool IsOpen => _root != null && _root.activeSelf;
+    // Explicit state: the serialized Root may still be active before this view's Awake runs, and
+    // cross-object Awake/OnEnable order is unspecified, so activeSelf cannot mean "presented".
+    private bool _isOpen;
+
+    public bool IsOpen => _isOpen;
 
     private void Awake()
     {
         _continueButton?.onClick.AddListener(OnContinue);
-        _root?.SetActive(false);
+        if (!_isOpen)
+        {
+            _root?.SetActive(false);
+        }
     }
 
     private void OnDestroy()
@@ -44,13 +51,18 @@ public sealed class TownRaidLossNoticeView : MonoBehaviour
         _itemsText.text = string.Join("\n", presentation.Lines);
         _continueLabel.text = presentation.ContinueLabel;
         _root.SetActive(true);
+        _isOpen = true;
         if (EventSystem.current != null)
         {
             EventSystem.current.SetSelectedGameObject(_continueButton.gameObject);
         }
     }
 
-    public void Hide() => _root?.SetActive(false);
+    public void Hide()
+    {
+        _isOpen = false;
+        _root?.SetActive(false);
+    }
 
     private void OnContinue() => ContinueRequested?.Invoke();
 }

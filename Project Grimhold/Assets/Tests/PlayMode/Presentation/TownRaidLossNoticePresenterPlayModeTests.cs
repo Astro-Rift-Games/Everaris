@@ -49,6 +49,42 @@ namespace Tests.PlayMode.Presentation
         }
 
         [Test]
+        public void PresenterEnabledBeforeTheViewAwakes_DoesNotSuppressGameplayInput()
+        {
+            // Cross-object Awake/OnEnable order is unspecified: in a player build the presenter can
+            // enable while the view's Root is still in its serialized (active) state.
+            var viewPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ViewPrefabPath);
+            var inactiveParent = new GameObject("InactiveLossNoticeParent");
+            inactiveParent.SetActive(false);
+            var host = new GameObject("EarlyEnabledLossNoticePresenter");
+            try
+            {
+                GameObject viewObject = Object.Instantiate(viewPrefab, inactiveParent.transform);
+                var view = viewObject.GetComponentInChildren<TownRaidLossNoticeView>(true);
+
+                host.SetActive(false);
+                var presenter = host.AddComponent<TownRaidLossNoticePresenter>();
+                SetField(presenter, "_view", view);
+                presenter.BindInputReader(_reader);
+                host.SetActive(true);
+
+                Assert.That(view.IsOpen, Is.False, "A notice that was never presented is not open.");
+                Assert.That(_reader.IsGameplayInputSuppressed, Is.False,
+                    "Enabling before the view initializes must not hold an invisible suppression.");
+
+                inactiveParent.SetActive(true);
+
+                Assert.That(view.IsOpen, Is.False);
+                Assert.That(_reader.IsGameplayInputSuppressed, Is.False);
+            }
+            finally
+            {
+                Object.DestroyImmediate(host);
+                Object.DestroyImmediate(inactiveParent);
+            }
+        }
+
+        [Test]
         public void Show_PresentsTheNoticeAndHoldsGameplayInputSuppression()
         {
             _presenter.Show(Notice());
