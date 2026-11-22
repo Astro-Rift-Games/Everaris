@@ -1,0 +1,124 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c34b6c95b7615bc458262a9654284c28, type: 3}
+  m_Name: DefaultCollapseRiftConfig
+  m_EditorClassIdentifier: Assembly-CSharp::CollapseRiftConfig
+  _floorRiftPrefab: {fileID: 8630295271896825020, guid: 5bcbae83c2cf3464f895cc8eb006f663, type: 3}
+  _wallRiftPrefab: {fileID: 6872449143185925695, guid: bb0d81fb5d593a34bbd1e733e2e02340, type: 3}
+  _floorSpawnFrames:
+  - {fileID: 4963500370617294252, guid: 7493573fa9162d04e83ff249fc53b1c1, type: 3}
+  - {fileID: 2589474370163069979, guid: 7493573fa9162d04e83ff249fc53b1c1, type: 3}
+  - {fileID: -9178968251051785431, guid: 7493573fa9162d04e83ff249fc53b1c1, type: 3}
+  - {fileID: -788127998948621478, guid: 7493573fa9162d04e83ff249fc53b1c1, type: 3}
+  - {fileID: -3916380161417067865, guid: 7493573fa9162d04e83ff249fc53b1c1, type: 3}
+  - {fileID: -9174849955224246467, guid: 7493573fa9162d04e83ff249fc53b1c1, type: 3}
+  - {fileID: -114891740933874746, guid: 7493573fa9162d04e83ff249fc53b1c1, type: 3}
+  _floorDormantSprite: {fileID: 21300000, guid: fdd6c6b6223f9f141aa185cc6ec75134, type: 3}
+  _floorTelegraphFrames:
+  - {fileID: 641939352769459301, guid: f63b668ec1339cb48a454ab26c6425b2, type: 3}
+  - {fileID: -5228542262237531528, guid: f63b668ec1339cb48a454ab26c6425b2, type: 3}
+  - {fileID: 2327358251587737381, guid: f63b668ec1339cb48a454ab26c6425b2, type: 3}
+  - {fileID: -8764236853921410887, guid: f63b668ec1339cb48a454ab26c6425b2, type: 3}
+  - {fileID: 4056209359435468063, guid: f63b668ec1339cb48a454ab26c6425b2, type: 3}
+  - {fileID: -6226121166078725231, guid: f63b668ec1339cb48a454ab26c6425b2, type: 3}
+  - {fileID: -5770192857739794264, guid: f63b668ec1339cb48a454ab26c6425b2, type: 3}
+  _floorEruptionFrames:
+  - {fileID: 2432454825986870592, guid: 700d8fc83a06026408f10184ed4e2728, type: 3}
+  - {fileID: -5171956777050778001, guid: 700d8fc83a06026408f10184ed4e2728, type: 3}
+  - {fileID: 4715894757969551909, guid: 700d8fc83a06026408f10184ed4e2728, type: 3}
+  - {fileID: 2179778330317411956, guid: 700d8fc83a06026408f10184ed4e2728, type: 3}
+  - {fileID: -1789026854149594913, guid: 700d8fc83a06026408f10184ed4e2728, type: 3}
+  - {fileID: 2929342916613182701, guid: 700d8fc83a06026408f10184ed4e2728, type: 3}
+  - {fileID: -347855884542481950, guid: 700d8fc83a06026408f10184ed4e2728, type: 3}
+  _floorCooldownFrames:
+  - {fileID: 3157603071972287860, guid: fa3680871eeec554183736e17206d527, type: 3}
+  - {fileID: -3870895715232782610, guid: fa3680871eeec554183736e17206d527, type: 3}
+  - {fileID: 4379273225316579186, guid: fa3680871eeec554183736e17206d527, type: 3}
+  - {fileID: 4706352654764095520, guid: fa3680871eeec554183736e17206d527, type: 3}
+  - {fileID: -6092450057311830564, guid: fa3680871eeec554183736e17206d527, type: 3}
+  - {fileID: -7745863652404008867, guid: fa3680871eeec554183736e17206d527, type: 3}
+  - {fileID: 1921710846411209536, guid: fa3680871eeec554183736e17206d527, type: 3}
+  - {fileID: 320487915988697828, guid: fa3680871eeec554183736e17206d527, type: 3}
+  _floorSpawnFps: 12
+  _floorTelegraphFps: 8
+  _floorTelegraphDurationSeconds: 2
+  _floorEruptionFps: 12
+  _floorCooldownFps: 10
+  _wallSpawnFrames:
+  - {fileID: 6626637216566186322, guid: 264e38baa782fec4fbf53515ff6bd6ec, type: 3}
+  - {fileID: 2866741426995252565, guid: 264e38baa782fec4fbf53515ff6bd6ec, type: 3}
+  - {fileID: -366442981042538544, guid: 264e38baa782fec4fbf53515ff6bd6ec, type: 3}
+  - {fileID: -8262106687046876849, guid: 264e38baa782fec4fbf53515ff6bd6ec, type: 3}
+  - {fileID: 2207997721454668632, guid: 264e38baa782fec4fbf53515ff6bd6ec, type: 3}
+  - {fileID: -6838713149127453306, guid: 264e38baa782fec4fbf53515ff6bd6ec, type: 3}
+  - {fileID: 4481289680161978979, guid: 264e38baa782fec4fbf53515ff6bd6ec, type: 3}
+  _wallStage1Frames:
+  - {fileID: 21300000, guid: 71315045fb89ea14fa79248cb51a3266, type: 3}
+  _wallStage2Frames:
+  - {fileID: 7263343019827600388, guid: 0813b84606b638f4bb776a147e5ba5d6, type: 3}
+  - {fileID: 8160751170599949059, guid: 0813b84606b638f4bb776a147e5ba5d6, type: 3}
+  - {fileID: 4582899181569059550, guid: 0813b84606b638f4bb776a147e5ba5d6, type: 3}
+  - {fileID: 7424107755747323875, guid: 0813b84606b638f4bb776a147e5ba5d6, type: 3}
+  - {fileID: -5441277686479859592, guid: 0813b84606b638f4bb776a147e5ba5d6, type: 3}
+  - {fileID: -7485310785599616789, guid: 0813b84606b638f4bb776a147e5ba5d6, type: 3}
+  - {fileID: 1087088373645740031, guid: 0813b84606b638f4bb776a147e5ba5d6, type: 3}
+  _wallStage3Frames:
+  - {fileID: -5456803594052867234, guid: df6e63cb8fa975949a079b0a6577933c, type: 3}
+  - {fileID: -3843948774013853451, guid: df6e63cb8fa975949a079b0a6577933c, type: 3}
+  - {fileID: -5826066970123283382, guid: df6e63cb8fa975949a079b0a6577933c, type: 3}
+  - {fileID: 6264956966264029776, guid: df6e63cb8fa975949a079b0a6577933c, type: 3}
+  - {fileID: -2656946672155908409, guid: df6e63cb8fa975949a079b0a6577933c, type: 3}
+  - {fileID: -7409694092278572309, guid: df6e63cb8fa975949a079b0a6577933c, type: 3}
+  - {fileID: 4735349412071870057, guid: df6e63cb8fa975949a079b0a6577933c, type: 3}
+  _wallStage4Frames:
+  - {fileID: 845179311728336819, guid: 0245dff16a8d95748a77d1e00a65c952, type: 3}
+  - {fileID: -846344075793911782, guid: 0245dff16a8d95748a77d1e00a65c952, type: 3}
+  - {fileID: -7313595150087045074, guid: 0245dff16a8d95748a77d1e00a65c952, type: 3}
+  - {fileID: -3055215305329388501, guid: 0245dff16a8d95748a77d1e00a65c952, type: 3}
+  - {fileID: 4902083373015573145, guid: 0245dff16a8d95748a77d1e00a65c952, type: 3}
+  - {fileID: 7783478203963056588, guid: 0245dff16a8d95748a77d1e00a65c952, type: 3}
+  - {fileID: -3267219245684667340, guid: 0245dff16a8d95748a77d1e00a65c952, type: 3}
+  - {fileID: 802065083998500665, guid: 0245dff16a8d95748a77d1e00a65c952, type: 3}
+  _wallFrameIntervalSeconds: 0.15
+  _stage2FloorRiftCount: 90
+  _stage3FloorRiftCount: 90
+  _wallRiftCount: 80
+  _floorMarginCells: 1
+  _wallWidthCells: 2
+  _wallFaceHeightCells: 2
+  _wallHorizontalMarginCells: 1
+  _wallTopMarginCells: 1
+  _minFloorRiftSpacing: 4.5
+  _minWallRiftSpacing: 5
+  _sanctuaryExclusionRadius: 4.5
+  _wallPropExclusionRadius: 2
+  _autoTriggerFloorVisualCycles: 1
+  _stage3CycleIntervalRange: {x: 10, y: 18}
+  _stage4CycleIntervalRange: {x: 5, y: 10}
+  _riftMaterial: {fileID: 2100000, guid: 4d6af89cc2247894a895356e079ee8a7, type: 2}
+  _emissiveLightColor: {r: 0.24, g: 0.92, b: 0.78, a: 1}
+  _telegraphEmissionStrength: 1.2
+  _eruptionEmissionStrength: 2.2
+  _cooldownEmissionStrength: 0.65
+  _telegraphLightIntensity: 0.9
+  _telegraphLightRadius: 2.4
+  _eruptionLightIntensity: 1.75
+  _eruptionLightRadius: 3.6
+  _cooldownLightIntensity: 0.45
+  _cooldownLightRadius: 2
+  _enableSubtleParticles: 1
+  _floorSortingLayerName: Floor
+  _floorSortingOrder: 2
+  _wallSortingLayerName: Walls
+  _wallSortingOrder: 3
+  _particleSortingLayerName: VFX
+  _particleSortingOrder: 2

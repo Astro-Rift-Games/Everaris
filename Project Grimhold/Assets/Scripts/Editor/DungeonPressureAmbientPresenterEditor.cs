@@ -33,10 +33,12 @@ public sealed class DungeonPressureAmbientPresenterEditor : Editor
         if (GUILayout.Button("Normal", GUILayout.Height(28)))
         {
             presenter.PreviewPhase(DungeonPressurePhase.Normal);
+            presenter.GetComponent<CollapseRiftPresenter>()?.PreviewPhase(DungeonPressurePhase.Normal);
         }
         if (GUILayout.Button("Reinforcements", GUILayout.Height(28)))
         {
             presenter.PreviewPhase(DungeonPressurePhase.Reinforcements);
+            presenter.GetComponent<CollapseRiftPresenter>()?.PreviewPhase(DungeonPressurePhase.Reinforcements);
         }
         EditorGUILayout.EndHorizontal();
 
@@ -44,11 +46,13 @@ public sealed class DungeonPressureAmbientPresenterEditor : Editor
         if (GUILayout.Button("Critical Pressure", GUILayout.Height(28)))
         {
             presenter.PreviewPhase(DungeonPressurePhase.CriticalPressure);
+            presenter.GetComponent<CollapseRiftPresenter>()?.PreviewPhase(DungeonPressurePhase.CriticalPressure);
         }
         GUI.backgroundColor = new Color(1f, 0.5f, 0.5f);
         if (GUILayout.Button("Collapse", GUILayout.Height(28)))
         {
             presenter.PreviewPhase(DungeonPressurePhase.Collapse);
+            presenter.GetComponent<CollapseRiftPresenter>()?.PreviewPhase(DungeonPressurePhase.Collapse);
         }
         GUI.backgroundColor = Color.white;
         EditorGUILayout.EndHorizontal();
@@ -58,6 +62,7 @@ public sealed class DungeonPressureAmbientPresenterEditor : Editor
         if (GUILayout.Button("Clear / Reset Preview", GUILayout.Height(24)))
         {
             presenter.ClearPreview();
+            presenter.GetComponent<CollapseRiftPresenter>()?.ClearPreview();
         }
     }
 }
