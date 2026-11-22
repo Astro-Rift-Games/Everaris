@@ -4,6 +4,7 @@ const { RESPEC_GOLD_COST } = require('../config/respecConfig');
 const { receiptPush, watermarkUpdate, assertWithinRetention } = require('./ShopReceiptRetention');
 const { inventoryVersion, inventoryItems, serializePreparedEquipment } = require('./InventoryEntries');
 const { planRespecUnequip } = require('./RespecEquipment');
+const EconomyTelemetry = require('./EconomyTelemetry');
 
 const ATTRIBUTE_KEYS = Object.freeze(['vitality', 'resistance', 'strength', 'dexterity', 'intelligence', 'luck']);
 const DEFAULT_ATTRIBUTES = Object.freeze({
@@ -258,6 +259,7 @@ class ProgressionService {
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict during respec.' };
     }
 
+    EconomyTelemetry.recordRespec(updated, { cost, pointsReturned: assignedPoints });
     return respecResult(updated, { transactionId, cost, alreadySecured: false });
   }
 

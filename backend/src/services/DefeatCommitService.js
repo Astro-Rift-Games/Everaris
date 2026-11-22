@@ -12,6 +12,7 @@
 const Character = require('../models/Character');
 const AuthoritativeExtractionResult = require('../models/AuthoritativeExtractionResult');
 const { requireMigratedInventory } = require('./InventoryEntries');
+const EconomyTelemetry = require('./EconomyTelemetry');
 const {
   requireUncreditedResultReservation, uncreditedResultReservationFilter, isDefeatResult, publishedResultSequence,
 } = require('./ResultReservationBinding');
@@ -226,6 +227,12 @@ class DefeatCommitService {
 
         if (updatedCharacter) {
           secured = true;
+          // An abandon already closed (and counted) a reservation it cleared earlier.
+          if (clearsReservation) {
+            EconomyTelemetry.recordRaidClose(updatedCharacter, {
+              outcome: 'defeat', raidId, reservation: pendingReservation, experienceGranted: experienceToGrant
+            });
+          }
           return {
             alreadySecured: false,
             level: updatedCharacter.level,

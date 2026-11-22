@@ -19,6 +19,7 @@ const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
 const { serializeItems, requireMigratedInventory, inventoryVersion, receiveItem } = require('./InventoryEntries');
 const { validateResultItems, resultEquipmentToInstances, equipmentToResult } = require('./ItemInstances');
 const { returnTrainingWeapons } = require('./TrainingWeapons');
+const EconomyTelemetry = require('./EconomyTelemetry');
 const {
   requireUncreditedResultReservation, requireResultReservation,
   uncreditedResultReservationFilter, resultReservationFilter,
@@ -124,7 +125,9 @@ class ExtractionCommitService {
     const newLoadout = [];
     const version = inventoryVersion(character);
     const rewards = version === 3 ? validateResultItems(authResult.items) : normalizeItems(authResult.items);
-    for (const item of rewards) receiveItem(newLoadout, 'loadout', item, version);
+    EconomyTelemetry.trackCapacityBlock(character, 'extraction', () => {
+      for (const item of rewards) receiveItem(newLoadout, 'loadout', item, version);
+    });
     // Equipment is validated and IDs issued before claiming, just like reward capacity.
     const settledPreparedEquipment = version === 3
       ? resultEquipmentToInstances(authResult.preparedEquipment || equipmentToResult(character.inventory.pendingReservation?.preparedEquipment))
@@ -279,6 +282,14 @@ class ExtractionCommitService {
         // Revision conflict: the catch releases the claim so the client can retry cleanly
         throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict during extraction commit.' };
       }
+
+      EconomyTelemetry.recordRaidClose(updatedCharacter, {
+        outcome: 'extraction',
+        raidId,
+        reservation: character.inventory.pendingReservation,
+        extracted: EconomyTelemetry.extractedEntries(trainingReturn.loadout, newPreparedEquipment),
+        experienceGranted: authResult.experienceGranted
+      });
 
       return {
         alreadySecured:      false,
