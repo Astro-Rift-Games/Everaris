@@ -4,11 +4,11 @@
 
 Release: Unreleased
 
-344 original commits; 344 canonical entries.
+346 original commits; 346 canonical entries.
 
 ## Canonical classification
 
-118 features; 108 bug fixes; 3 refactoring; 1 architecture & infrastructure; 61 documentation; 23 tests; 11 maintenance; 19 other changes
+119 features; 108 bug fixes; 3 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -17,19 +17,151 @@ Release: Unreleased
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
 | Build & Tooling | 83 | 72 | 3 | 1 | 25 | 6 |
 | Combat | 51 | 21 | 2 | 0 | 16 | 1 |
-| Documentation | 40 | 44 | 0 | 0 | 19 | 0 |
-| Extraction | 18 | 22 | 2 | 0 | 10 | 5 |
+| Documentation | 40 | 44 | 0 | 0 | 20 | 0 |
+| Extraction | 19 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 79 | 63 | 3 | 1 | 29 | 5 |
+| Inventory & Loot | 80 | 63 | 3 | 1 | 29 | 5 |
 | Movement | 6 | 5 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 40 | 44 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 49 | 56 | 2 | 1 | 22 | 3 |
-| Tests | 113 | 102 | 3 | 1 | 34 | 4 |
+| Persistence & Backend | 50 | 56 | 2 | 1 | 22 | 3 |
+| Tests | 114 | 102 | 3 | 1 | 34 | 4 |
 | UI | 43 | 23 | 1 | 0 | 14 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 28 | 0 |
 | World & Visibility | 30 | 16 | 0 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### a418c3f02db365efa235d7d16592b65938261e36
+
+[a418c3f02db365efa235d7d16592b65938261e36](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a418c3f02db365efa235d7d16592b65938261e36)
+
+Date: 2026-11-22T01:04:41-03:00 · Classification: Documentation (explicit) · Systems: Documentation
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(architecture): document the economy telemetry contract
+```
+
+#### Original body
+
+```text
+Add EconomyTelemetryArchitecture.md with the event shape, the gold
+categories and their emitters, the post-commit and privacy rules, raid
+close rules, mongosh aggregation examples and the known gaps
+(mission_reward emitter, Unity-only MaxTransportable). Add the ODD
+execution tracker for TASK-305.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md
+odd/tasks/task-305-economy-telemetry.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Documentation: Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 3f3caedf8afe249a2ab4ab4821fba3a78ecc9ee3
+
+[3f3caedf8afe249a2ab4ab4821fba3a78ecc9ee3](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3f3caedf8afe249a2ab4ab4821fba3a78ecc9ee3)
+
+Date: 2026-11-22T01:04:41-03:00 · Classification: Features (explicit) · Systems: Extraction, Inventory & Loot, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(economy): record internal economy telemetry for playtests
+```
+
+#### Original body
+
+```text
+Confirmed economic operations now write one structured event to the
+new EconomyTelemetryEvent collection, so playtests can compute gold
+generated and spent by category, extraction rate and value lost
+(Docs 22 §§5, 10, 14 and 23 §12, TASK-305).
+
+- Events are recorded fire-and-forget after the revision-guarded
+  write succeeds. Rejected operations, idempotent replays and
+  concurrent-retry losers record nothing. A sink failure only logs
+  "[EconomyTelemetry] dropped <operation> event" and never fails or
+  rolls back the operation (at-most-once).
+- Only the Character _id is stored; account ids, usernames and tokens
+  never are (strict schema plus a field whitelist).
+- Sources: npc_sale (shopSell, shopTrade). mission_reward exists as a
+  category without an emitter until a backend claim path exists.
+- Sinks: purchase by offer type, buyback, weapon_upgrade,
+  armor_upgrade, respec. Commerce details include weekly demand bonus
+  units and gold. Upgrade details include materials and the level
+  reached.
+- raid_close summarizes extraction, defeat (only when that commit
+  cleared the reservation) and abandon (a non-rollback reservation
+  clear that held items). Each summary carries the entry profile,
+  carried, extracted and lost value, and lost items.
+- Entry profile (Naked/Budget/Geared) uses equipment replacement gold:
+  0 is Naked, 800 or more is Geared. The 800 threshold is provisional,
+  taken from the Doc 22 §10 assumptions, and is not a balance value.
+- capacity_block records INVENTORY_FULL refusals in purchase, buyback,
+  trade and extraction, then rethrows the original error.
+
+Tests: economy.telemetry, economy.telemetry.commerce,
+economy.telemetry.services, economy.telemetry.raid. Full npm test
+passes 985/985.
+```
+
+#### Changed paths
+
+```text
+backend/src/models/EconomyTelemetryEvent.js
+backend/src/services/DefeatCommitService.js
+backend/src/services/EconomyTelemetry.js
+backend/src/services/ExtractionCommitService.js
+backend/src/services/InventoryService.js
+backend/src/services/ProgressionService.js
+backend/tests/economy.telemetry.commerce.test.js
+backend/tests/economy.telemetry.raid.test.js
+backend/tests/economy.telemetry.services.test.js
+backend/tests/economy.telemetry.test.js
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Extraction: backend/src/services/ExtractionCommitService.js
+- message-term → Extraction: extraction
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- message-term → Inventory &amp; Loot: equipment
+- path → Persistence &amp; Backend: backend/src/models/EconomyTelemetryEvent.js
+- path → Persistence &amp; Backend: backend/src/services/DefeatCommitService.js
+- path → Persistence &amp; Backend: backend/src/services/EconomyTelemetry.js
+- path → Persistence &amp; Backend: backend/src/services/ExtractionCommitService.js
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/src/services/ProgressionService.js
+- path → Persistence &amp; Backend: backend/tests/economy.telemetry.commerce.test.js
+- path → Persistence &amp; Backend: backend/tests/economy.telemetry.raid.test.js
+- path → Persistence &amp; Backend: backend/tests/economy.telemetry.services.test.js
+- path → Persistence &amp; Backend: backend/tests/economy.telemetry.test.js
+- path → Tests: backend/tests/economy.telemetry.commerce.test.js
+- path → Tests: backend/tests/economy.telemetry.raid.test.js
+- path → Tests: backend/tests/economy.telemetry.services.test.js
+- path → Tests: backend/tests/economy.telemetry.test.js
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 5faad871f6db36944c265b3ba75182e967d01e3a
 

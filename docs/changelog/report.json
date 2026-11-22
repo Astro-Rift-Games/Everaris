@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1221,
-  "canonicalEntries": 1218,
+  "rawCommits": 1223,
+  "canonicalEntries": 1220,
   "before": {
-    "Features": 439,
-    "Documentation": 135,
+    "Documentation": 136,
+    "Features": 440,
     "Bug Fixes": 186,
     "Tests": 47,
     "Other Changes": 374,
@@ -12,8 +12,8 @@
     "Architecture & Infrastructure": 24
   },
   "after": {
-    "Features": 578,
-    "Documentation": 151,
+    "Documentation": 152,
+    "Features": 579,
     "Bug Fixes": 202,
     "Tests": 52,
     "Refactoring": 29,
@@ -23,27 +23,27 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Documentation": 447,
+    "Extraction": 177,
+    "Inventory & Loot": 497,
+    "Persistence & Backend": 319,
+    "Tests": 779,
     "Networking & Sessions": 361,
     "Build & Tooling": 631,
-    "Documentation": 446,
-    "Tests": 778,
-    "Persistence & Backend": 318,
     "Abilities": 142,
-    "Inventory & Loot": 496,
     "Combat": 407,
     "Unassigned": 47,
     "World & Visibility": 171,
     "Art & Animation": 263,
     "UI": 353,
-    "Extraction": 176,
     "Audio": 42,
     "Movement": 102,
     "Input": 32
   },
   "canonical": {
     "sections": {
-      "Features": 577,
-      "Documentation": 151,
+      "Documentation": 152,
+      "Features": 578,
       "Bug Fixes": 201,
       "Tests": 52,
       "Refactoring": 29,
@@ -52,19 +52,19 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Documentation": 445,
+      "Extraction": 177,
+      "Inventory & Loot": 497,
+      "Persistence & Backend": 319,
+      "Tests": 777,
       "Networking & Sessions": 361,
       "Build & Tooling": 629,
-      "Documentation": 444,
-      "Tests": 776,
-      "Persistence & Backend": 318,
       "Abilities": 140,
-      "Inventory & Loot": 496,
       "Combat": 405,
       "Unassigned": 47,
       "World & Visibility": 169,
       "Art & Animation": 260,
       "UI": 352,
-      "Extraction": 176,
       "Audio": 42,
       "Movement": 102,
       "Input": 32
@@ -74437,8 +74437,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 344,
-      "canonicalEntries": 344
+      "originalCommits": 346,
+      "canonicalEntries": 346
     },
     {
       "key": "v0.5.0",
@@ -74482,6 +74482,179 @@
     }
   ],
   "commits": [
+    {
+      "sha": "a418c3f02db365efa235d7d16592b65938261e36",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a418c3f02db365efa235d7d16592b65938261e36",
+      "subject": "docs(architecture): document the economy telemetry contract",
+      "body": "Add EconomyTelemetryArchitecture.md with the event shape, the gold\ncategories and their emitters, the post-commit and privacy rules, raid\nclose rules, mongosh aggregation examples and the known gaps\n(mission_reward emitter, Unity-only MaxTransportable). Add the ODD\nexecution tracker for TASK-305.\n",
+      "date": "2026-11-22T01:04:41-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md",
+        "odd/tasks/task-305-economy-telemetry.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "architecture",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Documentation"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "3f3caedf8afe249a2ab4ab4821fba3a78ecc9ee3",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3f3caedf8afe249a2ab4ab4821fba3a78ecc9ee3",
+      "subject": "feat(economy): record internal economy telemetry for playtests",
+      "body": "Confirmed economic operations now write one structured event to the\nnew EconomyTelemetryEvent collection, so playtests can compute gold\ngenerated and spent by category, extraction rate and value lost\n(Docs 22 §§5, 10, 14 and 23 §12, TASK-305).\n\n- Events are recorded fire-and-forget after the revision-guarded\n  write succeeds. Rejected operations, idempotent replays and\n  concurrent-retry losers record nothing. A sink failure only logs\n  \"[EconomyTelemetry] dropped <operation> event\" and never fails or\n  rolls back the operation (at-most-once).\n- Only the Character _id is stored; account ids, usernames and tokens\n  never are (strict schema plus a field whitelist).\n- Sources: npc_sale (shopSell, shopTrade). mission_reward exists as a\n  category without an emitter until a backend claim path exists.\n- Sinks: purchase by offer type, buyback, weapon_upgrade,\n  armor_upgrade, respec. Commerce details include weekly demand bonus\n  units and gold. Upgrade details include materials and the level\n  reached.\n- raid_close summarizes extraction, defeat (only when that commit\n  cleared the reservation) and abandon (a non-rollback reservation\n  clear that held items). Each summary carries the entry profile,\n  carried, extracted and lost value, and lost items.\n- Entry profile (Naked/Budget/Geared) uses equipment replacement gold:\n  0 is Naked, 800 or more is Geared. The 800 threshold is provisional,\n  taken from the Doc 22 §10 assumptions, and is not a balance value.\n- capacity_block records INVENTORY_FULL refusals in purchase, buyback,\n  trade and extraction, then rethrows the original error.\n\nTests: economy.telemetry, economy.telemetry.commerce,\neconomy.telemetry.services, economy.telemetry.raid. Full npm test\npasses 985/985.\n",
+      "date": "2026-11-22T01:04:41-03:00",
+      "files": [
+        "backend/src/models/EconomyTelemetryEvent.js",
+        "backend/src/services/DefeatCommitService.js",
+        "backend/src/services/EconomyTelemetry.js",
+        "backend/src/services/ExtractionCommitService.js",
+        "backend/src/services/InventoryService.js",
+        "backend/src/services/ProgressionService.js",
+        "backend/tests/economy.telemetry.commerce.test.js",
+        "backend/tests/economy.telemetry.raid.test.js",
+        "backend/tests/economy.telemetry.services.test.js",
+        "backend/tests/economy.telemetry.test.js"
+      ],
+      "originalType": "feat",
+      "originalScope": "economy",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ExtractionCommitService.js",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/EconomyTelemetryEvent.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/DefeatCommitService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/EconomyTelemetry.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ExtractionCommitService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ProgressionService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/economy.telemetry.commerce.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/economy.telemetry.raid.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/economy.telemetry.services.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/economy.telemetry.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/economy.telemetry.commerce.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/economy.telemetry.raid.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/economy.telemetry.services.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/economy.telemetry.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "5faad871f6db36944c265b3ba75182e967d01e3a",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/5faad871f6db36944c265b3ba75182e967d01e3a",
