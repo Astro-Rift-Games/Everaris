@@ -16,10 +16,12 @@ containers or corpses. This document is the technical contract for that split.
 | In scope | Out of scope |
 | --- | --- |
 | Every equipment item (Weapon, Shield, Helmet, Armor, Gloves, Boots) is an instance | Instances for Resource, Treasure, Consumable, Utility |
-| Weapon modifiers: optional primary/secondary scaling, 0-2 gem sockets | Modifiers on shields or armor pieces |
+| Weapon modifiers: optional primary/secondary scaling, 0-2 gem sockets | Modifiers on shields |
+| Armor modifier: `upgradeLevel` 0-3 only (§4.4) | Any other armor modifier |
 | Town-only gem incrustation ("Incrustar gema") | Gem removal/extraction, artisan NPCs (GD-25) |
+| NPC equipment upgrades: backend (§5.1, TASK-302) and Unity flow (§5.2, TASK-303) | B/A/S NPC upgrades; armor level carried through the Raid (follow-up) |
 | Raid transport of modifiers, extraction re-issue | Server-side Raid registry, signed host results |
-| Buy-back disabled for equipment | Buy-back redesign (Game Design follow-up) |
+| Equipment buy-back keeps the instance (§4.3) | Buy-back redesign (Game Design follow-up) |
 
 TASK-278 L20/L22 supersedes the `arming_sword` recovery fallback: there is no automatic weapon
 grant or auto-equip at Ready/launch (GD Doc 04 §13 / Doc 09 §15). The Trainer provides the chosen
@@ -33,7 +35,9 @@ weapons count, and reservation/admission retain that exact selection and its mod
 EquipmentInstance
   instanceId   backend-issued opaque id (24 lowercase hex, Mongo ObjectId)   Town/backend only
   lootId       immutable Template reference
-  modifiers    WeaponInstanceModifiers (weapons only; absent for shields/armor)
+  modifiers    WeaponInstanceModifiers (weapons) or { upgradeLevel 0..3 } (armor pieces, §4.4);
+               absent for shields and plain (+0) armor. Unity: EquipmentInstance.Modifiers /
+               EquipmentInstance.ArmorUpgradeLevel
                  primary   { attribute, grade E..S } | none
                  secondary { attribute, grade E..S } | none
                  gemSocketCount 0..2
@@ -113,17 +117,43 @@ An explicit one-time script, following `scripts/migrate_inventory_slots.js`:
 | Split | Equipment rejects `409 INSTANCE_NOT_SPLITTABLE` |
 | Equip / unequip | The entry (with its instance) moves between the list and `preparedEquipment`; equip requires `instanceId` |
 | Buy | Each purchased equipment unit is a new plain instance |
-| Sell | Every equipment instance is sellable, even for 0; price = Template sell value + sell value of each installed gem (*provisional*) |
-| Buy-back | Disabled for equipment: sales push no ledger entry; `isBuybackEligible` returns false; a pre-migration equipment entry rejects `409 BUYBACK_NOT_ELIGIBLE` |
+| Sell | Every equipment instance is sellable, even for 0; unit price = ObjectValue of the instance + sell value of each installed gem (see "Equipment price" below). Implemented in TASK-302 (`applyShopSale`). |
+| Buy-back | Doc 23 §8.3 shared buyback applies to equipment: the entry keeps its instance; price = `ceil(received × 1.5)` (see "Equipment price" below) |
 | Reservation / admission | Reserved entries keep their instances in `pendingReservation` and the admission snapshot |
 | Gem incrustation | §5 |
+| NPC upgrade | §5.1 |
+
+**Equipment price (TASK-302, Doc 23 §7/§9.3).** Doc 23 §7: "Jugador vende al NPC | ObjectValue × 1,0 | floor";
+"Jugador recompra su objeto | Oro efectivamente recibido al vender × 1,5 | ceil"; "El ObjectValue de la
+instancia incluye sus modificaciones y gemas conforme a GD-09; no se recalcula retroactivamente el precio
+de una recompra ya registrada." ObjectValue of an instance (`ItemUpgrades.objectValue`) is:
+
+| Component | Bonus |
+| --- | --- |
+| Template value | `sellValue` of the Template |
+| Weapon primary scaling | E +20, D +35, C +50 (cumulative from the base, replacing the previous grade's bonus) |
+| First gem socket | +60 |
+| Armor `upgradeLevel` | +1 → +15, +2 → +35, +3 → +60 (cumulative, replacing the previous level's bonus) |
+
+The sale unit price adds the sell value of each installed gem. Example: a MagicSword with base 125,
+primary scaling C and one socket is worth 125 + 50 + 60 = 235. Buy-back is frozen at
+`ceil(received × 1.5)` of the gold actually paid at sale and is not recomputed afterwards.
+Bonuses for B/A/S scaling and for a second socket are GD-09 and are not defined yet; they add 0.
 
 ### 4.4 Plain instances
 
 A plain instance (purchase, migration, fallback) has no gems and no sockets. Its primary scaling is
 the grade equal to the Template's legacy `WeaponOffensiveScaling` coefficient; a zero coefficient
 means no scaling. All current weapon Templates have coefficient 0, so plain weapons keep their
-current damage. Shields and armor have no modifiers.
+current damage. Shields carry no modifiers.
+
+Armor pieces (Helmet, Armor, Gloves, Boots) may carry `modifiers: { upgradeLevel: 0..3 }` and no other
+key; an absent `modifiers` means +0, so plain armor and existing instances stay valid (`validModifiers`
+rejects any other key or an out-of-range, non-integer level). Final defense is computed by Unity from
+the `ArmorDefinition` base values (Doc 23 §9.2): `floor(base × (1 + 0.05 / 0.10 / 0.15))` for +1/+2/+3.
+The bonus is cumulative over the base (not compounded) and applies to physical and magical defense
+separately. The backend owns the level and the formula (`ItemUpgrades.upgradedDefense`); the base
+defense lives only in Unity.
 
 ## 5. Town gem incrustation
 
@@ -159,6 +189,83 @@ Replays with the same `transactionId` return the stored outcome (shop receipt pa
 it remote-first: the UI asks for confirmation ("¿Incrustar {gema} en {arma}? Es permanente."), shows
 pending state, and applies the returned snapshot; it never mutates locally first. Unity's pure
 `WeaponInstanceModifiers.TryInstallGem` mirrors the rules for previews and tests.
+
+### 5.1 NPC equipment upgrades (TASK-302)
+
+Backend contract for the Town NPC upgrade services of Doc 23 §9 (weapon primary scaling, first gem
+socket, armor +0 → +3). The Unity flow is §5.2.
+
+`POST /character/me/inventory/upgrades` (schema v3 only)
+
+```text
+{ transactionId, expectedRevision, merchant, operation, instanceId, location, slot }
+```
+
+- `merchant`: `blacksmith` (physical weapons and all armor) or `arcanist` (magical weapons). Physical
+  weapons are the rotation pool plus `zweihander` and `long_bow`, which are upgradable but never offered in
+  the weekly rotation (`UPGRADE_ONLY_PHYSICAL_WEAPONS`).
+- `operation`: `primary_scaling` (none → E → D → C), `first_socket` (one empty socket, only if the
+  weapon has none; never installs or removes gems) or `armor_level` (next level up to +3).
+- `location`: `loadout` (the Inventory list) or `equipment` (prepared equipment); `slot` is the
+  Inventory slot number or the equipment slot name. The instance must match `instanceId`. Items in
+  the Stash are not addressable.
+- Gold and materials come from persistent currency and the Inventory only; Stash materials are never
+  read. Costs follow the Doc 23 §9.1/§9.2 step tables (each armor row is the transition from the
+  previous level; the basic material depends on the armor family).
+- Location, `instanceId` and every other property of the instance are preserved; only `modifiers`
+  change.
+
+One revision-guarded `findOneAndUpdate` (no Mongo transactions) writes the Inventory, prepared
+equipment, currency, `revision + 1` and an `upgrade` shop receipt together; any rejection mutates
+nothing. A replay with the same `transactionId` and intent returns the stored outcome with
+`alreadySecured: true`; the same id with another intent rejects `TRANSACTION_ID_REUSED`.
+
+Response: the shop snapshot plus
+
+```text
+upgrade { operation, location, slot, lootId, instance, gold, materials, objectValue }, alreadySecured
+```
+
+| Rejection | Code |
+| --- | --- |
+| Malformed body | `400 VALIDATION_FAILED` |
+| Location does not hold the instance | `409 INSTANCE_MISMATCH` |
+| Item does not support the operation | `422 UPGRADE_NOT_ELIGIBLE` |
+| Wrong NPC for the item | `422 UPGRADE_WRONG_MERCHANT` |
+| Already at the NPC limit (C weapon scaling, armor +3) | `409 UPGRADE_LIMIT_REACHED` |
+| Primary scaling B, A or S (the NPC never modifies it) | `409 UPGRADE_GRADE_LOCKED` |
+| Weapon already has a socket | `409 UPGRADE_SOCKET_EXISTS` |
+| Not enough gold | `409 INSUFFICIENT_FUNDS` |
+| Materials missing from the Inventory | `409 INSUFFICIENT_MATERIALS` |
+| `transactionId` reused with another intent | `409 TRANSACTION_ID_REUSED` |
+| Revision changed | `409 REVISION_CONFLICT` |
+| Raid reservation pending | `409 RESERVATION_PENDING` |
+| Pre-v3 inventory | `409 INVENTORY_MIGRATION_REQUIRED` |
+| Timestamped transaction id older than the receipt watermark | `409 TRANSACTION_RETENTION_EXCEEDED` |
+| No character for the account | `404 CHARACTER_NOT_FOUND` |
+
+The C / +3 limit is the MVP value (Doc 23 §9.1, `WeaponNpcMaxScaling`). Limits come from the step
+tables in `ItemUpgrades.js`, so extending the NPC to S means adding rows, not changing the contract.
+
+### 5.2 Unity upgrade flow (TASK-303)
+
+- **Armor shape.** `WeaponInstanceModifiersData` also carries the armor shape `{ upgradeLevel }`
+  (`IsArmorShape`); weapon JSON is unchanged (`upgradeLevel` omitted, `ShouldSerialize*` keeps the weapon
+  keys). v3 hydration, the local cache codec and the publish body round-trip the level
+  (`EquipmentInstance.ArmorUpgradeLevel`). Raid admission validates the armor shape but does **not**
+  carry the level into the Raid yet: an upgraded armor taken to a Raid returns +0 after extraction
+  (follow-up; the Raid network word is weapon-only).
+- **Defense.** `ArmorUpgradeDefense.Apply` is the single Unity formula (§4.4); the Town character sheet
+  (`TownCharacterStatisticsBuilder`) applies it per piece. The Raid avatar still uses +0.
+- **Preview.** `NpcUpgradeRules` mirrors `ItemUpgrades.js` for previews only (eligibility incl.
+  upgrade-only `zweihander`/`long_bow`, step costs, Inventory-only materials, limits). The backend stays
+  authoritative; `backend/tests/item.upgrades.parity.test.js` keeps the tables in parity.
+- **Confirm.** `TownUpgradeSession` builds one request with a `ShopTransactionId`, confirms once through
+  `StashTransferCoordinator` (shared Town queue and `RemoteInventoryService` lock) and
+  `LocalProfileStore.ApplyConfirmedUpgrade` applies the response snapshot (gold, lists and prepared
+  equipment) behind a revision guard, so an equipped item keeps its slot. Every non-success code that does
+  not prove "nothing was applied" rereads the backend once and is never resent; messages follow the
+  outcome status, then the backend code. UI: `CommerceArchitecture.md` §Mejoras tab.
 
 ## 6. Unity runtime
 

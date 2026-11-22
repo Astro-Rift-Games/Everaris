@@ -164,7 +164,8 @@ test('v3 instance public HTTP/service contract', async t => {
   for (const gems of [[], ['RES_RUBY_GEM'], ['RES_RUBY_GEM', 'RES_SAPPHIRE_GEM']]) await t.test(`sell accepts weapon with ${gems.length} gems and creates buyback`, async () => {
     stored.inventory.loadout = [unit(8, 'arming_sword', 1, { gemSocketCount: gems.length, gems })];
     const sold = await Inventory.shopSell(accountId, 'arming_sword', 1, 99999, 4, 'sell', 8);
-    const unitSellValue = 60 + gems.length * 70;
+    // ObjectValue (Doc 23 §7, §9.3, TASK-302): base 60, +60 once the weapon has a socket, plus installed gems.
+    const unitSellValue = 60 + (gems.length > 0 ? 60 : 0) + gems.length * 70;
     assert.equal(sold.currency, 500 + unitSellValue);
     assert.equal(sold.buyback.entries.length, 1);
     assert.equal(sold.buyback.entries[0].unitPrice, Math.ceil(unitSellValue * 1.5));

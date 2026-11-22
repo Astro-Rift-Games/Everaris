@@ -35,6 +35,15 @@ namespace Grimhold.Backend
 
         public static string Encode<T>(T body)
         {
+            if (body is UpgradeItemRequest upgrade)
+                return new JObject
+                {
+                    ["transactionId"] = upgrade.transactionId, ["expectedRevision"] = upgrade.expectedRevision,
+                    ["merchant"] = upgrade.merchant, ["operation"] = upgrade.operation, ["instanceId"] = upgrade.instanceId,
+                    ["location"] = upgrade.location,
+                    ["slot"] = upgrade.location == UpgradeItemRequest.EquipmentLocation
+                        ? PreparedEquipmentJsonConverter.Name(upgrade.equipmentSlot) : (JToken)upgrade.loadoutSlot
+                }.ToString(Formatting.None);
             if (body is InstallGemRequest install)
                 return new JObject
                 {
@@ -175,6 +184,8 @@ namespace Grimhold.Backend
 
         private static JObject ModifiersJson(WeaponInstanceModifiersData modifiers)
         {
+            // Armor pieces carry only their level (ItemInstanceArchitecture §4.4).
+            if (modifiers.IsArmorShape) return new JObject { ["upgradeLevel"] = modifiers.upgradeLevel.Value };
             var json = new JObject();
             if (modifiers.primary != null) json["primary"] = ScalingJson(modifiers.primary);
             if (modifiers.secondary != null) json["secondary"] = ScalingJson(modifiers.secondary);

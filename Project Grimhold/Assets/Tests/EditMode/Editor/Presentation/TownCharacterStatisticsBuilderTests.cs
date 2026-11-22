@@ -97,6 +97,27 @@ namespace Tests.EditMode.Presentation
         }
 
         [Test]
+        public void TryBuild_UpgradedArmorInstances_UseFlooredUpgradedDefensePerPiece()
+        {
+            // TASK-303 S7 / Doc 23 §9.2: DefensaFinal = floor(DefensaBase × (1 + 5/10/15 %)) per piece.
+            Register("helm", CreateArmorLoot("Helm", LootCategory.Helmet, 40, 1, MaximumResourceType.Health, 1));
+            Register("armor", CreateArmorLoot("Armor", LootCategory.Armor, 30, 2, MaximumResourceType.Health, 1));
+            Register("gloves", CreateArmorLoot("Gloves", LootCategory.Gloves, 20, 3, MaximumResourceType.Health, 1));
+            Register("boots", CreateArmorLoot("Boots", LootCategory.Boots, 10, 4, MaximumResourceType.Health, 1));
+            var loadout = new PreparedEquipmentLoadout(
+                    default, default,
+                    new LootId("helm"), new LootId("armor"), new LootId("gloves"), new LootId("boots"))
+                .With(EquipmentSlot.Helmet, new LootId("helm"), new EquipmentInstance(null, null, 1))
+                .With(EquipmentSlot.Armor, new LootId("armor"), new EquipmentInstance(null, null, 3));
+
+            TownCharacterStatisticsPresentation result = Build(Attributes(), loadout);
+
+            Assert.That(result.PhysicalDefense, Is.EqualTo(42 + 34 + 20 + 10));
+            Assert.That(result.MagicalDefense, Is.EqualTo(1 + 2 + 3 + 4));
+            Assert.That(result.MaximumHealth.FromEquipment, Is.EqualTo(4), "upgrades change defense only");
+        }
+
+        [Test]
         public void TryBuild_ZeroDefense_HasZeroMitigation()
         {
             TownCharacterStatisticsPresentation result = Build(Attributes(), default);

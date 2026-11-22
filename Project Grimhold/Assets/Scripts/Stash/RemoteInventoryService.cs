@@ -6,8 +6,26 @@ using Grimhold.Backend;
 /// Handles backend synchronization for the stash/loadout inventory system.
 /// Intended to be called by Presenters before applying local state changes.
 /// </summary>
-public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, ISlotRemoteInventoryService, IRemoteGemInstallService, IRemoteBulkTransferService
+public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, ISlotRemoteInventoryService, IRemoteGemInstallService, IRemoteBulkTransferService, IRemoteUpgradeService
 {
+    /// <summary>Serialized with every other inventory mutation; the coordinator applies the snapshot atomically.</summary>
+    public async Task<(bool success, UpgradeItemResult data, BackendError error)> UpgradeItemAsync(UpgradeItemRequest request)
+    {
+        if (string.IsNullOrEmpty(AuthToken))
+            return (false, default, new BackendError { error = "UNAUTHORIZED" });
+        await _mutationLock.WaitAsync();
+        try
+        {
+            if (_store == null || _store.InventorySchemaVersion != 3 || _store.RequiresEquipmentHydration)
+                return (false, default, new BackendError { error = "INVENTORY_MIGRATION_REQUIRED" });
+            var result = await InventoryClient.UpgradeItemAsync(_backendConfig, AuthToken, request);
+            if (!result.success && result.error.error == BackendErrorUtility.Unauthorized)
+                ApplicationAuthContext.Instance?.HandleUnauthorizedSession();
+            return result;
+        }
+        finally { _mutationLock.Release(); }
+    }
+
     public async Task<(bool success, MoveItemResult data, BackendError error)> InstallGemAsync(InstallGemRequest request)
     {
         if (string.IsNullOrEmpty(AuthToken))

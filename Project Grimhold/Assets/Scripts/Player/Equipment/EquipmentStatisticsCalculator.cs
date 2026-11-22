@@ -1,11 +1,23 @@
 /// <summary>Pure full-state projection from equipped armor definitions to effective modifiers.</summary>
 public static class EquipmentStatisticsCalculator
 {
+    /// <summary>Plain (+0) pieces; kept for callers without instance data (Raid avatar, TASK-303 L6).</summary>
     public static bool TryCalculate(
         ArmorDefinition helmet,
         ArmorDefinition armor,
         ArmorDefinition gloves,
         ArmorDefinition boots,
+        out EquipmentStatisticsModifiers modifiers,
+        out EquipmentStatisticsCalculationFailure failure) =>
+        TryCalculate(new ArmorPieceStatistics(helmet), new ArmorPieceStatistics(armor), new ArmorPieceStatistics(gloves),
+            new ArmorPieceStatistics(boots), out modifiers, out failure);
+
+    /// <summary>Upgraded pieces contribute floor(base × (1 + bonus)) defense each (Doc 23 §9.2).</summary>
+    public static bool TryCalculate(
+        in ArmorPieceStatistics helmet,
+        in ArmorPieceStatistics armor,
+        in ArmorPieceStatistics gloves,
+        in ArmorPieceStatistics boots,
         out EquipmentStatisticsModifiers modifiers,
         out EquipmentStatisticsCalculationFailure failure)
     {
@@ -78,7 +90,7 @@ public static class EquipmentStatisticsCalculator
     }
 
     private static bool TryAccumulate(
-        ArmorDefinition definition,
+        in ArmorPieceStatistics piece,
         ref long physicalDefense,
         ref long magicalDefense,
         ref long maximumHealthModifier,
@@ -88,19 +100,20 @@ public static class EquipmentStatisticsCalculator
         out EquipmentStatisticsCalculationFailure failure)
     {
         failure = EquipmentStatisticsCalculationFailure.None;
+        ArmorDefinition definition = piece.Definition;
         if (definition == null)
         {
             return true;
         }
 
-        if (!definition.TryValidate(out _))
+        if (!definition.TryValidate(out _) || piece.UpgradeLevel < 0 || piece.UpgradeLevel > EquipmentInstance.MaxArmorUpgradeLevel)
         {
             failure = EquipmentStatisticsCalculationFailure.InvalidArmorDefinition;
             return false;
         }
 
-        physicalDefense += definition.PhysicalDefense;
-        magicalDefense += definition.MagicalDefense;
+        physicalDefense += ArmorUpgradeDefense.Apply(definition.PhysicalDefense, piece.UpgradeLevel);
+        magicalDefense += ArmorUpgradeDefense.Apply(definition.MagicalDefense, piece.UpgradeLevel);
         knockbackResistance += definition.KnockbackResistance;
 
         MaximumResourceModifier resourceModifier = definition.MaximumResourceModifier;

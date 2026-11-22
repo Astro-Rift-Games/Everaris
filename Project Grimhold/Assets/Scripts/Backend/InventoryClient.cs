@@ -39,6 +39,17 @@ namespace Grimhold.Backend
                 $"{config.BaseUrl}/character/me/inventory/gems/install", body);
         }
 
+        /// <summary>One Town NPC upgrade (TASK-302/303); callers confirm first and apply only the returned snapshot.</summary>
+        public static Task<(bool success, UpgradeItemResult data, BackendError error)> UpgradeItemAsync(
+            BackendConfiguration config, string token, UpgradeItemRequest body)
+        {
+            if (!EquipmentInstance.IsValidId(body.instanceId))
+                return Task.FromResult((false, default(UpgradeItemResult), new BackendError
+                    { error = "INSTANCE_MISMATCH", message = "A backend-issued equipment instance is required." }));
+            return PostJson<UpgradeItemRequest, UpgradeItemResult>(config, token,
+                $"{config.BaseUrl}/character/me/inventory/upgrades", body);
+        }
+
         public static Task<(bool success, MoveItemResult data, BackendError error)> OrderSlotsAsync(
             BackendConfiguration config, string token, InventorySlotOrderRequest body) =>
             PutJson<InventorySlotOrderRequest, MoveItemResult>(config, token,

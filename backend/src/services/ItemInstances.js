@@ -9,6 +9,9 @@ const { isTrainingWeapon } = require('./TrainingWeapons');
 const ATTRIBUTES = Object.freeze(['vitality', 'resistance', 'strength', 'dexterity', 'intelligence', 'luck']);
 const GRADE_COEFFICIENTS = Object.freeze({ E: 0.25, D: 0.40, C: 0.55, B: 0.70, A: 0.85, S: 1 });
 const INSTANCE_ID = /^[a-f0-9]{24}$/;
+// Wearable armor pieces (Doc 23 §6.2); shields are not armor and carry no modifiers.
+const ARMOR_CATEGORIES = Object.freeze(['Helmet', 'Armor', 'Gloves', 'Boots']);
+const ARMOR_MAX_UPGRADE_LEVEL = 3;
 const plainObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const onlyKeys = (value, keys) => plainObject(value) && Object.keys(value).every(key => keys.includes(key));
 const plain = value => typeof value?.toObject === 'function' ? value.toObject() : value;
@@ -25,6 +28,11 @@ function validScaling(value) {
 function validModifiers(lootId, modifiers) {
   const template = getEquipmentTemplate(lootId);
   if (modifiers === undefined) return true;
+  // Doc 23 §9.2: armor carries only its +0..+3 upgrade level.
+  if (ARMOR_CATEGORIES.includes(template?.category)) {
+    return onlyKeys(modifiers, ['upgradeLevel']) && Number.isInteger(modifiers.upgradeLevel) &&
+      modifiers.upgradeLevel >= 0 && modifiers.upgradeLevel <= ARMOR_MAX_UPGRADE_LEVEL;
+  }
   if (template?.category !== 'Weapon' || !onlyKeys(modifiers, ['primary', 'secondary', 'gemSocketCount', 'gems'])) return false;
   // Doc 09 §15: training weapons have fixed damage and never carry attribute scaling.
   if (isTrainingWeapon(lootId) && (modifiers.primary !== undefined || modifiers.secondary !== undefined)) return false;
@@ -121,6 +129,6 @@ function equipmentToResult(equipment) {
   }));
 }
 
-module.exports = { ATTRIBUTES, INSTANCE_ID, validModifiers, validInstance, validItem, validEquipment, validInventory,
+module.exports = { ATTRIBUTES, INSTANCE_ID, ARMOR_CATEGORIES, ARMOR_MAX_UPGRADE_LEVEL, validModifiers, validInstance, validItem, validEquipment, validInventory,
   invalidInventory, createInstance, createEquipment, plainModifiers, validateResultItems, validateResultEquipment,
   resultEquipmentToInstances, equipmentToResult };

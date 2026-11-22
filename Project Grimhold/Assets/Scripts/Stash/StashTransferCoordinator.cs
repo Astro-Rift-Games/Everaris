@@ -171,6 +171,49 @@ public sealed class StashTransferCoordinator
             }
         });
 
+    /// <summary>Town NPC upgrade on the shared queue; a rejection never mutates local state and is never retried here.</summary>
+    public Task<StashTransferOutcome> UpgradeItemAsync(Grimhold.Backend.UpgradeItemRequest request, LocalProfileStore store) =>
+        RunExclusiveAsync(async () =>
+        {
+            if (store == null || store.ProfileId != _profileId || !store.IsAvailable ||
+                store.InventorySchemaVersion != 3 || store.RequiresEquipmentHydration)
+                return StashTransferOutcome.RemoteFailed(null, "INVENTORY_MIGRATION_REQUIRED");
+            if (store.PendingReservation != null)
+                return StashTransferOutcome.RemoteFailed(null, "RESERVATION_PENDING");
+            if (store.RemoteRevision != request.expectedRevision)
+                return StashTransferOutcome.RemoteFailed(null, "REVISION_CONFLICT");
+            if (!(_remote is IRemoteUpgradeService remote)) return StashTransferOutcome.Unavailable();
+            try
+            {
+                var result = await remote.UpgradeItemAsync(request);
+                if (!result.success)
+                {
+                    string code = result.error.error;
+                    // Even an error response may follow a committed upgrade (timeout, lost or unreadable body,
+                    // revision race): only a code proving nothing was applied skips the backend reread.
+                    if (UpgradeRejectionProvesNoMutation(code)) return StashTransferOutcome.RemoteFailed(result.error.message, code);
+                    return await ReconcileAsync()
+                        ? StashTransferOutcome.RemoteFailed(result.error.message, code)
+                        : StashTransferOutcome.RecoveryFailed(StashOperationResult.Success, result.error.message, code);
+                }
+                return await ApplyLocalAsync(store.ApplyConfirmedUpgrade(result.data, request.expectedRevision));
+            }
+            catch (Exception)
+            {
+                return await ReconcileAsync()
+                    ? StashTransferOutcome.RemoteFailed(null, "REMOTE_RESULT_UNKNOWN")
+                    : StashTransferOutcome.RecoveryFailed(StashOperationResult.Success, null, "REMOTE_RESULT_UNKNOWN");
+            }
+        });
+
+    private static bool UpgradeRejectionProvesNoMutation(string code) => code switch
+    {
+        "UNAUTHORIZED" or "VALIDATION_FAILED" or "INSUFFICIENT_FUNDS" or "INSUFFICIENT_MATERIALS" or
+        "UPGRADE_NOT_ELIGIBLE" or "UPGRADE_WRONG_MERCHANT" or "UPGRADE_LIMIT_REACHED" or "UPGRADE_GRADE_LOCKED" or
+        "UPGRADE_SOCKET_EXISTS" or "RESERVATION_PENDING" or "INVENTORY_MIGRATION_REQUIRED" => true,
+        _ => false
+    };
+
     private static bool SupportsSlots(int schema) => schema == 2 || schema == 3;
 
     private async Task<StashTransferOutcome> RunExclusiveAsync(Func<Task<StashTransferOutcome>> operation)

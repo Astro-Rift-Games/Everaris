@@ -29,6 +29,8 @@ public sealed class TownMerchantPresenter : NetworkBehaviour
     private PlayerInputReader _inputReader;
     private TownMerchantProfileSource _profile;
     private TownMerchantTradeSession _session;
+    private TownUpgradeSession _upgrade;
+    private TownUpgradePresentation _upgradePresentation;
 
     /// <summary>Supplies the confirmed local profile. Rebinding closes any open session.</summary>
     public void BindProfile(TownMerchantProfileSource profile)
@@ -220,9 +222,19 @@ public sealed class TownMerchantPresenter : NetworkBehaviour
             SubmissionTimeoutSeconds,
             buybackLedger: profile.BuybackLedger,
             buybackService: profile.BuybackService,
-            canMutateBuild: profile.CanMutateBuild);
+            // Trades also wait for an upgrade in flight; both share the confirmed profile.
+            canMutateBuild: () => (profile.CanMutateBuild?.Invoke() ?? true) && _upgrade?.IsPending != true);
         _session.TradeCompleted += shopUI.PresentResult;
         shopUI.Bind(_session);
+
+        if (merchant.MerchantType != TownMerchantType.General && profile.SupportsUpgrades)
+        {
+            TownMerchantTradeSession trade = _session;
+            _upgrade = new TownUpgradeSession(profile.Store, profile.TransferCoordinator, profile.LootCatalog,
+                merchant.MerchantType, profile.CanMutateBuild, () => trade.IsSubmissionInFlight);
+            _upgradePresentation = new TownUpgradePresentation(_upgrade, profile.LootCatalog);
+        }
+        shopUI.BindUpgrades(_upgradePresentation);
         shopUI.OnCloseRequested.AddListener(ClosePanelFromUI);
 
         _openNpc = npc;
@@ -295,6 +307,10 @@ public sealed class TownMerchantPresenter : NetworkBehaviour
     {
         _session?.Dispose();
         _session = null;
+        _upgradePresentation?.Dispose();
+        _upgradePresentation = null;
+        _upgrade?.Dispose();
+        _upgrade = null;
 
         if (_view != null && _view.ShopUI != null)
         {

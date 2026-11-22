@@ -11,7 +11,8 @@ namespace Grimhold.Backend
         public static EquipmentInstanceData FromInstance(EquipmentInstance instance) => instance == null ? null : new()
         {
             instanceId = instance.InstanceId,
-            modifiers = instance.Modifiers.HasValue ? WeaponInstanceModifiersData.FromModifiers(instance.Modifiers.Value) : null
+            modifiers = instance.Modifiers.HasValue ? WeaponInstanceModifiersData.FromModifiers(instance.Modifiers.Value)
+                : WeaponInstanceModifiersData.FromArmorLevel(instance.ArmorUpgradeLevel)
         };
 
         public bool TryToInstance(LootDefinition definition, bool requireIdentity, out EquipmentInstance instance, out string error, LootDefinitionCatalog catalog = null)
@@ -21,9 +22,15 @@ namespace Grimhold.Backend
             if (!EquipmentInstance.IsEquipment(definition) ||
                 (requireIdentity ? !EquipmentInstance.IsValidId(instanceId) : !string.IsNullOrEmpty(instanceId) && !EquipmentInstance.IsValidId(instanceId))) return false;
             WeaponInstanceModifiers? value = null;
-            if (modifiers != null)
+            int armorLevel = 0;
+            if (modifiers != null && EquipmentInstance.IsArmorPiece(definition))
             {
-                if (definition.Category != LootCategory.Weapon || definition.WeaponDefinition == null ||
+                if (!modifiers.TryToArmorLevel(out armorLevel, out error)) return false;
+            }
+            else if (modifiers != null)
+            {
+                if (modifiers.IsArmorShape ||
+                    definition.Category != LootCategory.Weapon || definition.WeaponDefinition == null ||
                     !modifiers.TryToModifiers(definition.WeaponDefinition.NaturalScalingAttribute, out var parsed, out error)) return false;
                 if (catalog != null)
                     foreach (string gem in modifiers.gems)
@@ -31,8 +38,29 @@ namespace Grimhold.Backend
                         { error = "Installed gem is not a catalog gem."; return false; }
                 value = parsed;
             }
-            instance = new EquipmentInstance(instanceId, value);
+            instance = new EquipmentInstance(instanceId, value, armorLevel);
             error = null;
+            return true;
+        }
+
+        /// <summary>Transport shape only (no template): weapon modifiers or an armor level, never both.</summary>
+        public static bool TryToTransportInstance(string instanceId, WeaponInstanceModifiersData modifiers,
+            out EquipmentInstance instance, out string error)
+        {
+            instance = null;
+            error = null;
+            WeaponInstanceModifiers? weapon = null;
+            int armorLevel = 0;
+            if (modifiers != null && modifiers.IsArmorShape)
+            {
+                if (!modifiers.TryToArmorLevel(out armorLevel, out error)) return false;
+            }
+            else if (modifiers != null)
+            {
+                if (!modifiers.TryToTransportModifiers(out var parsed, out error)) return false;
+                weapon = parsed;
+            }
+            instance = new EquipmentInstance(instanceId, weapon, armorLevel);
             return true;
         }
     }
@@ -60,6 +88,10 @@ namespace Grimhold.Backend
         { attribute = value.Attribute.ToString().ToLowerInvariant(), grade = value.Grade.ToString() };
     }
 
+    /// <summary>
+    /// Wire <c>modifiers</c> of one equipment instance: the weapon shape, or <c>{ upgradeLevel }</c> alone for armor
+    /// pieces (ItemInstanceArchitecture §4.4). <c>upgradeLevel</c> is omitted for weapons so their JSON is unchanged.
+    /// </summary>
     [Serializable]
     public sealed class WeaponInstanceModifiersData
     {
@@ -68,10 +100,36 @@ namespace Grimhold.Backend
         public int gemSocketCount;
         public string[] gems;
 
+        [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? upgradeLevel;
+
+        [Newtonsoft.Json.JsonIgnore]
+        public bool IsArmorShape => upgradeLevel.HasValue;
+
+        public bool ShouldSerializeprimary() => !IsArmorShape;
+        public bool ShouldSerializesecondary() => !IsArmorShape;
+        public bool ShouldSerializegemSocketCount() => !IsArmorShape;
+        public bool ShouldSerializegems() => !IsArmorShape;
+
+        /// <summary>Armor shape: exactly <c>{ upgradeLevel: 0..3 }</c>, no weapon key.</summary>
+        public bool TryToArmorLevel(out int level, out string error)
+        {
+            level = 0;
+            error = "Invalid armor upgrade modifiers.";
+            if (!upgradeLevel.HasValue || upgradeLevel < 0 || upgradeLevel > EquipmentInstance.MaxArmorUpgradeLevel ||
+                primary != null || secondary != null || gemSocketCount != 0 || gems != null) return false;
+            level = upgradeLevel.Value;
+            error = null;
+            return true;
+        }
+
+        public static WeaponInstanceModifiersData FromArmorLevel(int level) => level > 0 ? new() { upgradeLevel = level } : null;
+
         public bool TryToModifiers(CharacterAttribute naturalAttribute, out WeaponInstanceModifiers value, out string error)
         {
             value = default;
             error = "Invalid weapon modifier sockets.";
+            if (IsArmorShape) return false;
             WeaponScalingModifier first = default, second = default;
             if (primary != null && !primary.TryToModifier(out first, out error) ||
                 secondary != null && !secondary.TryToModifier(out second, out error)) return false;

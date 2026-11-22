@@ -1116,6 +1116,29 @@ public sealed class LocalProfileStore : IMissionClaimService
     }
 
     /// <summary>
+    /// Applies an upgrade's authoritative snapshot (TASK-303): gold, both lists and prepared equipment come from
+    /// the response, so an equipped upgraded instance keeps its slot with its new modifiers. Unlike the gem path,
+    /// local prepared equipment is never copied because the upgrade may have changed an equipped instance.
+    /// </summary>
+    public StashOperationResult ApplyConfirmedUpgrade(Grimhold.Backend.UpgradeItemResult result, int expectedRevision)
+    {
+        lock (_sync)
+        {
+            var current = _repository.Snapshot;
+            if (!IsAvailable || current == null || current.RemoteRevision != expectedRevision ||
+                current.InventorySchemaVersion != 3 || current.RequiresEquipmentHydration ||
+                current.PendingReservation != null || current.PendingExtractionCommit != null ||
+                result.stash == null || result.loadout == null || result.revision <= expectedRevision)
+                return StashOperationResult.InvalidInventory;
+            return ReconcileRemoteState(new Grimhold.Backend.InventoryData
+            {
+                inventorySchemaVersion = 3, stash = result.stash, loadout = result.loadout,
+                revision = result.revision, currency = result.currency, preparedEquipment = result.preparedEquipment
+            }, null, _lootCatalog, _abilityCatalog);
+        }
+    }
+
+    /// <summary>
     /// Applies the bulk transfer endpoint's authoritative lists through the hydration transaction: one
     /// commit, local state equal to the backend result. The revision must advance because a bulk that
     /// moved nothing writes nothing and is never applied.
