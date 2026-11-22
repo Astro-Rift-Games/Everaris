@@ -28,6 +28,7 @@ const { inventoryVersion, copyEntry, serializeItems, requireMigratedInventory,
 const { TRAINING_WEAPONS, isTrainingWeapon } = require('./TrainingWeapons');
 const { validatePreparedAbilities } = require('./PreparedAbilityValidation');
 const { receiptPush, watermarkUpdate, assertWithinRetention } = require('./ShopReceiptRetention');
+const EconomyTelemetry = require('./EconomyTelemetry');
 const { pendingLootResultFilter } = require('./ResultReservationBinding');
 const { getWeeklyRotation, isAllowedByMerchant, getMerchantOffers } = require('./CommerceRotationService');
 
@@ -255,7 +256,8 @@ function applyShopSale(loadout, version, lootId, amount, sourceSlot, weeklyDeman
   if (!Number.isSafeInteger(revenue)) throw { statusCode: 400, errorCode: 'INTEGER_OVERFLOW', message: 'Calculated transaction value causes integer overflow.' };
   if (source.amount === amount) loadout.splice(index, 1);
   else source.amount -= amount;
-  return { revenue, buybackEntry: isBuybackEligible(lootId, version) ? {
+  const sale = { lootId, amount, revenue, demandBonus: isDemand, demandBonusGold: (baseSellValue - listedValue) * amount };
+  return { revenue, sale, buybackEntry: isBuybackEligible(lootId, version) ? {
     entryId: randomUUID(), lootId, amount, unitPrice: Math.ceil(unitSellValue * BUYBACK_PRICE_MULTIPLIER),
     ...(version === 3 && source?.instance ? { instance: copyEntry(source.instance) } : {}),
     soldAt: new Date()
@@ -402,17 +404,23 @@ class InventoryService {
 
     const loadout = inventoryItems(character, 'loadout');
     const newBuybackEntries = [];
+    const telemetry = { sales: [], purchases: [], buybacks: [], merchant: intent.merchant };
     let revenue = 0; let cost = 0;
 
     // Process sales (fund cart)
     for (const line of intent.sales) {
       const sale = applyShopSale(loadout, version, line.lootId, line.amount, line.sourceSlot, currentWeek.demandItems);
       revenue = safeTradeTotal(revenue + sale.revenue);
+      telemetry.sales.push(sale.sale);
       if (sale.buybackEntry) newBuybackEntries.push(sale.buybackEntry);
     }
 
     // Process purchases
-    for (const line of intent.purchases) cost = safeTradeTotal(cost + shopPurchaseCost(line.lootId, line.amount));
+    for (const line of intent.purchases) {
+      const lineCost = shopPurchaseCost(line.lootId, line.amount);
+      cost = safeTradeTotal(cost + lineCost);
+      telemetry.purchases.push({ lootId: line.lootId, amount: line.amount, cost: lineCost });
+    }
 
     // Process buybacks
     const existingBuybacks = character.inventory.buyback?.entries ? [...character.inventory.buyback.entries] : [];
@@ -426,8 +434,10 @@ class InventoryService {
       if (line.amount > entry.amount) throw { statusCode: 409, errorCode: 'INSUFFICIENT_BUYBACK_UNITS', message: 'Not enough units in this sale line.' };
       const buybackCost = safeTradeTotal(entry.unitPrice * line.amount);
       cost = safeTradeTotal(cost + buybackCost);
+      telemetry.buybacks.push({ lootId: entry.lootId, amount: line.amount, cost: buybackCost });
 
-      receiveItem(loadout, 'loadout', { lootId: entry.lootId, amount: line.amount, ...(entry.instance ? { instance: copyEntry(entry.instance) } : {}) }, version);
+      EconomyTelemetry.trackCapacityBlock(character, 'trade', () => receiveItem(loadout, 'loadout',
+        { lootId: entry.lootId, amount: line.amount, ...(entry.instance ? { instance: copyEntry(entry.instance) } : {}) }, version));
 
       if (line.amount === entry.amount) {
         existingBuybacks.splice(entryIndex, 1);
@@ -446,7 +456,8 @@ class InventoryService {
         const existing = loadout.find(item => matchesLootId(item, line.lootId));
         if (existing) safeTradeTotal(existing.amount + line.amount);
       }
-      receiveItem(loadout, 'loadout', { lootId: line.lootId, amount: line.amount }, version);
+      EconomyTelemetry.trackCapacityBlock(character, 'trade',
+        () => receiveItem(loadout, 'loadout', { lootId: line.lootId, amount: line.amount }, version));
     }
 
     const combinedBuybackEntries = [...existingBuybacks, ...newBuybackEntries];
@@ -475,6 +486,7 @@ class InventoryService {
       if (latest?.inventory?.pendingReservation) throw { statusCode: 409, errorCode: 'RESERVATION_PENDING', message: 'Cannot trade while a raid reservation is pending.' };
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict during shop trade.' };
     }
+    EconomyTelemetry.recordCommerce(updated, 'trade', telemetry);
     return { ...shopSnapshot(updated), alreadySecured: false };
   }
 
@@ -569,6 +581,8 @@ class InventoryService {
       if (latest) rejectPendingReservation(latest, 'Cannot upgrade equipment while a raid reservation is pending.');
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict during equipment upgrade.' };
     }
+    EconomyTelemetry.recordUpgrade(updated, { merchant, upgradeOperation: operation, lootId: target.lootId, gold: plan.gold,
+      materials: plan.materials, modifiers: target.instance.modifiers, objectValueAfter: outcome.objectValue });
     return { ...shopSnapshot(updated), upgrade: outcome, alreadySecured: false };
   }
 
@@ -1333,6 +1347,7 @@ class InventoryService {
       if (character.inventory.pendingReservation.reservationId !== expectedReservationId)
         throw { statusCode: 409, errorCode: 'RESERVATION_MISMATCH', message: 'A different reservation is active.' };
     }
+    const reservation = character.inventory.pendingReservation;
     const setFields = { 'inventory.pendingReservation': null };
     if (rollback && character.inventory.pendingReservation) {
       restoreReservation(character);
@@ -1354,6 +1369,10 @@ class InventoryService {
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Internal revision conflict clearing reservation.' };
     }
 
+    // A rollback restores ownership (a refund, not an expedition); only a loss closes the raid as abandoned.
+    if (!rollback && reservation) {
+      EconomyTelemetry.recordRaidClose(updated, { outcome: 'abandon', raidId: reservation.raidId, reservation });
+    }
     return { pendingReservation: null, revision: updated.revision };
   }
 
@@ -1516,7 +1535,7 @@ class InventoryService {
     }
 
     const loadout = character.inventory.loadout;
-    const { revenue: authoritativeRevenue, buybackEntry } = applyShopSale(loadout, version, lootId, amount, sourceSlot);
+    const { revenue: authoritativeRevenue, sale, buybackEntry } = applyShopSale(loadout, version, lootId, amount, sourceSlot);
     const buybackPush = buybackEntry ? {
       'inventory.buyback.entries': { $each: [buybackEntry], $slice: -BUYBACK_MAX_ENTRIES }
     } : {};
@@ -1543,6 +1562,7 @@ class InventoryService {
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict during shop sale.' };
     }
 
+    EconomyTelemetry.recordCommerce(updated, 'sell', { sales: [sale] });
     return shopSnapshot(updated);
   }
 
@@ -1616,7 +1636,7 @@ class InventoryService {
     }
 
     const loadout = character.inventory.loadout;
-    receiveItem(loadout, 'loadout', { lootId, amount }, version);
+    EconomyTelemetry.trackCapacityBlock(character, 'purchase', () => receiveItem(loadout, 'loadout', { lootId, amount }, version));
 
     const updated = await Character.findOneAndUpdate(
       { accountId, revision: expectedRevision, 'inventory.pendingReservation': null, 'inventory.currency': { $gte: authoritativeCost } },
@@ -1639,6 +1659,7 @@ class InventoryService {
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict or insufficient funds during shop purchase.' };
     }
 
+    EconomyTelemetry.recordCommerce(updated, 'buy', { purchases: [{ lootId, amount, cost: authoritativeCost }] });
     return shopSnapshot(updated);
   }
   /** Rebuys a sale line at its frozen price, within the current Town epoch. */
@@ -1676,7 +1697,8 @@ class InventoryService {
     if ((character.inventory.currency || 0) < cost) throw { statusCode: 409, errorCode: 'INSUFFICIENT_FUNDS', message: 'Not enough currency.' };
     if (version === 1) assertUnambiguousItems(character.inventory.loadout, [entry.lootId]);
     const loadout = inventoryItems(character, 'loadout');
-    receiveItem(loadout, 'loadout', { lootId: entry.lootId, amount, ...(entry.instance ? { instance: copyEntry(entry.instance) } : {}) }, version);
+    EconomyTelemetry.trackCapacityBlock(character, 'buyback', () => receiveItem(loadout, 'loadout',
+      { lootId: entry.lootId, amount, ...(entry.instance ? { instance: copyEntry(entry.instance) } : {}) }, version));
     const entryUpdate = amount === entry.amount
       ? { $pull: { 'inventory.buyback.entries': { entryId } } }
       : {};
@@ -1700,6 +1722,7 @@ class InventoryService {
       if (latest?.inventory?.pendingReservation) throw { statusCode: 409, errorCode: 'RESERVATION_PENDING', message: 'Cannot trade while a raid reservation is pending.' };
       throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict during buyback.' };
     }
+    EconomyTelemetry.recordCommerce(updated, 'buyback', { buybacks: [{ lootId: entry.lootId, amount, cost }] });
     return shopSnapshot(updated);
   }
 
