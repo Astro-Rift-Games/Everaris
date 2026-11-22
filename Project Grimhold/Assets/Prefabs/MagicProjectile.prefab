@@ -14,12 +14,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2559617404340566004, guid: b68349702bdcbb84f9aed456ed6b035c, type: 3}
       propertyPath: NetworkedBehaviours.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -2559617404340566004, guid: b68349702bdcbb84f9aed456ed6b035c, type: 3}
       propertyPath: 'NetworkedBehaviours.Array.data[2]'
       value: 
       objectReference: {fileID: 4032333432539657141}
+    - target: {fileID: -2559617404340566004, guid: b68349702bdcbb84f9aed456ed6b035c, type: 3}
+      propertyPath: 'NetworkedBehaviours.Array.data[3]'
+      value: 
+      objectReference: {fileID: 5573573527499165958}
     - target: {fileID: 1448790307140610847, guid: b68349702bdcbb84f9aed456ed6b035c, type: 3}
       propertyPath: m_Controller
       value: 
@@ -106,6 +110,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2215579267790226133, guid: b68349702bdcbb84f9aed456ed6b035c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4045727444426775393}
+    - targetCorrespondingSourceObject: {fileID: 2215579267790226133, guid: b68349702bdcbb84f9aed456ed6b035c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5573573527499165958}
   m_SourcePrefab: {fileID: 100100000, guid: b68349702bdcbb84f9aed456ed6b035c, type: 3}
 --- !u!212 &5712039789280583533 stripped
 SpriteRenderer:
@@ -152,4 +159,18 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 5712039789280583533}
   _animator: {fileID: 8132966200834926835}
   _tintPalette: {fileID: 0}
-  _trailDetacher: {fileID: 0}
+  _trailDetacher: {fileID: 5573573527499165958}
+--- !u!114 &5573573527499165958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8825484248396349753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07b53e2c284daca4db5c6cbc23d4d444, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileTrailDetacher
+  _trails: []
+  _particles: []

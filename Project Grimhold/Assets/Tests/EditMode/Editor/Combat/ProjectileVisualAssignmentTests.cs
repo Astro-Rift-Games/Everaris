@@ -9,6 +9,7 @@ namespace Tests.EditMode.Combat
     public sealed class ProjectileVisualAssignmentTests
     {
         private const string Definitions = "Assets/Scriptable Objects/Loot/Definitions/";
+        private const string MagicVfx = "Assets/Prefabs/VFX/Magic/";
         private const string Art = "Assets/Art/Projectiles/New/";
         private const string Catalog = "Assets/Scriptable Objects/Loot/Catalogs/LootDefinitionCatalog.asset";
 
@@ -17,7 +18,7 @@ namespace Tests.EditMode.Combat
         [TestCase("MagicStaff", "MagicMissile")]
         [TestCase("MagicWand", "MagicDart-V1")]
         [TestCase("TrainingWand", "MagicDart-V2")]
-        public void Weapon_UsesAssignedPrecoloredSpriteOnlyProfile(string weapon, string art)
+        public void Weapon_UsesAssignedPrecoloredSpriteProfile_OnlyMagicAddsTrailImpactAndFizzle(string weapon, string art)
         {
             var definition = AssetDatabase.LoadAssetAtPath<WeaponDefinition>(Definitions + weapon + "WeaponDefinition.asset");
             Assert.That(definition, Is.Not.Null);
@@ -29,9 +30,13 @@ namespace Tests.EditMode.Combat
             Assert.That(profile.UseDamageTypeTint, Is.False);
             Assert.That(profile.OverrideTint, Is.False);
             Assert.That(profile.Tint, Is.EqualTo(Color.white));
-            Assert.That(profile.TrailPrefab, Is.Null);
-            Assert.That(profile.ImpactParticles, Is.Null);
-            Assert.That(profile.FizzleParticles, Is.Null);
+            bool magic = weapon is "MagicStaff" or "MagicWand" or "TrainingWand";
+            Assert.That(AssetDatabase.GetAssetPath(profile.TrailPrefab),
+                Is.EqualTo(magic ? MagicVfx + "MagicProjectileTrail.prefab" : string.Empty));
+            Assert.That(AssetDatabase.GetAssetPath(profile.ImpactParticles),
+                Is.EqualTo(magic ? MagicVfx + "MagicProjectileImpact.prefab" : string.Empty));
+            Assert.That(AssetDatabase.GetAssetPath(profile.FizzleParticles),
+                Is.EqualTo(magic ? MagicVfx + "MagicProjectileFizzle.prefab" : string.Empty));
         }
 
         [Test]

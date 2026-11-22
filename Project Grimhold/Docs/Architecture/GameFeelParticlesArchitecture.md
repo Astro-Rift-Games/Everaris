@@ -86,17 +86,32 @@ Límite residual: un daño independiente que llegue dentro de la ventana con una
 
 EditMode cubre validación, catálogo/pesos, muestreo (punto, dirección, cantidad, tamaño y vida), reutilización/limpieza del emisor y absorción anterior/posterior/caducada/de un uso. PlayMode comprueba el release/RPC equipado y el impacto ranged etiquetado con perfiles opcionales, sin hitstop, además del filtrado/deduplicado en Render, múltiples contactos y limpieza al despawn sin cambiar Health. La cobertura de presentación de proyectiles distingue impacto, expiración/fizzle, estelas y teardown; las fuentes sin etiqueta conservan el feedback genérico. La aprobación estética, lectura Light/Medium/Heavy y verificación Host + clientes/proxies reales siguen siendo manuales; los tests de un runner no prueban esos casos visuales multijugador.
 
-#### M7 wiring — asignación y comprobaciones pendientes
+#### Cableado de armas mágicas y comprobaciones pendientes
 
-- [ ] Asignar `WeaponDefinition.ProjectileVisual`; añadir `ProjectileVisualProfilePresenter` a la raíz del proyectil con catálogo, SpriteRenderer/Animator hijos explícitos, paleta opcional y `ProjectileTrailDetacher`. Asignar aparte la paleta del presenter de impacto por defecto. Las estelas deben ser solo visuales.
-- [ ] Comprobar override de controller/sprite (sin Animator de flecha sobrescribiéndolo), tintes, sustitución sin doble impacto/fizzle, colisión con personaje/pared, expiración y limpieza de estelas en Host/Client.
-- [ ] Asignar `Presentation.WindupChargeVfx` / `ReleaseBurstParticles`; comprobar punta, profundidad, rampa .25→1, Staff tensado ×1.5, cancelación/resume y ambas manos. Falta una aserción dedicada de pose de ráfaga thrust; verificarla visualmente junto al slash.
-- [ ] Asignar `AttackVfxTintPalette.asset` a `_impactTintPalette` del controlador y `_tintPalette` del feedback; comprobar prioridad del color de objetivo, magia violeta, kill y reutilización del pool.
-- [ ] Dejar ranged `Presentation.ImpactParticles` vacío para un burst de proyectil único, o aceptar explícitamente el apilado local. Comprobar capas visibles en atacante, víctima y proxies; la coalescencia genérica sigue siendo local.
-- [ ] Asignar Charge/Cast opcionales en audio; comprobar corte por mano, resume silencioso, fallback Shoot y Attack > Hit (Block sin cambios); véase el contrato de audio en Player Combat.
+Asignado (2026-11-22), con prefabs procedurales en `Assets/Prefabs/VFX/Magic/` que usan el material `Sprite-Unlit-Default` (cuadrados sin textura) y no requieren arte nuevo:
+
+- `MagicStaff`, `MagicWand` y `TrainingWand`: `Presentation.WindupChargeVfx` (`Scriptable Objects/Combat/WindupCharge/`, prefab `MagicWindupCharge`) y, en sus `ProjectileVisualProfile`, estela (`MagicProjectileTrail`), impacto (`MagicProjectileImpact`) y fizzle (`MagicProjectileFizzle`). Los perfiles de flecha siguen siendo solo sprite.
+- `MagicSword` y `MagicCinquedea`: `Presentation.ReleaseBurstParticles` (`MagicSwordReleaseBurst`, `MagicCinquedeaReleaseBurst`).
+- `MagicProjectile.prefab`: `ProjectileTrailDetacher` añadido a la raíz, registrado en `NetworkedBehaviours` y asignado al `ProjectileVisualProfilePresenter`. El prefab lo comparten arcos y ballesta; sin estela en su perfil el detacher no hace nada.
+- `AttackVfxTintPalette.asset` asignada a `PlayerCombatNetworkController._impactTintPalette` y a `CombatFeedbackPresenter._tintPalette`.
+
+Pendiente:
+
+- [ ] Aprobación estética en juego de tamaños, cantidades, ritmo e intensidad de luz de los prefabs mágicos.
+- [ ] Comprobar en Host/Client: carga en la punta (rampa, Staff tensado ×1.5, cancelación/resume), estela y su desprendimiento, impacto en personaje/pared, fizzle, ráfaga de slash/thrust, prioridad del color de objetivo, números violeta y kill.
+- [ ] Falta una aserción dedicada de pose de ráfaga thrust; verificarla visualmente junto al slash.
+- [ ] Audio mágico (`Charge`/`Cast`): en curso por separado; véase el contrato de audio en Player Combat.
 - [ ] Validar migración real con proyectiles en vuelo (Host y al menos dos Clients): etiquetas conservadas, fallback genérico sin errores y ningún fizzle/estela desprendida por teardown.
 
-No se introducen assets nuevos ni predicción cliente del ataque o del proyectil. El cableado y la aprobación estética siguen pendientes; estos campos opcionales no implican assets ya asignados.
+### Luz de efectos mágicos
+
+`ParticleDrivenLight2D` (con la función pura `ParticleLightLevel`) es un componente solo visual que acompaña a un `Light2D` dentro de un prefab de efecto: la luz arranca apagada, sube mientras el `ParticleSystem` asignado está emitiendo y baja cuando deja de emitir, con duraciones de fade serializadas. La intensidad autorada del `Light2D` es su pico. No posee estado de gameplay ni de red.
+
+- Carga: se enciende mientras dura la carga y se apaga al soltar o cancelar, porque el presenter detiene la emisión.
+- Estela: viaja con el proyectil; al desprenderse, `ProjectileTrailDetacher` detiene la emisión y la luz se apaga antes de destruirse la raíz.
+- Impacto, fizzle y ráfaga: destello breve mientras dura la emisión del burst.
+
+Las luces copian la configuración de `DungeonLightProp` (blend style, capas objetivo y sombras) y son visibles para todos los peers, igual que las partículas. La niebla de visión es un overlay sin iluminación (véase `VisibilityArchitecture.md`), así que estas luces no revelan zonas fuera de visión. Límite conocido: el tinte por tipo de daño se aplica a las partículas, no al color de la luz, que es el autorado en el prefab.
 
 Véase también [PlayerCombatArchitecture — Weapon impact particles](PlayerCombatArchitecture.md#weapon-impact-particles).
 

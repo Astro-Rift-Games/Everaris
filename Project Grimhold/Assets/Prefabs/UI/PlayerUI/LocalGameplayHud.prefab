@@ -2232,6 +2232,8 @@ MonoBehaviour:
   _promptText: {fileID: 7300000000000000043}
   _feedbackRoot: {fileID: 1187550265258275415}
   _feedbackText: {fileID: 1187550265258275412}
+  _progressBarRoot: {fileID: 0}
+  _progressBarFill: {fileID: 0}
   _feedbackDuration: 1.25
   _attemptPulseDuration: 0.15
   _rejectionColor: {r: 1, g: 0.35, b: 0.2, a: 1}
@@ -2434,6 +2436,9 @@ MonoBehaviour:
   _cooldownIconRoot: {fileID: 1290212109944746942}
   _impactDuration: 0.55
   _impactRisePixels: 42
+  _tintPalette: {fileID: 11400000, guid: ec00a93cd0f51c24bafd34583843ecfc, type: 2}
+  _killColor: {r: 1, g: 0.75, b: 0.2, a: 1}
+  _killScaleMultiplier: 1.35
   _cooldownPulseDuration: 0.18
   _cooldownPulseScale: 1.12
 --- !u!1 &1187550265258275415

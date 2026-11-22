@@ -44,7 +44,7 @@ MonoBehaviour:
       _duration: 0
     _hitReaction: {fileID: 0}
     _impactParticles: {fileID: 0}
-    _windupChargeVfx: {fileID: 0}
+    _windupChargeVfx: {fileID: 11400000, guid: d8985a5bd132a11439b9b4ff64792fa9, type: 2}
     _releaseBurstParticles: {fileID: 0}
     _stanceOffset: {x: 0, y: 0}
     _gripPoint: {x: 0, y: -0.5}

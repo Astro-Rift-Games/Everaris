@@ -58,6 +58,12 @@ namespace Tests.EditMode.Player.Presentation
                     chargeField.objectReferenceValue = profile;
                 burstField.objectReferenceValue = particles;
             }
+            else
+            {
+                // The shipped weapon assets now carry charge/burst data; the unconfigured rig clears its clone.
+                chargeField.objectReferenceValue = null;
+                burstField.objectReferenceValue = null;
+            }
             data.ApplyModifiedPropertiesWithoutUndo();
             state.AttackWeapon = loot;
             state.Equipment[EquipmentSlot.WeaponSetAMainHand] = loot;
