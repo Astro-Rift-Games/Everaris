@@ -249,7 +249,13 @@ public sealed class TownTrainerView : MonoBehaviour
         _scrim = scrimObj;
 
         // 2. Main modal panel
-        _panelRoot = new GameObject("TrainerPanel", typeof(RectTransform), typeof(Image));
+        // Built at runtime, so it adds the open/close transition that the other Town panels carry on their prefabs.
+        _panelRoot = new GameObject(
+            "TrainerPanel",
+            typeof(RectTransform),
+            typeof(Image),
+            typeof(CanvasGroup),
+            typeof(UiPanelTransition));
         _panelRoot.transform.SetParent(transform, false);
         RectTransform panelRect = _panelRoot.GetComponent<RectTransform>();
         panelRect.anchorMin = new Vector2(0.5f, 0.5f);
