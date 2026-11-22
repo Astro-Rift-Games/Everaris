@@ -34,10 +34,7 @@ public sealed class TownNpcDirectionalView : MonoBehaviour
     public void FaceTarget(Vector3 targetPosition)
     {
         Vector2 direction = targetPosition - transform.position;
-        CharacterVisualDirection facing = CharacterVisualDirectionResolver.Resolve(
-            direction,
-            CharacterVisualDirectionResolver.GetCanonicalVector(_initialFacing));
-        SetFacing(facing);
+        SetFacing(TownNpcFacingResolver.Resolve(direction, CurrentFacing));
     }
 
     public void RestoreInitialFacing()

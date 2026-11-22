@@ -48,7 +48,7 @@ public sealed class TownRespecNpcPrefabTests
         CircleCollider2D trigger = prefab.GetComponent<CircleCollider2D>();
         Assert.That(trigger, Is.Not.Null);
         Assert.That(trigger.isTrigger, Is.True);
-        Assert.That(trigger.radius, Is.EqualTo(1f));
+        Assert.That(trigger.radius, Is.EqualTo(0.6f), "about one body wide, like every Town NPC");
     }
 
     [Test]
@@ -177,7 +177,9 @@ public sealed class TownRespecNpcPrefabTests
                 Physics2D.SyncTransforms();
                 foreach (Collider2D solid in scene.GetRootGameObjects()
                              .SelectMany(root => root.GetComponentsInChildren<Collider2D>(true))
-                             .Where(collider => !collider.isTrigger && collider.enabled && collider.gameObject != mentor))
+                             // The Mentor's own solid footprint (its MovementBlocker child) is not an obstacle to itself.
+                             .Where(collider => !collider.isTrigger && collider.enabled &&
+                                                !collider.transform.IsChildOf(mentor.transform)))
                 {
                     Assert.That(footprint.Distance(solid).isOverlapped, Is.False,
                         $"the Mentor stands inside the solid '{solid.name}'");
