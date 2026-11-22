@@ -1,35 +1,35 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1229,
-  "canonicalEntries": 1226,
+  "rawCommits": 1230,
+  "canonicalEntries": 1227,
   "before": {
+    "Refactoring": 17,
     "Features": 444,
     "Bug Fixes": 188,
     "Documentation": 136,
     "Tests": 47,
     "Other Changes": 374,
-    "Refactoring": 16,
     "Architecture & Infrastructure": 24
   },
   "after": {
+    "Refactoring": 30,
     "Features": 583,
     "Bug Fixes": 204,
     "Documentation": 152,
     "Tests": 52,
-    "Refactoring": 29,
     "Other Changes": 181,
     "Maintenance": 22,
     "Architecture & Infrastructure": 6
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Inventory & Loot": 501,
+    "UI": 356,
+    "World & Visibility": 174,
+    "Build & Tooling": 637,
+    "Tests": 786,
     "Abilities": 144,
-    "Inventory & Loot": 500,
     "Networking & Sessions": 362,
-    "Build & Tooling": 636,
-    "Tests": 785,
-    "UI": 355,
-    "World & Visibility": 173,
     "Art & Animation": 265,
     "Combat": 408,
     "Documentation": 448,
@@ -42,23 +42,23 @@
   },
   "canonical": {
     "sections": {
+      "Refactoring": 30,
       "Features": 582,
       "Bug Fixes": 203,
       "Documentation": 152,
       "Tests": 52,
-      "Refactoring": 29,
       "Other Changes": 180,
       "Maintenance": 22,
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Inventory & Loot": 501,
+      "UI": 355,
+      "World & Visibility": 172,
+      "Build & Tooling": 635,
+      "Tests": 784,
       "Abilities": 142,
-      "Inventory & Loot": 500,
       "Networking & Sessions": 362,
-      "Build & Tooling": 634,
-      "Tests": 783,
-      "UI": 354,
-      "World & Visibility": 171,
       "Art & Animation": 262,
       "Combat": 406,
       "Documentation": 446,
@@ -74437,8 +74437,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 352,
-      "canonicalEntries": 352
+      "originalCommits": 353,
+      "canonicalEntries": 353
     },
     {
       "key": "v0.5.0",
@@ -74482,6 +74482,204 @@
     }
   ],
   "commits": [
+    {
+      "sha": "da3f92e4ae0b0c5ca6b0b72d5575934b1855a46c",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/da3f92e4ae0b0c5ca6b0b72d5575934b1855a46c",
+      "subject": "refactor(interaction): make the interaction prompt a shared, tunable prefab",
+      "body": "The prompt was hard to design with: Town and Raid each had their own\nprompt object with a different size, frame and font, the Town one lived\ninside the avatar prefab, spacing was tuned per HUD, and its position\ncould only be judged in Play mode.\n\n- InteractionPrompt.prefab is the single prompt, nested in both\n  LocalGameplayHud and SocialPlayer. It keeps the Raid look (panel_main\n  frame, alagard 24) and sizes to its text through a layout group and a\n  ContentSizeFitter instead of a fixed 320 or 620 unit plate.\n- InteractionPromptStyle.asset holds the gap above the interactable and\n  the screen margin, in canvas units, and is referenced by every\n  InteractionHudPresenter. It replaces the per-HUD pixel fields.\n- InteractionHudPresenter rebuilds the prompt layout when its text\n  changes, so the prompt is placed with its final size in the same frame.\n- InteractionPromptMetadata gains a world-unit prompt offset and a\n  selected gizmo that marks where the prompt will rest and with which\n  text, so an object can be tuned in the Scene view.\n\nReviewers: the Town prompt changes look, from the panel_secondary frame\nwith LiberationSans to the shared Raid frame and font.\n\nTests: InteractionPromptPrefabTests, two metadata offset cases in\nInteractionPromptPlacementTests, and style and text-fitting cases in\nInteractionPromptWorldPlacementPlayModeTests.\n\nPlayer-Improved: The interaction prompt now looks the same in Town and in the dungeon and fits the length of its text.\n",
+      "date": "2026-11-22T19:54:56-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/SocialPlayer.prefab",
+        "Project Grimhold/Assets/Prefabs/UI/PlayerUI/InteractionPrompt.prefab",
+        "Project Grimhold/Assets/Prefabs/UI/PlayerUI/InteractionPrompt.prefab.meta",
+        "Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab",
+        "Project Grimhold/Assets/Scriptable Objects/InteractionPromptStyle.asset",
+        "Project Grimhold/Assets/Scriptable Objects/InteractionPromptStyle.asset.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptMetadata.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptStyle.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptStyle.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/LocalInteractionCandidateSource.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs"
+      ],
+      "originalType": "refactor",
+      "originalScope": "interaction",
+      "originalSection": "Refactoring",
+      "breaking": false,
+      "reverts": null,
+      "section": "Refactoring",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "UI",
+        "World & Visibility",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "refactor",
+          "supports": "Refactoring"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/UI/PlayerUI/InteractionPrompt.prefab",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/UI/PlayerUI/InteractionPrompt.prefab.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/InteractionPromptStyle.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/InteractionPromptStyle.asset.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptMetadata.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptStyle.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptStyle.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/LocalInteractionCandidateSource.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs.meta",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "scope",
+          "value": "interaction",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "interaction",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/UI/PlayerUI/InteractionPrompt.prefab",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/UI/PlayerUI/InteractionPrompt.prefab.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "HUD",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "dungeon",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "7e5232bdef2060ac69c5d12be3b0a07cec61a361",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7e5232bdef2060ac69c5d12be3b0a07cec61a361",

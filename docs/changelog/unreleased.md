@@ -4,32 +4,135 @@
 
 Release: Unreleased
 
-352 original commits; 352 canonical entries.
+353 original commits; 353 canonical entries.
 
 ## Canonical classification
 
-123 features; 110 bug fixes; 3 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 19 other changes
+123 features; 110 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 19 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 17 | 11 | 1 | 0 | 10 | 1 |
 | Art & Animation | 24 | 12 | 3 | 0 | 9 | 7 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 87 | 73 | 3 | 1 | 25 | 6 |
+| Build & Tooling | 87 | 73 | 4 | 1 | 25 | 6 |
 | Combat | 52 | 21 | 2 | 0 | 16 | 1 |
 | Documentation | 41 | 44 | 0 | 0 | 20 | 0 |
 | Extraction | 19 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 83 | 63 | 3 | 1 | 29 | 5 |
+| Inventory & Loot | 83 | 63 | 4 | 1 | 29 | 5 |
 | Movement | 6 | 6 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 41 | 44 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 50 | 56 | 2 | 1 | 22 | 3 |
-| Tests | 118 | 104 | 3 | 1 | 34 | 4 |
-| UI | 45 | 23 | 1 | 0 | 14 | 3 |
+| Tests | 118 | 104 | 4 | 1 | 34 | 4 |
+| UI | 45 | 23 | 2 | 0 | 14 | 3 |
 | Unassigned | 0 | 1 | 0 | 0 | 28 | 0 |
-| World & Visibility | 32 | 16 | 0 | 0 | 3 | 12 |
+| World & Visibility | 32 | 16 | 1 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### da3f92e4ae0b0c5ca6b0b72d5575934b1855a46c
+
+[da3f92e4ae0b0c5ca6b0b72d5575934b1855a46c](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/da3f92e4ae0b0c5ca6b0b72d5575934b1855a46c)
+
+Date: 2026-11-22T19:54:56-03:00 · Classification: Refactoring (explicit) · Systems: Inventory & Loot, UI, World & Visibility, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+refactor(interaction): make the interaction prompt a shared, tunable prefab
+```
+
+#### Original body
+
+```text
+The prompt was hard to design with: Town and Raid each had their own
+prompt object with a different size, frame and font, the Town one lived
+inside the avatar prefab, spacing was tuned per HUD, and its position
+could only be judged in Play mode.
+
+- InteractionPrompt.prefab is the single prompt, nested in both
+  LocalGameplayHud and SocialPlayer. It keeps the Raid look (panel_main
+  frame, alagard 24) and sizes to its text through a layout group and a
+  ContentSizeFitter instead of a fixed 320 or 620 unit plate.
+- InteractionPromptStyle.asset holds the gap above the interactable and
+  the screen margin, in canvas units, and is referenced by every
+  InteractionHudPresenter. It replaces the per-HUD pixel fields.
+- InteractionHudPresenter rebuilds the prompt layout when its text
+  changes, so the prompt is placed with its final size in the same frame.
+- InteractionPromptMetadata gains a world-unit prompt offset and a
+  selected gizmo that marks where the prompt will rest and with which
+  text, so an object can be tuned in the Scene view.
+
+Reviewers: the Town prompt changes look, from the panel_secondary frame
+with LiberationSans to the shared Raid frame and font.
+
+Tests: InteractionPromptPrefabTests, two metadata offset cases in
+InteractionPromptPlacementTests, and style and text-fitting cases in
+InteractionPromptWorldPlacementPlayModeTests.
+
+Player-Improved: The interaction prompt now looks the same in Town and in the dungeon and fits the length of its text.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/SocialPlayer.prefab
+Project Grimhold/Assets/Prefabs/UI/PlayerUI/InteractionPrompt.prefab
+Project Grimhold/Assets/Prefabs/UI/PlayerUI/InteractionPrompt.prefab.meta
+Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab
+Project Grimhold/Assets/Scriptable Objects/InteractionPromptStyle.asset
+Project Grimhold/Assets/Scriptable Objects/InteractionPromptStyle.asset.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptMetadata.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptStyle.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptStyle.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/LocalInteractionCandidateSource.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs.meta
+Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs
+```
+
+#### Classification evidence
+
+- type → Refactoring: refactor
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/UI/PlayerUI/InteractionPrompt.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/UI/PlayerUI/InteractionPrompt.prefab.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/InteractionPromptStyle.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/InteractionPromptStyle.asset.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptMetadata.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptStyle.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/InteractionPromptStyle.cs.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/LocalInteractionCandidateSource.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs
+- scope → Inventory &amp; Loot: interaction
+- message-term → Inventory &amp; Loot: interaction
+- path → UI: Project Grimhold/Assets/Prefabs/UI/PlayerUI/InteractionPrompt.prefab
+- path → UI: Project Grimhold/Assets/Prefabs/UI/PlayerUI/InteractionPrompt.prefab.meta
+- path → UI: Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/InteractionHudPresenter.cs
+- message-term → UI: HUD
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs
+- message-term → World &amp; Visibility: dungeon
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPlacementTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/InteractionPromptPrefabTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/InteractionPromptWorldPlacementPlayModeTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 7e5232bdef2060ac69c5d12be3b0a07cec61a361
 

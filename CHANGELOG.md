@@ -70,6 +70,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - The Trainer panel now fades in and out like the other Town panels.
 - Town characters turn to face you when you walk up to them and no longer talk with their back turned.
 - You now need to stand next to a Town character to interact with it.
+- The interaction prompt now looks the same in Town and in the dungeon and fits the length of its text.
 
 ### Fixed
 
