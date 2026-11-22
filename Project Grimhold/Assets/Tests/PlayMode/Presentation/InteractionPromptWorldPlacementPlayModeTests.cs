@@ -22,6 +22,8 @@ namespace Tests.PlayMode.Presentation
         private GameObject _canvasObject;
         private RectTransform _promptRect;
         private InteractionHudPresenter _presenter;
+        private InteractionPromptStyle _style;
+        private TextMeshProUGUI _label;
         private readonly Vector3[] _corners = new Vector3[4];
 
         [SetUp]
@@ -50,6 +52,10 @@ namespace Tests.PlayMode.Presentation
             SetField("_promptRoot", promptObject);
             SetField("_promptText", promptObject.GetComponent<TextMeshProUGUI>());
             SetField("_worldCamera", _camera);
+
+            _style = ScriptableObject.CreateInstance<InteractionPromptStyle>();
+            SetField("_promptStyle", _style);
+            _label = promptObject.GetComponent<TextMeshProUGUI>();
         }
 
         [TearDown]
@@ -57,6 +63,7 @@ namespace Tests.PlayMode.Presentation
         {
             Object.DestroyImmediate(_canvasObject);
             Object.DestroyImmediate(_cameraObject);
+            Object.DestroyImmediate(_style);
         }
 
         [UnityTest]
@@ -71,7 +78,8 @@ namespace Tests.PlayMode.Presentation
             _promptRect.GetWorldCorners(_corners);
             float bottomCentreX = (_corners[0].x + _corners[3].x) * 0.5f;
             Assert.That(bottomCentreX, Is.EqualTo(anchorOnScreen.x).Within(PixelTolerance));
-            Assert.That(_corners[0].y, Is.EqualTo(anchorOnScreen.y + ReadFloat("_promptGap")).Within(PixelTolerance));
+            float gapInPixels = _style.Gap * _canvasObject.GetComponent<Canvas>().scaleFactor;
+            Assert.That(_corners[0].y, Is.EqualTo(anchorOnScreen.y + gapInPixels).Within(PixelTolerance));
         }
 
         [UnityTest]
@@ -101,6 +109,66 @@ namespace Tests.PlayMode.Presentation
             Assert.That(_corners[0].y, Is.GreaterThanOrEqualTo(0f));
         }
 
+        [UnityTest]
+        public IEnumerator Prompt_UsesTheSharedStyleGapInCanvasUnits()
+        {
+            yield return null;
+            var worldAnchor = new Vector3(0f, 0f, 0f);
+            SetStyle(gap: 40f, screenMargin: 0f);
+
+            PlacePromptAbove(worldAnchor);
+
+            Vector2 anchorOnScreen = _camera.WorldToScreenPoint(worldAnchor);
+            float scale = _canvasObject.GetComponent<Canvas>().scaleFactor;
+            _promptRect.GetWorldCorners(_corners);
+            Assert.That(_corners[0].y, Is.EqualTo(anchorOnScreen.y + (40f * scale)).Within(PixelTolerance));
+        }
+
+        [UnityTest]
+        public IEnumerator Prompt_ResizesToItsTextInTheSameFrame()
+        {
+            // A prompt that sizes to its content, as the shared prefab does.
+            var layout = _promptRect.gameObject.AddComponent<HorizontalLayoutGroup>();
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            var labelObject = new GameObject("Text", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+            labelObject.transform.SetParent(_promptRect, false);
+            Object.DestroyImmediate(_label);
+            _label = labelObject.GetComponent<TextMeshProUGUI>();
+            _label.textWrappingMode = TextWrappingModes.NoWrap;
+            SetField("_promptText", _label);
+            var fitter = _promptRect.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            yield return null;
+
+            ApplyPromptText("[F] Ir");
+            float shortWidth = _promptRect.rect.width;
+            ApplyPromptText("[F] Comerciar con el Mercader General");
+            float longWidth = _promptRect.rect.width;
+
+            Assert.That(shortWidth, Is.GreaterThan(0f));
+            Assert.That(longWidth, Is.GreaterThan(shortWidth * 2f));
+        }
+
+        private void ApplyPromptText(string text)
+        {
+            MethodInfo method = typeof(InteractionHudPresenter).GetMethod(
+                "ApplyPromptText",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(method, Is.Not.Null, "InteractionHudPresenter.ApplyPromptText");
+            method.Invoke(_presenter, new object[] { text, false });
+        }
+
+        private void SetStyle(float gap, float screenMargin)
+        {
+            var serialized = new UnityEditor.SerializedObject(_style);
+            serialized.FindProperty("_gap").floatValue = gap;
+            serialized.FindProperty("_screenMargin").floatValue = screenMargin;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
         private void PlacePromptAbove(Vector3 worldAnchor)
         {
             MethodInfo method = typeof(InteractionHudPresenter).GetMethod(
@@ -117,15 +185,6 @@ namespace Tests.PlayMode.Presentation
                 BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.That(field, Is.Not.Null, fieldName);
             field.SetValue(_presenter, value);
-        }
-
-        private float ReadFloat(string fieldName)
-        {
-            FieldInfo field = typeof(InteractionHudPresenter).GetField(
-                fieldName,
-                BindingFlags.Instance | BindingFlags.NonPublic);
-            Assert.That(field, Is.Not.Null, fieldName);
-            return (float)field.GetValue(_presenter);
         }
     }
 }

@@ -38,11 +38,8 @@ public sealed class InteractionHudPresenter : MonoBehaviour
     private Color _rejectionColor = new(1f, 0.35f, 0.2f, 1f);
 
     [Header("Prompt placement")]
-    [SerializeField, Min(0f), Tooltip("Screen pixels between the interactable's top and the prompt's bottom edge.")]
-    private float _promptGap = 8f;
-
-    [SerializeField, Min(0f), Tooltip("Screen pixels the prompt keeps from every screen edge.")]
-    private float _promptScreenMargin = 12f;
+    [SerializeField, Tooltip("Shared prompt tuning. One asset for every HUD, so Town and Raid stay in step.")]
+    private InteractionPromptStyle _promptStyle;
 
     private static readonly Vector3[] PromptCorners = new Vector3[4];
 
@@ -85,6 +82,13 @@ public sealed class InteractionHudPresenter : MonoBehaviour
         {
             HideAll();
             return;
+        }
+
+        if (_promptStyle == null)
+        {
+            Debug.LogError(
+                $"{nameof(InteractionHudPresenter)} has no {nameof(InteractionPromptStyle)}; using default spacing.",
+                this);
         }
 
         _lastConsumedSequence = _interactionController.CurrentInteractionSequence;
@@ -217,20 +221,18 @@ public sealed class InteractionHudPresenter : MonoBehaviour
         bool hasCandidate = _candidateSource != null && _candidateSource.HasCandidate;
         bool showPrompt = hasCandidate;
 
+        bool wasShown = _promptRoot != null && _promptRoot.activeSelf;
         if (_promptRoot != null)
         {
             _promptRoot.SetActive(showPrompt);
-        }
-
-        if (_promptText != null && showPrompt)
-        {
-            _promptText.text = InteractionPromptText.Format(_candidateSource?.CurrentPromptText);
         }
 
         if (!showPrompt)
         {
             return;
         }
+
+        ApplyPromptText(InteractionPromptText.Format(_candidateSource.CurrentPromptText), forceLayout: !wasShown);
 
         if (_candidateSource.TryGetPromptWorldAnchor(out Vector3 worldAnchor))
         {
@@ -239,6 +241,30 @@ public sealed class InteractionHudPresenter : MonoBehaviour
         else
         {
             RestPrompt();
+        }
+    }
+
+    /// <summary>
+    /// Sets the prompt text and resizes a content-fitted prompt at once, so it is placed with its final size
+    /// instead of the size of the previous text. Does nothing while the text is unchanged.
+    /// </summary>
+    private void ApplyPromptText(string text, bool forceLayout = false)
+    {
+        if (_promptText == null)
+        {
+            return;
+        }
+
+        bool changed = !string.Equals(_promptText.text, text, System.StringComparison.Ordinal);
+        if (changed)
+        {
+            _promptText.text = text;
+        }
+
+        RectTransform promptRect = ResolvePromptRect();
+        if ((changed || forceLayout) && promptRect != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(promptRect);
         }
     }
 
@@ -276,13 +302,18 @@ public sealed class InteractionHudPresenter : MonoBehaviour
             RectTransformUtility.WorldToScreenPoint(canvasCamera, PromptCorners[2]) -
             RectTransformUtility.WorldToScreenPoint(canvasCamera, PromptCorners[0]);
 
+        // Style values are canvas units; the canvas scale turns them into screen pixels.
+        float canvasScale = _promptCanvas != null ? _promptCanvas.rootCanvas.scaleFactor : 1f;
+        float gap = _promptStyle != null ? _promptStyle.Gap : InteractionPromptStyle.DefaultGap;
+        float margin = _promptStyle != null ? _promptStyle.ScreenMargin : InteractionPromptStyle.DefaultScreenMargin;
+
         Vector2 screenPosition = InteractionPromptPlacement.ResolveScreenPosition(
             anchorOnScreen,
             promptSize,
             promptRect.pivot,
-            _promptGap,
+            gap * canvasScale,
             new Vector2(Screen.width, Screen.height),
-            _promptScreenMargin);
+            margin * canvasScale);
 
         if (canvasCamera == null)
         {

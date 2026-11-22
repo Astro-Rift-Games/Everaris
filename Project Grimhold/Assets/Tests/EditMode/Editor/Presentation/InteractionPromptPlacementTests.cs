@@ -161,6 +161,38 @@ namespace Tests.EditMode.Presentation
             Assert.That(resolved, Is.False);
         }
 
+        [Test]
+        public void Metadata_NudgesTheAnchorByItsAuthoredOffset()
+        {
+            _root.transform.position = new Vector3(10f, 5f, 0f);
+            AddRenderer(_root, Vector3.zero);
+            InteractionPromptMetadata metadata = _root.AddComponent<InteractionPromptMetadata>();
+            var serialized = new UnityEditor.SerializedObject(metadata);
+            serialized.FindProperty("_promptOffset").vector2Value = new Vector2(0.5f, -0.25f);
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+
+            bool resolved = metadata.TryResolvePromptWorldAnchor(out Vector3 worldAnchor);
+
+            // The sprite spans y 4..6 around x 10; the offset moves the anchor from its top-centre.
+            Assert.That(resolved, Is.True);
+            Assert.That(worldAnchor.x, Is.EqualTo(10.5f).Within(0.0001f));
+            Assert.That(worldAnchor.y, Is.EqualTo(5.75f).Within(0.0001f));
+        }
+
+        [Test]
+        public void Metadata_WithoutOffset_UsesTheTopOfItsSprites()
+        {
+            _root.transform.position = new Vector3(10f, 5f, 0f);
+            AddRenderer(_root, Vector3.zero);
+            InteractionPromptMetadata metadata = _root.AddComponent<InteractionPromptMetadata>();
+
+            bool resolved = metadata.TryResolvePromptWorldAnchor(out Vector3 worldAnchor);
+
+            Assert.That(resolved, Is.True);
+            Assert.That(worldAnchor.x, Is.EqualTo(10f).Within(0.0001f));
+            Assert.That(worldAnchor.y, Is.EqualTo(6f).Within(0.0001f));
+        }
+
         private static Sprite FindSprite(string sheetPath, string spriteName)
         {
             foreach (Object asset in UnityEditor.AssetDatabase.LoadAllAssetsAtPath(sheetPath))

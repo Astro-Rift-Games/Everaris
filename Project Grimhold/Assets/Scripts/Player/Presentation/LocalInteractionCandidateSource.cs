@@ -34,6 +34,7 @@ public sealed class LocalInteractionCandidateSource : NetworkBehaviour
     private string _currentPromptText;
     private Transform _promptAnchor;
     private Vector3 _promptLocalAnchor;
+    private Vector2 _promptOffset;
 
     public bool HasCandidate { get; private set; }
     public InteractionTarget CurrentCandidate { get; private set; }
@@ -57,6 +58,7 @@ public sealed class LocalInteractionCandidateSource : NetworkBehaviour
         worldAnchor = _promptAnchor != null
             ? _promptAnchor.position
             : _metadataNetworkObject.transform.TransformPoint(_promptLocalAnchor);
+        worldAnchor += (Vector3)_promptOffset;
         return true;
     }
 
@@ -169,6 +171,7 @@ public sealed class LocalInteractionCandidateSource : NetworkBehaviour
         _door = networkObject.GetComponent<NetworkDoor>();
         _metadataPromptText = metadata != null ? metadata.PromptText : null;
         _promptAnchor = metadata != null ? metadata.PromptAnchor : null;
+        _promptOffset = metadata != null ? metadata.PromptOffset : Vector2.zero;
         _promptLocalAnchor = ResolvePromptLocalAnchor(networkObject);
         _currentPromptText = _socialPlayerInteractable != null
             ? _socialPlayerInteractable.PromptText
@@ -190,6 +193,7 @@ public sealed class LocalInteractionCandidateSource : NetworkBehaviour
         _currentPromptText = null;
         _promptAnchor = null;
         _promptLocalAnchor = default;
+        _promptOffset = default;
     }
 
     /// <summary>
