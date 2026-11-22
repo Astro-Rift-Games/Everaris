@@ -4,20 +4,20 @@
 
 Release: Unreleased
 
-353 original commits; 353 canonical entries.
+354 original commits; 354 canonical entries.
 
 ## Canonical classification
 
-123 features; 110 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 19 other changes
+123 features; 110 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 20 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 17 | 11 | 1 | 0 | 10 | 1 |
-| Art & Animation | 24 | 12 | 3 | 0 | 9 | 7 |
+| Art & Animation | 24 | 12 | 3 | 0 | 9 | 8 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
 | Build & Tooling | 87 | 73 | 4 | 1 | 25 | 6 |
-| Combat | 52 | 21 | 2 | 0 | 16 | 1 |
-| Documentation | 41 | 44 | 0 | 0 | 20 | 0 |
+| Combat | 52 | 21 | 2 | 0 | 16 | 2 |
+| Documentation | 41 | 44 | 0 | 0 | 20 | 1 |
 | Extraction | 19 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
 | Inventory & Loot | 83 | 63 | 4 | 1 | 29 | 5 |
@@ -25,11 +25,113 @@ Release: Unreleased
 | Networking & Sessions | 41 | 44 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 50 | 56 | 2 | 1 | 22 | 3 |
 | Tests | 118 | 104 | 4 | 1 | 34 | 4 |
-| UI | 45 | 23 | 2 | 0 | 14 | 3 |
+| UI | 45 | 23 | 2 | 0 | 14 | 4 |
 | Unassigned | 0 | 1 | 0 | 0 | 28 | 0 |
 | World & Visibility | 32 | 16 | 1 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### e5a9484e21456288e82e4425453cc00c87b4ce7b
+
+[e5a9484e21456288e82e4425453cc00c87b4ce7b](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e5a9484e21456288e82e4425453cc00c87b4ce7b)
+
+Date: 2026-11-22T19:56:56-03:00 · Classification: Other Changes (unknown) · Systems: Combat, UI, Art & Animation, Documentation
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+Update Unity VFX and render settings
+```
+
+#### Original body
+
+```text
+Enable particle size randomization for the magic projectile trail and refresh Universal Render Pipeline settings for the current Unity configuration.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/.claude/settings.json
+Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Directions.aseprite
+Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Idle.aseprite
+Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Knockback.aseprite
+Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Sprint.aseprite
+Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Walk.aseprite
+Project Grimhold/ArtSource/VillagerDefault/png/Body/Directions/Player-Body-S.png
+Project Grimhold/ArtSource/VillagerDefault/png/Body/Idle/Player-Body-Idle-S-Sheet.png
+Project Grimhold/ArtSource/VillagerDefault/png/Body/Knockback/Player-Body-Knockback-S-Sheet.png
+Project Grimhold/ArtSource/VillagerDefault/png/Body/Sprint/Player-Body-Sprint-S-Sheet.png
+Project Grimhold/ArtSource/VillagerDefault/png/Body/Walk/Player-Body-Walk-S-Sheet.png
+Project Grimhold/ArtSource/VillagerDefault/png/Legs/Directions/Player-Legs-S.png
+Project Grimhold/ArtSource/VillagerDefault/png/Legs/Idle/Player-Legs-Idle-S-Sheet.png
+Project Grimhold/ArtSource/VillagerDefault/png/Legs/Knockback/Player-Legs-Knockback-S-Sheet.png
+Project Grimhold/ArtSource/VillagerDefault/png/Legs/Sprint/Player-Legs-Sprint-S-Sheet.png
+Project Grimhold/ArtSource/VillagerDefault/png/Legs/Walk/Player-Legs-Walk-S-Sheet.png
+Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Directions-S-Preview.png
+Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Idle-S-Preview.gif
+Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Idle-S-Preview.png
+Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Knockback-S-Preview.gif
+Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Knockback-S-Preview.png
+Project Grimhold/ArtSource/VillagerDefault/previews/Villager-S-Showcase.png
+Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Sprint-S-Preview.gif
+Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Sprint-S-Preview.png
+Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Walk-S-Preview.gif
+Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Walk-S-Preview.png
+Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab
+Project Grimhold/Assets/Settings/UniversalRP.asset
+Project Grimhold/Assets/UniversalRenderPipelineGlobalSettings.asset
+Project Grimhold/Docs/Architecture/UiDesignSystemArchitecture.md
+Project Grimhold/Docs/Architecture/UiScalingArchitecture.md
+odd/evidence/audit-tomas-sprint17-fixes/G1.md
+odd/evidence/audit-tomas-sprint17-fixes/G2.md
+odd/evidence/audit-tomas-sprint17-fixes/G3.md
+odd/evidence/audit-tomas-sprint17-fixes/G4.md
+odd/evidence/audit-tomas-sprint17-fixes/G5.md
+odd/evidence/audit-tomas-sprint17-fixes/G6.md
+odd/evidence/audit-tomas-sprint17-fixes/G7.md
+odd/tasks/audit-tomas-sprint17-fixes.md
+```
+
+#### Classification evidence
+
+- path → Combat: Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab
+- message-term → Combat: projectile
+- path → UI: Project Grimhold/Docs/Architecture/UiDesignSystemArchitecture.md
+- path → UI: Project Grimhold/Docs/Architecture/UiScalingArchitecture.md
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Directions.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Idle.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Knockback.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Sprint.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Walk.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/png/Body/Directions/Player-Body-S.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/png/Body/Idle/Player-Body-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/png/Body/Knockback/Player-Body-Knockback-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/png/Body/Sprint/Player-Body-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/png/Body/Walk/Player-Body-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/png/Legs/Directions/Player-Legs-S.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/png/Legs/Idle/Player-Legs-Idle-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/png/Legs/Knockback/Player-Legs-Knockback-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/png/Legs/Sprint/Player-Legs-Sprint-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/png/Legs/Walk/Player-Legs-Walk-S-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Directions-S-Preview.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Idle-S-Preview.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Idle-S-Preview.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Knockback-S-Preview.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Knockback-S-Preview.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/previews/Villager-S-Showcase.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Sprint-S-Preview.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Sprint-S-Preview.png
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Walk-S-Preview.gif
+- path → Art &amp; Animation: Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Walk-S-Preview.png
+- path → Documentation: Project Grimhold/Docs/Architecture/UiDesignSystemArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/UiScalingArchitecture.md
+
+#### Diagnostics
+
+- **ambiguous-kind:** No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages.
 
 ### da3f92e4ae0b0c5ca6b0b72d5575934b1855a46c
 

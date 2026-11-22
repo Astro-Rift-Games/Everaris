@@ -1,38 +1,38 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1230,
-  "canonicalEntries": 1227,
+  "rawCommits": 1231,
+  "canonicalEntries": 1228,
   "before": {
+    "Other Changes": 375,
     "Refactoring": 17,
     "Features": 444,
     "Bug Fixes": 188,
     "Documentation": 136,
     "Tests": 47,
-    "Other Changes": 374,
     "Architecture & Infrastructure": 24
   },
   "after": {
+    "Other Changes": 182,
     "Refactoring": 30,
     "Features": 583,
     "Bug Fixes": 204,
     "Documentation": 152,
     "Tests": 52,
-    "Other Changes": 181,
     "Maintenance": 22,
     "Architecture & Infrastructure": 6
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Combat": 409,
+    "UI": 357,
+    "Art & Animation": 266,
+    "Documentation": 449,
     "Inventory & Loot": 501,
-    "UI": 356,
     "World & Visibility": 174,
     "Build & Tooling": 637,
     "Tests": 786,
     "Abilities": 144,
     "Networking & Sessions": 362,
-    "Art & Animation": 265,
-    "Combat": 408,
-    "Documentation": 448,
     "Movement": 103,
     "Extraction": 177,
     "Persistence & Backend": 319,
@@ -42,26 +42,26 @@
   },
   "canonical": {
     "sections": {
+      "Other Changes": 181,
       "Refactoring": 30,
       "Features": 582,
       "Bug Fixes": 203,
       "Documentation": 152,
       "Tests": 52,
-      "Other Changes": 180,
       "Maintenance": 22,
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Combat": 407,
+      "UI": 356,
+      "Art & Animation": 263,
+      "Documentation": 447,
       "Inventory & Loot": 501,
-      "UI": 355,
       "World & Visibility": 172,
       "Build & Tooling": 635,
       "Tests": 784,
       "Abilities": 142,
       "Networking & Sessions": 362,
-      "Art & Animation": 262,
-      "Combat": 406,
-      "Documentation": 446,
       "Movement": 103,
       "Extraction": 177,
       "Persistence & Backend": 319,
@@ -71,6 +71,232 @@
     }
   },
   "unknownEntries": [
+    {
+      "sha": "e5a9484e21456288e82e4425453cc00c87b4ce7b",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e5a9484e21456288e82e4425453cc00c87b4ce7b",
+      "subject": "Update Unity VFX and render settings",
+      "body": "Enable particle size randomization for the magic projectile trail and refresh Universal Render Pipeline settings for the current Unity configuration.\n",
+      "date": "2026-11-22T19:56:56-03:00",
+      "files": [
+        "Project Grimhold/.claude/settings.json",
+        "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Directions.aseprite",
+        "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Idle.aseprite",
+        "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Knockback.aseprite",
+        "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Sprint.aseprite",
+        "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Walk.aseprite",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Body/Directions/Player-Body-S.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Body/Idle/Player-Body-Idle-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Body/Knockback/Player-Body-Knockback-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Body/Sprint/Player-Body-Sprint-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Body/Walk/Player-Body-Walk-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Directions/Player-Legs-S.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Idle/Player-Legs-Idle-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Knockback/Player-Legs-Knockback-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Sprint/Player-Legs-Sprint-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Walk/Player-Legs-Walk-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Directions-S-Preview.png",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Idle-S-Preview.gif",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Idle-S-Preview.png",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Knockback-S-Preview.gif",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Knockback-S-Preview.png",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-S-Showcase.png",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Sprint-S-Preview.gif",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Sprint-S-Preview.png",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Walk-S-Preview.gif",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Walk-S-Preview.png",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab",
+        "Project Grimhold/Assets/Settings/UniversalRP.asset",
+        "Project Grimhold/Assets/UniversalRenderPipelineGlobalSettings.asset",
+        "Project Grimhold/Docs/Architecture/UiDesignSystemArchitecture.md",
+        "Project Grimhold/Docs/Architecture/UiScalingArchitecture.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G1.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G2.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G3.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G4.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G5.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G6.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G7.md",
+        "odd/tasks/audit-tomas-sprint17-fixes.md"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [
+        "Combat",
+        "UI",
+        "Art & Animation",
+        "Documentation"
+      ],
+      "evidence": [
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "projectile",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/UiDesignSystemArchitecture.md",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/UiScalingArchitecture.md",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Directions.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Idle.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Knockback.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Sprint.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Walk.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Body/Directions/Player-Body-S.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Body/Idle/Player-Body-Idle-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Body/Knockback/Player-Body-Knockback-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Body/Sprint/Player-Body-Sprint-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Body/Walk/Player-Body-Walk-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Directions/Player-Legs-S.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Idle/Player-Legs-Idle-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Knockback/Player-Legs-Knockback-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Sprint/Player-Legs-Sprint-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Walk/Player-Legs-Walk-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Directions-S-Preview.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Idle-S-Preview.gif",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Idle-S-Preview.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Knockback-S-Preview.gif",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Knockback-S-Preview.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-S-Showcase.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Sprint-S-Preview.gif",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Sprint-S-Preview.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Walk-S-Preview.gif",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Walk-S-Preview.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/UiDesignSystemArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/UiScalingArchitecture.md",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        }
+      ],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "a3fd0ca2695c6578089819bbe5d55bac97399169",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a3fd0ca2695c6578089819bbe5d55bac97399169",
@@ -74437,8 +74663,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 353,
-      "canonicalEntries": 353
+      "originalCommits": 354,
+      "canonicalEntries": 354
     },
     {
       "key": "v0.5.0",
@@ -74482,6 +74708,232 @@
     }
   ],
   "commits": [
+    {
+      "sha": "e5a9484e21456288e82e4425453cc00c87b4ce7b",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e5a9484e21456288e82e4425453cc00c87b4ce7b",
+      "subject": "Update Unity VFX and render settings",
+      "body": "Enable particle size randomization for the magic projectile trail and refresh Universal Render Pipeline settings for the current Unity configuration.\n",
+      "date": "2026-11-22T19:56:56-03:00",
+      "files": [
+        "Project Grimhold/.claude/settings.json",
+        "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Directions.aseprite",
+        "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Idle.aseprite",
+        "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Knockback.aseprite",
+        "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Sprint.aseprite",
+        "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Walk.aseprite",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Body/Directions/Player-Body-S.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Body/Idle/Player-Body-Idle-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Body/Knockback/Player-Body-Knockback-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Body/Sprint/Player-Body-Sprint-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Body/Walk/Player-Body-Walk-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Directions/Player-Legs-S.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Idle/Player-Legs-Idle-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Knockback/Player-Legs-Knockback-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Sprint/Player-Legs-Sprint-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Walk/Player-Legs-Walk-S-Sheet.png",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Directions-S-Preview.png",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Idle-S-Preview.gif",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Idle-S-Preview.png",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Knockback-S-Preview.gif",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Knockback-S-Preview.png",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-S-Showcase.png",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Sprint-S-Preview.gif",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Sprint-S-Preview.png",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Walk-S-Preview.gif",
+        "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Walk-S-Preview.png",
+        "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab",
+        "Project Grimhold/Assets/Settings/UniversalRP.asset",
+        "Project Grimhold/Assets/UniversalRenderPipelineGlobalSettings.asset",
+        "Project Grimhold/Docs/Architecture/UiDesignSystemArchitecture.md",
+        "Project Grimhold/Docs/Architecture/UiScalingArchitecture.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G1.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G2.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G3.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G4.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G5.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G6.md",
+        "odd/evidence/audit-tomas-sprint17-fixes/G7.md",
+        "odd/tasks/audit-tomas-sprint17-fixes.md"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [
+        "Combat",
+        "UI",
+        "Art & Animation",
+        "Documentation"
+      ],
+      "evidence": [
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/VFX/Magic/MagicProjectileTrail.prefab",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "projectile",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/UiDesignSystemArchitecture.md",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/UiScalingArchitecture.md",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Directions.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Idle.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Knockback.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Sprint.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/aseprite/Villager-S-Walk.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Body/Directions/Player-Body-S.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Body/Idle/Player-Body-Idle-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Body/Knockback/Player-Body-Knockback-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Body/Sprint/Player-Body-Sprint-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Body/Walk/Player-Body-Walk-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Directions/Player-Legs-S.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Idle/Player-Legs-Idle-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Knockback/Player-Legs-Knockback-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Sprint/Player-Legs-Sprint-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/png/Legs/Walk/Player-Legs-Walk-S-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Directions-S-Preview.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Idle-S-Preview.gif",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Idle-S-Preview.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Knockback-S-Preview.gif",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Knockback-S-Preview.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-S-Showcase.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Sprint-S-Preview.gif",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Sprint-S-Preview.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Walk-S-Preview.gif",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/VillagerDefault/previews/Villager-Walk-S-Preview.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/UiDesignSystemArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/UiScalingArchitecture.md",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        }
+      ],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "da3f92e4ae0b0c5ca6b0b72d5575934b1855a46c",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/da3f92e4ae0b0c5ca6b0b72d5575934b1855a46c",
