@@ -40,6 +40,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - The Catacombs have their first wall torches.
 - The Catacombs have braziers and candles.
 - Braziers and candles now burn with animated flickering flames.
+- Catacombs raids now have coffins to loot and jars to break alongside chests and crates.
 
 ### Improved
 
@@ -74,6 +75,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Town characters turn to face you when you walk up to them and no longer talk with their back turned.
 - You now need to stand next to a Town character to interact with it.
 - The interaction prompt now looks the same in Town and in the dungeon and fits the length of its text.
+- Chests, crates and jars are solid, so you can no longer walk through them.
 
 ### Fixed
 

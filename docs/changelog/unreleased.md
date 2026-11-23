@@ -4,32 +4,389 @@
 
 Release: Unreleased
 
-357 original commits; 357 canonical entries.
+361 original commits; 361 canonical entries.
 
 ## Canonical classification
 
-126 features; 110 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 20 other changes
+128 features; 111 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 21 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 17 | 11 | 1 | 0 | 10 | 1 |
-| Art & Animation | 27 | 12 | 3 | 0 | 9 | 8 |
+| Art & Animation | 29 | 12 | 3 | 0 | 9 | 8 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 90 | 73 | 4 | 1 | 25 | 6 |
-| Combat | 52 | 21 | 2 | 0 | 16 | 2 |
-| Documentation | 41 | 44 | 0 | 0 | 20 | 1 |
+| Build & Tooling | 92 | 74 | 4 | 1 | 25 | 6 |
+| Combat | 53 | 22 | 2 | 0 | 16 | 2 |
+| Documentation | 41 | 45 | 0 | 0 | 20 | 1 |
 | Extraction | 19 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 83 | 63 | 4 | 1 | 29 | 5 |
-| Movement | 6 | 6 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 42 | 44 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 50 | 56 | 2 | 1 | 22 | 3 |
-| Tests | 121 | 104 | 4 | 1 | 34 | 4 |
+| Inventory & Loot | 85 | 63 | 4 | 1 | 29 | 5 |
+| Movement | 7 | 6 | 0 | 0 | 2 | 0 |
+| Networking & Sessions | 43 | 44 | 0 | 0 | 19 | 2 |
+| Persistence & Backend | 50 | 57 | 2 | 1 | 22 | 3 |
+| Tests | 123 | 105 | 4 | 1 | 34 | 4 |
 | UI | 45 | 23 | 2 | 0 | 14 | 4 |
-| Unassigned | 0 | 1 | 0 | 0 | 28 | 0 |
-| World & Visibility | 35 | 16 | 1 | 0 | 3 | 12 |
+| Unassigned | 0 | 1 | 0 | 0 | 28 | 1 |
+| World & Visibility | 36 | 16 | 1 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 6c2712798f7e3596d670eb408812af6c32dbc6df
+
+[6c2712798f7e3596d670eb408812af6c32dbc6df](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6c2712798f7e3596d670eb408812af6c32dbc6df)
+
+Date: 2026-11-23T01:50:56-03:00 · Classification: Other Changes (unknown) · Systems: Unassigned
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+Increase torch light intensity
+```
+
+#### Original body
+
+```text
+Set the Torch prefab's light intensity to 1.2 for brighter lighting.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/Lighting Props/Torch.prefab
+```
+
+#### Classification evidence
+
+- No sufficient classification evidence.
+
+#### Diagnostics
+
+- **ambiguous-kind:** No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages.
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### f09e25edac0b9c62aa5c69fc20cef2557081e13d
+
+[f09e25edac0b9c62aa5c69fc20cef2557081e13d](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f09e25edac0b9c62aa5c69fc20cef2557081e13d)
+
+Date: 2026-11-23T01:49:19-03:00 · Classification: Features (explicit) · Systems: Movement, Inventory & Loot, Networking & Sessions, World & Visibility, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(loot): add coffin containers and jar breakables to the Raid
+```
+
+#### Original body
+
+```text
+Chests and breakables now block movement, and two new catacombs props
+join them: coffins as a look for standard loot containers, and jars as
+a look for breakables next to the existing crate.
+
+- LootContainer and LockedChest gain a solid WorldBlocker over the
+  lower part of their artwork, like the breakable already had.
+- CoffinLootContainer: variant of LootContainer with the coffin
+  closed/open frames, its own prompt text and colliders fitted to the
+  re-cut coffin sprites. Same content rules as a chest.
+- JarBreakable: variant of BreakableObject (still the crate) with the
+  jar sprite and a Remains renderer. BreakableObject gains
+  _destroyedRenderers, shown only once the object is destroyed and
+  covered by fog like the intact look.
+- NetworkSpawnManager: _coffinContainerPrefab/_coffinContainerChance
+  Percent pick the coffin for standard (not locked) container points,
+  and _jarBreakablePrefab/_jarBreakableChancePercent pick the jar for
+  breakable points. Both are copied, validated when enabled and
+  blocked from explicit spawns like the other randomized props.
+- Selection is seeded from each point's seed through SeededChanceRoll,
+  with its own domain constant per rule, so the look is stable on
+  retries and never consumes the content, drop or locked rolls.
+- Gameplay and CatacombsMap set both chances to 50 (scene files patched
+  by text: only the new fields change).
+- Coffin source art is sliced around the coffin to leave out a stray
+  pixel blob; Pot-Close/Pot-Open metas carry the jar sprite re-cut.
+
+Tests:
+- RaidPropPrefabTests: chests, crate and jar block movement within
+  their artwork; crate leaves no remains; jar is a variant with remains
+  covered by fog.
+- CoffinLootContainerTests and JarBreakableTests: rule bounds, ~50%
+  split, independence from other rolls, prefab variants, scene
+  configuration, reference copy, missing-variant validation and the
+  explicit-spawn guard.
+- BreakableObjectPlayModeTests: a broken jar hides its intact look and
+  shows its remains.
+- VisibilityPrefabCoverageTests: cover the coffin and the jar.
+
+Player-Added: Catacombs raids now have coffins to loot and jars to break alongside chests and crates.
+Player-Improved: Chests, crates and jars are solid, so you can no longer walk through them.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Art/Props/Coffin-Close.png
+Project Grimhold/Assets/Art/Props/Coffin-Close.png.meta
+Project Grimhold/Assets/Art/Props/Coffin-Open.png
+Project Grimhold/Assets/Art/Props/Coffin-Open.png.meta
+Project Grimhold/Assets/Art/Props/Pot-Close.png.meta
+Project Grimhold/Assets/Art/Props/Pot-Open.png.meta
+Project Grimhold/Assets/Prefabs/CoffinLootContainer.prefab
+Project Grimhold/Assets/Prefabs/CoffinLootContainer.prefab.meta
+Project Grimhold/Assets/Prefabs/JarBreakable.prefab
+Project Grimhold/Assets/Prefabs/JarBreakable.prefab.meta
+Project Grimhold/Assets/Prefabs/LockedChest.prefab
+Project Grimhold/Assets/Prefabs/LootContainer.prefab
+Project Grimhold/Assets/Scenes/CatacombsMap.unity
+Project Grimhold/Assets/Scenes/Gameplay.unity
+Project Grimhold/Assets/Scripts/Gameplay/BreakableObject.cs
+Project Grimhold/Assets/Scripts/Networking/CoffinContainerSpawnRules.cs
+Project Grimhold/Assets/Scripts/Networking/CoffinContainerSpawnRules.cs.meta
+Project Grimhold/Assets/Scripts/Networking/JarBreakableSpawnRules.cs
+Project Grimhold/Assets/Scripts/Networking/JarBreakableSpawnRules.cs.meta
+Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs
+Project Grimhold/Assets/Scripts/Networking/SeededChanceRoll.cs
+Project Grimhold/Assets/Scripts/Networking/SeededChanceRoll.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/CoffinLootContainerTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/CoffinLootContainerTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/JarBreakableTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/JarBreakableTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/RaidPropPrefabTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/RaidPropPrefabTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisibilityPrefabCoverageTests.cs
+Project Grimhold/Assets/Tests/PlayMode/BreakableObjectPlayModeTests.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- message-term → Movement: movement
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/CoffinLootContainer.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/CoffinLootContainer.prefab.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Prefabs/LootContainer.prefab
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/CoffinLootContainerTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/CoffinLootContainerTests.cs.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/JarBreakableTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/JarBreakableTests.cs.meta
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/RaidPropPrefabTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/RaidPropPrefabTests.cs.meta
+- scope → Inventory &amp; Loot: loot
+- message-term → Inventory &amp; Loot: loot
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/CoffinContainerSpawnRules.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/CoffinContainerSpawnRules.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/JarBreakableSpawnRules.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/JarBreakableSpawnRules.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SeededChanceRoll.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SeededChanceRoll.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scenes/CatacombsMap.unity
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisibilityPrefabCoverageTests.cs
+- message-term → World &amp; Visibility: catacombs
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coffin-Close.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coffin-Close.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coffin-Open.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coffin-Open.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Pot-Close.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Pot-Open.png.meta
+- message-term → Art &amp; Animation: sprites
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/CoffinLootContainerTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/CoffinLootContainerTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/JarBreakableTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/JarBreakableTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/RaidPropPrefabTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/RaidPropPrefabTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisibilityPrefabCoverageTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/CoffinLootContainerTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/CoffinLootContainerTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/JarBreakableTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/JarBreakableTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/RaidPropPrefabTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/RaidPropPrefabTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisibilityPrefabCoverageTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/BreakableObjectPlayModeTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 96c338a601e92d6b3468969e9f136f1bbfbca086
+
+[96c338a601e92d6b3468969e9f136f1bbfbca086](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/96c338a601e92d6b3468969e9f136f1bbfbca086)
+
+Date: 2026-11-23T01:35:38-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(combat): drop stuck arrows on an incorporeal specter
+```
+
+#### Original body
+
+```text
+Arrows stuck to the specter while it was not manifested, and stayed
+stuck after it dematerialized.
+
+- IStuckProjectileSurface: a body can refuse stuck projectiles.
+  SpecterVisualPresenter implements it through
+  SpecterRules.HoldsStuckProjectiles (manifested states only).
+- ProjectileVisualProfilePresenter skips the stuck copy when the body
+  refuses it; StuckProjectileVisual expires as soon as its body stops
+  holding stuck projectiles (dematerialization, death).
+- Simulation is untouched: a physical projectile still stops against
+  the incorporeal specter without dealing damage.
+- GameFeelParticlesArchitecture: ranged weapon section, stick rule and
+  pending manual checks.
+
+Tests:
+- ProjectileStuckVisualTests: no stuck copy on a refusing body, and an
+  existing copy expires when the body stops holding it.
+- SpecterRulesAndCombatTests: stuck projectiles held only while
+  manifested, per state.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Character/Specter/SpecterRules.cs
+Project Grimhold/Assets/Scripts/Character/Specter/SpecterVisualPresenter.cs
+Project Grimhold/Assets/Scripts/Combat/Presentation/IStuckProjectileSurface.cs
+Project Grimhold/Assets/Scripts/Combat/Presentation/IStuckProjectileSurface.cs.meta
+Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs
+Project Grimhold/Assets/Scripts/Combat/Presentation/StuckProjectileVisual.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Enemies/SpecterRulesAndCombatTests.cs
+Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/IStuckProjectileSurface.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/IStuckProjectileSurface.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Presentation/StuckProjectileVisual.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Enemies/SpecterRulesAndCombatTests.cs
+- scope → Combat: combat
+- message-term → Combat: combat
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Combat/Presentation/ProjectileVisualProfilePresenter.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Enemies/SpecterRulesAndCombatTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileStuckVisualTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Enemies/SpecterRulesAndCombatTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### f0e9380a7676320d51ea4976f7fb6de6a30fc09c
+
+[f0e9380a7676320d51ea4976f7fb6de6a30fc09c](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f0e9380a7676320d51ea4976f7fb6de6a30fc09c)
+
+Date: 2026-11-23T01:35:29-03:00 · Classification: Features (explicit) · Systems: Combat, Inventory & Loot, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(combat): add physical feel to bows and crossbow
+```
+
+#### Original body
+
+```text
+Long bow, compound bow and light crossbow get their own feedback
+without new art or lights, reusing the existing projectile profile and
+weapon presentation slots.
+
+- Assets/Prefabs/VFX/Ranged: ArrowTrail and BoltTrail (thin speed
+  lines, the bolt longer and stronger), ArrowImpact (wood splinters
+  kicked back toward the shooter), ArrowFizzle (dust puff),
+  BowReleaseBurst and CrossbowReleaseBurst (short forward fan).
+- Bow profiles: trail, impact and fizzle assigned.
+- LightCrossbowProjectileVisual: new sprite-less profile, so the
+  default animated arrow art stays; stick values mirror the long bow,
+  so bolts now stay embedded.
+- Weapon definitions: release burst, hit reaction (Light on bows,
+  Medium on the crossbow) and a stronger crossbow deal shake
+  (0.45 / 0.18). Hitstop stays 0: it is melee-only by design.
+
+Tests:
+- RangedWeaponFeelAssignmentTests: release burst, hit reaction,
+  crossbow shake and zero hitstop per weapon.
+- ProjectileVisualAssignmentTests: arrows expect the ranged trail,
+  impact and fizzle; the crossbow keeps the default controller through
+  a sprite-less profile.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/VFX/Ranged.meta
+Project Grimhold/Assets/Prefabs/VFX/Ranged/ArrowFizzle.prefab
+Project Grimhold/Assets/Prefabs/VFX/Ranged/ArrowFizzle.prefab.meta
+Project Grimhold/Assets/Prefabs/VFX/Ranged/ArrowImpact.prefab
+Project Grimhold/Assets/Prefabs/VFX/Ranged/ArrowImpact.prefab.meta
+Project Grimhold/Assets/Prefabs/VFX/Ranged/ArrowTrail.prefab
+Project Grimhold/Assets/Prefabs/VFX/Ranged/ArrowTrail.prefab.meta
+Project Grimhold/Assets/Prefabs/VFX/Ranged/BoltTrail.prefab
+Project Grimhold/Assets/Prefabs/VFX/Ranged/BoltTrail.prefab.meta
+Project Grimhold/Assets/Prefabs/VFX/Ranged/BowReleaseBurst.prefab
+Project Grimhold/Assets/Prefabs/VFX/Ranged/BowReleaseBurst.prefab.meta
+Project Grimhold/Assets/Prefabs/VFX/Ranged/CrossbowReleaseBurst.prefab
+Project Grimhold/Assets/Prefabs/VFX/Ranged/CrossbowReleaseBurst.prefab.meta
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LightCrossbowProjectileVisual.asset
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LightCrossbowProjectileVisual.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CompoundBowWeaponDefinition.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightCrossbowWeaponDefinition.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LongBowWeaponDefinition.asset
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/RangedWeaponFeelAssignmentTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/RangedWeaponFeelAssignmentTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/CompoundBowProjectileVisual.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LightCrossbowProjectileVisual.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LightCrossbowProjectileVisual.asset.meta
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Combat/ProjectileVisuals/LongBowProjectileVisual.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CompoundBowWeaponDefinition.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightCrossbowWeaponDefinition.asset
+- path → Combat: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LongBowWeaponDefinition.asset
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/RangedWeaponFeelAssignmentTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/RangedWeaponFeelAssignmentTests.cs.meta
+- scope → Combat: combat
+- message-term → Combat: combat
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/CompoundBowWeaponDefinition.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LightCrossbowWeaponDefinition.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/LongBowWeaponDefinition.asset
+- message-term → Art &amp; Animation: sprite
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/RangedWeaponFeelAssignmentTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/RangedWeaponFeelAssignmentTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/ProjectileVisualAssignmentTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/RangedWeaponFeelAssignmentTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/RangedWeaponFeelAssignmentTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 85caa62be30f35c59d16070f261fead37d135033
 
