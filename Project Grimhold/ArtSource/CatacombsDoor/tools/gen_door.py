@@ -19,11 +19,13 @@ SHADOW = (20, 20, 26)  # leaves darken toward this colour as they recede from th
 MAX_DARKEN = 0.55
 
 
+CAP_ROWS = 16  # top tile row: the stone cap, part of the static frame
+
+
 def load_door(atlas_path):
     atlas = Image.open(atlas_path).convert("RGBA")
     h = atlas.size[1]
-    full = atlas.crop((1616, h - 1392, 1648, h - 1328))  # 32x64, top-origin
-    return full.crop((0, 16, 32, 64))  # lower 3 tile rows: 32x48
+    return atlas.crop((1616, h - 1392, 1648, h - 1328))  # all 4 tile rows (cap + door): 32x64, top-origin
 
 
 def split(door):
@@ -34,7 +36,8 @@ def split(door):
             p = door.getpixel((x, y))
             if p[3] == 0:
                 continue
-            (frame if p[:3] in FRAME_COLORS else leaves).putpixel((x, y), p)
+            static = y < CAP_ROWS or p[:3] in FRAME_COLORS
+            (frame if static else leaves).putpixel((x, y), p)
     return frame, leaves
 
 
@@ -74,7 +77,7 @@ def main(atlas_path, out_dir):
         frames.append(img)
     assert list(frames[0].getdata()) == list(door.getdata()), "closed frame must equal the door tiles"
     frame.save(os.path.join(out_dir, "Catacombs-Door-Frame.png"))
-    sheet = Image.new("RGBA", (32 * len(frames), 48), (0, 0, 0, 0))
+    sheet = Image.new("RGBA", (32 * len(frames), 64), (0, 0, 0, 0))
     for i, img in enumerate(frames):
         img.save(os.path.join(out_dir, f"Catacombs-Door-{i}.png"))
         sheet.paste(img, (32 * i, 0))

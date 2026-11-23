@@ -64,7 +64,7 @@ public sealed class CatacombsDoorTests
         Sprite[] frames = LoadFrames();
         for (int i = 0; i < FrameCount; i++)
         {
-            Assert.That(frames[i].rect, Is.EqualTo(new Rect(i * 32f, 0f, 32f, 48f)), frames[i].name);
+            Assert.That(frames[i].rect, Is.EqualTo(new Rect(i * 32f, 0f, 32f, 64f)), frames[i].name);
             Assert.That((frames[i].pivot - new Vector2(16f, 0f)).magnitude, Is.LessThan(Tolerance),
                 "Bottom-centre pivot: the door threshold sits on the NetworkDoor root.");
         }
@@ -77,8 +77,8 @@ public sealed class CatacombsDoorTests
         Texture2D atlas = ReadPng(AtlasPath);
         try
         {
-            // Atlas door tiles: x 1616-1647, lower 3 tile rows y 1328-1375 (bottom origin).
-            for (int y = 0; y < 48; y++)
+            // Atlas door tiles: x 1616-1647, all 4 tile rows (door + stone cap) y 1328-1391 (bottom origin).
+            for (int y = 0; y < 64; y++)
             {
                 for (int x = 0; x < 32; x++)
                 {
@@ -140,12 +140,42 @@ public sealed class CatacombsDoorTests
         Assert.That(variant.GetComponent<NetworkDoor>(), Is.Not.Null);
         Assert.That(variant.GetComponent<DungeonDoorPresenter>(), Is.Not.Null);
 
+        // Inherits the base door's character Y-sort: a SortingGroup raised by the character root-to-feet offset.
+        Transform anchor = variant.transform.Find("SortAnchor");
+        var group = anchor.GetComponent<UnityEngine.Rendering.SortingGroup>();
+        Assert.That(group.sortingLayerName, Is.EqualTo("Characters"));
+        Assert.That(group.sortingOrder, Is.Zero);
+        Assert.That(anchor.localPosition, Is.EqualTo(
+            AssetDatabase.LoadAssetAtPath<GameObject>(BasePrefabPath).transform.Find("SortAnchor").localPosition));
+
         Transform view = variant.transform.Find("SortAnchor/View");
         Assert.That(view, Is.Not.Null);
         Assert.That(view.position, Is.EqualTo(variant.transform.position), "View sits on the root threshold.");
         Assert.That(view.GetComponent<SpriteRenderer>().sprite, Is.EqualTo(LoadFrames()[0]));
         Assert.That(view.GetComponent<Animator>().runtimeAnimatorController,
             Is.EqualTo(AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(OverridePath)));
+    }
+
+    [Test]
+    public void ClosedVariant_BlocksTheWholeWallDepth_SoNobodyStandsInsideTheDoorway()
+    {
+        // The Catacombs wall is 4 rows deep (3 door rows + stone cap). A 1-row threshold blocker let a player
+        // stand inside the doorway behind the closed door, where the weapon poked through it.
+        var variant = AssetDatabase.LoadAssetAtPath<GameObject>(VariantPath);
+        var blocker = variant.transform.Find("Blocker").GetComponent<BoxCollider2D>();
+        Assert.That(blocker.offset, Is.EqualTo(new Vector2(0f, 2f)));
+        Assert.That(blocker.size, Is.EqualTo(new Vector2(2.125f, 4f)));
+
+        // Interaction stays reachable from both faces: 0.75 beyond the south and the north face.
+        var trigger = variant.transform.Find("InteractionTrigger").GetComponent<BoxCollider2D>();
+        Assert.That(trigger.isTrigger, Is.True);
+        Assert.That(trigger.offset.y - trigger.size.y * 0.5f, Is.EqualTo(-0.75f).Within(0.0001f));
+        Assert.That(trigger.offset.y + trigger.size.y * 0.5f, Is.EqualTo(4.75f).Within(0.0001f));
+        Assert.That(trigger.size.x, Is.EqualTo(2.5f));
+
+        var baseBlocker = AssetDatabase.LoadAssetAtPath<GameObject>(BasePrefabPath).transform.Find("Blocker")
+            .GetComponent<BoxCollider2D>();
+        Assert.That(baseBlocker.size, Is.EqualTo(new Vector2(2.125f, 1f)), "The base door keeps its threshold blocker.");
     }
 
     [Test]
@@ -174,11 +204,11 @@ public sealed class CatacombsDoorTests
         Assert.That(sprite.min.x, Is.EqualTo(cell.x).Within(Tolerance));
         Assert.That(sprite.max.x, Is.EqualTo(cell.x + 2f).Within(Tolerance));
         Assert.That(sprite.min.y, Is.EqualTo(cell.y).Within(Tolerance));
-        Assert.That(sprite.max.y, Is.EqualTo(cell.y + 3f).Within(Tolerance));
+        Assert.That(sprite.max.y, Is.EqualTo(cell.y + 4f).Within(Tolerance), "The door also draws its stone cap.");
     }
 
     [Test]
-    public void CatacombsMap_HasANetworkedDoubleDoorOnEveryDoorway_AndNoDoorTilesBelowTheCap()
+    public void CatacombsMap_HasANetworkedDoubleDoorOnEveryDoorway_AndNoDoorOrCapTilesLeft()
     {
         Scene scene = EditorSceneManager.OpenPreviewScene(CatacombsScenePath);
         try
@@ -203,7 +233,7 @@ public sealed class CatacombsDoorTests
             Tilemap walls = tilemaps.Single(t => t.name == "Walls");
             foreach (Vector3Int cell in DoorCells)
             {
-                for (int dy = 0; dy < 3; dy++)
+                for (int dy = 0; dy < 4; dy++)
                 {
                     for (int dx = 0; dx < 2; dx++)
                     {
@@ -212,9 +242,6 @@ public sealed class CatacombsDoorTests
                         Assert.That(walls.HasTile(c), Is.False, $"Walls tile inside doorway at {c}");
                     }
                 }
-
-                Vector3Int cap = cell + new Vector3Int(0, 3, 0);
-                Assert.That(access.HasTile(cap) || walls.HasTile(cap), Is.True, $"stone cap kept at {cap}");
             }
         }
         finally
