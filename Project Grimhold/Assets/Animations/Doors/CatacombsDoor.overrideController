@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: CatacombsDoor
+  m_Controller: {fileID: 9100000, guid: e0ead70e73fe3b342b4ce8a20abb3cad, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 8e95bd70cf2be4b4a8df2dcc203edcdf, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 547d692f1b645314ba0a855fb6f3b730, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 8633a0804389539449a214c15d39d216, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: c7d1306e1a52f5743baf3a551e4c1dba, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: e44a793b2cd39024797ac1fa3f647601, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 34fac1298a524794dba91152f6461ade, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 54a9f23a2b760d04f8a3b0ff33c4bd1a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: d31783621824d8948818875ac8108506, type: 2}

@@ -183,7 +183,7 @@ namespace Tests.EditMode.Networking
             Assert.That(All<RaidLootTestSpawner>(_scene), Is.Empty);
             Assert.That(All<MissionPlayModeDebugger>(_scene), Is.Empty);
             Assert.That(All<NetworkLootPickup>(_scene), Is.Empty);
-            Assert.That(All<NetworkDoor>(_scene), Is.Empty);
+            // Doors are authored content now: CatacombsDoorTests pins one CatacombsDoor per doorway.
             Assert.That(All<EnemyPatrolRoute>(_scene), Is.Empty);
             Assert.That(All<ParticleSystem>(_scene).Where(item => item.GetComponentInParent<DungeonLightProp>(true) == null),
                 Is.Empty, "Only light props may carry particles (their extinguish smoke).");
