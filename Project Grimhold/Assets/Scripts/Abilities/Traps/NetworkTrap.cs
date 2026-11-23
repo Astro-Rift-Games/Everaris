@@ -139,6 +139,8 @@ public sealed class NetworkTrap : NetworkBehaviour
             Collider2D collider = _overlapBuffer[i];
             if (collider == null || !_registry.TryGetEntityId(collider, out EntityId candidateId)) continue;
             if (candidateId.Value == 0 || !_registry.IsDamageCollider(candidateId, collider)) continue;
+            // A trap never triggers on someone on the other side of a wall or closed door.
+            if (WorldOcclusion.IsBlocked(transform.position, collider.ClosestPoint(transform.position))) continue;
             if (!_registry.TryGetDamageable(candidateId, out IDamageable damageable)) continue;
             if (damageable is PlayerCharacter player)
             {

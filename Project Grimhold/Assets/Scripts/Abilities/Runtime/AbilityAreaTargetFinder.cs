@@ -74,8 +74,9 @@ public sealed class AbilityAreaTargetFinder : MonoBehaviour
         if (query == null || registry == null || results == null || layerMask == 0 ||
             !(radius > 0f) || float.IsInfinity(radius) || float.IsNaN(origin.x) || float.IsNaN(origin.y)) return false;
         isValid ??= ValidEnemy;
+        // Hostile areas never reach through walls or closed doors: the line from the area centre must be clear.
         var found = query.FindTargets(new AttackTargetQuery(
-            casterId, origin, Vector2.zero, 0f, radius, UnlimitedTargets, layerMask));
+            casterId, origin, Vector2.zero, 0f, radius, UnlimitedTargets, layerMask, origin, WorldOcclusion.Mask));
         if (found == null) return true;
         // Copy immediately: the query returns its own reused list.
         for (int i = 0; i < found.Count; i++)
@@ -101,7 +102,7 @@ public sealed class AbilityAreaTargetFinder : MonoBehaviour
             float.IsNaN(origin.x) || float.IsInfinity(origin.x) ||
             float.IsNaN(origin.y) || float.IsInfinity(origin.y)) return false;
         var found = query.FindTargets(new AttackTargetQuery(
-            casterId, origin, Vector2.zero, 0f, radius, UnlimitedTargets, layerMask));
+            casterId, origin, Vector2.zero, 0f, radius, UnlimitedTargets, layerMask, origin, WorldOcclusion.Mask));
         if (isValidAlly(caster, caster)) results.Add(caster);
         if (found == null) return true;
         for (int i = 0; i < found.Count; i++)

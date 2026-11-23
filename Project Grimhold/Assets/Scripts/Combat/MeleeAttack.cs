@@ -10,8 +10,6 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class MeleeAttack : MonoBehaviour, IAttack
 {
-    // Walls, closed doors, railings and pillars (the layer NetworkDoor's blocker and the map tilemaps use).
-    private const int WorldCollisionMask = 1 << 6;
 
     [Header("Configuration")]
     [SerializeField]
@@ -257,7 +255,7 @@ public sealed class MeleeAttack : MonoBehaviour, IAttack
             _config.MaximumTargets,
             _config.TargetLayerMask.value,
             transform.position,
-            WorldCollisionMask
+            WorldOcclusion.Mask
         );
 
         // 2. Perform spatial query

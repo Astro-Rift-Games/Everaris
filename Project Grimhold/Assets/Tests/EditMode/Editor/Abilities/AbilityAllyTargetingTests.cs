@@ -123,6 +123,22 @@ namespace Tests.EditMode.Abilities
         }
 
         [Test]
+        public void Allies_TeammateBehindAWallOrClosedDoorIsExcluded()
+        {
+            CreateTeammate(2, new Vector2(1.5f, 0f));
+            CreateTeammate(3, new Vector2(0f, 1.5f));
+            var wall = new GameObject("Wall") { layer = LayerMask.NameToLayer("WorldCollision") };
+            wall.transform.position = new Vector2(0.75f, 0f);
+            wall.AddComponent<BoxCollider2D>().size = new Vector2(0.1f, 1f);
+            _objects.Add(wall);
+            Physics2D.SyncTransforms();
+
+            Assert.That(Collect(Vector2.zero, 3f), Is.True);
+
+            Assert.That(Ids(), Is.EqualTo(new[] { CasterIdValue, 3 }));
+        }
+
+        [Test]
         public void Allies_TeammateOutsideTheRadiusIsExcluded()
         {
             CreateTeammate(2, new Vector2(5f, 0f));

@@ -20,4 +20,4 @@ MonoBehaviour:
     RawGuidValue: 3ab712d5d6994c64aa4e888228750fc5
   _impactLayerMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 192

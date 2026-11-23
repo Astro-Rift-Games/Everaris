@@ -198,6 +198,8 @@ public sealed class ProtectiveOrbsNetworkEffect : NetworkBehaviour
                     !_registry.TryGetDamageable(id, out IDamageable target) ||
                     !AbilityTargetPredicate.IsValidEnemy(OwnerId, target)) continue;
                 Vector2 point = collider.ClosestPoint(origin);
+                // An orb poking past a wall, railing or closed door does not touch what is behind it.
+                if (WorldOcclusion.IsBlocked(_playerCharacter.transform.position, point)) continue;
                 float distance = (point - origin).sqrMagnitude;
                 if (selectedId.Value == 0 || distance < selectedDistance ||
                     (distance == selectedDistance && id.Value < selectedId.Value))

@@ -80,7 +80,8 @@ public sealed class NetworkExplosiveBomb : NetworkBehaviour
 
         OwnerEntityIdValue = ownerId.Value;
         StartPosition = start;
-        TargetPosition = target;
+        // A thrown bomb lands against the first wall or closed door it crosses instead of passing through it.
+        TargetPosition = WorldOcclusion.ClampToFirstObstacle(start, target);
         FuseTimer = TickTimer.CreateFromSeconds(Runner, _fuseSeconds);
         HasDetonated = false;
         _damageResolver = resolver;
@@ -178,6 +179,8 @@ public sealed class NetworkExplosiveBomb : NetworkBehaviour
         {
             Collider2D col = colliders[i];
             if (col == null) continue;
+            // The blast does not reach through walls or closed doors.
+            if (WorldOcclusion.IsBlocked(TargetPosition, col.ClosestPoint(TargetPosition))) continue;
 
             EntityId targetId = default;
             if (registry != null)
