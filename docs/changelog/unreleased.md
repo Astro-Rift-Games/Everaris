@@ -4,32 +4,430 @@
 
 Release: Unreleased
 
-361 original commits; 361 canonical entries.
+365 original commits; 365 canonical entries.
 
 ## Canonical classification
 
-128 features; 111 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 21 other changes
+129 features; 114 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 21 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Abilities | 17 | 11 | 1 | 0 | 10 | 1 |
-| Art & Animation | 29 | 12 | 3 | 0 | 9 | 8 |
+| Abilities | 17 | 12 | 1 | 0 | 10 | 1 |
+| Art & Animation | 30 | 13 | 3 | 0 | 9 | 8 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 92 | 74 | 4 | 1 | 25 | 6 |
-| Combat | 53 | 22 | 2 | 0 | 16 | 2 |
+| Build & Tooling | 93 | 77 | 4 | 1 | 25 | 6 |
+| Combat | 54 | 24 | 2 | 0 | 16 | 2 |
 | Documentation | 41 | 45 | 0 | 0 | 20 | 1 |
 | Extraction | 19 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 85 | 63 | 4 | 1 | 29 | 5 |
-| Movement | 7 | 6 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 43 | 44 | 0 | 0 | 19 | 2 |
+| Inventory & Loot | 86 | 64 | 4 | 1 | 29 | 5 |
+| Movement | 8 | 7 | 0 | 0 | 2 | 0 |
+| Networking & Sessions | 44 | 44 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 50 | 57 | 2 | 1 | 22 | 3 |
-| Tests | 123 | 105 | 4 | 1 | 34 | 4 |
+| Tests | 124 | 108 | 4 | 1 | 34 | 4 |
 | UI | 45 | 23 | 2 | 0 | 14 | 4 |
 | Unassigned | 0 | 1 | 0 | 0 | 28 | 1 |
-| World & Visibility | 36 | 16 | 1 | 0 | 3 | 12 |
+| World & Visibility | 37 | 18 | 1 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 3f4ffcc05a753937bfed79be483459e79d7371cb
+
+[3f4ffcc05a753937bfed79be483459e79d7371cb](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3f4ffcc05a753937bfed79be483459e79d7371cb)
+
+Date: 2026-11-23T19:20:50-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Inventory & Loot, World & Visibility, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(level): sort Catacombs arches and doors with characters, unblock doorways
+```
+
+#### Original body
+
+```text
+Players crossing arches and doors drew over their stone, three doors
+opened into an invisible wall, and a player could stand inside a
+closed doorway and push a weapon through the door.
+
+- Arches: each arch moves to its own tilemap (Access_ArchRoof_x_y,
+  still read as Access by the rift classifier) under a SortingGroup on
+  Characters at the wall base + the character root-to-feet offset (the
+  door calibration). Characters in front draw over it, characters
+  passing through draw behind its pillars and roof.
+- Arch (-28,-65) becomes a passage: its cap row leaves Walls for the
+  roof. ArchCollision blocks the 9 px pillars of both open arches
+  through the 4-row wall.
+- CatacombsDoor: the sprite is 32x64 and draws the stone cap (40 cap
+  tiles removed from Access), so the door sorts as one unit; the closed
+  blocker fills the 4-row wall depth (2.125x4) and the interaction
+  trigger reaches 0.75 past both faces. The base DungeonDoor is
+  unchanged.
+- Three doors had their cap painted in Walls; the doorways now lead
+  through. The Walls CompositeCollider2D geometry was stale and is
+  rebuilt from the current tiles.
+
+Tests:
+- CatacombsAccessTraversalTests: a player-sized body sweeps every
+  door (closed blocks from both faces, open lets through), both arches
+  and all stairs
+- CatacombsArchRoofTests: roof tiles, Y-sort anchor, front/behind
+  sorting, pillar collision
+- CatacombsDoorTests: 32x64 frames with the cap, full-depth blocker,
+  no door or cap tiles left
+
+Player-Fixed: Characters now pass behind Catacombs arches and doors instead of over them, and three doors that opened into a wall lead through again.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/ArtSource/CatacombsDoor/README.md
+Project Grimhold/ArtSource/CatacombsDoor/aseprite/Catacombs-Door.aseprite
+Project Grimhold/ArtSource/CatacombsDoor/tools/gen_door.py
+Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png
+Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta
+Project Grimhold/Assets/Prefabs/Doors/CatacombsDoor.prefab
+Project Grimhold/Assets/Scenes/CatacombsMap.unity
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs
+odd/tasks/catacombs-doors.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Combat: weapon
+- message-term → Inventory &amp; Loot: interaction
+- path → World &amp; Visibility: Project Grimhold/ArtSource/CatacombsDoor/README.md
+- path → World &amp; Visibility: Project Grimhold/ArtSource/CatacombsDoor/aseprite/Catacombs-Door.aseprite
+- path → World &amp; Visibility: Project Grimhold/ArtSource/CatacombsDoor/tools/gen\_door.py
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Prefabs/Doors/CatacombsDoor.prefab
+- path → World &amp; Visibility: Project Grimhold/Assets/Scenes/CatacombsMap.unity
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs
+- path → World &amp; Visibility: odd/tasks/catacombs-doors.md
+- message-term → World &amp; Visibility: Catacombs
+- path → Art &amp; Animation: Project Grimhold/ArtSource/CatacombsDoor/README.md
+- path → Art &amp; Animation: Project Grimhold/ArtSource/CatacombsDoor/aseprite/Catacombs-Door.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/CatacombsDoor/tools/gen\_door.py
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta
+- message-term → Art &amp; Animation: sprite
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/CatacombsDoor/tools/gen\_door.py
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### e58a9624c08f0b19d473c79919f99585f775707a
+
+[e58a9624c08f0b19d473c79919f99585f775707a](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e58a9624c08f0b19d473c79919f99585f775707a)
+
+Date: 2026-11-23T19:20:39-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Abilities, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(combat): stop melee hits through walls and closed doors
+```
+
+#### Original body
+
+```text
+Physics2DAttackTargetQuery selected melee targets with an OverlapCircle
+only, so a swing whose circle reached past a wall or a closed door hit
+whatever stood behind it (players and enemies alike).
+
+- AttackTargetQuery gains optional OcclusionOrigin and
+  ObstacleLayerMask (default 0 = previous behaviour). With a mask, a
+  target is skipped when a linecast from the occlusion origin to its
+  hit point meets that layer.
+- MeleeAttack occludes by WorldCollision (walls, closed door blockers,
+  railings, pillars) from the attacker's body, not the swing origin:
+  the hand can sit inside a wall or door, the body cannot. Reach still
+  starts at the swing origin.
+- Ability areas (AbilityAreaTargetFinder) keep the unoccluded query.
+
+Tests:
+- MeleeAttackTests: query carries body occlusion origin and the
+  WorldCollision mask
+- Physics2DAttackTargetQueryTests: target behind a wall excluded, clear
+  line kept, no mask keeps the overlap-only behaviour
+
+Player-Fixed: Melee attacks no longer hit enemies or players through walls and closed doors.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Combat/MeleeAttack.cs
+Project Grimhold/Assets/Scripts/Combat/Physics2DAttackTargetQuery.cs
+Project Grimhold/Assets/Scripts/Core/AttackTargetQuery.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeAttackTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/Physics2DAttackTargetQueryTests.cs
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/MeleeAttack.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/Physics2DAttackTargetQuery.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Core/AttackTargetQuery.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeAttackTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/Physics2DAttackTargetQueryTests.cs
+- scope → Combat: combat
+- message-term → Combat: combat
+- message-term → Abilities: Ability
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeAttackTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/Physics2DAttackTargetQueryTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeAttackTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/Physics2DAttackTargetQueryTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 849c3a4e45cc8ea806da2f09b09fa7e43791d981
+
+[849c3a4e45cc8ea806da2f09b09fa7e43791d981](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/849c3a4e45cc8ea806da2f09b09fa7e43791d981)
+
+Date: 2026-11-23T18:22:07-03:00 · Classification: Bug Fixes (explicit) · Systems: Movement, World & Visibility, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(level): block the sides of the Catacombs stairs
+```
+
+#### Original body
+
+```text
+The seven decorative stairs of CatacombsMap had no collision: players
+and enemies walked through railings, arch pillars and the solid side
+of the diagonal stair. Only their sides block now; the steps stay
+walkable and the open arches stay passable. Tiles and art are
+unchanged.
+
+- StairCollision under the map Grid (WorldCollision, static, no
+  renderer), one child per stair:
+  - railed stairs and the arch stair: half-cell (8 px) boxes on both
+    railings/pillars, full height including the bottom posts;
+  - unrailed stair in a wall gap: thin boxes on the sides of its only
+    row outside the wall;
+  - diagonal stair: polygon on its solid brick side and an edge along
+    the open top edge of the step band.
+- PathfindingGrid already samples WorldCollision with OverlapBox, so
+  enemy navigation respects the railings.
+
+Tests:
+- CatacombsStairCollisionTests: static WorldCollision setup, railings
+  blocked and steps free every 0.2 u, diagonal side and edge, arches
+  passable
+
+Player-Fixed: You can no longer walk through stair railings and arch pillars in the Catacombs.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scenes/CatacombsMap.unity
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scenes/CatacombsMap.unity
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs.meta
+- message-term → World &amp; Visibility: Catacombs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 505d6e39ebdfa6bde2b684d56b1e66cf2f8d779f
+
+[505d6e39ebdfa6bde2b684d56b1e66cf2f8d779f](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/505d6e39ebdfa6bde2b684d56b1e66cf2f8d779f)
+
+Date: 2026-11-23T18:01:53-03:00 · Classification: Features (explicit) · Systems: Combat, Movement, Inventory & Loot, Networking & Sessions, World & Visibility, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(level): make Catacombs doors networked and animated
+```
+
+#### Original body
+
+```text
+The 20 double doors of CatacombsMap were static Access tiles with no
+interaction or collision. They are now CatacombsDoor instances: the
+existing NetworkDoor (prompt, blocker, pathfinding refresh, vision and
+projectile occlusion, Host Migration restore) showing the map's own
+double door, animated in Aseprite.
+
+- Catacombs-Door-Sheet.png: 4 frames of 32x48 (closed, 60 %, 25 %,
+  open), pivot on the threshold. The closed frame equals the atlas
+  door tiles pixel-exactly. The leaves swing North behind the wall:
+  they render under the static brick/arch frame, narrow, lift and
+  darken as they recede, and are gone when open.
+- Catacombs_Door_* clips copy the base clips' timing, loop and binding;
+  CatacombsDoor.overrideController keeps the four presenter states of
+  DungeonDoor.controller.
+- CatacombsDoor.prefab: variant of DungeonDoor with the new sprite and
+  controller; NetworkDoor and DungeonDoorPresenter are unchanged.
+- CatacombsDoorBrush: paint on a door's bottom-left cell; the root
+  lands on the threshold between its two cells.
+- CatacombsMap: empty "Doors" tilemap under the Grid with the 20 doors;
+  their 120 lower Access tiles removed (each verified as a door tile).
+  The stone-cap row stays a tile, so Walls collision is unchanged.
+- ArtSource/CatacombsDoor: Aseprite source (Leaves under Frame,
+  Opening/Closing tags), generator script and README.
+- odd/tasks/catacombs-doors.md tracker.
+
+Tests:
+- CatacombsDoorTests: import and pivots, closed frame == tiles,
+  override clips, variant, brush alignment, 20 doors with no door
+  tiles below the cap
+- CatacombsSceneCompositionTests no longer forbids NetworkDoor
+- DungeonDoorPlayModeTests 19/19, door rules and animation suites pass
+
+Player-Added: Catacombs doors can now be opened and closed; closed doors block movement, attacks and sight.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/ArtSource/CatacombsDoor/.gitignore
+Project Grimhold/ArtSource/CatacombsDoor/README.md
+Project Grimhold/ArtSource/CatacombsDoor/aseprite/Catacombs-Door.aseprite
+Project Grimhold/ArtSource/CatacombsDoor/tools/gen_door.py
+Project Grimhold/Assets/Animations/Doors/CatacombsDoor.overrideController
+Project Grimhold/Assets/Animations/Doors/CatacombsDoor.overrideController.meta
+Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closed.anim
+Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closed.anim.meta
+Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closing_North.anim
+Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closing_North.anim.meta
+Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Open_North.anim
+Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Open_North.anim.meta
+Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Opening_North.anim
+Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Opening_North.anim.meta
+Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png
+Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta
+Project Grimhold/Assets/Art/Tilesets/Brushes/CatacombsDoorBrush.asset
+Project Grimhold/Assets/Art/Tilesets/Brushes/CatacombsDoorBrush.asset.meta
+Project Grimhold/Assets/Prefabs/Doors/CatacombsDoor.prefab
+Project Grimhold/Assets/Prefabs/Doors/CatacombsDoor.prefab.meta
+Project Grimhold/Assets/Scenes/CatacombsMap.unity
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs.meta
+odd/tasks/catacombs-doors.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- message-term → Combat: projectile
+- message-term → Movement: movement
+- message-term → Inventory &amp; Loot: interaction
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- message-term → Networking &amp; Sessions: Host Migration
+- path → World &amp; Visibility: Project Grimhold/ArtSource/CatacombsDoor/.gitignore
+- path → World &amp; Visibility: Project Grimhold/ArtSource/CatacombsDoor/README.md
+- path → World &amp; Visibility: Project Grimhold/ArtSource/CatacombsDoor/aseprite/Catacombs-Door.aseprite
+- path → World &amp; Visibility: Project Grimhold/ArtSource/CatacombsDoor/tools/gen\_door.py
+- path → World &amp; Visibility: Project Grimhold/Assets/Animations/Doors/CatacombsDoor.overrideController
+- path → World &amp; Visibility: Project Grimhold/Assets/Animations/Doors/CatacombsDoor.overrideController.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Closed.anim
+- path → World &amp; Visibility: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Closed.anim.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Closing\_North.anim
+- path → World &amp; Visibility: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Closing\_North.anim.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Open\_North.anim
+- path → World &amp; Visibility: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Open\_North.anim.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Opening\_North.anim
+- path → World &amp; Visibility: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Opening\_North.anim.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Tilesets/Brushes/CatacombsDoorBrush.asset
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Tilesets/Brushes/CatacombsDoorBrush.asset.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Prefabs/Doors/CatacombsDoor.prefab
+- path → World &amp; Visibility: Project Grimhold/Assets/Prefabs/Doors/CatacombsDoor.prefab.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scenes/CatacombsMap.unity
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs.meta
+- path → World &amp; Visibility: odd/tasks/catacombs-doors.md
+- message-term → World &amp; Visibility: Catacombs
+- path → Art &amp; Animation: Project Grimhold/ArtSource/CatacombsDoor/.gitignore
+- path → Art &amp; Animation: Project Grimhold/ArtSource/CatacombsDoor/README.md
+- path → Art &amp; Animation: Project Grimhold/ArtSource/CatacombsDoor/aseprite/Catacombs-Door.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/CatacombsDoor/tools/gen\_door.py
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Doors/CatacombsDoor.overrideController
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Doors/CatacombsDoor.overrideController.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Closed.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Closed.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Closing\_North.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Closing\_North.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Open\_North.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Open\_North.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Opening\_North.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Doors/Catacombs\_Door\_Opening\_North.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Tilesets/Brushes/CatacombsDoorBrush.asset
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Tilesets/Brushes/CatacombsDoorBrush.asset.meta
+- message-term → Art &amp; Animation: sprite
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/CatacombsDoor/tools/gen\_door.py
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 6c2712798f7e3596d670eb408812af6c32dbc6df
 

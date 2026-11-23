@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1238,
-  "canonicalEntries": 1235,
+  "rawCommits": 1242,
+  "canonicalEntries": 1239,
   "before": {
+    "Bug Fixes": 192,
+    "Features": 450,
     "Other Changes": 376,
-    "Features": 449,
-    "Bug Fixes": 189,
     "Refactoring": 17,
     "Documentation": 136,
     "Tests": 47,
     "Architecture & Infrastructure": 24
   },
   "after": {
+    "Bug Fixes": 208,
+    "Features": 589,
     "Other Changes": 183,
-    "Features": 588,
-    "Bug Fixes": 205,
     "Refactoring": 30,
     "Documentation": 152,
     "Tests": 52,
@@ -23,28 +23,28 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Combat": 414,
+    "Inventory & Loot": 505,
+    "World & Visibility": 181,
+    "Art & Animation": 273,
+    "Build & Tooling": 647,
+    "Tests": 796,
+    "Abilities": 145,
+    "Movement": 106,
+    "Networking & Sessions": 365,
     "Unassigned": 48,
-    "Movement": 104,
-    "Inventory & Loot": 503,
-    "Networking & Sessions": 364,
-    "World & Visibility": 178,
-    "Art & Animation": 271,
-    "Build & Tooling": 643,
-    "Tests": 792,
-    "Combat": 411,
     "Persistence & Backend": 320,
     "Documentation": 450,
     "UI": 357,
-    "Abilities": 144,
     "Extraction": 177,
     "Audio": 42,
     "Input": 32
   },
   "canonical": {
     "sections": {
+      "Bug Fixes": 207,
+      "Features": 588,
       "Other Changes": 182,
-      "Features": 587,
-      "Bug Fixes": 204,
       "Refactoring": 30,
       "Documentation": 152,
       "Tests": 52,
@@ -52,19 +52,19 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Combat": 412,
+      "Inventory & Loot": 505,
+      "World & Visibility": 179,
+      "Art & Animation": 270,
+      "Build & Tooling": 645,
+      "Tests": 794,
+      "Abilities": 143,
+      "Movement": 106,
+      "Networking & Sessions": 365,
       "Unassigned": 48,
-      "Movement": 104,
-      "Inventory & Loot": 503,
-      "Networking & Sessions": 364,
-      "World & Visibility": 176,
-      "Art & Animation": 268,
-      "Build & Tooling": 641,
-      "Tests": 790,
-      "Combat": 409,
       "Persistence & Backend": 320,
       "Documentation": 448,
       "UI": 356,
-      "Abilities": 142,
       "Extraction": 177,
       "Audio": 42,
       "Input": 32
@@ -74694,8 +74694,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 361,
-      "canonicalEntries": 361
+      "originalCommits": 365,
+      "canonicalEntries": 365
     },
     {
       "key": "v0.5.0",
@@ -74739,6 +74739,766 @@
     }
   ],
   "commits": [
+    {
+      "sha": "3f4ffcc05a753937bfed79be483459e79d7371cb",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3f4ffcc05a753937bfed79be483459e79d7371cb",
+      "subject": "fix(level): sort Catacombs arches and doors with characters, unblock doorways",
+      "body": "Players crossing arches and doors drew over their stone, three doors\nopened into an invisible wall, and a player could stand inside a\nclosed doorway and push a weapon through the door.\n\n- Arches: each arch moves to its own tilemap (Access_ArchRoof_x_y,\n  still read as Access by the rift classifier) under a SortingGroup on\n  Characters at the wall base + the character root-to-feet offset (the\n  door calibration). Characters in front draw over it, characters\n  passing through draw behind its pillars and roof.\n- Arch (-28,-65) becomes a passage: its cap row leaves Walls for the\n  roof. ArchCollision blocks the 9 px pillars of both open arches\n  through the 4-row wall.\n- CatacombsDoor: the sprite is 32x64 and draws the stone cap (40 cap\n  tiles removed from Access), so the door sorts as one unit; the closed\n  blocker fills the 4-row wall depth (2.125x4) and the interaction\n  trigger reaches 0.75 past both faces. The base DungeonDoor is\n  unchanged.\n- Three doors had their cap painted in Walls; the doorways now lead\n  through. The Walls CompositeCollider2D geometry was stale and is\n  rebuilt from the current tiles.\n\nTests:\n- CatacombsAccessTraversalTests: a player-sized body sweeps every\n  door (closed blocks from both faces, open lets through), both arches\n  and all stairs\n- CatacombsArchRoofTests: roof tiles, Y-sort anchor, front/behind\n  sorting, pillar collision\n- CatacombsDoorTests: 32x64 frames with the cap, full-depth blocker,\n  no door or cap tiles left\n\nPlayer-Fixed: Characters now pass behind Catacombs arches and doors instead of over them, and three doors that opened into a wall lead through again.\n",
+      "date": "2026-11-23T19:20:50-03:00",
+      "files": [
+        "Project Grimhold/ArtSource/CatacombsDoor/README.md",
+        "Project Grimhold/ArtSource/CatacombsDoor/aseprite/Catacombs-Door.aseprite",
+        "Project Grimhold/ArtSource/CatacombsDoor/tools/gen_door.py",
+        "Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png",
+        "Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta",
+        "Project Grimhold/Assets/Prefabs/Doors/CatacombsDoor.prefab",
+        "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs",
+        "odd/tasks/catacombs-doors.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "level",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Inventory & Loot",
+        "World & Visibility",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "interaction",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/README.md",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/aseprite/Catacombs-Door.aseprite",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/tools/gen_door.py",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Doors/CatacombsDoor.prefab",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/catacombs-doors.md",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "Catacombs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/README.md",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/aseprite/Catacombs-Door.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/tools/gen_door.py",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "sprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/tools/gen_door.py",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsArchRoofTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "e58a9624c08f0b19d473c79919f99585f775707a",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e58a9624c08f0b19d473c79919f99585f775707a",
+      "subject": "fix(combat): stop melee hits through walls and closed doors",
+      "body": "Physics2DAttackTargetQuery selected melee targets with an OverlapCircle\nonly, so a swing whose circle reached past a wall or a closed door hit\nwhatever stood behind it (players and enemies alike).\n\n- AttackTargetQuery gains optional OcclusionOrigin and\n  ObstacleLayerMask (default 0 = previous behaviour). With a mask, a\n  target is skipped when a linecast from the occlusion origin to its\n  hit point meets that layer.\n- MeleeAttack occludes by WorldCollision (walls, closed door blockers,\n  railings, pillars) from the attacker's body, not the swing origin:\n  the hand can sit inside a wall or door, the body cannot. Reach still\n  starts at the swing origin.\n- Ability areas (AbilityAreaTargetFinder) keep the unoccluded query.\n\nTests:\n- MeleeAttackTests: query carries body occlusion origin and the\n  WorldCollision mask\n- Physics2DAttackTargetQueryTests: target behind a wall excluded, clear\n  line kept, no mask keeps the overlap-only behaviour\n\nPlayer-Fixed: Melee attacks no longer hit enemies or players through walls and closed doors.\n",
+      "date": "2026-11-23T19:20:39-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Combat/MeleeAttack.cs",
+        "Project Grimhold/Assets/Scripts/Combat/Physics2DAttackTargetQuery.cs",
+        "Project Grimhold/Assets/Scripts/Core/AttackTargetQuery.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeAttackTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/Physics2DAttackTargetQueryTests.cs"
+      ],
+      "originalType": "fix",
+      "originalScope": "combat",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Abilities",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/MeleeAttack.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/Physics2DAttackTargetQuery.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Core/AttackTargetQuery.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeAttackTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/Physics2DAttackTargetQueryTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "scope",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "Ability",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeAttackTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/Physics2DAttackTargetQueryTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/MeleeAttackTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/Physics2DAttackTargetQueryTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "849c3a4e45cc8ea806da2f09b09fa7e43791d981",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/849c3a4e45cc8ea806da2f09b09fa7e43791d981",
+      "subject": "fix(level): block the sides of the Catacombs stairs",
+      "body": "The seven decorative stairs of CatacombsMap had no collision: players\nand enemies walked through railings, arch pillars and the solid side\nof the diagonal stair. Only their sides block now; the steps stay\nwalkable and the open arches stay passable. Tiles and art are\nunchanged.\n\n- StairCollision under the map Grid (WorldCollision, static, no\n  renderer), one child per stair:\n  - railed stairs and the arch stair: half-cell (8 px) boxes on both\n    railings/pillars, full height including the bottom posts;\n  - unrailed stair in a wall gap: thin boxes on the sides of its only\n    row outside the wall;\n  - diagonal stair: polygon on its solid brick side and an edge along\n    the open top edge of the step band.\n- PathfindingGrid already samples WorldCollision with OverlapBox, so\n  enemy navigation respects the railings.\n\nTests:\n- CatacombsStairCollisionTests: static WorldCollision setup, railings\n  blocked and steps free every 0.2 u, diagonal side and edge, arches\n  passable\n\nPlayer-Fixed: You can no longer walk through stair railings and arch pillars in the Catacombs.\n",
+      "date": "2026-11-23T18:22:07-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs.meta"
+      ],
+      "originalType": "fix",
+      "originalScope": "level",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Movement",
+        "World & Visibility",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs",
+          "supports": "Movement"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs.meta",
+          "supports": "Movement"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "Catacombs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsStairCollisionTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "505d6e39ebdfa6bde2b684d56b1e66cf2f8d779f",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/505d6e39ebdfa6bde2b684d56b1e66cf2f8d779f",
+      "subject": "feat(level): make Catacombs doors networked and animated",
+      "body": "The 20 double doors of CatacombsMap were static Access tiles with no\ninteraction or collision. They are now CatacombsDoor instances: the\nexisting NetworkDoor (prompt, blocker, pathfinding refresh, vision and\nprojectile occlusion, Host Migration restore) showing the map's own\ndouble door, animated in Aseprite.\n\n- Catacombs-Door-Sheet.png: 4 frames of 32x48 (closed, 60 %, 25 %,\n  open), pivot on the threshold. The closed frame equals the atlas\n  door tiles pixel-exactly. The leaves swing North behind the wall:\n  they render under the static brick/arch frame, narrow, lift and\n  darken as they recede, and are gone when open.\n- Catacombs_Door_* clips copy the base clips' timing, loop and binding;\n  CatacombsDoor.overrideController keeps the four presenter states of\n  DungeonDoor.controller.\n- CatacombsDoor.prefab: variant of DungeonDoor with the new sprite and\n  controller; NetworkDoor and DungeonDoorPresenter are unchanged.\n- CatacombsDoorBrush: paint on a door's bottom-left cell; the root\n  lands on the threshold between its two cells.\n- CatacombsMap: empty \"Doors\" tilemap under the Grid with the 20 doors;\n  their 120 lower Access tiles removed (each verified as a door tile).\n  The stone-cap row stays a tile, so Walls collision is unchanged.\n- ArtSource/CatacombsDoor: Aseprite source (Leaves under Frame,\n  Opening/Closing tags), generator script and README.\n- odd/tasks/catacombs-doors.md tracker.\n\nTests:\n- CatacombsDoorTests: import and pivots, closed frame == tiles,\n  override clips, variant, brush alignment, 20 doors with no door\n  tiles below the cap\n- CatacombsSceneCompositionTests no longer forbids NetworkDoor\n- DungeonDoorPlayModeTests 19/19, door rules and animation suites pass\n\nPlayer-Added: Catacombs doors can now be opened and closed; closed doors block movement, attacks and sight.\n",
+      "date": "2026-11-23T18:01:53-03:00",
+      "files": [
+        "Project Grimhold/ArtSource/CatacombsDoor/.gitignore",
+        "Project Grimhold/ArtSource/CatacombsDoor/README.md",
+        "Project Grimhold/ArtSource/CatacombsDoor/aseprite/Catacombs-Door.aseprite",
+        "Project Grimhold/ArtSource/CatacombsDoor/tools/gen_door.py",
+        "Project Grimhold/Assets/Animations/Doors/CatacombsDoor.overrideController",
+        "Project Grimhold/Assets/Animations/Doors/CatacombsDoor.overrideController.meta",
+        "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closed.anim",
+        "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closed.anim.meta",
+        "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closing_North.anim",
+        "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closing_North.anim.meta",
+        "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Open_North.anim",
+        "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Open_North.anim.meta",
+        "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Opening_North.anim",
+        "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Opening_North.anim.meta",
+        "Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png",
+        "Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta",
+        "Project Grimhold/Assets/Art/Tilesets/Brushes/CatacombsDoorBrush.asset",
+        "Project Grimhold/Assets/Art/Tilesets/Brushes/CatacombsDoorBrush.asset.meta",
+        "Project Grimhold/Assets/Prefabs/Doors/CatacombsDoor.prefab",
+        "Project Grimhold/Assets/Prefabs/Doors/CatacombsDoor.prefab.meta",
+        "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs.meta",
+        "odd/tasks/catacombs-doors.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "level",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Movement",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "World & Visibility",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "message-term",
+          "value": "projectile",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "movement",
+          "supports": "Movement"
+        },
+        {
+          "source": "message-term",
+          "value": "interaction",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "message-term",
+          "value": "Host Migration",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/.gitignore",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/README.md",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/aseprite/Catacombs-Door.aseprite",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/tools/gen_door.py",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/CatacombsDoor.overrideController",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/CatacombsDoor.overrideController.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closed.anim",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closed.anim.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closing_North.anim",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closing_North.anim.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Open_North.anim",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Open_North.anim.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Opening_North.anim",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Opening_North.anim.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/CatacombsDoorBrush.asset",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/CatacombsDoorBrush.asset.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Doors/CatacombsDoor.prefab",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Doors/CatacombsDoor.prefab.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/catacombs-doors.md",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "Catacombs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/.gitignore",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/README.md",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/aseprite/Catacombs-Door.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/tools/gen_door.py",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/CatacombsDoor.overrideController",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/CatacombsDoor.overrideController.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closed.anim",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closed.anim.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closing_North.anim",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Closing_North.anim.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Open_North.anim",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Open_North.anim.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Opening_North.anim",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Doors/Catacombs_Door_Opening_North.anim.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/CatacombsDoorBrush.asset",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/CatacombsDoorBrush.asset.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "sprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/CatacombsDoor/tools/gen_door.py",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "6c2712798f7e3596d670eb408812af6c32dbc6df",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6c2712798f7e3596d670eb408812af6c32dbc6df",

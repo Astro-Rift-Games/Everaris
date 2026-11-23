@@ -41,6 +41,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - The Catacombs have braziers and candles.
 - Braziers and candles now burn with animated flickering flames.
 - Catacombs raids now have coffins to loot and jars to break alongside chests and crates.
+- Catacombs doors can now be opened and closed; closed doors block movement, attacks and sight.
 
 ### Improved
 
@@ -148,6 +149,9 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Your character can move again after entering Town in the released game.
 - You can no longer walk through Town characters, and overlapping characters no longer blend into each other.
 - Braziers and candles no longer jump when they go out.
+- You can no longer walk through stair railings and arch pillars in the Catacombs.
+- Melee attacks no longer hit enemies or players through walls and closed doors.
+- Characters now pass behind Catacombs arches and doors instead of over them, and three doors that opened into a wall lead through again.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08
