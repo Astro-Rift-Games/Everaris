@@ -21,12 +21,10 @@ public sealed class PathfindingGridConfig : ScriptableObject
     private float _nodeSize = 0.5f;
 
     [Header("Agent Footprint")]
-    [Tooltip("Agent radius used to inflate obstacle detection during grid build. " +
-             "Set slightly below the enemy CircleCollider2D radius so the centre of " +
-             "the agent never reaches within this distance of a wall. " +
-             "Recommended: 0.35 for the current enemy prefab (collider radius 0.4).")]
+    [Tooltip("Agent clearance radius used by OverlapCircle during grid build and RefreshRegion. " +
+             "Should match physical collider radius + safety margin (e.g. 0.40 + 0.02 = 0.42).")]
     [SerializeField, Min(0f)]
-    private float _agentRadius = 0.35f;
+    private float _agentRadius = 0.42f;
 
     [Header("Path Smoothing")]
     [Tooltip("El radio del CircleCollider2D físico del enemigo actual. Utilizado para validar atajos rectos.")]

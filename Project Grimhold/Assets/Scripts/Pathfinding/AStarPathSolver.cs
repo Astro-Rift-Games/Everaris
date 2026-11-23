@@ -2,114 +2,116 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Stateless A* path solver over a <see cref="PathfindingGrid"/>.
-///
-/// This class owns preallocated working buffers (open heap, node data array)
-/// and writes its output into a caller-provided <see cref="List{T}"/> so that
-/// no heap allocations occur per search.
-///
-/// Each call to <see cref="FindPath"/> is fully self-contained. The solver
-/// holds no state between calls and is safe to invoke multiple times within
-/// the same simulation tick (e.g. during Fusion resimulation).
-///
-/// Path smoothing is applied post-A* via <c>Physics2D.CircleCast</c> with the
-/// agent radius, ensuring that any direct segment in the smoothed path is
-/// physically traversable by the agent volume — not just the path centre-line.
-///
-/// The diagonal corner-cutting rule is delegated to
-/// <see cref="PathfindingGrid.IsValidDiagonalMove"/> so that both systems share
-/// a single, consistent definition of what constitutes a legal diagonal step.
+/// Outcome status of an A* path search.
 /// </summary>
-/// <remarks>
-/// See <c>Docs/Architecture/PathfindingArchitecture.md</c> for the complete
-/// pathfinding data flow and authority model.
-/// </remarks>
+public enum AStarPathStatus
+{
+    NoPath = 0,
+    Complete = 1,
+    Partial = 2
+}
+
+/// <summary>
+/// Stateless, allocation-free A* path solver over a <see cref="PathfindingGrid"/>.
+///
+/// Designed to be owned as a single shared instance by <see cref="PathfindingGrid"/> so memory
+/// does not scale with enemy count and no heap allocations occur during simulation ticks.
+/// Uses an indexed <see cref="BinaryMinHeap"/> for optimal minimum-cost paths and bounded O(n)
+/// CircleCast smoothing that validates every segment including the final endpoint.
+/// </summary>
 public sealed class AStarPathSolver
 {
-    // Cost multipliers expressed as integers (×10) to avoid floating-point
-    // comparisons in G-cost accumulation.
     private const int CostStraight = 10;
-    private const int CostDiagonal = 14; // approx √2 × 10
+    private const int CostDiagonal = 14; // approx sqrt(2) * 10
 
     private readonly PathfindingGridConfig _config;
     private readonly LayerMask _obstacleLayer;
     private readonly PathNode[] _nodeData;
     private readonly BinaryMinHeap _openHeap;
-
-    // Tracks which nodes were dirtied during a search so they can be reset
-    // without clearing the entire array every call.
     private readonly List<int> _visitedIndices = new List<int>(256);
 
-    /// <summary>
-    /// Allocates preallocated internal buffers sized for the given grid dimensions.
-    /// </summary>
-    /// <param name="gridWidth">Number of columns in the grid.</param>
-    /// <param name="gridHeight">Number of rows in the grid.</param>
-    /// <param name="config">Configuration shared with the grid.</param>
+    /// <summary>True when the most recent search terminated early due to MaxPathIterations.</summary>
+    public bool LastSearchHitIterationLimit { get; private set; }
+
     public AStarPathSolver(int gridWidth, int gridHeight, PathfindingGridConfig config)
     {
-        _config       = config;
+        _config = config;
         _obstacleLayer = config.ObstacleLayer;
 
-        int nodeCount = gridWidth * gridHeight;
+        int nodeCount = Mathf.Max(1, gridWidth * gridHeight);
         _nodeData = new PathNode[nodeCount];
-        // Heap capacity equals node count: in the absolute worst case every node
-        // could enter the open set once.
         _openHeap = new BinaryMinHeap(nodeCount);
     }
 
     /// <summary>
-    /// Searches for a path from <paramref name="startWorld"/> to
-    /// <paramref name="endWorld"/> and writes world-space waypoints into
-    /// <paramref name="outputWaypoints"/>.
-    ///
-    /// <para>The list is cleared before use. The caller retains ownership.</para>
+    /// Searches for a path from <paramref name="startWorld"/> to <paramref name="endWorld"/>.
+    /// Returns the number of waypoints written (>0 on success, 0 on failure).
     /// </summary>
-    /// <param name="grid">The walkability grid to search.</param>
-    /// <param name="startWorld">Start position in world space.</param>
-    /// <param name="endWorld">Goal position in world space.</param>
-    /// <param name="enableSmoothing">If true, applies CircleCast smoothing to cut corners.</param>
-    /// <param name="pathSmoothingRadius">Radius used for CircleCast if smoothing is enabled.</param>
-    /// <param name="outputWaypoints">
-    /// Caller-owned list that receives world-space waypoint positions.
-    /// </param>
-    /// <returns>
-    /// Number of waypoints written (>0 on success, 0 on failure).
-    /// </returns>
     public int FindPath(
         PathfindingGrid grid,
         Vector2 startWorld,
         Vector2 endWorld,
         bool enableSmoothing,
         float pathSmoothingRadius,
-        List<Vector2> outputWaypoints)
+        List<Vector2> outputWaypoints,
+        bool allowPartialPath = false)
+    {
+        AStarPathStatus status = FindPathWithStatus(
+            grid,
+            startWorld,
+            endWorld,
+            enableSmoothing,
+            pathSmoothingRadius,
+            outputWaypoints,
+            allowPartialPath,
+            logIterationWarning: true);
+
+        return status == AStarPathStatus.NoPath ? 0 : outputWaypoints.Count;
+    }
+
+    /// <summary>
+    /// Searches for a path and reports whether the result is Complete, Partial (closest reachable
+    /// node when <paramref name="allowPartialPath"/> is true), or NoPath.
+    /// </summary>
+    public AStarPathStatus FindPathWithStatus(
+        PathfindingGrid grid,
+        Vector2 startWorld,
+        Vector2 endWorld,
+        bool enableSmoothing,
+        float pathSmoothingRadius,
+        List<Vector2> outputWaypoints,
+        bool allowPartialPath = false,
+        bool logIterationWarning = false)
     {
         outputWaypoints.Clear();
+        LastSearchHitIterationLimit = false;
 
-        if (!grid.IsBuilt)
+        if (grid == null || !grid.IsBuilt)
         {
-            return 0;
+            return AStarPathStatus.NoPath;
         }
 
-        // Resolve start and end to the nearest walkable nodes.
         if (!grid.TryGetNearestWalkableNode(startWorld, out int sx, out int sy) ||
-            !grid.TryGetNearestWalkableNode(endWorld,   out int ex, out int ey))
+            !grid.TryGetNearestWalkableNode(endWorld, out int ex, out int ey))
         {
-            return 0;
+            return AStarPathStatus.NoPath;
         }
 
-        // Trivial case: already at the destination node.
         if (sx == ex && sy == ey)
         {
-            outputWaypoints.Add(endWorld);
-            return 1;
+            Vector2 goalNodePos = grid.GetWorldPosition(ex, ey);
+            Vector2 finalPoint = HasDirectPath(startWorld, endWorld, pathSmoothingRadius)
+                ? endWorld
+                : goalNodePos;
+            outputWaypoints.Add(finalPoint);
+            return AStarPathStatus.Complete;
         }
 
-        ResetVisitedNodes(grid);
+        ResetVisitedNodes();
         _openHeap.Clear();
 
-        // Initialise the start node.
-        int startIndex = FlatIndex(sx, sy, grid.Width);
+        int width = grid.Width;
+        int startIndex = FlatIndex(sx, sy, width);
         PathNode startNode = grid.GetNode(sx, sy);
         startNode.GCost = 0;
         startNode.HCost = Heuristic(sx, sy, ex, ey);
@@ -117,7 +119,12 @@ public sealed class AStarPathSolver
         _nodeData[startIndex] = startNode;
         Track(startIndex);
 
-        _openHeap.Push(startNode.FCost, sx, sy);
+        _openHeap.PushOrDecreaseKey(startNode.FCost, startIndex, sx, sy);
+
+        int bestX = sx;
+        int bestY = sy;
+        int bestHCost = startNode.HCost;
+        int bestGCost = 0;
 
         int iterations = 0;
         int maxIterations = _config.MaxPathIterations;
@@ -127,35 +134,28 @@ public sealed class AStarPathSolver
             iterations++;
 
             (_, int cx, int cy) = _openHeap.Pop();
-            int currentIndex = FlatIndex(cx, cy, grid.Width);
+            int currentIndex = FlatIndex(cx, cy, width);
 
             ref PathNode current = ref _nodeData[currentIndex];
             if (current.InClosedSet) continue;
             current.InClosedSet = true;
-            current.InOpenSet   = false;
+            current.InOpenSet = false;
 
-            // Reached the goal.
+            if (current.HCost < bestHCost || (current.HCost == bestHCost && current.GCost < bestGCost))
+            {
+                bestX = cx;
+                bestY = cy;
+                bestHCost = current.HCost;
+                bestGCost = current.GCost;
+            }
+
             if (cx == ex && cy == ey)
             {
                 RetracePath(grid, sx, sy, ex, ey, outputWaypoints);
-                
-                if (enableSmoothing)
-                {
-                    SmoothPath(outputWaypoints, pathSmoothingRadius, endWorld);
-                }
-                else
-                {
-                    // Replace the exact final position with the requested endWorld for sub-node precision
-                    if (outputWaypoints.Count > 0)
-                    {
-                        outputWaypoints[outputWaypoints.Count - 1] = endWorld;
-                    }
-                }
-                
-                return outputWaypoints.Count;
+                FinalizeWaypoints(outputWaypoints, enableSmoothing, pathSmoothingRadius, endWorld);
+                return AStarPathStatus.Complete;
             }
 
-            // Expand neighbours.
             for (int dy = -1; dy <= 1; dy++)
             {
                 for (int dx = -1; dx <= 1; dx++)
@@ -168,62 +168,62 @@ public sealed class AStarPathSolver
                     bool isDiagonal = dx != 0 && dy != 0;
                     if (isDiagonal && !grid.IsValidDiagonalMove(cx, cy, dx, dy)) continue;
 
-                    int neighbourIndex = FlatIndex(nx, ny, grid.Width);
+                    int neighbourIndex = FlatIndex(nx, ny, width);
                     ref PathNode neighbour = ref _nodeData[neighbourIndex];
 
                     if (neighbour.InClosedSet) continue;
 
-                    // Copy walkability into working node if it has not been visited yet.
-                    if (!neighbour.InOpenSet && !neighbour.InClosedSet)
+                    if (!neighbour.InOpenSet)
                     {
                         PathNode original = grid.GetNode(nx, ny);
-                        neighbour.X           = original.X;
-                        neighbour.Y           = original.Y;
+                        neighbour.X = original.X;
+                        neighbour.Y = original.Y;
                         neighbour.WorldPosition = original.WorldPosition;
-                        neighbour.IsWalkable  = original.IsWalkable;
+                        neighbour.IsWalkable = original.IsWalkable;
                         Track(neighbourIndex);
                     }
 
                     int tentativeG = current.GCost + (isDiagonal ? CostDiagonal : CostStraight);
-                    if (tentativeG < neighbour.GCost || !neighbour.InOpenSet)
+                    if (!neighbour.InOpenSet || tentativeG < neighbour.GCost)
                     {
-                        neighbour.GCost   = tentativeG;
-                        neighbour.HCost   = Heuristic(nx, ny, ex, ey);
+                        neighbour.GCost = tentativeG;
+                        neighbour.HCost = Heuristic(nx, ny, ex, ey);
                         neighbour.ParentX = cx;
                         neighbour.ParentY = cy;
+                        neighbour.InOpenSet = true;
 
-                        if (!neighbour.InOpenSet)
-                        {
-                            neighbour.InOpenSet = true;
-                            _openHeap.Push(neighbour.FCost, nx, ny);
-                        }
+                        _openHeap.PushOrDecreaseKey(neighbour.FCost, neighbourIndex, nx, ny);
                     }
                 }
             }
         }
 
-        if (iterations >= maxIterations)
+        // Only report iteration limit exhaustion when unexplored open nodes remain.
+        bool hitLimit = _openHeap.Count > 0 && iterations >= maxIterations;
+        LastSearchHitIterationLimit = hitLimit;
+        if (hitLimit && logIterationWarning)
         {
             Debug.LogWarning(
                 $"[{nameof(AStarPathSolver)}] Path search exceeded {maxIterations} iterations " +
-                $"(start={startWorld}, end={endWorld}). Returning no path.",
+                $"(start={startWorld}, end={endWorld}).",
                 null);
         }
 
-        return 0;
+        if (allowPartialPath && (bestX != sx || bestY != sy))
+        {
+            RetracePath(grid, sx, sy, bestX, bestY, outputWaypoints);
+            Vector2 bestWorld = grid.GetWorldPosition(bestX, bestY);
+            FinalizeWaypoints(outputWaypoints, enableSmoothing, pathSmoothingRadius, bestWorld);
+            return outputWaypoints.Count > 0 ? AStarPathStatus.Partial : AStarPathStatus.NoPath;
+        }
+
+        return AStarPathStatus.NoPath;
     }
 
-    // ── Private helpers ───────────────────────────────────────────────────────
-
-    /// <summary>
-    /// Octile distance heuristic: admissible for 8-directional movement.
-    /// Uses integer costs (×10) to match G-cost accumulation.
-    /// </summary>
     private static int Heuristic(int ax, int ay, int bx, int by)
     {
         int dx = Mathf.Abs(ax - bx);
         int dy = Mathf.Abs(ay - by);
-        // Octile: D * (dx + dy) + (D2 - 2*D) * min(dx, dy)  where D=10, D2=14
         return CostStraight * (dx + dy) + (CostDiagonal - 2 * CostStraight) * Mathf.Min(dx, dy);
     }
 
@@ -234,28 +234,21 @@ public sealed class AStarPathSolver
         _visitedIndices.Add(index);
     }
 
-    /// <summary>
-    /// Resets only the A* working fields of nodes that were touched in the last
-    /// search, avoiding a full array clear on every call.
-    /// </summary>
-    private void ResetVisitedNodes(PathfindingGrid grid)
+    private void ResetVisitedNodes()
     {
-        foreach (int index in _visitedIndices)
+        for (int i = 0; i < _visitedIndices.Count; i++)
         {
-            _nodeData[index].GCost      = 0;
-            _nodeData[index].HCost      = 0;
-            _nodeData[index].ParentX    = 0;
-            _nodeData[index].ParentY    = 0;
-            _nodeData[index].InOpenSet  = false;
+            int index = _visitedIndices[i];
+            _nodeData[index].GCost = 0;
+            _nodeData[index].HCost = 0;
+            _nodeData[index].ParentX = 0;
+            _nodeData[index].ParentY = 0;
+            _nodeData[index].InOpenSet = false;
             _nodeData[index].InClosedSet = false;
         }
         _visitedIndices.Clear();
     }
 
-    /// <summary>
-    /// Reconstructs the path by following parent pointers from the goal back to
-    /// the start, then reverses the result into world-space waypoints.
-    /// </summary>
     private void RetracePath(
         PathfindingGrid grid,
         int sx, int sy,
@@ -264,55 +257,106 @@ public sealed class AStarPathSolver
     {
         int cx = ex;
         int cy = ey;
+        int width = grid.Width;
 
         while (cx != sx || cy != sy)
         {
             output.Add(grid.GetWorldPosition(cx, cy));
-            int idx = FlatIndex(cx, cy, grid.Width);
+            int idx = FlatIndex(cx, cy, width);
             int px = _nodeData[idx].ParentX;
             int py = _nodeData[idx].ParentY;
             cx = px;
             cy = py;
         }
 
-        // Add the start position and reverse so the list runs start → goal.
         output.Add(grid.GetWorldPosition(sx, sy));
         output.Reverse();
     }
 
+    private void FinalizeWaypoints(
+        List<Vector2> waypoints,
+        bool enableSmoothing,
+        float pathSmoothingRadius,
+        Vector2 endWorld)
+    {
+        if (waypoints.Count == 0)
+        {
+            return;
+        }
+
+        if (enableSmoothing)
+        {
+            SmoothPath(waypoints, pathSmoothingRadius, endWorld);
+            return;
+        }
+
+        // Preserve exact endWorld only when directly reachable from the preceding waypoint without clipping walls.
+        int lastIndex = waypoints.Count - 1;
+        Vector2 anchor = lastIndex > 0 ? waypoints[lastIndex - 1] : waypoints[0];
+        if (HasDirectPath(anchor, endWorld, pathSmoothingRadius))
+        {
+            waypoints[lastIndex] = endWorld;
+        }
+    }
+
     /// <summary>
-    /// Applies line-of-sight smoothing using <c>Physics2D.CircleCast</c> to
-    /// remove intermediate waypoints that are directly reachable by the agent.
-    ///
-    /// CircleCast with the agent radius correctly accounts for the agent volume;
-    /// a plain Linecast would allow paths through gaps smaller than the agent.
-    ///
-    /// The final waypoint is replaced with the raw <paramref name="endWorld"/>
-    /// position for sub-node precision.
+    /// Applies bounded O(n) CircleCast smoothing.
+    /// Checks a fast direct-to-end shortcut first, then advances greedily along reachable nodes
+    /// stopping at the first blocked cast so worst-case casts stay linear in waypoint count.
+    /// Always validates the final segment to <paramref name="endWorld"/> so smoothing never cuts walls.
     /// </summary>
     private void SmoothPath(List<Vector2> waypoints, float pathSmoothingRadius, Vector2 endWorld)
     {
-        if (waypoints.Count <= 2)
+        int count = waypoints.Count;
+        if (count == 0)
         {
-            if (waypoints.Count > 0)
+            return;
+        }
+
+        Vector2 finalGridNode = waypoints[count - 1];
+
+        if (count == 1)
+        {
+            if (HasDirectPath(waypoints[0], endWorld, pathSmoothingRadius))
             {
-                waypoints[waypoints.Count - 1] = endWorld;
+                waypoints[0] = endWorld;
             }
+            return;
+        }
+
+        // Fast-path for straight unobstructed corridors: O(1) cast directly to endWorld.
+        if (HasDirectPath(waypoints[0], endWorld, pathSmoothingRadius))
+        {
+            waypoints[1] = endWorld;
+            TrimToCount(waypoints, 2);
             return;
         }
 
         int writeIndex = 0;
         int current = 0;
+        int lastIndex = count - 1;
 
-        while (current < waypoints.Count - 1)
+        while (current < lastIndex)
         {
-            // Find the furthest waypoint reachable from current via CircleCast.
             int furthest = current + 1;
-            for (int lookahead = current + 2; lookahead < waypoints.Count; lookahead++)
+
+            // Check direct shortcut to the final grid node first (O(1) finish once clear of corners).
+            if (lastIndex > furthest && HasDirectPath(waypoints[current], waypoints[lastIndex], pathSmoothingRadius))
             {
-                if (HasDirectPath(waypoints[current], waypoints[lookahead], pathSmoothingRadius))
+                furthest = lastIndex;
+            }
+            else
+            {
+                for (int lookahead = current + 2; lookahead < lastIndex; lookahead++)
                 {
-                    furthest = lookahead;
+                    if (HasDirectPath(waypoints[current], waypoints[lookahead], pathSmoothingRadius))
+                    {
+                        furthest = lookahead;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -320,30 +364,47 @@ public sealed class AStarPathSolver
             current = furthest;
         }
 
-        // Always include the last waypoint.
-        waypoints[writeIndex++] = endWorld;
-
-        // Trim excess entries without allocating a new list.
-        int excess = waypoints.Count - writeIndex;
-        for (int i = 0; i < excess; i++)
+        // Validate final endpoint: never substitute endWorld if the segment clips a wall.
+        Vector2 previousKept = waypoints[writeIndex - 1];
+        if (HasDirectPath(previousKept, endWorld, pathSmoothingRadius))
         {
-            waypoints.RemoveAt(waypoints.Count - 1);
+            waypoints[writeIndex++] = endWorld;
+        }
+        else
+        {
+            waypoints[writeIndex++] = finalGridNode;
+            if (Vector2.SqrMagnitude(endWorld - finalGridNode) > 0.0001f &&
+                HasDirectPath(finalGridNode, endWorld, pathSmoothingRadius))
+            {
+                if (writeIndex < waypoints.Count)
+                {
+                    waypoints[writeIndex++] = endWorld;
+                }
+                else
+                {
+                    waypoints.Add(endWorld);
+                    writeIndex = waypoints.Count;
+                }
+            }
+        }
+
+        TrimToCount(waypoints, writeIndex);
+    }
+
+    private static void TrimToCount(List<Vector2> list, int targetCount)
+    {
+        for (int i = list.Count - 1; i >= targetCount; i--)
+        {
+            list.RemoveAt(i);
         }
     }
 
-    /// <summary>
-    /// Returns <see langword="true"/> when the agent volume can move from
-    /// <paramref name="from"/> to <paramref name="to"/> without intersecting any
-    /// obstacle collider.
-    /// </summary>
     private bool HasDirectPath(Vector2 from, Vector2 to, float pathSmoothingRadius)
     {
         Vector2 delta = to - from;
         float distance = delta.magnitude;
         if (distance < 0.001f) return true;
 
-        // CircleCast projects the agent circle along the segment to detect any
-        // collision that would block the agent body (not just the centre-line).
         RaycastHit2D hit = Physics2D.CircleCast(
             from,
             pathSmoothingRadius,
