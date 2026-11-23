@@ -82,9 +82,9 @@ public sealed class FloorLightPropBrushTests
     {
         DungeonLightProp prop = LoadPrefab("Multiple Candles").GetComponent<DungeonLightProp>();
 
-        Assert.That(prop.LitSprite.name, Is.EqualTo("Candles-Lit_0"));
+        Assert.That(prop.LitSprite.name, Is.EqualTo("Candles-Lit-Base_0"), "Lit body without the baked flames.");
         Assert.That(prop.ExtinguishedSprite.name, Is.EqualTo("Candles-Unlit_0"));
-        Assert.That(prop.GetComponent<SpriteRenderer>().sprite, Is.SameAs(prop.LitSprite));
+        Assert.That(prop.GetComponent<SpriteRenderer>().sprite, Is.EqualTo(prop.LitSprite));
     }
 
     private static PrefabPaletteBrush LoadBrush(string brushName)

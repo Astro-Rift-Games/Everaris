@@ -185,21 +185,27 @@ public sealed class TorchFlameAnimationTests
         Assert.That(animator.updateMode, Is.EqualTo(AnimatorUpdateMode.Normal));
         Assert.That(animator.cullingMode, Is.EqualTo(AnimatorCullingMode.AlwaysAnimate));
 
-        string[] siblingPaths =
+        // The shared base stays flameless; each variant owns its flame (floor props: FloorLightPropFlameAnimationTests).
+        GameObject baseProp = AssetDatabase.LoadAssetAtPath<GameObject>(BaseLightPropPrefabPath);
+        Assert.That(baseProp, Is.Not.Null, BaseLightPropPrefabPath);
+        Assert.That(baseProp.GetComponentsInChildren<Animator>(true), Is.Empty, BaseLightPropPrefabPath);
+        Transform baseFlame = baseProp.transform.Find("FlameVisual");
+        Assert.That(baseFlame, Is.Not.Null, BaseLightPropPrefabPath);
+        Assert.That(baseFlame.GetComponent<SpriteRenderer>().sprite, Is.Null, BaseLightPropPrefabPath);
+
+        string[] floorVariantPaths =
         {
-            BaseLightPropPrefabPath,
             PrefabFolder + "Brazier.prefab",
             PrefabFolder + "Candle.prefab",
             PrefabFolder + "Multiple Candles.prefab"
         };
-        foreach (string siblingPath in siblingPaths)
+        foreach (string variantPath in floorVariantPaths)
         {
-            GameObject sibling = AssetDatabase.LoadAssetAtPath<GameObject>(siblingPath);
-            Assert.That(sibling, Is.Not.Null, siblingPath);
-            Assert.That(sibling.GetComponentsInChildren<Animator>(true), Is.Empty, siblingPath);
-            Transform siblingFlame = sibling.transform.Find("FlameVisual");
-            Assert.That(siblingFlame, Is.Not.Null, siblingPath);
-            Assert.That(siblingFlame.GetComponent<SpriteRenderer>().sprite, Is.Null, siblingPath);
+            Animator variantAnimator = AssetDatabase.LoadAssetAtPath<GameObject>(variantPath)
+                .GetComponentInChildren<Animator>(true);
+            Assert.That(variantAnimator, Is.Not.Null, variantPath);
+            Assert.That(variantAnimator.runtimeAnimatorController, Is.Not.EqualTo(controller),
+                $"{variantPath} must not reuse the torch flame.");
         }
     }
 

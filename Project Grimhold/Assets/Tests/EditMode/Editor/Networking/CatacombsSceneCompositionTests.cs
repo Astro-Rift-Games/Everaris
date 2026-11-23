@@ -149,7 +149,10 @@ namespace Tests.EditMode.Networking
             Assert.That(Reference(fog, "_renderer"), Is.SameAs(fog.GetComponent<MeshRenderer>()));
             foreach (string field in new[] { "_settings", "_maskMaterial" })
                 Assert.That(Reference(fog, field), Is.SameAs(Reference(One<VisionFogPresenter>(_reference), field)));
-            Light2D light = One<Light2D>(_scene);
+            Light2D[] lights = All<Light2D>(_scene);
+            Assert.That(lights.Where(item => item.GetComponentInParent<DungeonLightProp>(true) == null).ToArray(), Has.Length.EqualTo(1),
+                "Besides painted light props (torches, braziers, candles) the scene owns only its global light.");
+            Light2D light = lights.Single(item => item.GetComponentInParent<DungeonLightProp>(true) == null);
             Assert.That(light.lightType, Is.EqualTo(Light2D.LightType.Global));
             Assert.That(light.intensity, Is.EqualTo(All<Light2D>(_reference)
                 .Single(item => item.lightType == Light2D.LightType.Global).intensity));
@@ -182,7 +185,8 @@ namespace Tests.EditMode.Networking
             Assert.That(All<NetworkLootPickup>(_scene), Is.Empty);
             Assert.That(All<NetworkDoor>(_scene), Is.Empty);
             Assert.That(All<EnemyPatrolRoute>(_scene), Is.Empty);
-            Assert.That(All<ParticleSystem>(_scene), Is.Empty);
+            Assert.That(All<ParticleSystem>(_scene).Where(item => item.GetComponentInParent<DungeonLightProp>(true) == null),
+                Is.Empty, "Only light props may carry particles (their extinguish smoke).");
             Assert.That(All<Transform>(_scene).Any(item => item.name.StartsWith("LootPickup_") ||
                 item.name.StartsWith("TestPickup_") || item.name == "[LootTestSpawner]" || item.name == "[MissionDebugger]"), Is.False);
         }
