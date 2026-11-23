@@ -35,6 +35,10 @@ public sealed class EnemyAttackState : IEnemyState
             {
                 fsm.TransitionTo(EnemyStateType.Chase);
             }
+            else if (fsm.MovementController.IsReturningHome)
+            {
+                fsm.TransitionTo(EnemyStateType.ReturnHome);
+            }
             else if (fsm.MovementController.HasPatrolRoute)
             {
                 fsm.TransitionTo(EnemyStateType.Patrol);
