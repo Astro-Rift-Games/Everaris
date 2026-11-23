@@ -148,12 +148,48 @@ PrefabInstance:
       propertyPath: _activeAttackSource
       value: 
       objectReference: {fileID: -7543650336435950344}
+    - target: {fileID: 3988879926097982634, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
+      propertyPath: _anticipationDurationSeconds
+      value: 0.4
+      objectReference: {fileID: 0}
     - target: {fileID: 4047341824300862929, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
       propertyPath: _attackRange
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4047341824300862929, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
+      propertyPath: _attackExitRangeMargin
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 4047341824300862929, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
       propertyPath: _aggroAlertDuration
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4047341824300862929, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
+      propertyPath: _leashRadius
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 4047341824300862929, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
+      propertyPath: _turnSpeedDegreesPerSecond
+      value: 480
+      objectReference: {fileID: 0}
+    - target: {fileID: 4047341824300862929, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
+      propertyPath: _enableSurroundSlots
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4047341824300862929, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
+      propertyPath: _useRangedPositioning
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4047341824300862929, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
+      propertyPath: _rangedRetreatDistance
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4047341824300862929, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
+      propertyPath: _rangedPreferredMinDistance
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4047341824300862929, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
+      propertyPath: _rangedVantageSearchRadius
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4369124737019072436, guid: be065b8028b5c3446a4e981ab29a28a1, type: 3}
