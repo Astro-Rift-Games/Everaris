@@ -86,6 +86,57 @@ public static class CharacterVisualDirectionResolver
     }
 
     /// <summary>
+    /// Resolves the continuous facing vector into one of the six visual buckets while applying
+    /// an angular hysteresis margin around the previous bucket's boundaries to prevent
+    /// frame-to-frame sprite flicker during diagonal locomotion (TASK-317).
+    /// </summary>
+    public static CharacterVisualDirection ResolveWithHysteresis(
+        Vector2 facing,
+        CharacterVisualDirection previousDirection,
+        float hysteresisDegrees,
+        Vector2 fallback = default)
+    {
+        if (hysteresisDegrees <= 0f)
+        {
+            return Resolve(facing, fallback);
+        }
+
+        Vector2 safe = SanitizeFacing(facing, fallback);
+        float angle = Mathf.Atan2(safe.y, safe.x) * Mathf.Rad2Deg;
+        float margin = Mathf.Clamp(hysteresisDegrees, 0f, 20f);
+
+        if (IsWithinExpandedSector(angle, previousDirection, margin))
+        {
+            return previousDirection;
+        }
+
+        return Resolve(safe, fallback);
+    }
+
+    private static bool IsWithinExpandedSector(float angle, CharacterVisualDirection sector, float margin)
+    {
+        switch (sector)
+        {
+            case CharacterVisualDirection.North:
+                return angle >= 67.5f - margin && angle <= 112.5f + margin;
+            case CharacterVisualDirection.NorthWest:
+                return (angle >= 112.5f - margin && angle <= 180f)
+                    || (angle >= -180f && angle <= -180f + margin);
+            case CharacterVisualDirection.NorthEast:
+                return angle >= -margin && angle <= 67.5f + margin;
+            case CharacterVisualDirection.SouthEast:
+                return angle >= -67.5f - margin && angle <= margin;
+            case CharacterVisualDirection.South:
+                return angle >= -112.5f - margin && angle <= -67.5f + margin;
+            case CharacterVisualDirection.SouthWest:
+                return (angle >= -180f && angle <= -112.5f + margin)
+                    || (angle >= 180f - margin && angle <= 180f);
+            default:
+                return false;
+        }
+    }
+
+    /// <summary>
     /// Returns the normalized canonical vector representing the center of the specified visual bucket.
     /// </summary>
     public static Vector2 GetCanonicalVector(CharacterVisualDirection direction)

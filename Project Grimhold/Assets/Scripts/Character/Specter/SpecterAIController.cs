@@ -20,6 +20,7 @@ namespace ProjectGrimhold.Gameplay.Enemies.Specter
         [SerializeField, Min(1f)] private float _disengageRange = 12.0f;
         [SerializeField, Min(1f)] private float _attackRange = 5.0f;
         [SerializeField, Min(1f)] private float _leashRadius = 15.0f;
+        [SerializeField, Min(0.1f)] private float _homeArrivalThreshold = SpecterRules.HomeArrivalThreshold;
 
         [Header("Combat Settings")]
         [SerializeField, Min(1f)] private float _detonationDamage = 25f;
@@ -32,6 +33,7 @@ namespace ProjectGrimhold.Gameplay.Enemies.Specter
         [Header("Dependencies")]
         [SerializeField] private EnemyCharacter _character;
         [SerializeField] private Kinematic2DMovementMotor _movementMotor;
+        [SerializeField] private EnemyPathfindingNavigator _pathfindingNavigator;
         [SerializeField] private Rigidbody2D _rigidbody;
         [SerializeField] private Collider2D _collider;
 
@@ -44,6 +46,7 @@ namespace ProjectGrimhold.Gameplay.Enemies.Specter
         [Networked] public TickTimer ReactiveDisplacementTimer { get; set; }
         [Networked] public TickTimer AttackCooldownTimer { get; set; }
         [Networked] private NetworkBool ReactiveDisplacementPending { get; set; }
+        [Networked] public NetworkBool IsReturningHome { get; private set; }
         [Networked] public Vector2 AttackTargetPosition { get; set; }
         [Networked] public Vector2 FacingDirection { get; set; }
         [Networked] public Vector2 HomeAreaPosition { get; set; }
@@ -72,12 +75,22 @@ namespace ProjectGrimhold.Gameplay.Enemies.Specter
             if (_obstacleLayer == 0) _obstacleLayer = LayerMask.GetMask("WorldCollision", "Obstacles");
             _entityRegistry = Runner != null ? Runner.GetComponent<EntityRegistry>() : null;
 
+            _pathfindingNavigator?.Initialize(Runner, HasStateAuthority);
+
             if (HasStateAuthority)
             {
-                HomeAreaPosition = transform.position;
-                FacingDirection = Vector2.down;
-                CurrentState = SpecterStateType.Reposo;
-                SetCollidersActive(true);
+                if (!HostMigrationRestoreUtility.IsRestoreSpawn(this))
+                {
+                    HomeAreaPosition = transform.position;
+                    FacingDirection = Vector2.down;
+                    CurrentState = SpecterStateType.Reposo;
+                    IsReturningHome = false;
+                    SetCollidersActive(true);
+                }
+                else
+                {
+                    SetCollidersActive(!SpecterRules.IsHidden(CurrentState) && CurrentState != SpecterStateType.Muerte);
+                }
             }
         }
 
@@ -230,6 +243,15 @@ namespace ProjectGrimhold.Gameplay.Enemies.Specter
 
         private void UpdatePersecucion()
         {
+            Vector2 myPos = transform.position;
+
+            // Leash check first: return to Home Area via fading without consuming reactive cooldown (§5 / TASK-315).
+            if (SpecterRules.ShouldReturnToHomeViaFade(myPos, HomeAreaPosition, _leashRadius, hasEligibleTarget: true, _homeArrivalThreshold))
+            {
+                BeginReturnToHomeViaFade();
+                return;
+            }
+
             if (!TryGetPlayer(CurrentTargetId, out PlayerCharacter targetPlayer) || !targetPlayer.IsAlive)
             {
                 _hateList.Remove(CurrentTargetId);
@@ -240,48 +262,94 @@ namespace ProjectGrimhold.Gameplay.Enemies.Specter
                 else
                 {
                     CurrentTargetId = default;
-                    TransitionTo(SpecterStateType.Reposo);
+                    if (SpecterRules.ShouldReturnToHomeViaFade(myPos, HomeAreaPosition, _leashRadius, hasEligibleTarget: false, _homeArrivalThreshold))
+                    {
+                        BeginReturnToHomeViaFade();
+                    }
+                    else
+                    {
+                        _pathfindingNavigator?.InvalidatePath();
+                        TransitionTo(SpecterStateType.Reposo);
+                    }
                     return;
                 }
             }
 
-            Vector2 myPos = transform.position;
             Vector2 targetPos = targetPlayer.transform.position;
             float distanceToTarget = Vector2.Distance(myPos, targetPos);
-
-            // Leash check
-            float distanceToHome = Vector2.Distance(myPos, HomeAreaPosition);
-            if (distanceToHome > _leashRadius)
-            {
-                _hateList.Clear();
-                CurrentTargetId = default;
-                TransitionTo(SpecterStateType.Reposo);
-                return;
-            }
 
             if (distanceToTarget > _disengageRange)
             {
                 _hateList.Remove(CurrentTargetId);
-                CurrentTargetId = default;
-                TransitionTo(SpecterStateType.Reposo);
-                return;
+                if (TrySelectTarget(out EntityId nextTargetId) && TryGetPlayer(nextTargetId, out targetPlayer))
+                {
+                    CurrentTargetId = nextTargetId;
+                    targetPos = targetPlayer.transform.position;
+                    distanceToTarget = Vector2.Distance(myPos, targetPos);
+                }
+                else
+                {
+                    CurrentTargetId = default;
+                    if (SpecterRules.ShouldReturnToHomeViaFade(myPos, HomeAreaPosition, _leashRadius, hasEligibleTarget: false, _homeArrivalThreshold))
+                    {
+                        BeginReturnToHomeViaFade();
+                    }
+                    else
+                    {
+                        _pathfindingNavigator?.InvalidatePath();
+                        TransitionTo(SpecterStateType.Reposo);
+                    }
+                    return;
+                }
             }
 
             // Check attack readiness: within range, attack cooldown expired, and line of sight unobstructed (§9 / TASK-285)
             if (distanceToTarget <= _attackRange && AttackCooldownTimer.ExpiredOrNotRunning(Runner) && HasLineOfSight(myPos, targetPos))
             {
                 AttackTargetPosition = targetPos;
+                _pathfindingNavigator?.InvalidatePath();
                 TransitionTo(SpecterStateType.Canalizacion);
                 return;
             }
 
-            // Floating chase movement
-            Vector2 dir = (targetPos - myPos).normalized;
-            FacingDirection = dir;
-            if (_movementMotor != null)
+            // Navigable pursuit around walls using shared PathfindingGrid (TASK-315)
+            Vector2 dir;
+            if (_pathfindingNavigator != null &&
+                _pathfindingNavigator.enabled &&
+                _pathfindingNavigator.Grid != null &&
+                _pathfindingNavigator.Grid.IsBuilt)
             {
-                _movementMotor.Move(dir * _chaseSpeed * Runner.DeltaTime);
+                dir = _pathfindingNavigator.GetDirectionToTarget(myPos, targetPos, Runner.Tick);
+                if (_pathfindingNavigator.IsStuck)
+                {
+                    BeginReturnToHomeViaFade();
+                    return;
+                }
             }
+            else
+            {
+                Vector2 delta = targetPos - myPos;
+                dir = delta.sqrMagnitude > 0.0001f ? delta.normalized : Vector2.zero;
+            }
+
+            if (dir.sqrMagnitude > 0.0001f)
+            {
+                FacingDirection = dir.normalized;
+                if (_movementMotor != null)
+                {
+                    _movementMotor.Move(FacingDirection * _chaseSpeed * Runner.DeltaTime);
+                }
+            }
+        }
+
+        private void BeginReturnToHomeViaFade()
+        {
+            _hateList.Clear();
+            CurrentTargetId = default;
+            IsReturningHome = true;
+            _pathfindingNavigator?.InvalidatePath();
+            // Intentionally does NOT touch ReactiveDisplacementTimer (§5 / TASK-315).
+            TransitionTo(SpecterStateType.Desvanecimiento);
         }
 
         private void UpdateCanalizacion()
@@ -331,7 +399,16 @@ namespace ProjectGrimhold.Gameplay.Enemies.Specter
         {
             if (StateTimer.Expired(Runner))
             {
-                TransitionTo(SpecterStateType.Persecucion);
+                if (IsReturningHome)
+                {
+                    IsReturningHome = false;
+                    _pathfindingNavigator?.InvalidatePath();
+                    TransitionTo(SpecterStateType.Reposo);
+                }
+                else
+                {
+                    TransitionTo(SpecterStateType.Persecucion);
+                }
             }
         }
 
@@ -397,36 +474,55 @@ namespace ProjectGrimhold.Gameplay.Enemies.Specter
 
         private void ExecuteTeleportRelocation()
         {
-            Vector2 myPos = transform.position;
-            Vector2 targetPos = myPos;
+            Vector2 destination;
 
-            var candidates = GetActivePlayerCandidates();
-            if (_hateList.SelectTarget(candidates, myPos, out EntityId selectedId))
+            if (IsReturningHome)
             {
-                CurrentTargetId = selectedId;
-                if (TryGetPlayer(selectedId, out PlayerCharacter player))
+                CurrentTargetId = default;
+                destination = HomeAreaPosition;
+            }
+            else
+            {
+                Vector2 myPos = transform.position;
+                Vector2 targetPos = myPos;
+
+                var candidates = GetActivePlayerCandidates();
+                if (candidates.Count == 0)
                 {
-                    targetPos = player.transform.position;
+                    CurrentTargetId = default;
+                    IsReturningHome = true;
+                    destination = HomeAreaPosition;
+                }
+                else
+                {
+                    if (_hateList.SelectTarget(candidates, myPos, out EntityId selectedId))
+                    {
+                        CurrentTargetId = selectedId;
+                        if (TryGetPlayer(selectedId, out PlayerCharacter player))
+                        {
+                            targetPos = player.transform.position;
+                        }
+                    }
+                    else
+                    {
+                        CurrentTargetId = candidates[0].Id;
+                        targetPos = candidates[0].Position;
+                    }
+
+                    // Checks that destination itself is free of walls/obstacles; does not require line-of-sight from origin (TASK-285)
+                    bool IsPointBlocked(Vector2 pt)
+                    {
+                        return Physics2D.OverlapCircle(pt, 0.4f, _obstacleLayer) != null;
+                    }
+
+                    destination = SpecterTeleportRules.FindDestination(
+                        myPos,
+                        targetPos,
+                        HomeAreaPosition,
+                        _leashRadius,
+                        IsPointBlocked);
                 }
             }
-            else if (candidates.Count > 0)
-            {
-                CurrentTargetId = candidates[0].Id;
-                targetPos = candidates[0].Position;
-            }
-
-            // Checks that destination itself is free of walls/obstacles; does not require line-of-sight from origin (TASK-285)
-            bool IsPointBlocked(Vector2 pt)
-            {
-                return Physics2D.OverlapCircle(pt, 0.4f, _obstacleLayer) != null;
-            }
-
-            Vector2 destination = SpecterTeleportRules.FindDestination(
-                myPos,
-                targetPos,
-                HomeAreaPosition,
-                _leashRadius,
-                IsPointBlocked);
 
             if (TryGetComponent(out NetworkTransform netTransform))
             {
@@ -595,6 +691,7 @@ namespace ProjectGrimhold.Gameplay.Enemies.Specter
             if (_stun == null) _stun = GetComponent<EnemyStunNetworkEffect>();
             if (_character == null) _character = GetComponent<EnemyCharacter>();
             if (_movementMotor == null) _movementMotor = GetComponent<Kinematic2DMovementMotor>();
+            if (_pathfindingNavigator == null) _pathfindingNavigator = GetComponent<EnemyPathfindingNavigator>();
             if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody2D>();
             if (_collider == null) _collider = GetComponent<Collider2D>();
             _allColliders = GetComponentsInChildren<Collider2D>(true);

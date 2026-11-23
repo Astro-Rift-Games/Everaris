@@ -329,6 +329,7 @@ public abstract class CombatPresenterBase : MonoBehaviour
 
         if (!_hasCapturedBaseState)
         {
+            OnCancelAndRestore();
             return;
         }
 
@@ -348,6 +349,12 @@ public abstract class CombatPresenterBase : MonoBehaviour
                 _weaponSpriteRenderer.gameObject.SetActive(_baseGameObjectActive);
             }
         }
+
+        OnCancelAndRestore();
+    }
+
+    protected virtual void OnCancelAndRestore()
+    {
     }
 
 #if UNITY_EDITOR

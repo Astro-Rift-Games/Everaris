@@ -33,7 +33,28 @@ namespace ProjectGrimhold.Gameplay.Enemies.Specter
         public const float MinTeleportDistance = TeleportMinRadius;
         public const float MaxTeleportDistance = TeleportMaxRadius;
         public const float LeashRadius = 15.0f;
+        public const float HomeArrivalThreshold = 1.0f;
         public const float DetonationDamage = 25.0f;
+
+        /// <summary>
+        /// Determina si el Espectro debe retornar a su Home Area mediante desvanecimiento
+        /// (sin consumir el cooldown reactivo de combate) por superar Leash o quedar sin objetivos elegibles (§5 / TASK-315).
+        /// </summary>
+        public static bool ShouldReturnToHomeViaFade(
+            Vector2 currentPos,
+            Vector2 homeAreaPos,
+            float leashRadius,
+            bool hasEligibleTarget,
+            float homeArrivalThreshold = HomeArrivalThreshold)
+        {
+            float distanceToHome = Vector2.Distance(currentPos, homeAreaPos);
+            if (leashRadius > 0f && distanceToHome > leashRadius)
+            {
+                return true;
+            }
+
+            return !hasEligibleTarget && distanceToHome > Mathf.Max(0.1f, homeArrivalThreshold);
+        }
 
         /// <summary>
         /// Determina si el estado actual es incorpóreo (inmune a daño físico).

@@ -33,9 +33,11 @@ The enemy state machine coordinates high-level behaviors authoritatively via `En
 
 | State | Responsibility | Control Enabled | Combat Enabled |
 | :--- | :--- | :--- | :--- |
-| **`Idle`** | Standard locomotion / wandering. | `true` | `false` |
-| **`Chase`** | Pursuit of acquired target (`PlayerCharacter`). | `true` | `false` |
-| **`Attack`** | Stationary combat execution when target is in range. | `false` | `true` |
+| **`Idle`** | Stationary guard / target scanning. | `true` | `false` |
+| **`Patrol`** | Navigates configured patrol waypoints with arrival and stuck-skip fallback. | `true` | `false` |
+| **`Chase`** | Pursuit of acquired target (`PlayerCharacter`), melee surround slots, or Ranged tactical repositioning. | `true` | `false` |
+| **`Attack`** | Stationary combat execution (with smooth braking and range hysteresis) when target is in range with LOS. | `false` | `true` |
+| **`ReturnHome`** | Navigates back to `[Networked] HomeAreaPosition` after exceeding Leash or losing target, with anti-oscillation re-engage lockout. | `true` | `false` |
 | **`Dead`** | Terminal state triggered upon character death. | `false` | `false` |
 
 ---
@@ -83,9 +85,11 @@ The attack hit-frame boundary stores the target `EntityId` accepted with the pen
 ## Network AI Combat (`EnemyCombatAIController`)
 
 * **Network Boundary**: Extends `NetworkBehaviour` and implements `ICombatController`.
-* **State Authority**: Only the State Authority evaluates attack intentions from `EnemyMovementAIController.IsAttacking` during network tick simulation (`FixedUpdateNetwork`).
+* **State Authority & Authoritative Anticipation (TASK-41 / TASK-316)**: Only State Authority evaluates attack intentions from `EnemyMovementAIController.IsAttacking` during `FixedUpdateNetwork`. Starting an attack begins an authoritative, Inspector-configurable `TickTimer` anticipation window (`_anticipationDurationSeconds`) and replicates `IsPreparingAttack`, `PreparedAttackDirection`, `PreparationSequence`, and `PreparedAttackTypeValue` so Host, Clients, and Proxies observe readable preparation before hit/shot release.
+* **Decoupled from Animation Events**: Damage and projectile execution fire strictly when `AnticipationTimer` expires on State Authority after revalidating target eligibility and LOS. Disabling the `Animator` or `EnemyCombatPresenter` never alters or deadlocks attack timing; `EnemyAttackAnimationListener.OnAttackHit` is a safe no-op retained for legacy clip event compatibility. Invalid target, LOS loss, death, or stun cancels preparation cleanly without consuming full cooldown (configurable via `_consumeCooldownOnCancel`).
+* **Attack-Range Hysteresis & Vision (TASK-311 / TASK-316)**: Entering `Attack` requires unobstructed LOS (`WorldCollision | Obstacles` + `SmokeZoneRegistry`) and `distance <= _attackRange`. Staying in `Attack` widens the exit threshold by `_attackExitRangeMargin` plus a minimum-stay `TickTimer` (`_minAttackStateDurationSeconds`), preventing `Chase ↔ Attack` flicker at the range boundary.
 * **Strategy Execution**: Delegates combat execution to an assigned `IAttack` strategy (e.g., `MeleeAttack` or `RangedAttack`).
-* **Network Replication**: Replicates `AttackSequence`, `LastAttackOrigin`, `LastAttackDirection`, and tick information to allow proxy clients to render attack animations smoothly via `AttackPerformed` events.
+* **Network Replication**: Replicates `AttackSequence`, `LastAttackOrigin`, `LastAttackDirection`, and tick information to allow proxy clients to render confirmed attack events (`AttackPerformed`) and anticipation telegraphs (`EnemyCombatPresenter`, `EnemyAnimatorView`).
 
 Enemy executors own serialized `AttackExecutionParameters` because they do not resolve player
 Equipment. Shared `AttackConfig` assets carry only execution behavior. Current melee Slimes retain

@@ -31,6 +31,16 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
     [SerializeField, Min(1f)] private float _pursuitSpeedMultiplier = 1.5f;
     [SerializeField] private Vector2 _defaultFacingDirection = Vector2.down;
 
+    [Header("Locomotion Smoothing")]
+    [Tooltip("Acceleration rate in world units/s² when starting or speeding up voluntary movement.")]
+    [SerializeField, Min(0.1f)] private float _acceleration = 8.0f;
+
+    [Tooltip("Deceleration rate in world units/s² when stopping or braking into Attack state.")]
+    [SerializeField, Min(0.1f)] private float _deceleration = 12.0f;
+
+    [Tooltip("Maximum facing rotation rate in degrees/s to avoid instantaneous orientation snaps.")]
+    [SerializeField, Min(1f)] private float _turnSpeedDegreesPerSecond = 420f;
+
     [Header("Patrol")]
     private EnemyPatrolRoute _patrolRoute;
     [SerializeField, Min(0f)] private float _waypointReachRadius = 0.3f;
@@ -49,9 +59,16 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
 
     [SerializeField] private float _attackRange = 1.5f;
 
+    [Header("Attack Hysteresis")]
+    [Tooltip("Extra distance beyond Attack Range required before exiting Attack back to Chase (prevents boundary flicker).")]
+    [SerializeField, Min(0f)] private float _attackExitRangeMargin = 0.35f;
+
+    [Tooltip("Minimum seconds to remain in Attack state once entered, provided LOS and target eligibility hold.")]
+    [SerializeField, Min(0f)] private float _minAttackStateDurationSeconds = 0.30f;
+
     [Header("Obstacle Detection")]
     [SerializeField] private bool _enableObstacleAvoidance = true;
-    [SerializeField] private LayerMask _obstacleLayer;
+    [SerializeField] private LayerMask _obstacleLayer = EnemyVisionRules.DefaultVisionObstacleMask;
 
     [SerializeField] private EnemyObstacleAvoidanceSettings _avoidanceSettings = new EnemyObstacleAvoidanceSettings
     {
@@ -73,6 +90,54 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
     [Header("Aggro")]
     [Tooltip("Duration in seconds the enemy pursues a player attacker without requiring LOS. Set to 0 to disable aggro bypass.")]
     [SerializeField, Min(0f)] private float _aggroAlertDuration = 5f;
+
+    [Header("Leash & Home Area")]
+    [Tooltip("Maximum distance from Home Area before abandoning pursuit and returning home (Doc 10 §10.1). Set to 0 to disable.")]
+    [SerializeField, Min(0f)] private float _leashRadius = 12f;
+
+    [Tooltip("Distance to Home Area considered arrived when returning home.")]
+    [SerializeField, Min(0.1f)] private float _homeArrivalRadius = 1.0f;
+
+    [Tooltip("Seconds during which a leashed player cannot immediately re-aggro this enemy during return.")]
+    [SerializeField, Min(0f)] private float _leashReengageCooldownSeconds = 3.0f;
+
+    [Tooltip("Fraction of Leash radius the enemy must re-enter before re-detecting the leashed player.")]
+    [SerializeField, Range(0.1f, 1f)] private float _leashReengageInnerFactor = 0.75f;
+
+    [Header("Crowd Separation & Surround")]
+    [Tooltip("Applies soft local separation from nearby enemies while preserving single-file flow in narrow corridors.")]
+    [SerializeField] private bool _enableCrowdSeparation = true;
+
+    [Tooltip("Minimum comfortable spacing radius between enemy centers in world units.")]
+    [SerializeField, Min(0.1f)] private float _separationRadius = 0.95f;
+
+    [Tooltip("Weight of local enemy-enemy separation steering.")]
+    [SerializeField, Range(0f, 1.5f)] private float _separationStrength = 0.75f;
+
+    [Tooltip("Distributes multiple melee enemies into distinct walkable slots around a shared target.")]
+    [SerializeField] private bool _enableSurroundSlots = true;
+
+    [Tooltip("Distance from the target at which surround slots are placed.")]
+    [SerializeField, Min(0.2f)] private float _surroundSlotRadius = 1.05f;
+
+    [Tooltip("Maximum number of distinct surround slots around one player.")]
+    [SerializeField, Range(2, 12)] private int _maxSurroundSlots = 6;
+
+    [Header("Ranged Positioning")]
+    [Tooltip("Enables preferred combat distance band, kiting retreat, and LOS vantage repositioning for Ranged enemies.")]
+    [SerializeField] private bool _useRangedPositioning = false;
+
+    [Tooltip("Distance below which a Ranged enemy retreats when space is available.")]
+    [SerializeField, Min(0.5f)] private float _rangedRetreatDistance = 2.5f;
+
+    [Tooltip("Preferred minimum combat distance (retreat hysteresis exit threshold).")]
+    [SerializeField, Min(0.5f)] private float _rangedPreferredMinDistance = 3.0f;
+
+    [Tooltip("Step distance evaluated when backing away from a close player.")]
+    [SerializeField, Min(0.5f)] private float _rangedRetreatStepDistance = 1.5f;
+
+    [Tooltip("Search radius around the Ranged enemy when looking for a walkable firing vantage point with LOS.")]
+    [SerializeField, Min(1.0f)] private float _rangedVantageSearchRadius = 6.0f;
 
     [Header("Dependencies")]
     [SerializeField] private EnemyPathfindingNavigator _pathfindingNavigator;
@@ -125,6 +190,10 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
     private EnemyStunNetworkEffect _stun;
     private EntityRegistry _entityRegistry;
     private EnemyObstacleAvoidance _obstacleAvoidance;
+    private EnemyCrowdCoordinator _crowdCoordinator;
+    private bool _isRangedRetreating;
+    private bool _hasActiveRangedDestination;
+    private Vector2 _activeRangedDestination;
 
     // ─────────────────────────────────────────────────────────────────────────
     // Networked state
@@ -133,6 +202,7 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
     [Networked] public NetworkBool IsControlEnabled { get; private set; }
     [Networked] public Vector2 FacingDirection { get; private set; }
     [Networked] public NetworkBool IsMoving { get; private set; }
+    [Networked] private Vector2 CurrentVelocity { get; set; }
 
     /// <summary>
     /// True while an external effect (for example the Trap's immobilize) holds the enemy in place. Independent of
@@ -152,6 +222,20 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
     /// Written exclusively by EvaluateActiveTarget; read by EnemyFSM states.
     /// </summary>
     [Networked] public NetworkBool IsOnPursuit { get; private set; }
+
+    /// <summary>
+    /// Origin position captured on fresh spawn (preserved across Host Migration).
+    /// </summary>
+    [Networked] public Vector2 HomeAreaPosition { get; private set; }
+
+    /// <summary>
+    /// True while navigating back to <see cref="HomeAreaPosition"/> after exceeding Leash or losing target.
+    /// </summary>
+    [Networked] public NetworkBool IsReturningHome { get; private set; }
+
+    [Networked] private TickTimer LeashReengageLockoutTimer { get; set; }
+    [Networked] private int LeashedTargetIdValue { get; set; }
+    [Networked] private TickTimer MinAttackStayTimer { get; set; }
 
     /// <summary>
     /// Throttle timer for periodic OverlapCircle scans when no target is active.
@@ -204,6 +288,15 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
     /// </summary>
     public bool IsPatrolActive { get; set; }
 
+    /// <summary>Canonical entity identity of this enemy for crowd coordination.</summary>
+    public EntityId SelfEntityId => _characterBase != null ? _characterBase.Id : default;
+
+    /// <summary>True while this enemy participates in Host crowd separation and surround slots.</summary>
+    public bool IsAliveForCrowd => enabled && Object != null && Object.IsValid && (_characterBase == null || _characterBase.IsAlive);
+
+    /// <summary>True when this enemy uses melee surround slots around a shared target.</summary>
+    public bool UsesSurroundSlots => _enableSurroundSlots && !_useRangedPositioning;
+
     // ─────────────────────────────────────────────────────────────────────────
     // Unity lifecycle
     // ─────────────────────────────────────────────────────────────────────────
@@ -220,10 +313,15 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
         _entityRegistry = Runner != null ? Runner.GetComponent<EntityRegistry>() : null;
         _dependenciesValid = ValidateDependencies();
         
-        _pathfindingNavigator?.Initialize(Runner);
+        _pathfindingNavigator?.Initialize(Runner, HasStateAuthority);
 
         if (HasStateAuthority)
         {
+            _crowdCoordinator = _pathfindingNavigator != null && _pathfindingNavigator.Grid != null
+                ? _pathfindingNavigator.Grid.CrowdCoordinator
+                : null;
+            _crowdCoordinator?.Register(this);
+
             if (!HostMigrationRestoreUtility.IsRestoreSpawn(this))
             {
                 IsControlEnabled = true;
@@ -235,8 +333,14 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
 
                 FacingDirection = initialFacing;
                 IsMoving = false;
+                CurrentVelocity = Vector2.zero;
                 IsOnPursuit = false;
                 IsAttacking = false;
+                HomeAreaPosition = transform.position;
+                IsReturningHome = false;
+                LeashReengageLockoutTimer = default;
+                LeashedTargetIdValue = 0;
+                MinAttackStayTimer = default;
                 _pursuitLostTickCount = 0;
                 PatrolWaypointIndex = 0;
                 // Fresh spawn only: restore spawns retain the copied knockback and start tick.
@@ -251,6 +355,8 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
                 _scanTimer = TickTimer.None;
                 AggroAlertTimer = TickTimer.None;
                 PatrolWaitTimer = TickTimer.None;
+                LeashReengageLockoutTimer = TickTimer.None;
+                MinAttackStayTimer = TickTimer.None;
                 
                 // Clear transient local state
                 _pursuitLostTickCount = 0;
@@ -262,6 +368,19 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
                 }
             }
         }
+    }
+
+    public override void Despawned(NetworkRunner runner, bool hasState)
+    {
+        _crowdCoordinator?.Unregister(this);
+        _crowdCoordinator = null;
+        base.Despawned(runner, hasState);
+    }
+
+    private void OnDestroy()
+    {
+        _crowdCoordinator?.Unregister(this);
+        _crowdCoordinator = null;
     }
 
     private EnemyPatrolRoute FindClosestPatrolRoute(Vector2 position)
@@ -341,9 +460,27 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
         UpdateFacingDirection(moveDirection, canMove, isAlive);
 
         float speed = IsOnPursuit ? PursuitSpeed : _patrolSpeed;
-        Vector2 displacement = canMove
-            ? moveDirection * speed * Runner.DeltaTime
-            : Vector2.zero;
+        Vector2 displacement;
+        if (!isAlive || IsImmobilized || stunned)
+        {
+            CurrentVelocity = Vector2.zero;
+            displacement = Vector2.zero;
+        }
+        else
+        {
+            Vector2 targetVelocity = canMove && moveDirection.sqrMagnitude > ValidDirectionSqrThreshold
+                ? moveDirection.normalized * speed
+                : Vector2.zero;
+
+            CurrentVelocity = EnemyLocomotionRules.StepVelocity(
+                CurrentVelocity,
+                targetVelocity,
+                _acceleration,
+                _deceleration,
+                Runner.DeltaTime);
+
+            displacement = CurrentVelocity * Runner.DeltaTime;
+        }
 
         if (KnockbackActive)
         {
@@ -379,6 +516,19 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
     // ─────────────────────────────────────────────────────────────────────────
     // Public API (called by FSM states and EnemyCombatAIController)
     // ─────────────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Layer mask used for enemy line-of-sight and obstacle checks.
+    /// </summary>
+    public LayerMask ObstacleLayer => _obstacleLayer;
+
+    /// <summary>
+    /// Evaluates unobstructed line of sight from this enemy to <paramref name="targetPosition"/>.
+    /// </summary>
+    public bool HasLineOfSightTo(Vector2 targetPosition)
+    {
+        return EnemyVisionRules.HasLineOfSight(transform.position, targetPosition, _obstacleLayer);
+    }
 
     /// <summary>
     /// Authoritatively enables or disables movement control.
@@ -473,8 +623,16 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
             return;
         }
 
+        if (ShouldBlockReengage(attackerId))
+        {
+            return;
+        }
+
         // Immediately acquire the player as the active target so EvaluateActiveTarget
         // takes over next tick and uses the aggro-bypass path.
+        IsReturningHome = false;
+        LeashedTargetIdValue = 0;
+        LeashReengageLockoutTimer = TickTimer.None;
         _currentTarget = new EnemyTargetReference(attackerId, attackerTransform);
         _pursuitLostTickCount = 0;
         AggroAlertTimer = TickTimer.CreateFromSeconds(Runner, _aggroAlertDuration);
@@ -556,6 +714,11 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
             IsOnPursuit = false;
             IsAttacking = false;
 
+            if (IsReturningHome && EnemyLeashRules.HasArrivedAtHome(transform.position, HomeAreaPosition, _homeArrivalRadius))
+            {
+                CompleteReturnHome();
+            }
+
             // Scan for new targets on a throttled interval to avoid OverlapCircle every tick.
             if (_scanTimer.ExpiredOrNotRunning(Runner))
             {
@@ -568,85 +731,89 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
     /// <summary>
     /// Validates the active target and updates IsOnPursuit / IsAttacking.
     /// Runs every tick when a target is already acquired (no OverlapCircle needed).
-    /// Handles grace period for LOS loss within disengage range.
+    /// Evaluates Leash with priority over aggro and handles grace period for LOS loss.
     /// </summary>
     private void EvaluateActiveTarget(EntityId targetId, Transform targetTransform)
     {
         // Validate target is still eligible (alive, damageable).
         if (!TryResolveEligibleTarget(targetId))
         {
-            ClearCurrentTarget();
-            IsOnPursuit = false;
-            IsAttacking = false;
+            AbandonTargetAndBeginReturn(leashedTargetId: default);
             return;
         }
 
         Vector2 enemyPos = transform.position;
         Vector2 targetPos = targetTransform.position;
+
+        // Leash takes absolute priority over aggro to prevent indefinite kiting (Doc 10 §10.1 / TASK-314).
+        if (EnemyLeashRules.IsBeyondLeash(enemyPos, HomeAreaPosition, _leashRadius))
+        {
+            AbandonTargetAndBeginReturn(leashedTargetId: targetId);
+            return;
+        }
+
         float distance = Vector2.Distance(enemyPos, targetPos);
 
         bool aggroActive = _aggroAlertDuration > 0f && !AggroAlertTimer.ExpiredOrNotRunning(Runner);
+        bool hasLOS = HasLineOfSightTo(targetPos);
+        bool isStunned = _stun != null && _stun.IsActive;
+        bool wasAttacking = IsAttacking;
+        bool minStayActive = wasAttacking && _minAttackStateDurationSeconds > 0f && !MinAttackStayTimer.ExpiredOrNotRunning(Runner);
 
-        // Target moved beyond disengage range: drop immediately, unless we have an active aggro alert.
-        if (!aggroActive && distance > _disengageRange)
+        float effectiveAttackRange = EnemyRangeHysteresisRules.ResolveEffectiveAttackRange(
+            wasAttacking,
+            _attackRange,
+            _attackExitRangeMargin,
+            minStayActive,
+            _disengageRange);
+
+        // Ranged positioning (TASK-319): preferred combat band, retreat when approached, and LOS vantage search.
+        if (_useRangedPositioning && distance <= _disengageRange)
         {
-            ClearCurrentTarget();
-            IsOnPursuit = false;
-            IsAttacking = false;
-            _pursuitLostTickCount = 0;
-            return;
-        }
-
-        // Check attack range first (does not require LOS).
-        if (distance <= _attackRange)
-        {
-            _pursuitLostTickCount = 0;
-            IsAttacking = _stun == null || !_stun.IsActive;
-            IsOnPursuit = true;
-            return;
-        }
-
-        // Check LOS for pursuit.
-        bool hasLOS = !Physics2D.Linecast(enemyPos, targetPos, _obstacleLayer) && !SmokeZoneRegistry.IsLineOccluded(enemyPos, targetPos);
-
-        if (hasLOS)
-        {
-            // Natural LOS re-established. Only cancel the aggro alert if we are within normal
-            // disengage range, otherwise we'd drop the target on the very next tick.
-            if (distance <= _disengageRange)
+            if (TryEvaluateRangedPositioning(enemyPos, targetPos, distance, hasLOS, effectiveAttackRange, isStunned, wasAttacking))
             {
-                AggroAlertTimer = default;
+                return;
             }
-            
-            _pursuitLostTickCount = 0;
-            IsOnPursuit = true;
-            IsAttacking = false;
-            return;
-        }
-
-        if (aggroActive)
-        {
-            // Aggro alert active: pursue without LOS.
-            IsOnPursuit = true;
-            IsAttacking = false;
-            return;
-        }
-
-        // LOS lost within disengage range: apply grace period before dropping target.
-        _pursuitLostTickCount++;
-        if (_pursuitLostTickCount >= _pursuitLostGraceTicks)
-        {
-            ClearCurrentTarget();
-            IsOnPursuit = false;
-            IsAttacking = false;
-            _pursuitLostTickCount = 0;
         }
         else
         {
-            // Within grace: maintain pursuit flag so the enemy continues moving toward last known position.
-            IsOnPursuit = true;
-            IsAttacking = false;
+            _isRangedRetreating = false;
+            _hasActiveRangedDestination = false;
         }
+
+        EnemyTargetEngagementDecision decision = EnemyVisionRules.EvaluateTargetEngagement(
+            distance,
+            _disengageRange,
+            effectiveAttackRange,
+            hasLOS,
+            aggroActive,
+            isStunned,
+            _pursuitLostTickCount,
+            _pursuitLostGraceTicks);
+
+        if (decision.DropTarget)
+        {
+            AbandonTargetAndBeginReturn(leashedTargetId: default);
+            return;
+        }
+
+        if (decision.ShouldClearAggro)
+        {
+            AggroAlertTimer = default;
+        }
+
+        if (!wasAttacking && decision.IsAttacking && _minAttackStateDurationSeconds > 0f)
+        {
+            MinAttackStayTimer = TickTimer.CreateFromSeconds(Runner, _minAttackStateDurationSeconds);
+        }
+        else if (!decision.IsAttacking)
+        {
+            MinAttackStayTimer = TickTimer.None;
+        }
+
+        _pursuitLostTickCount = decision.NextPursuitLostTickCount;
+        IsOnPursuit = decision.IsOnPursuit;
+        IsAttacking = decision.IsAttacking;
     }
 
     /// <summary>
@@ -692,6 +859,11 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
                 continue;
             }
 
+            if (ShouldBlockReengage(candidateId))
+            {
+                continue;
+            }
+
             // Use the collider's root transform to measure distance from the entity's origin,
             // not from a potentially offset hitbox child.
             Transform candidateTransform = col.attachedRigidbody != null
@@ -721,7 +893,7 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
             }
 
             // LOS check: Linecast is sufficient for detection (CircleCast is reserved for wall-steering).
-            bool hasLOS = !Physics2D.Linecast(enemyPos, candidatePos, _obstacleLayer) && !SmokeZoneRegistry.IsLineOccluded(enemyPos, candidatePos);
+            bool hasLOS = EnemyVisionRules.HasLineOfSight(enemyPos, candidatePos, _obstacleLayer);
             if (!hasLOS)
             {
                 continue;
@@ -741,6 +913,9 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
 
         if (bestId.Value != 0 && bestTransform != null)
         {
+            IsReturningHome = false;
+            LeashedTargetIdValue = 0;
+            LeashReengageLockoutTimer = TickTimer.None;
             _currentTarget = new EnemyTargetReference(bestId, bestTransform);
             // ScanTimer will restart on the next EvaluateSensors call with no target;
             // since we now have a target, EvaluateActiveTarget takes over next tick.
@@ -783,13 +958,21 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
                 targetTransform.position,
                 out Vector2 targetDirection))
         {
-            FacingDirection = targetDirection;
+            FacingDirection = EnemyLocomotionRules.RotateDirectionTowards(
+                FacingDirection,
+                targetDirection,
+                _turnSpeedDegreesPerSecond,
+                Runner.DeltaTime);
             return;
         }
 
         if (canMove && moveDirection.sqrMagnitude > ValidDirectionSqrThreshold)
         {
-            FacingDirection = moveDirection.normalized;
+            FacingDirection = EnemyLocomotionRules.RotateDirectionTowards(
+                FacingDirection,
+                moveDirection.normalized,
+                _turnSpeedDegreesPerSecond,
+                Runner.DeltaTime);
         }
     }
 
@@ -810,6 +993,11 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
             targetPos = targetTransform.position;
             intendedDir = ComputePursuitDirection(targetTransform);
         }
+        else if (IsReturningHome)
+        {
+            targetPos = HomeAreaPosition;
+            intendedDir = ComputeReturnHomeDirection();
+        }
         else if (IsPatrolActive)
         {
             if (HasPatrolRoute && _patrolRoute.TryGetWaypoint(PatrolWaypointIndex, out Transform waypoint))
@@ -817,6 +1005,20 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
                 targetPos = waypoint.position;
                 intendedDir = ComputePatrolDirection();
             }
+        }
+
+        if (_enableCrowdSeparation &&
+            _crowdCoordinator != null &&
+            intendedDir.sqrMagnitude > ValidDirectionSqrThreshold)
+        {
+            Vector2 separation = _crowdCoordinator.ComputeSeparation(
+                this,
+                intendedDir,
+                _separationRadius,
+                _separationStrength,
+                _pathfindingNavigator != null ? _pathfindingNavigator.Grid : null);
+
+            intendedDir = EnemyCrowdRules.BlendDirectionWithSeparation(intendedDir, separation);
         }
 
         if (_enableObstacleAvoidance && intendedDir.sqrMagnitude > ValidDirectionSqrThreshold && _characterBase != null)
@@ -847,12 +1049,16 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
         if (_patrolRoute.TryGetWaypoint(PatrolWaypointIndex, out Transform waypoint))
         {
             Vector2 toWaypoint = (Vector2)waypoint.position - (Vector2)transform.position;
-            if (toWaypoint.sqrMagnitude < _waypointReachRadius * _waypointReachRadius)
+            bool reachedByDistance = toWaypoint.sqrMagnitude < _waypointReachRadius * _waypointReachRadius;
+            bool reachedOrStuckByNavigator = _pathfindingNavigator != null &&
+                (_pathfindingNavigator.HasReachedDestination || _pathfindingNavigator.IsStuck);
+
+            if (reachedByDistance || reachedOrStuckByNavigator)
             {
                 PatrolWaypointIndex = (PatrolWaypointIndex + 1) % _patrolRoute.Count;
                 _pathfindingNavigator?.InvalidatePath();
                 
-                if (_waypointWaitTime > 0f)
+                if (_waypointWaitTime > 0f && !reachedOrStuckByNavigator)
                 {
                     PatrolWaitTimer = TickTimer.CreateFromSeconds(Runner, _waypointWaitTime);
                     return Vector2.zero;
@@ -873,8 +1079,18 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
             
             if (_pathfindingNavigator != null)
             {
-                return _pathfindingNavigator.GetDirectionToTarget(
+                Vector2 navDir = _pathfindingNavigator.GetDirectionToTarget(
                     transform.position, waypoint.position, Runner.Tick);
+
+                // If the query itself immediately marked arrival or stuck, advance on the next tick cleanly.
+                if (_pathfindingNavigator.HasReachedDestination || _pathfindingNavigator.IsStuck)
+                {
+                    PatrolWaypointIndex = (PatrolWaypointIndex + 1) % _patrolRoute.Count;
+                    _pathfindingNavigator.InvalidatePath();
+                    return Vector2.zero;
+                }
+
+                return navDir;
             }
 
             return toWaypoint.normalized;
@@ -884,23 +1100,209 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
     }
 
     /// <summary>
-    /// Returns the normalized direction from the enemy toward the active target.
+    /// Returns the normalized direction from the enemy toward the active target (or its assigned
+    /// surround slot / Ranged tactical position).
     /// </summary>
     private Vector2 ComputePursuitDirection(Transform target)
     {
-        Vector2 toTarget = (Vector2)target.position - (Vector2)transform.position;
-        if (toTarget.sqrMagnitude < ValidDirectionSqrThreshold)
+        Vector2 navigationGoal = target.position;
+
+        if (_useRangedPositioning && _hasActiveRangedDestination)
+        {
+            navigationGoal = _activeRangedDestination;
+        }
+        else if (UsesSurroundSlots && _crowdCoordinator != null && _currentTarget.Id.Value != 0)
+        {
+            if (_crowdCoordinator.TryResolveSurroundSlot(
+                this,
+                _currentTarget.Id,
+                target.position,
+                _surroundSlotRadius,
+                _maxSurroundSlots,
+                _pathfindingNavigator != null ? _pathfindingNavigator.Grid : null,
+                _obstacleLayer,
+                out Vector2 slotPosition))
+            {
+                navigationGoal = slotPosition;
+            }
+        }
+
+        Vector2 toGoal = navigationGoal - (Vector2)transform.position;
+        if (toGoal.sqrMagnitude < ValidDirectionSqrThreshold)
         {
             return Vector2.zero;
         }
 
         if (_pathfindingNavigator != null)
         {
-            return _pathfindingNavigator.GetDirectionToTarget(
-                transform.position, target.position, Runner.Tick);
+            Vector2 dir = _pathfindingNavigator.GetDirectionToTarget(
+                transform.position, navigationGoal, Runner.Tick);
+
+            if (_pathfindingNavigator.IsStuck && !IsAttacking)
+            {
+                AbandonTargetAndBeginReturn(leashedTargetId: _currentTarget.Id);
+                return Vector2.zero;
+            }
+
+            return dir;
         }
 
-        return toTarget.normalized;
+        return toGoal.normalized;
+    }
+
+    private bool TryEvaluateRangedPositioning(
+        Vector2 enemyPos,
+        Vector2 targetPos,
+        float distance,
+        bool hasLOS,
+        float effectiveAttackRange,
+        bool isStunned,
+        bool wasAttacking)
+    {
+        PathfindingGrid grid = _pathfindingNavigator != null ? _pathfindingNavigator.Grid : null;
+        bool IsWalkable(Vector2 pos) => grid == null || !grid.IsBuilt || grid.IsWalkableWorldPosition(pos);
+        bool HasLos(Vector2 from, Vector2 to) => EnemyVisionRules.HasLineOfSight(from, to, _obstacleLayer);
+
+        EnemyRangedMovementIntent intent = EnemyRangedPositioningRules.EvaluateIntent(
+            distance,
+            hasLOS,
+            _rangedRetreatDistance,
+            _rangedPreferredMinDistance,
+            effectiveAttackRange,
+            _isRangedRetreating);
+
+        if (intent == EnemyRangedMovementIntent.Retreat)
+        {
+            if (EnemyRangedPositioningRules.TryComputeRetreatDestination(
+                enemyPos,
+                targetPos,
+                HomeAreaPosition,
+                _leashRadius,
+                _rangedRetreatStepDistance,
+                IsWalkable,
+                HasLos,
+                out Vector2 retreatPos))
+            {
+                _isRangedRetreating = true;
+                _hasActiveRangedDestination = true;
+                _activeRangedDestination = retreatPos;
+                _pursuitLostTickCount = 0;
+                IsOnPursuit = true;
+                IsAttacking = false;
+                MinAttackStayTimer = TickTimer.None;
+                return true;
+            }
+
+            // Cornered against wall/leash with clear LOS: hold position and fire back.
+            _isRangedRetreating = false;
+            _hasActiveRangedDestination = false;
+            return false;
+        }
+
+        if (intent == EnemyRangedMovementIntent.RepositionForLos)
+        {
+            _isRangedRetreating = false;
+            if (EnemyRangedPositioningRules.TryFindVantagePointWithLos(
+                enemyPos,
+                targetPos,
+                HomeAreaPosition,
+                _leashRadius,
+                _rangedPreferredMinDistance,
+                _attackRange,
+                _rangedVantageSearchRadius,
+                IsWalkable,
+                HasLos,
+                out Vector2 vantagePos))
+            {
+                _hasActiveRangedDestination = true;
+                _activeRangedDestination = vantagePos;
+                _pursuitLostTickCount = 0;
+                IsOnPursuit = true;
+                IsAttacking = false;
+                MinAttackStayTimer = TickTimer.None;
+                return true;
+            }
+
+            // No vantage point found around cover: fall through to standard LOS grace/disengage.
+            _hasActiveRangedDestination = false;
+            return false;
+        }
+
+        _isRangedRetreating = false;
+        _hasActiveRangedDestination = false;
+        return false;
+    }
+
+    private Vector2 ComputeReturnHomeDirection()
+    {
+        Vector2 myPos = transform.position;
+        if (EnemyLeashRules.HasArrivedAtHome(myPos, HomeAreaPosition, _homeArrivalRadius))
+        {
+            CompleteReturnHome();
+            return Vector2.zero;
+        }
+
+        if (_pathfindingNavigator != null)
+        {
+            Vector2 dir = _pathfindingNavigator.GetDirectionToTarget(myPos, HomeAreaPosition, Runner.Tick);
+            if (_pathfindingNavigator.HasReachedDestination || _pathfindingNavigator.IsStuck)
+            {
+                CompleteReturnHome();
+                return Vector2.zero;
+            }
+            return dir;
+        }
+
+        Vector2 toHome = HomeAreaPosition - myPos;
+        return toHome.sqrMagnitude > ValidDirectionSqrThreshold ? toHome.normalized : Vector2.zero;
+    }
+
+    private void AbandonTargetAndBeginReturn(EntityId leashedTargetId)
+    {
+        ClearCurrentTarget();
+        AggroAlertTimer = default;
+
+        if (!EnemyLeashRules.HasArrivedAtHome(transform.position, HomeAreaPosition, _homeArrivalRadius))
+        {
+            IsReturningHome = true;
+        }
+        else
+        {
+            IsReturningHome = false;
+        }
+
+        if (leashedTargetId.Value != 0)
+        {
+            LeashedTargetIdValue = leashedTargetId.Value;
+            LeashReengageLockoutTimer = _leashReengageCooldownSeconds > 0f
+                ? TickTimer.CreateFromSeconds(Runner, _leashReengageCooldownSeconds)
+                : TickTimer.None;
+        }
+    }
+
+    private void CompleteReturnHome()
+    {
+        IsReturningHome = false;
+        LeashedTargetIdValue = 0;
+        LeashReengageLockoutTimer = TickTimer.None;
+        _pathfindingNavigator?.InvalidatePath();
+    }
+
+    private bool ShouldBlockReengage(EntityId candidateId)
+    {
+        bool lockoutActive = _leashReengageCooldownSeconds > 0f
+            && Runner != null
+            && !LeashReengageLockoutTimer.ExpiredOrNotRunning(Runner);
+
+        return EnemyLeashRules.ShouldBlockReengage(
+            candidateId,
+            new EntityId(LeashedTargetIdValue),
+            IsReturningHome,
+            lockoutActive,
+            transform.position,
+            HomeAreaPosition,
+            _leashRadius,
+            _leashReengageInnerFactor);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -915,6 +1317,8 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
     {
         _currentTarget = default;
         _pursuitLostTickCount = 0;
+        _isRangedRetreating = false;
+        _hasActiveRangedDestination = false;
 
         _pathfindingNavigator?.InvalidatePath();
 
@@ -990,6 +1394,11 @@ public sealed class EnemyMovementAIController : NetworkBehaviour, IMovementState
 #if UNITY_EDITOR
     private void OnValidate()
     {
+        if (_obstacleLayer == 0)
+        {
+            _obstacleLayer = EnemyVisionRules.DefaultVisionObstacleMask;
+        }
+
         if (_disengageRange < _detectionRange)
         {
             _disengageRange = _detectionRange;

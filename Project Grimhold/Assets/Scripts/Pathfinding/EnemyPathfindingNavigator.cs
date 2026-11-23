@@ -3,38 +3,21 @@ using Fusion;
 using UnityEngine;
 
 /// <summary>
-/// Manages the lifecycle of a single enemy's active path: requesting a new
-/// path when needed, caching the result, advancing waypoints and reporting
-/// the direction to the next target point.
+/// Manages the lifecycle of a single enemy's active path on State Authority:
+/// shared-solver queries, partial-path fallback for unreachable targets, tick-based repath cadence,
+/// deterministic initial staggering, arrival detection, no-progress stuck detection, and
+/// immediate invalidation when <see cref="PathfindingGrid.TopologyVersion"/> changes (e.g. doors).
 ///
-/// This component is owned by the State Authority (Host). It is never invoked
-/// on proxies because <see cref="EnemyMovementAIController.FixedUpdateNetwork"/>
-/// is gated on HasStateAuthority.
-///
-/// Resimulation safety: Fusion may re-execute FixedUpdateNetwork multiple times
-/// for the same simulation tick (e.g. when correcting a client's predicted input).
-/// To remain idempotent, the repath timer is based on the simulation tick number
-/// (Runner.Tick), not on accumulated delta time. Calling
-/// <see cref="GetDirectionToTarget"/> twice with the same tick value produces the
-/// same outcome and does not duplicate waypoint advancement.
-///
-/// Host Migration: this component holds no [Networked] state. Its local state
-/// (active path, waypoint index, timer) is reset when Spawned() is re-invoked
-/// on the replacement host. The first call to GetDirectionToTarget on the new
-/// host will trigger a fresh path request.
+/// Resimulation safety: all timers, waypoint advances, and progress checks are keyed to
+/// Fusion's <c>Runner.Tick</c> rather than frame time.
 /// </summary>
-/// <remarks>
-/// See <c>Docs/Architecture/PathfindingArchitecture.md</c> for the complete
-/// pathfinding flow and authority model.
-/// </remarks>
 [DisallowMultipleComponent]
 public sealed class EnemyPathfindingNavigator : MonoBehaviour
 {
-    // ── Configuration ─────────────────────────────────────────────────────────
-
     [SerializeField]
     private PathfindingGridConfig _config;
 
+    [Header("Navigation Cadence")]
     [Tooltip("How often to recalculate the path, in seconds.")]
     [SerializeField, Min(0.05f)]
     private float _repathIntervalSeconds = 0.5f;
@@ -47,54 +30,89 @@ public sealed class EnemyPathfindingNavigator : MonoBehaviour
     [SerializeField, Min(0.1f)]
     private float _targetMovedThreshold = 1.5f;
 
+    [Header("Stuck Detection & Logging")]
+    [Tooltip("Seconds without meaningful progress before reporting IsStuck so callers can discard the destination.")]
+    [SerializeField, Min(0.25f)]
+    private float _stuckTimeoutSeconds = 2.0f;
+
+    [Tooltip("Minimum displacement in world units required to reset the stuck progress timer.")]
+    [SerializeField, Min(0.05f)]
+    private float _stuckMinProgressDistance = 0.25f;
+
+    [Tooltip("Minimum seconds between iteration-limit warning logs for this navigator.")]
+    [SerializeField, Min(0.5f)]
+    private float _warningCooldownSeconds = 5.0f;
+
     [Header("Path Smoothing")]
-    [Tooltip("If true, the agent will attempt to cut corners using path smoothing. If false, it strictly follows grid nodes.")]
+    [Tooltip("If true, applies CircleCast path smoothing to remove grid zig-zag.")]
     [SerializeField]
     private bool _enablePathSmoothing = false;
-
-    // ── Runtime state (not networked; lives on State Authority only) ──────────
 
     private AStarPathSolver _solver;
     private PathfindingGrid _grid;
 
-    // Caller-owned waypoint buffer reused across path requests to avoid allocations.
     private readonly List<Vector2> _waypointBuffer = new List<Vector2>(32);
     private int _waypointCount;
     private int _waypointIndex;
 
     private bool _hasValidPath;
+    private bool _hasAttemptedPath;
+    private bool _forceRepathOnNextQuery;
+    private bool _hasReachedDestination;
+    private bool _isStuck;
+    private AStarPathStatus _lastPathStatus;
 
-    // Tick-based repath timer (see Resimulation safety note in the class summary).
     private int _lastRepathTick = int.MinValue;
+    private int _lastWaypointAdvanceTick = int.MinValue;
+    private int _lastWarningTick = int.MinValue;
+    private int _observedTopologyVersion = -1;
+
+    private int _staggerOffsetTicks;
+    private int _initialActivationTick = int.MinValue;
 
     private Vector2 _lastKnownTargetPosition;
-
-    // Track whether the waypoint has already been advanced in the current tick
-    // to guard against double-advancement during Fusion resimulation.
-    private int _lastWaypointAdvanceTick = int.MinValue;
-
-    // ── Fusion runner reference (obtained in Spawned) ─────────────────────────
+    private Vector2 _progressAnchorPosition;
+    private int _progressAnchorTick = int.MinValue;
+    private int _lastProgressEvalTick = int.MinValue;
 
     private NetworkRunner _runner;
 
-    // ── Public API ────────────────────────────────────────────────────────────
-
-    /// <summary>
-    /// <see langword="true"/> when a valid path is cached and has remaining waypoints.
-    /// </summary>
+    /// <summary>True when a valid complete or partial path is cached with remaining waypoints.</summary>
     public bool HasValidPath => _hasValidPath && _waypointCount > 0;
 
+    /// <summary>True when the agent reached the final waypoint of a complete path.</summary>
+    public bool HasReachedDestination => _hasReachedDestination;
+
+    /// <summary>True when the active path is a partial fallback toward the closest reachable node.</summary>
+    public bool IsPathPartial => _lastPathStatus == AStarPathStatus.Partial;
+
+    /// <summary>True when no meaningful progress has been made for the configured stuck timeout.</summary>
+    public bool IsStuck => _isStuck;
+
+    /// <summary>Active scene pathfinding grid discovered during initialization.</summary>
+    public PathfindingGrid Grid => _grid;
+
     /// <summary>
-    /// Initializes the navigator after the network object has been spawned.
-    ///
-    /// Must be called from <see cref="EnemyMovementAIController.Spawned"/> so that
-    /// the runner reference and grid are available.
+    /// Initializes the navigator after the network object spawns.
+    /// Infers authority from the attached <see cref="NetworkObject"/> when available.
     /// </summary>
-    /// <param name="runner">The active NetworkRunner (used to read simulation tick).</param>
     public void Initialize(NetworkRunner runner)
     {
+        NetworkObject netObj = GetComponent<NetworkObject>();
+        bool hasAuthority = netObj != null && netObj.IsValid
+            ? netObj.HasStateAuthority
+            : runner == null || runner.IsServer;
+        uint? seed = netObj != null && netObj.IsValid ? netObj.Id.Raw : (uint?)null;
+        Initialize(runner, hasAuthority, seed);
+    }
+
+    /// <summary>
+    /// Explicit authority and stagger-seed initialization for runtime and deterministic EditMode tests.
+    /// </summary>
+    public void Initialize(NetworkRunner runner, bool hasStateAuthority, uint? staggerSeedOverride = null)
+    {
         _runner = runner;
-        _grid   = UnityEngine.Object.FindFirstObjectByType<PathfindingGrid>();
+        _grid = UnityEngine.Object.FindFirstObjectByType<PathfindingGrid>();
 
         if (_config == null)
         {
@@ -107,60 +125,31 @@ public sealed class EnemyPathfindingNavigator : MonoBehaviour
 
         if (_grid == null)
         {
-            // Clients will hit this path because they do not build the grid.
-            // Only log a warning on the server where pathfinding is expected.
-            if (runner != null && runner.IsServer)
+            if (hasStateAuthority && runner != null)
             {
                 Debug.LogWarning(
                     $"{nameof(EnemyPathfindingNavigator)} on '{name}': no " +
-                    $"{nameof(PathfindingGrid)} found on the NetworkRunner. " +
-                    "Pathfinding will not be available.",
+                    $"{nameof(PathfindingGrid)} found in the scene. Pathfinding will not be available.",
                     this);
             }
             return;
         }
 
-        // We defer creating the solver until the grid is actually built
-        // to avoid allocating zero-length arrays if the grid isn't ready.
-
         ResetState();
 
-        // Stagger the initial repath timer deterministically by the object's
-        // network ID to distribute A* calls across different simulation ticks.
-        // This avoids a spike where many enemies all repath on the first tick.
-        if (runner != null && runner.IsServer)
+        if (hasStateAuthority)
         {
-            NetworkObject networkObject = GetComponent<NetworkObject>();
-            if (networkObject != null)
-            {
-                int repathTicks = RepathIntervalTicks;
-                int offset = (int)(networkObject.Id.Raw % (uint)repathTicks);
-                _lastRepathTick = runner.Tick - repathTicks + offset;
-            }
+            uint seed = staggerSeedOverride ?? ResolveNetworkObjectSeed();
+            int repathTicks = RepathIntervalTicks;
+            _staggerOffsetTicks = repathTicks > 1 ? (int)(seed % (uint)repathTicks) : 0;
         }
     }
 
     /// <summary>
-    /// Returns the normalized direction toward the next waypoint for the given target.
-    /// Requests a new path when the active path is invalid, the target has moved
-    /// beyond the movement threshold, or the repath interval has elapsed.
-    ///
-    /// Returns <see cref="Vector2.zero"/> when no valid path exists. The caller
-    /// should stall (apply no movement) rather than fall back to direct-line
-    /// navigation, because direct-line movement is the pre-pathfinding behaviour
-    /// that caused enemies to become stuck.
+    /// Returns the normalized direction toward the next waypoint for <paramref name="targetPos"/>.
+    /// Respects repath cadence even when unreachable, falls back to the closest reachable point,
+    /// invalidates immediately on map topology changes, and tracks arrival and stuck status.
     /// </summary>
-    /// <param name="currentPos">Current world-space position of the enemy.</param>
-    /// <param name="targetPos">Current world-space position of the navigation target.</param>
-    /// <param name="currentTick">
-    /// The current Fusion simulation tick (<c>Runner.Tick</c>).
-    /// Must be the same value for all calls within the same simulation tick to
-    /// ensure idempotent behaviour during resimulation.
-    /// </param>
-    /// <returns>
-    /// Normalized direction toward the next waypoint, or <see cref="Vector2.zero"/>
-    /// if pathfinding is unavailable or has found no valid path.
-    /// </returns>
     public Vector2 GetDirectionToTarget(Vector2 currentPos, Vector2 targetPos, int currentTick)
     {
         if (_grid == null || !_grid.IsBuilt)
@@ -170,40 +159,87 @@ public sealed class EnemyPathfindingNavigator : MonoBehaviour
 
         if (_solver == null)
         {
-            _solver = new AStarPathSolver(_grid.Width, _grid.Height, _config);
+            _solver = _grid.SharedSolver ?? new AStarPathSolver(_grid.Width, _grid.Height, _config);
         }
 
-        // Request a new path if necessary.
-        if (!_hasValidPath ||
-            ShouldRepath(currentTick) ||
-            TargetHasMoved(targetPos))
+        bool topologyInvalidated = CheckTopologyInvalidation(currentPos);
+
+        if (!_hasAttemptedPath)
+        {
+            if (!CanExecuteInitialRequest(currentTick, topologyInvalidated))
+            {
+                return Vector2.zero;
+            }
+
+            RequestPath(currentPos, targetPos, currentTick);
+        }
+        else if (_forceRepathOnNextQuery ||
+                 topologyInvalidated ||
+                 ShouldRepath(currentTick) ||
+                 TargetHasMoved(targetPos))
         {
             RequestPath(currentPos, targetPos, currentTick);
         }
 
-        if (!_hasValidPath || _waypointCount == 0)
+        if (_hasReachedDestination)
         {
             return Vector2.zero;
         }
 
-        // Advance the waypoint index only once per simulation tick, even if
-        // GetDirectionToTarget is called multiple times during resimulation.
-        if (_waypointIndex < _waypointCount - 1 && currentTick != _lastWaypointAdvanceTick)
+        if (!_hasValidPath || _waypointCount == 0)
         {
-            Vector2 toWaypoint = _waypointBuffer[_waypointIndex] - currentPos;
-            if (toWaypoint.sqrMagnitude < _waypointReachRadius * _waypointReachRadius)
+            UpdateProgressTracking(currentPos, currentTick);
+            return Vector2.zero;
+        }
+
+        // Advance waypoints (including the final waypoint!) at most once per simulation tick.
+        if (currentTick != _lastWaypointAdvanceTick)
+        {
+            float reachSqr = _waypointReachRadius * _waypointReachRadius;
+
+            // If the agent is already within reach of the final waypoint (e.g., pushed past intermediate
+            // nodes by knockback), mark arrival directly instead of walking backwards to earlier nodes.
+            if (_lastPathStatus == AStarPathStatus.Complete &&
+                Vector2.SqrMagnitude(_waypointBuffer[_waypointCount - 1] - currentPos) < reachSqr)
             {
-                _waypointIndex++;
+                _waypointIndex = _waypointCount;
                 _lastWaypointAdvanceTick = currentTick;
+            }
+            else
+            {
+                bool advanced = false;
+
+                while (_waypointIndex < _waypointCount &&
+                       Vector2.SqrMagnitude(_waypointBuffer[_waypointIndex] - currentPos) < reachSqr)
+                {
+                    _waypointIndex++;
+                    advanced = true;
+                }
+
+                if (advanced)
+                {
+                    _lastWaypointAdvanceTick = currentTick;
+                }
             }
         }
 
-        // Mark the path as exhausted when the final waypoint is reached.
         if (_waypointIndex >= _waypointCount)
         {
             _hasValidPath = false;
+            _hasReachedDestination = _lastPathStatus == AStarPathStatus.Complete;
+            if (_hasReachedDestination)
+            {
+                _isStuck = false;
+            }
+            else
+            {
+                // Reached the end of a partial fallback path: evaluate stuck progress so callers can recover.
+                UpdateProgressTracking(currentPos, currentTick);
+            }
             return Vector2.zero;
         }
+
+        UpdateProgressTracking(currentPos, currentTick);
 
         Vector2 direction = _waypointBuffer[_waypointIndex] - currentPos;
         if (direction.sqrMagnitude < 0.0001f)
@@ -215,34 +251,103 @@ public sealed class EnemyPathfindingNavigator : MonoBehaviour
     }
 
     /// <summary>
-    /// Immediately invalidates the current path, forcing a repath on the
-    /// next call to <see cref="GetDirectionToTarget"/>.
-    ///
-    /// Call this when the navigation goal changes (e.g. patrol waypoint index
-    /// advances, or pursuit ends and then resumes toward a different target).
+    /// Immediately invalidates the current path, arrival flag, and stuck timer so the next
+    /// query requests a fresh path to the new destination.
     /// </summary>
     public void InvalidatePath()
     {
-        _hasValidPath  = false;
+        _hasValidPath = false;
         _waypointCount = 0;
         _waypointIndex = 0;
+        _hasReachedDestination = false;
+        _isStuck = false;
+        _lastPathStatus = AStarPathStatus.NoPath;
+        _forceRepathOnNextQuery = true;
+        _progressAnchorTick = int.MinValue;
+        _lastProgressEvalTick = int.MinValue;
     }
 
-    // ── Private helpers ───────────────────────────────────────────────────────
-
-    private int RepathIntervalTicks
+    /// <summary>
+    /// Resets only the stuck-progress window without dropping the cached path.
+    /// </summary>
+    public void ResetProgressTracking()
     {
-        get
+        _isStuck = false;
+        _progressAnchorTick = int.MinValue;
+        _lastProgressEvalTick = int.MinValue;
+    }
+
+    private uint ResolveNetworkObjectSeed()
+    {
+        NetworkObject networkObject = GetComponent<NetworkObject>();
+        return networkObject != null && networkObject.IsValid ? networkObject.Id.Raw : 0u;
+    }
+
+    private float SimulationDeltaTime => _runner != null && _runner.DeltaTime > 0f ? _runner.DeltaTime : 0.02f;
+
+    private int RepathIntervalTicks => Mathf.Max(1, Mathf.CeilToInt(_repathIntervalSeconds / SimulationDeltaTime));
+
+    private int StuckTimeoutTicks => Mathf.Max(1, Mathf.CeilToInt(_stuckTimeoutSeconds / SimulationDeltaTime));
+
+    private int WarningCooldownTicks => Mathf.Max(1, Mathf.CeilToInt(_warningCooldownSeconds / SimulationDeltaTime));
+
+    private bool CanExecuteInitialRequest(int currentTick, bool topologyInvalidated)
+    {
+        if (topologyInvalidated || _staggerOffsetTicks <= 0)
         {
-            // Guard against zero DeltaTime (should never happen in Fusion but be safe).
-            float dt = _runner != null ? _runner.DeltaTime : 0.02f;
-            return Mathf.Max(1, Mathf.CeilToInt(_repathIntervalSeconds / dt));
+            return true;
         }
+
+        if (_initialActivationTick == int.MinValue)
+        {
+            _initialActivationTick = currentTick;
+        }
+
+        return (currentTick - _initialActivationTick) >= _staggerOffsetTicks;
+    }
+
+    private bool CheckTopologyInvalidation(Vector2 currentPos)
+    {
+        int currentVersion = _grid.TopologyVersion;
+        if (_observedTopologyVersion < 0)
+        {
+            _observedTopologyVersion = currentVersion;
+            return false;
+        }
+
+        if (currentVersion == _observedTopologyVersion)
+        {
+            return false;
+        }
+
+        // If we had no complete path (NoPath or Partial), a newly opened door might unlock a path.
+        if (!_hasValidPath || _lastPathStatus != AStarPathStatus.Complete || _waypointCount == 0)
+        {
+            return true;
+        }
+
+        int startIdx = Mathf.Clamp(_waypointIndex, 0, _waypointCount - 1);
+        if (_grid.HasTopologyChangedNearSegment(_observedTopologyVersion, currentPos, _waypointBuffer[startIdx]))
+        {
+            return true;
+        }
+
+        for (int i = startIdx; i < _waypointCount - 1; i++)
+        {
+            if (_grid.HasTopologyChangedNearSegment(_observedTopologyVersion, _waypointBuffer[i], _waypointBuffer[i + 1]))
+            {
+                return true;
+            }
+        }
+
+        // Topology changed elsewhere on the map; keep our unaffected cached path.
+        _observedTopologyVersion = currentVersion;
+        return false;
     }
 
     private bool ShouldRepath(int currentTick)
     {
-        return (currentTick - _lastRepathTick) >= RepathIntervalTicks;
+        return _lastRepathTick == int.MinValue || (currentTick - _lastRepathTick) >= RepathIntervalTicks;
     }
 
     private bool TargetHasMoved(Vector2 targetPos)
@@ -251,44 +356,116 @@ public sealed class EnemyPathfindingNavigator : MonoBehaviour
                _targetMovedThreshold * _targetMovedThreshold;
     }
 
-    /// <summary>
-    /// Invokes A* and updates the cached path. Resets the repath timer regardless
-    /// of whether a path was found, to avoid thrashing on unsolvable requests.
-    /// </summary>
     private void RequestPath(Vector2 currentPos, Vector2 targetPos, int currentTick)
     {
-        _lastRepathTick          = currentTick;
+        _hasAttemptedPath = true;
+        _forceRepathOnNextQuery = false;
+        _lastRepathTick = currentTick;
         _lastKnownTargetPosition = targetPos;
+        _observedTopologyVersion = _grid.TopologyVersion;
 
-        int count = _solver.FindPath(_grid, currentPos, targetPos,
-            _enablePathSmoothing, _config.PathSmoothingRadius, _waypointBuffer);
+        AStarPathStatus status = _solver.FindPathWithStatus(
+            _grid,
+            currentPos,
+            targetPos,
+            _enablePathSmoothing,
+            _config.PathSmoothingRadius,
+            _waypointBuffer,
+            allowPartialPath: true,
+            logIterationWarning: false);
 
-        if (count > 0)
+        if (_solver.LastSearchHitIterationLimit &&
+            (_lastWarningTick == int.MinValue || (currentTick - _lastWarningTick) >= WarningCooldownTicks))
         {
-            _waypointCount = count;
+            _lastWarningTick = currentTick;
+            Debug.LogWarning(
+                $"[{nameof(EnemyPathfindingNavigator)}] '{name}' path search hit {_config.MaxPathIterations} iterations " +
+                $"(start={currentPos}, end={targetPos}, status={status}).",
+                this);
+        }
+
+        _lastPathStatus = status;
+
+        if (status != AStarPathStatus.NoPath && _waypointBuffer.Count > 0)
+        {
+            _waypointCount = _waypointBuffer.Count;
             _waypointIndex = 0;
-            _hasValidPath  = true;
+            _hasValidPath = true;
+            _hasReachedDestination = false;
+
+            // Skip starting node if we are already standing right on it (when further waypoints exist).
+            float reachSqr = _waypointReachRadius * _waypointReachRadius;
+            if (_waypointCount > 1 && Vector2.SqrMagnitude(_waypointBuffer[0] - currentPos) < reachSqr)
+            {
+                _waypointIndex = 1;
+            }
         }
         else
         {
-            _hasValidPath  = false;
+            _hasValidPath = false;
             _waypointCount = 0;
             _waypointIndex = 0;
+            _hasReachedDestination = false;
+        }
+    }
+
+    private void UpdateProgressTracking(Vector2 currentPos, int currentTick)
+    {
+        if (_progressAnchorTick == int.MinValue)
+        {
+            _progressAnchorPosition = currentPos;
+            _progressAnchorTick = currentTick;
+            _lastProgressEvalTick = currentTick;
+            _isStuck = false;
+            return;
+        }
+
+        // Resimulation guard: do not evaluate backwards or duplicate ticks.
+        if (currentTick <= _lastProgressEvalTick)
+        {
+            return;
+        }
+
+        _lastProgressEvalTick = currentTick;
+
+        float minProgressSqr = _stuckMinProgressDistance * _stuckMinProgressDistance;
+        if (Vector2.SqrMagnitude(currentPos - _progressAnchorPosition) >= minProgressSqr)
+        {
+            _progressAnchorPosition = currentPos;
+            _progressAnchorTick = currentTick;
+            _isStuck = false;
+            return;
+        }
+
+        if ((currentTick - _progressAnchorTick) >= StuckTimeoutTicks)
+        {
+            _isStuck = true;
         }
     }
 
     private void ResetState()
     {
         _waypointBuffer.Clear();
-        _waypointCount           = 0;
-        _waypointIndex           = 0;
-        _hasValidPath            = false;
-        _lastRepathTick          = int.MinValue;
-        _lastKnownTargetPosition = Vector2.zero;
+        _waypointCount = 0;
+        _waypointIndex = 0;
+        _hasValidPath = false;
+        _hasAttemptedPath = false;
+        _forceRepathOnNextQuery = false;
+        _hasReachedDestination = false;
+        _isStuck = false;
+        _lastPathStatus = AStarPathStatus.NoPath;
+        _lastRepathTick = int.MinValue;
         _lastWaypointAdvanceTick = int.MinValue;
+        _lastWarningTick = int.MinValue;
+        _observedTopologyVersion = _grid != null ? _grid.TopologyVersion : -1;
+        _staggerOffsetTicks = 0;
+        _initialActivationTick = int.MinValue;
+        _lastKnownTargetPosition = Vector2.zero;
+        _progressAnchorPosition = Vector2.zero;
+        _progressAnchorTick = int.MinValue;
+        _lastProgressEvalTick = int.MinValue;
     }
 
-    // ── Editor Gizmos ─────────────────────────────────────────────────────────
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
@@ -300,8 +477,7 @@ public sealed class EnemyPathfindingNavigator : MonoBehaviour
 
         if (!_hasValidPath || _waypointCount == 0) return;
 
-        // Draw the full path in cyan.
-        Gizmos.color = Color.cyan;
+        Gizmos.color = _lastPathStatus == AStarPathStatus.Partial ? Color.magenta : Color.cyan;
         for (int i = 0; i < _waypointCount - 1; i++)
         {
             Gizmos.DrawLine(
@@ -309,7 +485,6 @@ public sealed class EnemyPathfindingNavigator : MonoBehaviour
                 new Vector3(_waypointBuffer[i + 1].x, _waypointBuffer[i + 1].y, 0f));
         }
 
-        // Highlight the current waypoint in yellow.
         if (_waypointIndex < _waypointCount)
         {
             Gizmos.color = Color.yellow;
@@ -319,7 +494,6 @@ public sealed class EnemyPathfindingNavigator : MonoBehaviour
                 0.15f);
         }
 
-        // Highlight the destination in red.
         Vector2 last = _waypointBuffer[_waypointCount - 1];
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(new Vector3(last.x, last.y, 0f), 0.2f);

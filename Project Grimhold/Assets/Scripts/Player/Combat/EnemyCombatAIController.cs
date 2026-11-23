@@ -6,12 +6,26 @@ using UnityEngine;
 /// Network component responsible for processing enemy AI combat decisions
 /// and delegating attack execution to the active attack strategy.
 ///
-/// Operates with any strategy implementing the <see cref="IAttack"/> contract,
-/// driven by AI state authority rather than client player input.
+/// Authoritative timing (TASK-41 / TASK-316):
+/// - State Authority owns a configurable <see cref="TickTimer"/> anticipation window before
+///   executing damage or spawning projectiles.
+/// - Animation and presentation layers observe replicated anticipation state
+///   (<see cref="IsPreparingAttack"/>, <see cref="PreparedAttackDirection"/>,
+///   <see cref="PreparationSequence"/>) and NEVER decide when damage executes.
+/// - Disabling Animator or presenters has zero impact on combat cadence or hit timing.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatController
 {
+    [Header("Authoritative Anticipation")]
+    [Tooltip("Configurable wind-up window in seconds before damage or projectile release (driven by Fusion TickTimer).")]
+    [SerializeField, Min(0.05f)]
+    private float _anticipationDurationSeconds = 0.35f;
+
+    [Tooltip("When false (default per TASK-41), canceling a prepared attack before release does not consume full cooldown.")]
+    [SerializeField]
+    private bool _consumeCooldownOnCancel = false;
+
     [Header("Dependencies")]
     [SerializeField]
     private MonoBehaviour _characterSource;
@@ -32,20 +46,37 @@ public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatControlle
     private bool _dependenciesValid;
     private int _lastObservedSequence;
 
-    // The request is queued during FixedUpdateNetwork and committed only after
-    // ExecutePendingDamage revalidates the target on the animation hit frame.
+    // Pending attack payload frozen on State Authority at preparation start and committed when AnticipationTimer expires.
     private AttackRequest _pendingDamageRequest;
     private EntityId _pendingTargetId;
     private bool _hasPendingDamage;
-    private bool _executeAttackNextTick;
 
     [Networked]
     private TickTimer AttackCooldown { get; set; }
 
     [Networked]
+    private TickTimer AnticipationTimer { get; set; }
+
+    [Networked]
     public NetworkBool IsAttackEnabled { get; private set; }
 
-    // Replicated state for presentation layers
+    /// <summary>True while an authoritative anticipation window is active before hit/shot release.</summary>
+    [Networked]
+    public NetworkBool IsPreparingAttack { get; private set; }
+
+    /// <summary>Normalized direction of the attack currently being prepared (readable by proxies).</summary>
+    [Networked]
+    public Vector2 PreparedAttackDirection { get; private set; }
+
+    /// <summary>Monotonic counter incremented each time a new anticipation window begins.</summary>
+    [Networked]
+    public int PreparationSequence { get; private set; }
+
+    /// <summary>Serialized <see cref="AttackType"/> value of the prepared attack (Melee vs Ranged).</summary>
+    [Networked]
+    private int PreparedAttackTypeValue { get; set; }
+
+    // Replicated state for presentation layers on execution
     [Networked]
     private int AttackSequence { get; set; }
 
@@ -60,6 +91,38 @@ public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatControlle
 
     [Networked]
     private int LastAttackTick { get; set; }
+
+    /// <summary>Configured anticipation duration in seconds.</summary>
+    public float AnticipationDurationSeconds => _anticipationDurationSeconds;
+
+    /// <summary>Attack type currently being prepared (for differentiated Melee/Ranged presentation).</summary>
+    public AttackType PreparedAttackType => (AttackType)PreparedAttackTypeValue;
+
+    /// <summary>World-space transform used as the attack origin.</summary>
+    public Transform AttackOrigin => _attackOrigin != null ? _attackOrigin : transform;
+
+    /// <summary>
+    /// Normalized [0..1] anticipation progress derived from the replicated <see cref="AnticipationTimer"/>.
+    /// Safe to read from presentation on Host, Client, and Proxies.
+    /// </summary>
+    public float PreparationProgress
+    {
+        get
+        {
+            if (Object == null || !Object.IsValid || !IsPreparingAttack || Runner == null)
+            {
+                return 0f;
+            }
+
+            if (AnticipationTimer.ExpiredOrNotRunning(Runner))
+            {
+                return 1f;
+            }
+
+            float remaining = AnticipationTimer.RemainingTime(Runner) ?? 0f;
+            return EnemyAttackAnticipationRules.ComputeProgress(remaining, _anticipationDurationSeconds);
+        }
+    }
 
     /// <summary>
     /// Local event raised during Render when a successful attack execution is detected in simulation.
@@ -92,11 +155,12 @@ public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatControlle
             if (!HostMigrationRestoreUtility.IsRestoreSpawn(this))
             {
                 IsAttackEnabled = false;
+                ClearPreparationState();
             }
             else
             {
                 AttackCooldown = TickTimer.None;
-                ClearPendingDamage();
+                ClearPreparationState();
             }
         }
     }
@@ -108,66 +172,70 @@ public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatControlle
             return;
         }
 
-        if (_stun != null && _stun.IsActive)
-        {
-            ClearPendingDamage();
-            return;
-        }
-
-        if (_executeAttackNextTick)
-        {
-            _executeAttackNextTick = false;
-            ApplyPendingDamage();
-        }
-
         if (_movementController == null || _character == null)
         {
             return;
         }
 
+        bool isAlive = _character.IsAlive;
+        bool isStunned = _stun != null && _stun.IsActive;
+        bool attackEnabled = IsAttackEnabled;
         bool attackRequested = _movementController.IsAttacking;
+        bool isPreparing = IsPreparingAttack && _hasPendingDamage;
 
-        if (!IsAttackEnabled || !_character.IsAlive)
+        // Reconcile stale replicated preparation flag if local payload is absent (e.g. after restore).
+        if (IsPreparingAttack && !_hasPendingDamage)
         {
-            ClearPendingDamage();
-            return;
+            ClearPreparationState();
+            isPreparing = false;
         }
 
-        // Si ya empezó el ataque (tiene daño pendiente), dejamos que termine la animación.
-        // No evaluamos ni cancelamos el objetivo hasta que el hit frame se resuelva.
-        if (_hasPendingDamage)
-        {
-            return;
-        }
-
-        if (!attackRequested)
-        {
-            return;
-        }
-
-        bool hasTarget = _movementController.TryGetCurrentTarget(out EntityId targetId, out Transform targetTransform);
-
-        if (!hasTarget && targetId.Value != 0)
+        EntityId targetId = default;
+        Transform targetTransform = null;
+        bool hasCurrentTarget = _movementController.TryGetCurrentTarget(out targetId, out targetTransform);
+        if (!hasCurrentTarget && targetId.Value != 0)
         {
             _movementController.TryInvalidateCurrentTarget(targetId);
-            ClearPendingDamage();
-            return;
         }
 
-        if (!hasTarget)
-        {
-            ClearPendingDamage();
-            return;
-        }
-
-        if (!TryResolveEligibleTarget(targetId))
+        bool targetMatchesPending = !isPreparing || targetId == _pendingTargetId;
+        bool targetEligible = hasCurrentTarget && targetMatchesPending && TryResolveEligibleTarget(targetId);
+        if (hasCurrentTarget && !targetEligible && targetId.Value != 0)
         {
             _movementController.TryInvalidateCurrentTarget(targetId);
-            ClearPendingDamage();
-            return;
         }
 
-        TryCommitAttack(ResolveAimDirection(targetTransform), targetId);
+        bool hasLOS = targetEligible && targetTransform != null &&
+                      _movementController.HasLineOfSightTo(targetTransform.position);
+
+        bool anticipationExpired = isPreparing && AnticipationTimer.ExpiredOrNotRunning(Runner);
+        bool cooldownReady = AttackCooldown.ExpiredOrNotRunning(Runner);
+
+        EnemyAnticipationStepOutcome outcome = EnemyAttackAnticipationRules.EvaluateStep(
+            isAlive,
+            isStunned,
+            attackEnabled,
+            attackRequested,
+            isPreparing,
+            targetEligible,
+            hasLOS,
+            anticipationExpired,
+            cooldownReady);
+
+        switch (outcome)
+        {
+            case EnemyAnticipationStepOutcome.StartPreparation:
+                BeginPreparation(ResolveAimDirection(targetTransform), targetId);
+                break;
+
+            case EnemyAnticipationStepOutcome.Execute:
+                ExecutePreparedAttack();
+                break;
+
+            case EnemyAnticipationStepOutcome.Cancel:
+                CancelPreparation(applyCooldownIfConfigured: true);
+                break;
+        }
     }
 
     public override void Render()
@@ -184,7 +252,8 @@ public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatControlle
                 (AttackType)LastAttackTypeValue,
                 LastAttackOrigin,
                 LastAttackDirection,
-                LastAttackTick
+                LastAttackTick,
+                scheduledWindupSeconds: _anticipationDurationSeconds
             );
 
             AttackPerformed?.Invoke(performedEvent);
@@ -192,21 +261,6 @@ public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatControlle
         }
     }
 
-    /// <summary>
-    /// Resolves the aim direction for a new attack.
-    ///
-    /// <para>
-    /// Ranged attacks aim from <see cref="_attackOrigin"/> toward the target's current position.
-    /// <see cref="IMovementState.FacingDirection"/> is not authoritative for ranged aiming: it is
-    /// a locomotion value derived from the pursuit path, so it can point around an obstacle rather
-    /// than at the target.
-    /// </para>
-    /// <para>
-    /// Melee keeps consuming <see cref="IMovementState.FacingDirection"/> so its arc is unchanged.
-    /// The same value is the fallback when the target transform is missing or the origin and the
-    /// target are effectively coincident.
-    /// </para>
-    /// </summary>
     private Vector2 ResolveAimDirection(Transform targetTransform)
     {
         Vector2 facingDirection = _movementController.FacingDirection;
@@ -225,18 +279,8 @@ public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatControlle
             : facingDirection;
     }
 
-    /// <summary>
-    /// Validates cooldown and stores a pending request for the animation hit frame.
-    /// Cooldown and replicated execution state are committed only after final target validation.
-    /// </summary>
-    /// <param name="aimDirection">The direction to execute the attack towards.</param>
-    private void TryCommitAttack(Vector2 aimDirection, EntityId targetId)
+    private void BeginPreparation(Vector2 aimDirection, EntityId targetId)
     {
-        if (_hasPendingDamage || !AttackCooldown.ExpiredOrNotRunning(Runner))
-        {
-            return;
-        }
-
         if (aimDirection.sqrMagnitude < 0.0001f)
         {
             aimDirection = Vector2.down;
@@ -245,7 +289,6 @@ public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatControlle
         Vector2 normalizedDirection = aimDirection.normalized;
         Vector2 originPos = _attackOrigin != null ? (Vector2)_attackOrigin.position : (Vector2)transform.position;
 
-        // Store the request so ExecutePendingDamage can resolve it on the animation hit frame.
         _pendingDamageRequest = new AttackRequest(
             _character.Id,
             originPos,
@@ -254,81 +297,65 @@ public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatControlle
         );
         _pendingTargetId = targetId;
         _hasPendingDamage = true;
-        
+
+        IsPreparingAttack = true;
+        PreparedAttackDirection = normalizedDirection;
+        PreparedAttackTypeValue = (int)_activeAttack.Type;
+        PreparationSequence++;
+        AnticipationTimer = TickTimer.CreateFromSeconds(Runner, _anticipationDurationSeconds);
+    }
+
+    private void ExecutePreparedAttack()
+    {
+        if (!HasStateAuthority || !_hasPendingDamage)
+        {
+            ClearPreparationState();
+            return;
+        }
+
+        // Refresh origin to current world pose while keeping the committed aim direction frozen.
+        Vector2 currentOrigin = _attackOrigin != null ? (Vector2)_attackOrigin.position : (Vector2)transform.position;
+        AttackRequest request = new AttackRequest(
+            _pendingDamageRequest.AttackerId,
+            currentOrigin,
+            _pendingDamageRequest.Direction,
+            (int)Runner.Tick
+        );
+
+        ClearPreparationState();
+
         float cooldownSeconds = _activeAttack.CooldownSeconds;
         AttackCooldown = cooldownSeconds > 0f
             ? TickTimer.CreateFromSeconds(Runner, cooldownSeconds)
             : TickTimer.None;
-    }
 
-    /// <summary>
-    /// Flags the pending damage request for execution in the next simulation tick.
-    /// Must be called from a trusted source (Animation Event via EnemyAttackAnimationListener)
-    /// only on the State Authority peer.
-    /// </summary>
-    public void ExecutePendingDamage()
-    {
-        if (!HasStateAuthority || !_hasPendingDamage)
-        {
-            return;
-        }
-        
-        _executeAttackNextTick = true;
-    }
-
-    /// <summary>
-    /// Applies the stored pending damage request during authoritative simulation flow.
-    /// </summary>
-    private void ApplyPendingDamage()
-    {
-        if (!HasStateAuthority || !_hasPendingDamage)
-        {
-            return;
-        }
-
-        if (!_character.IsAlive)
-        {
-            ClearPendingDamage();
-            return;
-        }
-
-        EntityId currentTargetId = default;
-        bool hasCurrentTarget = _movementController != null &&
-            _movementController.TryGetCurrentTarget(out currentTargetId, out _);
-
-        if (!hasCurrentTarget)
-        {
-            if (currentTargetId.Value != 0)
-            {
-                _movementController.TryInvalidateCurrentTarget(currentTargetId);
-            }
-
-            ClearPendingDamage();
-            return;
-        }
-
-        if (currentTargetId != _pendingTargetId)
-        {
-            ClearPendingDamage();
-            return;
-        }
-
-        if (!TryResolveEligibleTarget(_pendingTargetId))
-        {
-            _movementController.TryInvalidateCurrentTarget(_pendingTargetId);
-            ClearPendingDamage();
-            return;
-        }
-
-        AttackRequest request = _pendingDamageRequest;
-        ClearPendingDamage();
         CommitAttack(in request);
         _activeAttack.Execute(in request);
     }
 
+    private void CancelPreparation(bool applyCooldownIfConfigured)
+    {
+        ClearPreparationState();
+
+        if (applyCooldownIfConfigured && _consumeCooldownOnCancel && _activeAttack != null)
+        {
+            float cooldownSeconds = _activeAttack.CooldownSeconds;
+            AttackCooldown = cooldownSeconds > 0f
+                ? TickTimer.CreateFromSeconds(Runner, cooldownSeconds)
+                : TickTimer.None;
+        }
+    }
+
     /// <summary>
-    /// Authoritatively changes the combat enabled state.
+    /// Legacy Animation Event hook retained as a no-op so existing AnimationClips do not log
+    /// MissingReceiver warnings. Authoritative attack timing is driven exclusively by
+    /// <see cref="AnticipationTimer"/> in <see cref="FixedUpdateNetwork"/> (TASK-41 / TASK-316).
     /// </summary>
+    public void ExecutePendingDamage()
+    {
+        // Intentionally empty: animation never decides when authoritative damage or projectiles fire.
+    }
+
     public bool TrySetAttackEnabled(bool enabled)
     {
         if (!HasStateAuthority)
@@ -337,12 +364,13 @@ public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatControlle
         }
 
         IsAttackEnabled = enabled;
+        if (!enabled)
+        {
+            ClearPreparationState();
+        }
         return true;
     }
 
-    /// <summary>
-    /// Authoritatively updates the active attack strategy. Requires State Authority.
-    /// </summary>
     public bool TrySetActiveAttack(MonoBehaviour attackSource)
     {
         if (!HasStateAuthority)
@@ -374,7 +402,7 @@ public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatControlle
         {
             _character = _characterSource as ICharacter;
         }
-        
+
         if (_character == null)
         {
             _character = GetComponent<ICharacter>() ?? GetComponentInParent<ICharacter>();
@@ -453,18 +481,22 @@ public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatControlle
             damageable.CanReceiveDamage;
     }
 
-    /// <summary>Immediately discard wind-up and queued hit-frame damage on authoritative Stun application.</summary>
+    /// <summary>Immediately discard wind-up on authoritative Stun application.</summary>
     internal void CancelAttackForStun()
     {
         if (!HasStateAuthority || Runner == null || !Runner.IsSimulationUpdating || !Runner.IsForward) return;
-        ClearPendingDamage();
+        CancelPreparation(applyCooldownIfConfigured: false);
     }
 
-    private void ClearPendingDamage()
+    private void ClearPreparationState()
     {
-        _executeAttackNextTick = false;
         _hasPendingDamage = false;
         _pendingTargetId = default;
+        if (Object != null && Object.IsValid && HasStateAuthority)
+        {
+            IsPreparingAttack = false;
+            AnticipationTimer = TickTimer.None;
+        }
     }
 
     private void CommitAttack(in AttackRequest request)
@@ -502,8 +534,3 @@ public sealed class EnemyCombatAIController : NetworkBehaviour, ICombatControlle
     }
 #endif
 }
-
-
-
-
-

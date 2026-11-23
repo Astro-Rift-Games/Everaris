@@ -5332,7 +5332,7 @@ MonoBehaviour:
   _enableObstacleAvoidance: 0
   _obstacleLayer:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 2112
   _avoidanceSettings:
     CastRadius: 0.8
     CastDistance: 0.5
@@ -5785,7 +5785,7 @@ MonoBehaviour:
   _repathIntervalSeconds: 0.5
   _waypointReachRadius: 0.3
   _targetMovedThreshold: 1.5
-  _enablePathSmoothing: 0
+  _enablePathSmoothing: 1
 --- !u!114 &2604764590180358513
 MonoBehaviour:
   m_ObjectHideFlags: 0

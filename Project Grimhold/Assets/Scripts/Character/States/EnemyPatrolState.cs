@@ -40,6 +40,12 @@ public sealed class EnemyPatrolState : IEnemyState
             fsm.TransitionTo(EnemyStateType.Chase);
             return;
         }
+
+        if (fsm.MovementController.IsReturningHome)
+        {
+            fsm.TransitionTo(EnemyStateType.ReturnHome);
+            return;
+        }
     }
 
     public void Exit(EnemyFSM fsm)

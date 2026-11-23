@@ -31,8 +31,15 @@ public class CharacterAnimatorView : MonoBehaviour, IAnimatorController
     [SerializeField]
     private MonoBehaviour _movementControllerSource;
 
+    [Header("Facing Stability")]
+    [Tooltip("Angular hysteresis margin in degrees around each of the 6 visual direction boundaries to prevent sprite flicker.")]
+    [SerializeField, Range(0f, 20f)]
+    private float _directionHysteresisDegrees = 8f;
+
     private IMovementState _movementState;
     private bool _hasBoundMovementState;
+    private bool _hasVisualDirection;
+    private CharacterVisualDirection _lastVisualDirection;
 
     private int _moveXHash;
     private int _moveYHash;
@@ -84,6 +91,7 @@ public class CharacterAnimatorView : MonoBehaviour, IAnimatorController
         VisualFacingDirection = Vector2.down;
         _temporalFacingDirection = null;
         _isDefeated = false;
+        _hasVisualDirection = false;
     }
 
     protected virtual void Update() => BeginFrame();
@@ -268,7 +276,11 @@ public class CharacterAnimatorView : MonoBehaviour, IAnimatorController
         }
 
         _safeFacing = CharacterVisualDirectionResolver.SanitizeFacing(rawFacing, _safeFacing);
-        CharacterVisualDirection visualDirection = CharacterVisualDirectionResolver.Resolve(_safeFacing);
+        CharacterVisualDirection visualDirection = _hasVisualDirection && !_temporalFacingDirection.HasValue
+            ? CharacterVisualDirectionResolver.ResolveWithHysteresis(_safeFacing, _lastVisualDirection, _directionHysteresisDegrees)
+            : CharacterVisualDirectionResolver.Resolve(_safeFacing);
+        _lastVisualDirection = visualDirection;
+        _hasVisualDirection = true;
         Vector2 canonicalFacing = CharacterVisualDirectionResolver.GetCanonicalVector(visualDirection);
         VisualFacingDirection = canonicalFacing;
 

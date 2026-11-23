@@ -7,6 +7,7 @@ using UnityEngine;
 public sealed class EnemyAnimatorView : CharacterAnimatorView
 {
     private EnemyMovementAIController _enemyMovement;
+    private EnemyCombatAIController _enemyCombat;
     private int _isAttackingHash;
     private bool _supportsIsAttacking;
 
@@ -24,6 +25,11 @@ public sealed class EnemyAnimatorView : CharacterAnimatorView
         {
             _enemyMovement = GetComponentInParent<EnemyMovementAIController>();
         }
+
+        if (_enemyCombat == null)
+        {
+            _enemyCombat = GetComponentInParent<EnemyCombatAIController>();
+        }
     }
 
     protected override void Update()
@@ -35,14 +41,16 @@ public sealed class EnemyAnimatorView : CharacterAnimatorView
             return;
         }
 
-        if (_enemyMovement == null)
+        if (_enemyMovement == null || _enemyCombat == null)
         {
             CacheEnemyDependencies();
         }
 
-        if (_enemyMovement != null && _supportsIsAttacking)
+        if (_supportsIsAttacking)
         {
-            AnimatorInstance.SetBool(_isAttackingHash, _enemyMovement.IsAttacking);
+            bool isPreparing = _enemyCombat != null && _enemyCombat.Object != null && _enemyCombat.Object.IsValid && _enemyCombat.IsPreparingAttack;
+            bool isAttacking = (_enemyMovement != null && _enemyMovement.Object != null && _enemyMovement.Object.IsValid && _enemyMovement.IsAttacking) || isPreparing;
+            AnimatorInstance.SetBool(_isAttackingHash, isAttacking);
         }
     }
 
