@@ -39,6 +39,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Floor and wall rifts now crack open across Catacombs as the dungeon collapses, glowing and erupting with turquoise energy.
 - The Catacombs have their first wall torches.
 - The Catacombs have braziers and candles.
+- Braziers and candles now burn with animated flickering flames.
 
 ### Improved
 

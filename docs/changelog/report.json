@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1233,
-  "canonicalEntries": 1230,
+  "rawCommits": 1234,
+  "canonicalEntries": 1231,
   "before": {
-    "Features": 446,
+    "Features": 447,
     "Other Changes": 375,
     "Refactoring": 17,
     "Bug Fixes": 188,
@@ -12,7 +12,7 @@
     "Architecture & Infrastructure": 24
   },
   "after": {
-    "Features": 585,
+    "Features": 586,
     "Other Changes": 182,
     "Refactoring": 30,
     "Bug Fixes": 204,
@@ -23,16 +23,16 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "World & Visibility": 176,
-    "Art & Animation": 268,
-    "Build & Tooling": 639,
-    "Tests": 788,
+    "Networking & Sessions": 363,
+    "World & Visibility": 177,
+    "Art & Animation": 269,
+    "Build & Tooling": 640,
+    "Tests": 789,
     "Combat": 409,
     "UI": 357,
     "Documentation": 449,
     "Inventory & Loot": 501,
     "Abilities": 144,
-    "Networking & Sessions": 362,
     "Movement": 103,
     "Extraction": 177,
     "Persistence & Backend": 319,
@@ -42,7 +42,7 @@
   },
   "canonical": {
     "sections": {
-      "Features": 584,
+      "Features": 585,
       "Other Changes": 181,
       "Refactoring": 30,
       "Bug Fixes": 203,
@@ -52,16 +52,16 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "World & Visibility": 174,
-      "Art & Animation": 265,
-      "Build & Tooling": 637,
-      "Tests": 786,
+      "Networking & Sessions": 363,
+      "World & Visibility": 175,
+      "Art & Animation": 266,
+      "Build & Tooling": 638,
+      "Tests": 787,
       "Combat": 407,
       "UI": 356,
       "Documentation": 447,
       "Inventory & Loot": 501,
       "Abilities": 142,
-      "Networking & Sessions": 362,
       "Movement": 103,
       "Extraction": 177,
       "Persistence & Backend": 319,
@@ -74663,8 +74663,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 356,
-      "canonicalEntries": 356
+      "originalCommits": 357,
+      "canonicalEntries": 357
     },
     {
       "key": "v0.5.0",
@@ -74708,6 +74708,322 @@
     }
   ],
   "commits": [
+    {
+      "sha": "85caa62be30f35c59d16070f261fead37d135033",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/85caa62be30f35c59d16070f261fead37d135033",
+      "subject": "feat(art): animate brazier and candle flames",
+      "body": "Braziers, candles and candle groups now burn with looping animated\nflames, built like the wall torch: a flameless lit base sprite plus a\nflame sheet animated on FlameVisual.\n\n- <Art>-Lit-Base.png keeps the lit (warm-lit) body; under the old\n  flame it shows the relit unlit pixels, and the brazier shows glowing\n  coals instead of dead charcoal. Base rects match the lit sprites, so\n  painted props do not move.\n- <Art>-Flame-Sheet.png: 128x128 frames pivoted on the lit image\n  origin. Frame 0 is the original flame, so base + frame 0 rebuilds\n  the lit art pixel-exactly. Brazier 10 frames at 7 fps with rising\n  embers; Candle 6 and Multiple Candles 8 frames at 8 fps, the two\n  candle flames half a cycle apart.\n- <Art>_Flame_Flicker.anim and <Art>Flame.controller per prop.\n- Prefabs: root shows the base, FlameVisual at local zero on\n  Characters/101 with the Animator, and a root SortingGroup on\n  Characters/100 so base and flame Y-sort as one prop instead of the\n  flame drawing over characters in front of it.\n- ArtSource/LightProps: Aseprite sources (Base + Flame layers,\n  Flicker tag), generator script and README; previews ignored.\n\nTests:\n- FloorLightPropFlameAnimationTests: import settings, slicing,\n  pixel-exact rebuild, clips, controllers, prefab wiring and sorting,\n  CatacombsMap instances inherit the animated prefabs\n- TorchFlameAnimationTests: the shared base stays flameless; floor\n  variants own their flame\n- CatacombsSceneCompositionTests: one global Light2D and no particles\n  besides those owned by light props (painted torches, braziers and\n  candles had broken the old single-light rule)\n\nPlayer-Added: Braziers and candles now burn with animated flickering flames.\n",
+      "date": "2026-11-22T23:17:43-03:00",
+      "files": [
+        "Project Grimhold/ArtSource/LightProps/.gitignore",
+        "Project Grimhold/ArtSource/LightProps/README.md",
+        "Project Grimhold/ArtSource/LightProps/aseprite/Brazier-Flame.aseprite",
+        "Project Grimhold/ArtSource/LightProps/aseprite/Candle-Flame.aseprite",
+        "Project Grimhold/ArtSource/LightProps/aseprite/Candles-Flame.aseprite",
+        "Project Grimhold/ArtSource/LightProps/tools/gen_flames.py",
+        "Project Grimhold/Assets/Animations/Props/BrazierFlame.controller",
+        "Project Grimhold/Assets/Animations/Props/BrazierFlame.controller.meta",
+        "Project Grimhold/Assets/Animations/Props/Brazier_Flame_Flicker.anim",
+        "Project Grimhold/Assets/Animations/Props/Brazier_Flame_Flicker.anim.meta",
+        "Project Grimhold/Assets/Animations/Props/CandleFlame.controller",
+        "Project Grimhold/Assets/Animations/Props/CandleFlame.controller.meta",
+        "Project Grimhold/Assets/Animations/Props/Candle_Flame_Flicker.anim",
+        "Project Grimhold/Assets/Animations/Props/Candle_Flame_Flicker.anim.meta",
+        "Project Grimhold/Assets/Animations/Props/CandlesFlame.controller",
+        "Project Grimhold/Assets/Animations/Props/CandlesFlame.controller.meta",
+        "Project Grimhold/Assets/Animations/Props/Candles_Flame_Flicker.anim",
+        "Project Grimhold/Assets/Animations/Props/Candles_Flame_Flicker.anim.meta",
+        "Project Grimhold/Assets/Art/Props/Brazier-Flame-Sheet.png",
+        "Project Grimhold/Assets/Art/Props/Brazier-Flame-Sheet.png.meta",
+        "Project Grimhold/Assets/Art/Props/Brazier-Lit-Base.png",
+        "Project Grimhold/Assets/Art/Props/Brazier-Lit-Base.png.meta",
+        "Project Grimhold/Assets/Art/Props/Candle-Flame-Sheet.png",
+        "Project Grimhold/Assets/Art/Props/Candle-Flame-Sheet.png.meta",
+        "Project Grimhold/Assets/Art/Props/Candle-Lit-Base.png",
+        "Project Grimhold/Assets/Art/Props/Candle-Lit-Base.png.meta",
+        "Project Grimhold/Assets/Art/Props/Candles-Flame-Sheet.png",
+        "Project Grimhold/Assets/Art/Props/Candles-Flame-Sheet.png.meta",
+        "Project Grimhold/Assets/Art/Props/Candles-Lit-Base.png",
+        "Project Grimhold/Assets/Art/Props/Candles-Lit-Base.png.meta",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/Brazier.prefab",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/Candle.prefab",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/Multiple Candles.prefab",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs"
+      ],
+      "originalType": "feat",
+      "originalScope": "art",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Networking & Sessions",
+        "World & Visibility",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/LightProps/.gitignore",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/LightProps/README.md",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/LightProps/aseprite/Brazier-Flame.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/LightProps/aseprite/Candle-Flame.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/LightProps/aseprite/Candles-Flame.aseprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/LightProps/tools/gen_flames.py",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Props/BrazierFlame.controller",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Props/BrazierFlame.controller.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Props/Brazier_Flame_Flicker.anim",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Props/Brazier_Flame_Flicker.anim.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Props/CandleFlame.controller",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Props/CandleFlame.controller.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Props/Candle_Flame_Flicker.anim",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Props/Candle_Flame_Flicker.anim.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Props/CandlesFlame.controller",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Props/CandlesFlame.controller.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Props/Candles_Flame_Flicker.anim",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Animations/Props/Candles_Flame_Flicker.anim.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Brazier-Flame-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Brazier-Flame-Sheet.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Brazier-Lit-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Brazier-Lit-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Candle-Flame-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Candle-Flame-Sheet.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Candle-Lit-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Candle-Lit-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Candles-Flame-Sheet.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Candles-Flame-Sheet.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Candles-Lit-Base.png",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Candles-Lit-Base.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "scope",
+          "value": "art",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "sprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/ArtSource/LightProps/tools/gen_flames.py",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "56be9bacb78942fa17af61fcadba405903296a3a",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/56be9bacb78942fa17af61fcadba405903296a3a",

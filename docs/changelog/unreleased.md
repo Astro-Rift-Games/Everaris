@@ -4,32 +4,183 @@
 
 Release: Unreleased
 
-356 original commits; 356 canonical entries.
+357 original commits; 357 canonical entries.
 
 ## Canonical classification
 
-125 features; 110 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 20 other changes
+126 features; 110 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 20 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 17 | 11 | 1 | 0 | 10 | 1 |
-| Art & Animation | 26 | 12 | 3 | 0 | 9 | 8 |
+| Art & Animation | 27 | 12 | 3 | 0 | 9 | 8 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 89 | 73 | 4 | 1 | 25 | 6 |
+| Build & Tooling | 90 | 73 | 4 | 1 | 25 | 6 |
 | Combat | 52 | 21 | 2 | 0 | 16 | 2 |
 | Documentation | 41 | 44 | 0 | 0 | 20 | 1 |
 | Extraction | 19 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
 | Inventory & Loot | 83 | 63 | 4 | 1 | 29 | 5 |
 | Movement | 6 | 6 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 41 | 44 | 0 | 0 | 19 | 2 |
+| Networking & Sessions | 42 | 44 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 50 | 56 | 2 | 1 | 22 | 3 |
-| Tests | 120 | 104 | 4 | 1 | 34 | 4 |
+| Tests | 121 | 104 | 4 | 1 | 34 | 4 |
 | UI | 45 | 23 | 2 | 0 | 14 | 4 |
 | Unassigned | 0 | 1 | 0 | 0 | 28 | 0 |
-| World & Visibility | 34 | 16 | 1 | 0 | 3 | 12 |
+| World & Visibility | 35 | 16 | 1 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 85caa62be30f35c59d16070f261fead37d135033
+
+[85caa62be30f35c59d16070f261fead37d135033](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/85caa62be30f35c59d16070f261fead37d135033)
+
+Date: 2026-11-22T23:17:43-03:00 · Classification: Features (explicit) · Systems: Networking & Sessions, World & Visibility, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(art): animate brazier and candle flames
+```
+
+#### Original body
+
+```text
+Braziers, candles and candle groups now burn with looping animated
+flames, built like the wall torch: a flameless lit base sprite plus a
+flame sheet animated on FlameVisual.
+
+- <Art>-Lit-Base.png keeps the lit (warm-lit) body; under the old
+  flame it shows the relit unlit pixels, and the brazier shows glowing
+  coals instead of dead charcoal. Base rects match the lit sprites, so
+  painted props do not move.
+- <Art>-Flame-Sheet.png: 128x128 frames pivoted on the lit image
+  origin. Frame 0 is the original flame, so base + frame 0 rebuilds
+  the lit art pixel-exactly. Brazier 10 frames at 7 fps with rising
+  embers; Candle 6 and Multiple Candles 8 frames at 8 fps, the two
+  candle flames half a cycle apart.
+- <Art>_Flame_Flicker.anim and <Art>Flame.controller per prop.
+- Prefabs: root shows the base, FlameVisual at local zero on
+  Characters/101 with the Animator, and a root SortingGroup on
+  Characters/100 so base and flame Y-sort as one prop instead of the
+  flame drawing over characters in front of it.
+- ArtSource/LightProps: Aseprite sources (Base + Flame layers,
+  Flicker tag), generator script and README; previews ignored.
+
+Tests:
+- FloorLightPropFlameAnimationTests: import settings, slicing,
+  pixel-exact rebuild, clips, controllers, prefab wiring and sorting,
+  CatacombsMap instances inherit the animated prefabs
+- TorchFlameAnimationTests: the shared base stays flameless; floor
+  variants own their flame
+- CatacombsSceneCompositionTests: one global Light2D and no particles
+  besides those owned by light props (painted torches, braziers and
+  candles had broken the old single-light rule)
+
+Player-Added: Braziers and candles now burn with animated flickering flames.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/ArtSource/LightProps/.gitignore
+Project Grimhold/ArtSource/LightProps/README.md
+Project Grimhold/ArtSource/LightProps/aseprite/Brazier-Flame.aseprite
+Project Grimhold/ArtSource/LightProps/aseprite/Candle-Flame.aseprite
+Project Grimhold/ArtSource/LightProps/aseprite/Candles-Flame.aseprite
+Project Grimhold/ArtSource/LightProps/tools/gen_flames.py
+Project Grimhold/Assets/Animations/Props/BrazierFlame.controller
+Project Grimhold/Assets/Animations/Props/BrazierFlame.controller.meta
+Project Grimhold/Assets/Animations/Props/Brazier_Flame_Flicker.anim
+Project Grimhold/Assets/Animations/Props/Brazier_Flame_Flicker.anim.meta
+Project Grimhold/Assets/Animations/Props/CandleFlame.controller
+Project Grimhold/Assets/Animations/Props/CandleFlame.controller.meta
+Project Grimhold/Assets/Animations/Props/Candle_Flame_Flicker.anim
+Project Grimhold/Assets/Animations/Props/Candle_Flame_Flicker.anim.meta
+Project Grimhold/Assets/Animations/Props/CandlesFlame.controller
+Project Grimhold/Assets/Animations/Props/CandlesFlame.controller.meta
+Project Grimhold/Assets/Animations/Props/Candles_Flame_Flicker.anim
+Project Grimhold/Assets/Animations/Props/Candles_Flame_Flicker.anim.meta
+Project Grimhold/Assets/Art/Props/Brazier-Flame-Sheet.png
+Project Grimhold/Assets/Art/Props/Brazier-Flame-Sheet.png.meta
+Project Grimhold/Assets/Art/Props/Brazier-Lit-Base.png
+Project Grimhold/Assets/Art/Props/Brazier-Lit-Base.png.meta
+Project Grimhold/Assets/Art/Props/Candle-Flame-Sheet.png
+Project Grimhold/Assets/Art/Props/Candle-Flame-Sheet.png.meta
+Project Grimhold/Assets/Art/Props/Candle-Lit-Base.png
+Project Grimhold/Assets/Art/Props/Candle-Lit-Base.png.meta
+Project Grimhold/Assets/Art/Props/Candles-Flame-Sheet.png
+Project Grimhold/Assets/Art/Props/Candles-Flame-Sheet.png.meta
+Project Grimhold/Assets/Art/Props/Candles-Lit-Base.png
+Project Grimhold/Assets/Art/Props/Candles-Lit-Base.png.meta
+Project Grimhold/Assets/Prefabs/Lighting Props/Brazier.prefab
+Project Grimhold/Assets/Prefabs/Lighting Props/Candle.prefab
+Project Grimhold/Assets/Prefabs/Lighting Props/Multiple Candles.prefab
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- path → Art &amp; Animation: Project Grimhold/ArtSource/LightProps/.gitignore
+- path → Art &amp; Animation: Project Grimhold/ArtSource/LightProps/README.md
+- path → Art &amp; Animation: Project Grimhold/ArtSource/LightProps/aseprite/Brazier-Flame.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/LightProps/aseprite/Candle-Flame.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/LightProps/aseprite/Candles-Flame.aseprite
+- path → Art &amp; Animation: Project Grimhold/ArtSource/LightProps/tools/gen\_flames.py
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Props/BrazierFlame.controller
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Props/BrazierFlame.controller.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Props/Brazier\_Flame\_Flicker.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Props/Brazier\_Flame\_Flicker.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Props/CandleFlame.controller
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Props/CandleFlame.controller.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Props/Candle\_Flame\_Flicker.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Props/Candle\_Flame\_Flicker.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Props/CandlesFlame.controller
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Props/CandlesFlame.controller.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Props/Candles\_Flame\_Flicker.anim
+- path → Art &amp; Animation: Project Grimhold/Assets/Animations/Props/Candles\_Flame\_Flicker.anim.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Flame-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Flame-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Lit-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Lit-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Flame-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Flame-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Lit-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Lit-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Flame-Sheet.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Flame-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Lit-Base.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Lit-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs
+- scope → Art &amp; Animation: art
+- message-term → Art &amp; Animation: sprite
+- path → Build &amp; Tooling: Project Grimhold/ArtSource/LightProps/tools/gen\_flames.py
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropFlameAnimationTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchFlameAnimationTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 56be9bacb78942fa17af61fcadba405903296a3a
 
