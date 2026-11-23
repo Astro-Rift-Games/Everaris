@@ -37,6 +37,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - While you are Ready for an expedition, the merchant tells you to unpack before trading and will not buy or sell until you cancel Ready.
 - The Blacksmith and the Arcanist can now upgrade weapon scaling, add a first gem socket and reinforce armor from a new Mejoras tab.
 - Floor and wall rifts now crack open across Catacombs as the dungeon collapses, glowing and erupting with turquoise energy.
+- The Catacombs have their first wall torches.
+- The Catacombs have braziers and candles.
 
 ### Improved
 
@@ -142,6 +144,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Items you took into a raid no longer reappear in your stash after a connection problem and logging back in.
 - Your character can move again after entering Town in the released game.
 - You can no longer walk through Town characters, and overlapping characters no longer blend into each other.
+- Braziers and candles no longer jump when they go out.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08

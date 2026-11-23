@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1231,
-  "canonicalEntries": 1228,
+  "rawCommits": 1233,
+  "canonicalEntries": 1230,
   "before": {
+    "Features": 446,
     "Other Changes": 375,
     "Refactoring": 17,
-    "Features": 444,
     "Bug Fixes": 188,
     "Documentation": 136,
     "Tests": 47,
     "Architecture & Infrastructure": 24
   },
   "after": {
+    "Features": 585,
     "Other Changes": 182,
     "Refactoring": 30,
-    "Features": 583,
     "Bug Fixes": 204,
     "Documentation": 152,
     "Tests": 52,
@@ -23,14 +23,14 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "World & Visibility": 176,
+    "Art & Animation": 268,
+    "Build & Tooling": 639,
+    "Tests": 788,
     "Combat": 409,
     "UI": 357,
-    "Art & Animation": 266,
     "Documentation": 449,
     "Inventory & Loot": 501,
-    "World & Visibility": 174,
-    "Build & Tooling": 637,
-    "Tests": 786,
     "Abilities": 144,
     "Networking & Sessions": 362,
     "Movement": 103,
@@ -42,9 +42,9 @@
   },
   "canonical": {
     "sections": {
+      "Features": 584,
       "Other Changes": 181,
       "Refactoring": 30,
-      "Features": 582,
       "Bug Fixes": 203,
       "Documentation": 152,
       "Tests": 52,
@@ -52,14 +52,14 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "World & Visibility": 174,
+      "Art & Animation": 265,
+      "Build & Tooling": 637,
+      "Tests": 786,
       "Combat": 407,
       "UI": 356,
-      "Art & Animation": 263,
       "Documentation": 447,
       "Inventory & Loot": 501,
-      "World & Visibility": 172,
-      "Build & Tooling": 635,
-      "Tests": 784,
       "Abilities": 142,
       "Networking & Sessions": 362,
       "Movement": 103,
@@ -74663,8 +74663,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 354,
-      "canonicalEntries": 354
+      "originalCommits": 356,
+      "canonicalEntries": 356
     },
     {
       "key": "v0.5.0",
@@ -74708,6 +74708,333 @@
     }
   ],
   "commits": [
+    {
+      "sha": "56be9bacb78942fa17af61fcadba405903296a3a",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/56be9bacb78942fa17af61fcadba405903296a3a",
+      "subject": "feat(level): add brazier and candle palette brushes for Catacombs",
+      "body": "Braziers and candles can now be painted from the Tile Palette like\nwall torches. Floor light props stand on the bottom edge of the\npainted cell, centered horizontally, so a row of props shares one base\nline. They keep the Characters Y-sorted layer used by chests and pots.\n\n- BrazierBrush (offset 0.34375), CandleBrush (-0.03125) and\n  MultipleCandlesBrush (0.5): base of the lit sprite on the cell's\n  bottom edge; prefab links kept.\n- Brazier-, Candle- and Candles-Unlit share the image origin of their\n  lit sprite, so extinguishing no longer shifts the prop (2, 1.5 and\n  2.5 px before).\n- Multiple Candles now uses Candles-Lit/Candles-Unlit; it showed a\n  single unlit candle as its lit sprite.\n- Candle and Multiple Candles colliders fit their sprites; the light\n  prop Light2D now lights the Walls layer instead of Fog.\n- CatacombsMap: first painted brazier and candles under LightProps.\n\nTests:\n- FloorLightPropBrushTests: brush config, base on cell bottom edge,\n  lit/unlit origin match, Multiple Candles sprites\n- Brush tests compare prefabs with Unity equality; a prefab reimport\n  can leave the brush holding an older managed wrapper\n\nPlayer-Fixed: Braziers and candles no longer jump when they go out.\nPlayer-Added: The Catacombs have braziers and candles.\n",
+      "date": "2026-11-22T22:51:58-03:00",
+      "files": [
+        "Project Grimhold/Assets/Art/Props/Brazier-Unlit.png.meta",
+        "Project Grimhold/Assets/Art/Props/Candle-Unlit.png.meta",
+        "Project Grimhold/Assets/Art/Props/Candles-Unlit.png.meta",
+        "Project Grimhold/Assets/Art/Tilesets/Brushes/BrazierBrush.asset",
+        "Project Grimhold/Assets/Art/Tilesets/Brushes/BrazierBrush.asset.meta",
+        "Project Grimhold/Assets/Art/Tilesets/Brushes/CandleBrush.asset",
+        "Project Grimhold/Assets/Art/Tilesets/Brushes/CandleBrush.asset.meta",
+        "Project Grimhold/Assets/Art/Tilesets/Brushes/MultipleCandlesBrush.asset",
+        "Project Grimhold/Assets/Art/Tilesets/Brushes/MultipleCandlesBrush.asset.meta",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/Candle.prefab",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/DungeonLightProp.prefab",
+        "Project Grimhold/Assets/Prefabs/Lighting Props/Multiple Candles.prefab",
+        "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs"
+      ],
+      "originalType": "feat",
+      "originalScope": "level",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "World & Visibility",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/BrazierBrush.asset",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/BrazierBrush.asset.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/CandleBrush.asset",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/CandleBrush.asset.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/MultipleCandlesBrush.asset",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/MultipleCandlesBrush.asset.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/Lighting Props/DungeonLightProp.prefab",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "Catacombs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Brazier-Unlit.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Candle-Unlit.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Props/Candles-Unlit.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/BrazierBrush.asset",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/BrazierBrush.asset.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/CandleBrush.asset",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/CandleBrush.asset.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/MultipleCandlesBrush.asset",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/MultipleCandlesBrush.asset.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "sprite",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "f2e15268946f3d2862e72e276df14fcca71b2248",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f2e15268946f3d2862e72e276df14fcca71b2248",
+      "subject": "feat(level): add a torch palette brush and paint target for Catacombs",
+      "body": "Wall torches can now be painted from the Tile Palette so every torch\nsnaps to the wall grid at the same height instead of being placed by\nhand.\n\n- PrefabPaletteBrush: GameObjectBrush subclass whose assets are listed\n  in the Tile Palette (the package hides GameObjectBrush assets). It\n  reuses the package brush editor and restores its authored cells when\n  a pick or move finds no prefab, which used to leave the brush empty.\n- TorchBrush paints the Torch prefab (prefab link kept) at cell center\n  + (0, 0.375): the 12x15 px sconce fills exactly one 16 px wall tile.\n- CatacombsMap gets an empty LightProps tilemap under the Grid as the\n  paint target, plus the first two painted torches. Its name avoids\n  \"wall\"/\"floor\"/\"obstacle\" because collapse rifts and ambient\n  pressure classify tilemaps by name.\n\nTests:\n- TorchBrushTests: palette visibility, prefab/offset, one-cell fit,\n  no stacking, LightProps target excluded from geometry classifiers\n- PrefabPaletteBrushTests: empty pick and move keep the brush intact\n\nPlayer-Added: The Catacombs have their first wall torches.\n",
+      "date": "2026-11-22T22:37:11-03:00",
+      "files": [
+        "Project Grimhold/Assets/Art/Tilesets/Brushes.meta",
+        "Project Grimhold/Assets/Art/Tilesets/Brushes/TorchBrush.asset",
+        "Project Grimhold/Assets/Art/Tilesets/Brushes/TorchBrush.asset.meta",
+        "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+        "Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrush.cs",
+        "Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrush.cs.meta",
+        "Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrushEditor.cs",
+        "Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrushEditor.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PrefabPaletteBrushTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PrefabPaletteBrushTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "level",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "World & Visibility",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/TorchBrush.asset",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/TorchBrush.asset.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/CatacombsMap.unity",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "Catacombs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/TorchBrush.asset",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Tilesets/Brushes/TorchBrush.asset.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrush.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrush.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrushEditor.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrushEditor.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PrefabPaletteBrushTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PrefabPaletteBrushTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PrefabPaletteBrushTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PrefabPaletteBrushTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "e5a9484e21456288e82e4425453cc00c87b4ce7b",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e5a9484e21456288e82e4425453cc00c87b4ce7b",
