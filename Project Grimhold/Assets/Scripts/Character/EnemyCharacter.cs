@@ -100,8 +100,6 @@ public class EnemyCharacter : CharacterBase, IAbilityEnemyTarget
             if (_movementController != null) _movementController.enabled = false;
             if (_combatController != null) _combatController.enabled = false;
             if (_fsm != null) _fsm.enabled = false;
-            var pathfinding = GetComponent<EnemyPathfindingNavigator>();
-            if (pathfinding != null) pathfinding.enabled = false;
         }
 
         if (HasStateAuthority && IsAlive)
