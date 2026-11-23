@@ -88,6 +88,10 @@ PrefabInstance:
       propertyPath: _extinguishedSprite
       value: 
       objectReference: {fileID: 5367509106672376315, guid: 4567c6a5cd0530d4884ef69ab072f2a0, type: 3}
+    - target: {fileID: 4484275429370236168, guid: 54d06fca2d4c8fa46a97cd9a6b5e5f84, type: 3}
+      propertyPath: m_Intensity
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 5182937015794150601, guid: 54d06fca2d4c8fa46a97cd9a6b5e5f84, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
