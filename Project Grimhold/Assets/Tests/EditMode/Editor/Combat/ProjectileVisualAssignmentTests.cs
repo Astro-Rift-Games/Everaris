@@ -10,6 +10,7 @@ namespace Tests.EditMode.Combat
     {
         private const string Definitions = "Assets/Scriptable Objects/Loot/Definitions/";
         private const string MagicVfx = "Assets/Prefabs/VFX/Magic/";
+        private const string RangedVfx = "Assets/Prefabs/VFX/Ranged/";
         private const string Art = "Assets/Art/Projectiles/New/";
         private const string Catalog = "Assets/Scriptable Objects/Loot/Catalogs/LootDefinitionCatalog.asset";
 
@@ -18,7 +19,7 @@ namespace Tests.EditMode.Combat
         [TestCase("MagicStaff", "MagicMissile")]
         [TestCase("MagicWand", "MagicDart-V1")]
         [TestCase("TrainingWand", "MagicDart-V2")]
-        public void Weapon_UsesAssignedPrecoloredSpriteProfile_OnlyMagicAddsTrailImpactAndFizzle(string weapon, string art)
+        public void Weapon_UsesAssignedPrecoloredSpriteProfile_WithItsFamilyTrailImpactAndFizzle(string weapon, string art)
         {
             var definition = AssetDatabase.LoadAssetAtPath<WeaponDefinition>(Definitions + weapon + "WeaponDefinition.asset");
             Assert.That(definition, Is.Not.Null);
@@ -32,19 +33,22 @@ namespace Tests.EditMode.Combat
             Assert.That(profile.Tint, Is.EqualTo(Color.white));
             bool magic = weapon is "MagicStaff" or "MagicWand" or "TrainingWand";
             Assert.That(AssetDatabase.GetAssetPath(profile.TrailPrefab),
-                Is.EqualTo(magic ? MagicVfx + "MagicProjectileTrail.prefab" : string.Empty));
+                Is.EqualTo(magic ? MagicVfx + "MagicProjectileTrail.prefab" : RangedVfx + "ArrowTrail.prefab"));
             Assert.That(AssetDatabase.GetAssetPath(profile.ImpactParticles),
-                Is.EqualTo(magic ? MagicVfx + "MagicProjectileImpact.prefab" : string.Empty));
+                Is.EqualTo(magic ? MagicVfx + "MagicProjectileImpact.prefab" : RangedVfx + "ArrowImpact.prefab"));
             Assert.That(AssetDatabase.GetAssetPath(profile.FizzleParticles),
-                Is.EqualTo(magic ? MagicVfx + "MagicProjectileFizzle.prefab" : string.Empty));
+                Is.EqualTo(magic ? MagicVfx + "MagicProjectileFizzle.prefab" : RangedVfx + "ArrowFizzle.prefab"));
         }
 
         [Test]
-        public void Crossbow_RetainsDefaultArrowControllerWithoutProfile()
+        public void Crossbow_RetainsDefaultArrowController_ThroughASpritelessProfile()
         {
             var weapon = AssetDatabase.LoadAssetAtPath<WeaponDefinition>(Definitions + "LightCrossbowWeaponDefinition.asset");
             Assert.That(weapon, Is.Not.Null);
-            Assert.That(weapon.ProjectileVisual, Is.Null);
+            // The profile only adds trail, impact, fizzle and stick; with no sprite or controller the default flight art stays.
+            Assert.That(weapon.ProjectileVisual, Is.Not.Null);
+            Assert.That(weapon.ProjectileVisual.Sprite, Is.Null);
+            Assert.That(weapon.ProjectileVisual.AnimatorController, Is.Null);
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/MagicProjectile.prefab");
             var animator = prefab.GetComponentInChildren<Animator>(true);
             Assert.That(animator.enabled, Is.True);

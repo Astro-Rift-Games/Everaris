@@ -17,9 +17,9 @@ MonoBehaviour:
   _overrideTint: 0
   _tint: {r: 1, g: 1, b: 1, a: 1}
   _useDamageTypeTint: 0
-  _trailPrefab: {fileID: 0}
-  _fizzleParticles: {fileID: 0}
-  _impactParticles: {fileID: 0}
+  _trailPrefab: {fileID: 5799823345043597940, guid: 81709c460a380314caa40922698c567a, type: 3}
+  _fizzleParticles: {fileID: 8378960460667227566, guid: 79cf08dffe9009d4ebcbe760c8b36df0, type: 3}
+  _impactParticles: {fileID: 1376236968482955693, guid: 4a2df79d555c3f1409db014bb8608fdf, type: 3}
   _stickOnImpact: 1
   _stickPenetration: 0
   _stickEdgeWidth: 0.1875

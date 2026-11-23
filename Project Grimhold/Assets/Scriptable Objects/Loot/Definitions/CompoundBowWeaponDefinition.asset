@@ -42,10 +42,10 @@ MonoBehaviour:
       _enabled: 0
       _intensity: 0
       _duration: 0
-    _hitReaction: {fileID: 0}
+    _hitReaction: {fileID: 11400000, guid: aafcaec3cdca3d9498ec1fd6e34c0460, type: 2}
     _impactParticles: {fileID: 0}
     _windupChargeVfx: {fileID: 0}
-    _releaseBurstParticles: {fileID: 0}
+    _releaseBurstParticles: {fileID: 2103124715974922261, guid: a45d521ece11ea443a16e41f66557fc4, type: 3}
     _stanceOffset: {x: 0, y: 0}
     _gripPoint: {x: 0, y: 0.09375}
     _angleCorrection: -90

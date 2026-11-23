@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8e89e52564c7254ca2b81c33679c56c, type: 3}
+  m_Name: LightCrossbowProjectileVisual
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileVisualProfile
+  _sprite: {fileID: 0}
+  _animatorController: {fileID: 0}
+  _overrideTint: 0
+  _tint: {r: 1, g: 1, b: 1, a: 1}
+  _useDamageTypeTint: 0
+  _trailPrefab: {fileID: 8999925449100395725, guid: fd6f15b41b31f1145a57360aa009b5d1, type: 3}
+  _fizzleParticles: {fileID: 8378960460667227566, guid: 79cf08dffe9009d4ebcbe760c8b36df0, type: 3}
+  _impactParticles: {fileID: 1376236968482955693, guid: 4a2df79d555c3f1409db014bb8608fdf, type: 3}
+  _stickOnImpact: 1
+  _stickPenetration: 0
+  _stickEdgeWidth: 0.1875
+  _stickVisibleFraction: 0.5
+  _stickHoldSeconds: 4.5
+  _stickFadeSeconds: 0.5
+  _stickBodySortingLayer: VFX
