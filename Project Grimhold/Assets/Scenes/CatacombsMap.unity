@@ -63412,8 +63412,14 @@ MonoBehaviour:
     RawGuidValue: d3073f98b1bfb53448989241f9087814l
   _lockedChestChancePercent: 10
   _guaranteeFirstLockedChestForTesting: 1
+  _coffinContainerPrefab:
+    RawGuidValue: 5959c17a72f1de0488ba6c0283a641f5l
+  _coffinContainerChancePercent: 50
   _breakablePrefab:
     RawGuidValue: 8b5a2dd483fd42b48fd1863cf21fc690l
+  _jarBreakablePrefab:
+    RawGuidValue: 8b423d76890a8ae428d331305651c0eel
+  _jarBreakableChancePercent: 50
   _lootCatalog: {fileID: 11400000, guid: f11f98d3ce1283d47adcf8bc420f88a2, type: 2}
   _abilityCatalog: {fileID: 11400000, guid: a863453103d57114dae7769d351cda59, type: 2}
   _reconnectBudgetConfig: {fileID: 11400000, guid: 057564b8ac7e35a4f96f9620514743f5, type: 2}

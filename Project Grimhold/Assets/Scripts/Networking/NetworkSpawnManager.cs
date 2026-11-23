@@ -136,8 +136,24 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
     [SerializeField]
     private bool _guaranteeFirstLockedChestForTesting;
 
+    [Tooltip("Visual variant of the standard loot container. Same content rules, different look.")]
+    [SerializeField]
+    private NetworkPrefabRef _coffinContainerPrefab;
+
+    [Tooltip("Share of standard (not locked) container points that spawn as a coffin.")]
+    [SerializeField, Range(0, 100)]
+    private int _coffinContainerChancePercent;
+
     [SerializeField]
     private NetworkPrefabRef _breakablePrefab;
+
+    [Tooltip("Visual variant of the breakable crate. Same drop rules, different look.")]
+    [SerializeField]
+    private NetworkPrefabRef _jarBreakablePrefab;
+
+    [Tooltip("Share of breakable points that spawn as a jar instead of a crate.")]
+    [SerializeField, Range(0, 100)]
+    private int _jarBreakableChancePercent;
 
     [SerializeField]
     private LootDefinitionCatalog _lootCatalog;
@@ -508,7 +524,11 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
 #endif
         }
     }
+    public NetworkPrefabRef CoffinContainerPrefab => _coffinContainerPrefab;
+    public int CoffinContainerChancePercent => _coffinContainerChancePercent;
     public NetworkPrefabRef BreakablePrefab => _breakablePrefab;
+    public NetworkPrefabRef JarBreakablePrefab => _jarBreakablePrefab;
+    public int JarBreakableChancePercent => _jarBreakableChancePercent;
 
     /// <summary>
     /// Reads the expedition's frozen Friendly Fire policy. If the context is unavailable,
@@ -779,7 +799,11 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
         _lockedChestPrefab = configuredManager._lockedChestPrefab;
         _lockedChestChancePercent = configuredManager._lockedChestChancePercent;
         _guaranteeFirstLockedChestForTesting = configuredManager._guaranteeFirstLockedChestForTesting;
+        _coffinContainerPrefab = configuredManager._coffinContainerPrefab;
+        _coffinContainerChancePercent = configuredManager._coffinContainerChancePercent;
         _breakablePrefab = configuredManager._breakablePrefab;
+        _jarBreakablePrefab = configuredManager._jarBreakablePrefab;
+        _jarBreakableChancePercent = configuredManager._jarBreakableChancePercent;
         _lootCatalog = configuredManager._lootCatalog;
         _abilityCatalog = configuredManager._abilityCatalog;
         if (configuredManager._reconnectBudgetConfig != null)
@@ -805,6 +829,22 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
         {
             Debug.LogError(
                 $"[NetworkSpawnManager] Scene manager '{configuredManager.name}' enables locked chests but has no valid locked-chest prefab. Loot groups will be skipped.",
+                configuredManager);
+            return false;
+        }
+
+        if (_coffinContainerChancePercent > 0 && !_coffinContainerPrefab.IsValid)
+        {
+            Debug.LogError(
+                $"[NetworkSpawnManager] Scene manager '{configuredManager.name}' enables coffin containers but has no valid coffin prefab. Loot groups will be skipped.",
+                configuredManager);
+            return false;
+        }
+
+        if (_jarBreakableChancePercent > 0 && !_jarBreakablePrefab.IsValid)
+        {
+            Debug.LogError(
+                $"[NetworkSpawnManager] Scene manager '{configuredManager.name}' enables jar breakables but has no valid jar prefab. Breakable groups will be skipped.",
                 configuredManager);
             return false;
         }
@@ -4347,6 +4387,20 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             return false;
         }
 
+        if (_coffinContainerChancePercent > 0 &&
+            !TryPrepareLootContentSnapshot(
+                runner,
+                _coffinContainerPrefab,
+                requireLocked: false,
+                out _,
+                out string coffinPreparationError))
+        {
+            Debug.LogError(
+                $"[NetworkSpawnManager] Loot group skipped because its coffin-container configuration is invalid. {coffinPreparationError}",
+                this);
+            return false;
+        }
+
         if (!TryCalculateEffectiveAdditionalLootChance(
                 out int additionalLootChanceBasisPoints,
                 out string luckError))
@@ -4409,6 +4463,17 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
         return completed;
     }
 
+    /// <summary>An unset coffin reference must never match another unset prefab reference.</summary>
+    private bool IsCoffinContainerPrefab(NetworkPrefabRef prefab)
+    {
+        return _coffinContainerPrefab.IsValid && prefab == _coffinContainerPrefab;
+    }
+
+    private bool IsJarBreakablePrefab(NetworkPrefabRef prefab)
+    {
+        return _jarBreakablePrefab.IsValid && prefab == _jarBreakablePrefab;
+    }
+
     private NetworkObject SpawnLootContainer(
         NetworkRunner runner,
         SpawnGroupType group,
@@ -4424,13 +4489,16 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             return null;
         }
 
+        // A locked chest keeps its own look; the coffin only replaces the standard container's look.
         NetworkPrefabRef selectedPrefab = LockedChestSpawnRules.ShouldSpawnLocked(
             containerSeed,
             _lockedChestChancePercent,
             spawnIndex,
             GuaranteeFirstLockedChestForTesting)
             ? _lockedChestPrefab
-            : _lootContainerPrefab;
+            : CoffinContainerSpawnRules.ShouldSpawnCoffin(containerSeed, _coffinContainerChancePercent)
+                ? _coffinContainerPrefab
+                : _lootContainerPrefab;
         if (!selectedPrefab.IsValid)
         {
             return null;
@@ -4677,11 +4745,25 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
 
         if (!TryPrepareBreakableContentSnapshot(
                 runner,
+                _breakablePrefab,
                 out ValidatedLootContainerContentSnapshot snapshot,
                 out string preparationError))
         {
             Debug.LogError(
                 $"[NetworkSpawnManager] Breakables group skipped because its configuration is invalid. {preparationError}",
+                this);
+            return false;
+        }
+
+        if (_jarBreakableChancePercent > 0 &&
+            !TryPrepareBreakableContentSnapshot(
+                runner,
+                _jarBreakablePrefab,
+                out _,
+                out string jarPreparationError))
+        {
+            Debug.LogError(
+                $"[NetworkSpawnManager] Breakables group skipped because its jar configuration is invalid. {jarPreparationError}",
                 this);
             return false;
         }
@@ -4770,11 +4852,14 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             spawnIndex,
             out Vector3 position,
             out Quaternion rotation);
+        NetworkPrefabRef prefab = JarBreakableSpawnRules.ShouldSpawnJar(dropSeed, _jarBreakableChancePercent)
+            ? _jarBreakablePrefab
+            : _breakablePrefab;
         bool callbackApplied = false;
         NetworkObject callbackObject = null;
         BreakableObject callbackBreakable = null;
         NetworkObject breakableObject = runner.Spawn(
-            _breakablePrefab,
+            prefab,
             position,
             rotation,
             inputAuthority: null,
@@ -4827,6 +4912,7 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
 
     private bool TryPrepareBreakableContentSnapshot(
         NetworkRunner runner,
+        NetworkPrefabRef breakablePrefab,
         out ValidatedLootContainerContentSnapshot snapshot,
         out string error)
     {
@@ -4839,7 +4925,7 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             return false;
         }
 
-        NetworkPrefabId prefabId = runner.Config.PrefabTable.GetId((NetworkObjectGuid)_breakablePrefab);
+        NetworkPrefabId prefabId = runner.Config.PrefabTable.GetId((NetworkObjectGuid)breakablePrefab);
         if (!prefabId.IsValid)
         {
             error = "The configured breakable prefab is not registered in Fusion's prefab table.";
@@ -5393,6 +5479,8 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             group == SpawnGroupType.Breakables ||
             prefab == _lootContainerPrefab ||
             prefab == _lockedChestPrefab ||
+            IsCoffinContainerPrefab(prefab) ||
+            IsJarBreakablePrefab(prefab) ||
             prefab == _breakablePrefab)
         {
             Debug.LogError("[NetworkSpawnManager] Randomized scene entities must use their dedicated initial spawn pipeline.", this);
@@ -5422,7 +5510,8 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
         Vector3 position,
         Quaternion rotation)
     {
-        if (prefab == _lootContainerPrefab || prefab == _lockedChestPrefab || prefab == _breakablePrefab)
+        if (prefab == _lootContainerPrefab || prefab == _lockedChestPrefab || IsCoffinContainerPrefab(prefab) ||
+            IsJarBreakablePrefab(prefab) || prefab == _breakablePrefab)
         {
             Debug.LogError("[NetworkSpawnManager] Randomized scene entities cannot bypass their dedicated initial-content pipeline.", this);
             return null;

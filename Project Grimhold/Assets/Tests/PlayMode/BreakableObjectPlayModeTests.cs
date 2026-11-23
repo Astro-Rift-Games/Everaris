@@ -14,6 +14,7 @@ namespace Tests.PlayMode.Loot
     public sealed class BreakableObjectPlayModeTests
     {
         private const string BreakablePrefabGuid = "8b5a2dd483fd42b48fd1863cf21fc690";
+        private const string JarPrefabPath = "Assets/Prefabs/JarBreakable.prefab";
 
         private NetworkRunner _runner;
         private NetworkObject _prefab;
@@ -100,6 +101,32 @@ namespace Tests.PlayMode.Loot
             Assert.That(_damageDriver.LastInteractionResult.IsConsumed, Is.True);
             Assert.That(receiver.CommittedAmount, Is.EqualTo(2));
             Assert.That(FindSpawnedPickups(), Has.Length.Zero);
+        }
+
+        [UnityTest]
+        public IEnumerator Jar_FatalDamage_HidesTheJarAndLeavesItsRemains()
+        {
+            yield return StartRunner();
+            _prefab = LoadNetworkPrefab(JarPrefabPath);
+
+            BreakableObject jar = SpawnBreakable(new LootEntry(new LootId("bone"), 1), Vector3.zero);
+            var presentation = new SerializedObject(jar);
+            List<SpriteRenderer> intact = ReadRenderers(presentation, "_intactRenderers");
+            List<SpriteRenderer> remains = ReadRenderers(presentation, "_destroyedRenderers");
+            Assert.That(intact, Is.Not.Empty.And.All.Matches<SpriteRenderer>(renderer => renderer.enabled));
+            Assert.That(remains, Is.Not.Empty.And.All.Matches<SpriteRenderer>(renderer => !renderer.enabled));
+
+            _damageDriver.Target = jar;
+            _damageDriver.DamageAmount = 1000f;
+            _damageDriver.RequestedHits = 1;
+            yield return WaitForRequests(1);
+            yield return null;
+
+            Assert.That((bool)jar.IsDestroyed, Is.True);
+            Assert.That(jar.GetComponentsInChildren<Collider2D>(true),
+                Has.All.Matches<Collider2D>(collider => !collider.enabled));
+            Assert.That(intact, Has.All.Matches<SpriteRenderer>(renderer => !renderer.enabled));
+            Assert.That(remains, Has.All.Matches<SpriteRenderer>(renderer => renderer.enabled));
         }
 
         [UnityTest]
@@ -285,6 +312,17 @@ namespace Tests.PlayMode.Loot
             Assert.That(_prefab, Is.Not.Null);
         }
 
+        private NetworkObject LoadNetworkPrefab(string assetPath)
+        {
+            string assetGuid = AssetDatabase.AssetPathToGUID(assetPath);
+            Assert.That(assetGuid, Is.Not.Empty, assetPath);
+            NetworkPrefabId prefabId = _runner.Config.PrefabTable.GetId(NetworkObjectGuid.Parse(assetGuid));
+            Assert.That(prefabId.IsValid, Is.True, $"{assetPath} is registered in Fusion's prefab table");
+            NetworkObject prefab = _runner.Config.PrefabTable.Load(prefabId, true);
+            Assert.That(prefab, Is.Not.Null);
+            return prefab;
+        }
+
         private BreakableObject SpawnBreakable(LootEntry drop, Vector3 position)
         {
             bool callbackApplied = false;
@@ -385,6 +423,19 @@ namespace Tests.PlayMode.Loot
 
             public void CommitRaidLootReceive(in LootTransferRequest request, RaidLootOriginTransfer transfer) =>
                 CommitReceive(request);
+        }
+
+        private static List<SpriteRenderer> ReadRenderers(SerializedObject serialized, string propertyName)
+        {
+            SerializedProperty property = serialized.FindProperty(propertyName);
+            Assert.That(property, Is.Not.Null, propertyName);
+            var renderers = new List<SpriteRenderer>();
+            for (int index = 0; index < property.arraySize; index++)
+            {
+                renderers.Add(property.GetArrayElementAtIndex(index).objectReferenceValue as SpriteRenderer);
+            }
+
+            return renderers;
         }
     }
 }

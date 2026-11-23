@@ -43,6 +43,9 @@ public sealed class BreakableObject : NetworkBehaviour, IDamageable
     [SerializeField]
     private SpriteRenderer[] _intactRenderers = Array.Empty<SpriteRenderer>();
 
+    [SerializeField, Tooltip("Remains shown once the object is destroyed. Never part of the intact look.")]
+    private SpriteRenderer[] _destroyedRenderers = Array.Empty<SpriteRenderer>();
+
     private Collider2D[] _cachedColliders;
     private EntityRegistry _registry;
     private EntityId _registeredId;
@@ -475,6 +478,17 @@ public sealed class BreakableObject : NetworkBehaviour, IDamageable
                 if (_intactRenderers[i] != null)
                 {
                     _intactRenderers[i].enabled = !destroyed;
+                }
+            }
+        }
+
+        if (_destroyedRenderers != null)
+        {
+            for (int i = 0; i < _destroyedRenderers.Length; i++)
+            {
+                if (_destroyedRenderers[i] != null)
+                {
+                    _destroyedRenderers[i].enabled = destroyed;
                 }
             }
         }
