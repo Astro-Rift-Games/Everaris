@@ -52,8 +52,8 @@ public sealed class CatacombsAccessTraversalTests
             Vector2 north = (Vector2)door.transform.position + new Vector2(0f, 4.5f);
             RaycastHit2D fromNorth = _physics.BoxCast(north + _bodyOffset, _bodySize, 0f, Vector2.down, 5f, _mask);
             Assert.That(fromNorth.collider, Is.SameAs(blocker), $"closed door at {door.transform.position} from the north");
-            Assert.That(fromNorth.point.y, Is.EqualTo(door.transform.position.y + 4f).Within(0.01f),
-                "The body stops at the back face of the 4-row wall.");
+            Assert.That(fromNorth.point.y, Is.EqualTo(door.transform.position.y + 3f).Within(0.01f),
+                "The body stops behind the 3 door rows, out of weapon reach of the threshold.");
 
             blocker.enabled = false;
             try

@@ -163,8 +163,8 @@ public sealed class CatacombsDoorTests
         // stand inside the doorway behind the closed door, where the weapon poked through it.
         var variant = AssetDatabase.LoadAssetAtPath<GameObject>(VariantPath);
         var blocker = variant.transform.Find("Blocker").GetComponent<BoxCollider2D>();
-        Assert.That(blocker.offset, Is.EqualTo(new Vector2(0f, 2f)));
-        Assert.That(blocker.size, Is.EqualTo(new Vector2(2.125f, 4f)));
+        Assert.That(blocker.offset, Is.EqualTo(new Vector2(0f, 1.5f)), "Blocks the 3 door rows: from y+3 the longest weapon (reach 2) stays short of the threshold.");
+        Assert.That(blocker.size, Is.EqualTo(new Vector2(2.125f, 3f)));
 
         // Interaction stays reachable from both faces: 0.75 beyond the south and the north face.
         var trigger = variant.transform.Find("InteractionTrigger").GetComponent<BoxCollider2D>();
