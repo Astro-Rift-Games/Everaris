@@ -4,18 +4,18 @@
 
 Release: Unreleased
 
-354 original commits; 354 canonical entries.
+356 original commits; 356 canonical entries.
 
 ## Canonical classification
 
-123 features; 110 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 20 other changes
+125 features; 110 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 20 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 17 | 11 | 1 | 0 | 10 | 1 |
-| Art & Animation | 24 | 12 | 3 | 0 | 9 | 8 |
+| Art & Animation | 26 | 12 | 3 | 0 | 9 | 8 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 87 | 73 | 4 | 1 | 25 | 6 |
+| Build & Tooling | 89 | 73 | 4 | 1 | 25 | 6 |
 | Combat | 52 | 21 | 2 | 0 | 16 | 2 |
 | Documentation | 41 | 44 | 0 | 0 | 20 | 1 |
 | Extraction | 19 | 22 | 2 | 0 | 10 | 5 |
@@ -24,12 +24,197 @@ Release: Unreleased
 | Movement | 6 | 6 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 41 | 44 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 50 | 56 | 2 | 1 | 22 | 3 |
-| Tests | 118 | 104 | 4 | 1 | 34 | 4 |
+| Tests | 120 | 104 | 4 | 1 | 34 | 4 |
 | UI | 45 | 23 | 2 | 0 | 14 | 4 |
 | Unassigned | 0 | 1 | 0 | 0 | 28 | 0 |
-| World & Visibility | 32 | 16 | 1 | 0 | 3 | 12 |
+| World & Visibility | 34 | 16 | 1 | 0 | 3 | 12 |
 
 ## Original commit records
+
+### 56be9bacb78942fa17af61fcadba405903296a3a
+
+[56be9bacb78942fa17af61fcadba405903296a3a](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/56be9bacb78942fa17af61fcadba405903296a3a)
+
+Date: 2026-11-22T22:51:58-03:00 · Classification: Features (explicit) · Systems: World & Visibility, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(level): add brazier and candle palette brushes for Catacombs
+```
+
+#### Original body
+
+```text
+Braziers and candles can now be painted from the Tile Palette like
+wall torches. Floor light props stand on the bottom edge of the
+painted cell, centered horizontally, so a row of props shares one base
+line. They keep the Characters Y-sorted layer used by chests and pots.
+
+- BrazierBrush (offset 0.34375), CandleBrush (-0.03125) and
+  MultipleCandlesBrush (0.5): base of the lit sprite on the cell's
+  bottom edge; prefab links kept.
+- Brazier-, Candle- and Candles-Unlit share the image origin of their
+  lit sprite, so extinguishing no longer shifts the prop (2, 1.5 and
+  2.5 px before).
+- Multiple Candles now uses Candles-Lit/Candles-Unlit; it showed a
+  single unlit candle as its lit sprite.
+- Candle and Multiple Candles colliders fit their sprites; the light
+  prop Light2D now lights the Walls layer instead of Fog.
+- CatacombsMap: first painted brazier and candles under LightProps.
+
+Tests:
+- FloorLightPropBrushTests: brush config, base on cell bottom edge,
+  lit/unlit origin match, Multiple Candles sprites
+- Brush tests compare prefabs with Unity equality; a prefab reimport
+  can leave the brush holding an older managed wrapper
+
+Player-Fixed: Braziers and candles no longer jump when they go out.
+Player-Added: The Catacombs have braziers and candles.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Art/Props/Brazier-Unlit.png.meta
+Project Grimhold/Assets/Art/Props/Candle-Unlit.png.meta
+Project Grimhold/Assets/Art/Props/Candles-Unlit.png.meta
+Project Grimhold/Assets/Art/Tilesets/Brushes/BrazierBrush.asset
+Project Grimhold/Assets/Art/Tilesets/Brushes/BrazierBrush.asset.meta
+Project Grimhold/Assets/Art/Tilesets/Brushes/CandleBrush.asset
+Project Grimhold/Assets/Art/Tilesets/Brushes/CandleBrush.asset.meta
+Project Grimhold/Assets/Art/Tilesets/Brushes/MultipleCandlesBrush.asset
+Project Grimhold/Assets/Art/Tilesets/Brushes/MultipleCandlesBrush.asset.meta
+Project Grimhold/Assets/Prefabs/Lighting Props/Candle.prefab
+Project Grimhold/Assets/Prefabs/Lighting Props/DungeonLightProp.prefab
+Project Grimhold/Assets/Prefabs/Lighting Props/Multiple Candles.prefab
+Project Grimhold/Assets/Scenes/CatacombsMap.unity
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Tilesets/Brushes/BrazierBrush.asset
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Tilesets/Brushes/BrazierBrush.asset.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Tilesets/Brushes/CandleBrush.asset
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Tilesets/Brushes/CandleBrush.asset.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Tilesets/Brushes/MultipleCandlesBrush.asset
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Tilesets/Brushes/MultipleCandlesBrush.asset.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Prefabs/Lighting Props/DungeonLightProp.prefab
+- path → World &amp; Visibility: Project Grimhold/Assets/Scenes/CatacombsMap.unity
+- message-term → World &amp; Visibility: Catacombs
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Unlit.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Unlit.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Unlit.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Tilesets/Brushes/BrazierBrush.asset
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Tilesets/Brushes/BrazierBrush.asset.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Tilesets/Brushes/CandleBrush.asset
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Tilesets/Brushes/CandleBrush.asset.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Tilesets/Brushes/MultipleCandlesBrush.asset
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Tilesets/Brushes/MultipleCandlesBrush.asset.meta
+- message-term → Art &amp; Animation: sprite
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/FloorLightPropBrushTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### f2e15268946f3d2862e72e276df14fcca71b2248
+
+[f2e15268946f3d2862e72e276df14fcca71b2248](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f2e15268946f3d2862e72e276df14fcca71b2248)
+
+Date: 2026-11-22T22:37:11-03:00 · Classification: Features (explicit) · Systems: World & Visibility, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(level): add a torch palette brush and paint target for Catacombs
+```
+
+#### Original body
+
+```text
+Wall torches can now be painted from the Tile Palette so every torch
+snaps to the wall grid at the same height instead of being placed by
+hand.
+
+- PrefabPaletteBrush: GameObjectBrush subclass whose assets are listed
+  in the Tile Palette (the package hides GameObjectBrush assets). It
+  reuses the package brush editor and restores its authored cells when
+  a pick or move finds no prefab, which used to leave the brush empty.
+- TorchBrush paints the Torch prefab (prefab link kept) at cell center
+  + (0, 0.375): the 12x15 px sconce fills exactly one 16 px wall tile.
+- CatacombsMap gets an empty LightProps tilemap under the Grid as the
+  paint target, plus the first two painted torches. Its name avoids
+  "wall"/"floor"/"obstacle" because collapse rifts and ambient
+  pressure classify tilemaps by name.
+
+Tests:
+- TorchBrushTests: palette visibility, prefab/offset, one-cell fit,
+  no stacking, LightProps target excluded from geometry classifiers
+- PrefabPaletteBrushTests: empty pick and move keep the brush intact
+
+Player-Added: The Catacombs have their first wall torches.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Art/Tilesets/Brushes.meta
+Project Grimhold/Assets/Art/Tilesets/Brushes/TorchBrush.asset
+Project Grimhold/Assets/Art/Tilesets/Brushes/TorchBrush.asset.meta
+Project Grimhold/Assets/Scenes/CatacombsMap.unity
+Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrush.cs
+Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrush.cs.meta
+Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrushEditor.cs
+Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrushEditor.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PrefabPaletteBrushTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PrefabPaletteBrushTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Tilesets/Brushes.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Tilesets/Brushes/TorchBrush.asset
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Tilesets/Brushes/TorchBrush.asset.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scenes/CatacombsMap.unity
+- message-term → World &amp; Visibility: Catacombs
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Tilesets/Brushes.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Tilesets/Brushes/TorchBrush.asset
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Tilesets/Brushes/TorchBrush.asset.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrush.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrush.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrushEditor.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Scripts/Editor/PrefabPaletteBrushEditor.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PrefabPaletteBrushTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PrefabPaletteBrushTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PrefabPaletteBrushTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/PrefabPaletteBrushTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TorchBrushTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### e5a9484e21456288e82e4425453cc00c87b4ce7b
 
