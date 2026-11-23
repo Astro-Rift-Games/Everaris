@@ -32,7 +32,8 @@ public sealed class TorchBrushTests
 
         Assert.That(brush.size, Is.EqualTo(Vector3Int.one));
         Assert.That(brush.cellCount, Is.EqualTo(1));
-        Assert.That(brush.cells[0].gameObject, Is.SameAs(torchPrefab));
+        // Unity equality (same native object): a prefab reimport can leave the brush holding an older managed wrapper.
+        Assert.That(brush.cells[0].gameObject, Is.EqualTo(torchPrefab));
         Assert.That(brush.m_Anchor, Is.EqualTo(new Vector3(0.5f, 0.5f, 0f)));
         Assert.That((brush.cells[0].offset - ExpectedOffset).magnitude, Is.LessThan(PositionTolerance));
         Assert.That(brush.cells[0].scale, Is.EqualTo(Vector3.one));
