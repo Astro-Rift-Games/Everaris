@@ -113,6 +113,21 @@ Pendiente:
 
 Las luces copian la configuración de `DungeonLightProp` (blend style, capas objetivo y sombras) y son visibles para todos los peers, igual que las partículas. La niebla de visión es un overlay sin iluminación (véase `VisibilityArchitecture.md`), así que estas luces no revelan zonas fuera de visión. Límite conocido: el tinte por tipo de daño se aplica a las partículas, no al color de la luz, que es el autorado en el prefab.
 
+### Armas a distancia físicas
+
+`LongBow`, `CompoundBow` y `LightCrossbow` usan los mismos campos opcionales que las armas mágicas, con prefabs solo visuales en `Assets/Prefabs/VFX/Ranged/` y sin `Light2D`: un proyectil físico no ilumina.
+
+- Perfil de proyectil: `ArrowTrail` (arcos) o `BoltTrail` (ballesta), `ArrowImpact` (astillas hacia el tirador) y `ArrowFizzle`.
+- `WeaponDefinition.Presentation`: `BowReleaseBurst` o `CrossbowReleaseBurst` como ráfaga de release y un `HitReaction` (`Light` en arcos, `Medium` en ballesta). La ballesta además sobrescribe `DealShake`; los arcos usan el valor compartido de `CameraShakeConfig`.
+- `HitstopSeconds` queda en cero: el hitstop pausa la línea de tiempo de un golpe melee y `TryScheduleHitstop` ignora impactos que no sean melee.
+- `LightCrossbowProjectileVisual` no asigna sprite ni controller, así que el virote conserva el arte de vuelo por defecto del prefab y solo suma estela, impacto, fizzle y clavado.
+
+#### Clavado según la solidez del cuerpo
+
+Un cuerpo puede exponer `IStuckProjectileSurface` (solo presentación). Mientras `HoldsStuckProjectiles` sea falso, `ProjectileVisualProfilePresenter.PresentStick` no deja copia clavada en ese cuerpo y `StuckProjectileVisual` expira las que ya llevaba. `SpecterVisualPresenter` lo implementa con `SpecterRules.HoldsStuckProjectiles`, verdadero solo en los estados manifestados, leyendo el estado replicado en cada peer. La simulación no cambia: el proyectil sigue terminando contra el collider del espectro incorpóreo y las reglas de daño siguen en `SpecterRules`.
+
+Comprobaciones manuales pendientes: lectura de estela, impacto y ráfaga en juego para las tres armas, clavado del virote con el arte animado por defecto, y espectro en Host y Client (flecha que no se clava en estado incorpóreo y que desaparece al desmaterializarse).
+
 Véase también [PlayerCombatArchitecture — Weapon impact particles](PlayerCombatArchitecture.md#weapon-impact-particles).
 
 ## Helper Core

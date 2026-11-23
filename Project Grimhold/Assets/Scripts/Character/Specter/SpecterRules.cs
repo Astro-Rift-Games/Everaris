@@ -59,6 +59,12 @@ namespace ProjectGrimhold.Gameplay.Enemies.Specter
             state == SpecterStateType.Desvanecido;
 
         /// <summary>
+        /// Determina si un proyectil puede quedar clavado en el cuerpo (sólo presentación).
+        /// Sólo un cuerpo manifestado es sólido: al dejar de estarlo suelta los proyectiles clavados.
+        /// </summary>
+        public static bool HoldsStuckProjectiles(SpecterStateType state) => IsManifested(state);
+
+        /// <summary>
         /// Determina si el espectro es elegible para recibir daño físico.
         /// Sólo es vulnerable durante la canalización, detonación y los 1.5s de recuperación (§3).
         /// </summary>

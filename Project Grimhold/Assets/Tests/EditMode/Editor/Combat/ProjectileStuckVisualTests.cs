@@ -271,6 +271,35 @@ namespace Tests.EditMode.Combat
         }
 
         [Test]
+        public void BodyThatHoldsNoStuckProjectiles_TakesNoStuckVisual()
+        {
+            GameObject body = Own(new GameObject("StuckTestBody"));
+            var surface = new GameObject("Presentation").AddComponent<StuckSurfaceStub>();
+            surface.transform.SetParent(body.transform, false);
+            surface.Holds = false;
+            _presenter.BeginFlight(Tag, DamageType.Physical);
+
+            Assert.That(_presenter.PresentStick(Vector2.zero, body.transform, default), Is.Null);
+            surface.Holds = true;
+            Assert.That(_presenter.PresentStick(Vector2.zero, body.transform, default), Is.Not.Null);
+        }
+
+        [Test]
+        public void BodyStuckVisual_ExpiresWhenTheBodyStopsHoldingStuckProjectiles()
+        {
+            GameObject body = Own(new GameObject("StuckTestBody"));
+            var surface = body.AddComponent<StuckSurfaceStub>();
+            surface.Holds = true;
+            _presenter.BeginFlight(Tag, DamageType.Physical);
+            StuckProjectileVisual stuck = _presenter.PresentStick(Vector2.zero, body.transform, default);
+
+            Assert.That(stuck.Tick(0.1f), Is.False);
+            surface.Holds = false;
+            Assert.That(stuck.Tick(0.1f), Is.True);
+            Assert.That(stuck.IsExpired, Is.True);
+        }
+
+        [Test]
         public void BodyStuckVisual_MirrorsBodyVisibility()
         {
             GameObject body = Own(new GameObject("StuckTestBody"));
@@ -523,6 +552,12 @@ namespace Tests.EditMode.Combat
         private StuckProjectileVisual CreateAnchored(Collider2D anchor, Transform target) =>
             StuckProjectileVisual.Create(_renderer, new Vector3(2f, 3f, 0f), Vector2.up, 0.5f, target, 4.5f, 0.5f,
                 _renderer.sortingLayerID, anchor);
+
+        private sealed class StuckSurfaceStub : MonoBehaviour, IStuckProjectileSurface
+        {
+            public bool Holds;
+            public bool HoldsStuckProjectiles => Holds;
+        }
 
         private T Own<T>(T item) where T : Object { _owned.Add(item); return item; }
         private static void Set(Object target, string field, object value)

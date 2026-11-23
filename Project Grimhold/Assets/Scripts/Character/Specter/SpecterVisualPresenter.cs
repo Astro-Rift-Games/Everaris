@@ -11,7 +11,7 @@ namespace ProjectGrimhold.Gameplay.Enemies.Specter
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(SpecterAIController))]
-    public sealed class SpecterVisualPresenter : NetworkBehaviour
+    public sealed class SpecterVisualPresenter : NetworkBehaviour, IStuckProjectileSurface
     {
         [Header("Visual Config")]
         [SerializeField] private SpriteRenderer _spriteRenderer;
@@ -30,6 +30,11 @@ namespace ProjectGrimhold.Gameplay.Enemies.Specter
         [SerializeField] private SpecterAIController _controller;
 
         private Color _originalColor = Color.white;
+
+        /// <summary>Arrows only stay embedded in the manifested body; read from replicated state on every peer.</summary>
+        public bool HoldsStuckProjectiles =>
+            _controller != null && Object != null && Object.IsValid &&
+            SpecterRules.HoldsStuckProjectiles(_controller.CurrentState);
 
         private void Awake()
         {

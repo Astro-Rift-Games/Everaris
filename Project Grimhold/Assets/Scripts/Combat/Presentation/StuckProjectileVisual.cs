@@ -5,7 +5,8 @@ using UnityEngine;
 /// Local, presentation-only copy of a projectile sprite left embedded at its impact point.
 /// It never touches simulation: it follows an optional body, mirrors that body's vision opacity,
 /// holds, fades out and destroys itself. A destroyed body ends it immediately, and so does an anchor
-/// collider that was disabled, deactivated or destroyed (for example a broken breakable object).
+/// collider that was disabled, deactivated or destroyed (for example a broken breakable object), or a
+/// body whose <see cref="IStuckProjectileSurface"/> stops holding stuck projectiles.
 /// The copy shows only the trailing part of the sprite, cut at the surface, so it reads as embedded.
 /// </summary>
 [DisallowMultipleComponent]
@@ -20,6 +21,7 @@ public sealed class StuckProjectileVisual : MonoBehaviour
     private bool _hasTarget;
     private Vector3 _targetOffset;
     private EntityVisibilityPresenter _targetVisibility;
+    private IStuckProjectileSurface _targetSurface;
     private Collider2D _anchor;
     private bool _hasAnchor;
     private Vector3 _anchorOffset;
@@ -123,6 +125,13 @@ public sealed class StuckProjectileVisual : MonoBehaviour
         return cropped;
     }
 
+    /// <summary>False only when <paramref name="body"/> exposes a surface that currently refuses stuck projectiles.</summary>
+    public static bool BodyHoldsStuckProjectiles(Transform body)
+    {
+        IStuckProjectileSurface surface = body.GetComponentInChildren<IStuckProjectileSurface>();
+        return surface == null || surface.HoldsStuckProjectiles;
+    }
+
     /// <summary>Destroys the cropped sprite this visual created; the source sprite is never touched.</summary>
     public void ReleaseOwnedSprite()
     {
@@ -148,6 +157,8 @@ public sealed class StuckProjectileVisual : MonoBehaviour
         if (_hasTarget && _target == null)
             return Expire();
         if (_hasAnchor && (_anchor == null || !_anchor.enabled || !_anchor.gameObject.activeInHierarchy))
+            return Expire();
+        if (_targetSurface != null && !_targetSurface.HoldsStuckProjectiles)
             return Expire();
 
         _elapsed += Mathf.Max(0f, deltaTime);
@@ -180,6 +191,7 @@ public sealed class StuckProjectileVisual : MonoBehaviour
 
         _targetOffset = transform.position - target.position;
         _targetVisibility = target.GetComponentInChildren<EntityVisibilityPresenter>();
+        _targetSurface = target.GetComponentInChildren<IStuckProjectileSurface>();
     }
 
     private bool Expire()

@@ -159,6 +159,8 @@ public sealed class ProjectileVisualProfilePresenter : MonoBehaviour
         int anchorLayerMask = Physics2D.AllLayers)
     {
         if (!HasStickOverride || _spriteRenderer == null || _spriteRenderer.sprite == null) return null;
+        // A body that is not solid right now (for example an incorporeal specter) takes no stuck copy.
+        if (target != null && !StuckProjectileVisual.BodyHoldsStuckProjectiles(target)) return null;
         Vector2 impact = target != null ? (Vector2)target.position + targetOffset : position;
         Vector2 flight = transform.right;
         // The cut edge lands on the surface, so only the renderer offset across the flight keeps its meaning.

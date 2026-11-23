@@ -23,6 +23,20 @@ namespace Tests.EditMode.Enemies
             Assert.That(SpecterRules.IsManifested(state), Is.EqualTo(expectedManifested));
         }
 
+        [TestCase(SpecterStateType.Reposo, false)]
+        [TestCase(SpecterStateType.Persecucion, false)]
+        [TestCase(SpecterStateType.Canalizacion, true)]
+        [TestCase(SpecterStateType.Detonacion, true)]
+        [TestCase(SpecterStateType.Recuperacion, true)]
+        [TestCase(SpecterStateType.Desvanecimiento, false)]
+        [TestCase(SpecterStateType.Desvanecido, false)]
+        [TestCase(SpecterStateType.Reaparicion, false)]
+        [TestCase(SpecterStateType.Muerte, false)]
+        public void StuckProjectiles_AreHeldOnlyWhileManifested(SpecterStateType state, bool expected)
+        {
+            Assert.That(SpecterRules.HoldsStuckProjectiles(state), Is.EqualTo(expected));
+        }
+
         [Test]
         public void PhysicalDamage_IsStrictlyZeroInIncorporealStates_AndAppliesInManifestedStates()
         {
