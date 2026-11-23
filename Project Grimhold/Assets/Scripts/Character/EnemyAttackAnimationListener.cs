@@ -1,24 +1,11 @@
 using UnityEngine;
 
 /// <summary>
-/// Presentation-layer bridge between the Animator Controller and the enemy combat simulation.
+/// Presentation-layer receiver retained for legacy <c>OnAttackHit</c> Animation Events on enemy
+/// attack clips so Unity does not log MissingReceiver warnings.
 ///
-/// This component must be placed on the same GameObject as the Animator, or reachable from it,
-/// so that Animation Events in the attack AnimationClip can call <see cref="OnAttackHit"/>.
-///
-/// Responsibility:
-/// - Receives the hit-frame Animation Event from the attack AnimationClip.
-/// - Delegates to <see cref="EnemyCombatAIController.ExecutePendingDamage"/> which enforces
-///   State Authority before applying any damage.
-///
-/// This component does not own combat state and does not make authoritative decisions.
-/// It is purely a bridge from the Animator Event system to the simulation layer.
-///
-/// Network authority:
-/// - <see cref="OnAttackHit"/> runs on all peers (host and clients) because Animation Events
-///   fire wherever the Animator runs.
-/// - Damage is applied only on the State Authority peer; the authority guard is inside
-///   <see cref="EnemyCombatAIController.ExecutePendingDamage"/>.
+/// Authoritative attack timing is owned exclusively by <see cref="EnemyCombatAIController"/> via
+/// Fusion <c>TickTimer</c> (TASK-41 / TASK-316); animation events never trigger or gate damage.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class EnemyAttackAnimationListener : MonoBehaviour
@@ -33,17 +20,11 @@ public sealed class EnemyAttackAnimationListener : MonoBehaviour
     }
 
     /// <summary>
-    /// Called by an Animation Event on the attack AnimationClip at the hit frame.
-    /// Delegates damage resolution to the combat controller, which enforces State Authority.
+    /// No-op receiver for legacy AnimationClip events. Simulation timing is authoritative.
     /// </summary>
     public void OnAttackHit()
     {
-        if (_combatController == null)
-        {
-            return;
-        }
-
-        _combatController.ExecutePendingDamage();
+        // Intentionally does not trigger authoritative damage (TASK-41 / TASK-316).
     }
 
     private void CacheDependencies()
