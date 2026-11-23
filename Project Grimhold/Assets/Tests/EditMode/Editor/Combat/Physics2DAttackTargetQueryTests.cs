@@ -94,6 +94,62 @@ namespace Tests.EditMode.Combat
             Assert.AreEqual(0, targets.Count);
         }
 
+        private GameObject CreateWall(Vector2 center, Vector2 size, int layer)
+        {
+            var wall = new GameObject("Wall") { layer = layer };
+            wall.transform.position = center;
+            wall.AddComponent<BoxCollider2D>().size = size;
+            _spawnedObjects.Add(wall);
+            Physics2D.SyncTransforms();
+            return wall;
+        }
+
+        private static AttackTargetQuery OccludedQuery(int targetLayer, int obstacleLayer) => new AttackTargetQuery(
+            new EntityId(1), new Vector2(0.4f, 0f), Vector2.right, 0.6f, 0.6f, 5, 1 << targetLayer,
+            occlusionOrigin: Vector2.zero, obstacleLayerMask: 1 << obstacleLayer);
+
+        [Test]
+        public void FindTargets_WithObstacleMask_ExcludesATargetBehindAWallOrClosedDoor()
+        {
+            int targetLayer = LayerMask.NameToLayer("Default");
+            int obstacleLayer = LayerMask.NameToLayer("WorldCollision");
+            CreateTarget(new EntityId(2), new Vector2(1.2f, 0f), targetLayer);
+            // Thin wall between the attacker's body (0,0) and the target, inside the swing circle.
+            CreateWall(new Vector2(0.7f, 0f), new Vector2(0.1f, 2f), obstacleLayer);
+
+            var targets = _query.FindTargets(OccludedQuery(targetLayer, obstacleLayer));
+
+            Assert.That(targets, Is.Empty);
+        }
+
+        [Test]
+        public void FindTargets_WithObstacleMask_KeepsATargetWithAClearLine()
+        {
+            int targetLayer = LayerMask.NameToLayer("Default");
+            int obstacleLayer = LayerMask.NameToLayer("WorldCollision");
+            CreateTarget(new EntityId(2), new Vector2(1.2f, 0f), targetLayer);
+            CreateWall(new Vector2(0.7f, 3f), new Vector2(0.1f, 2f), obstacleLayer); // off the line
+
+            var targets = _query.FindTargets(OccludedQuery(targetLayer, obstacleLayer));
+
+            Assert.That(targets, Has.Count.EqualTo(1));
+            Assert.That(targets[0].TargetId, Is.EqualTo(new EntityId(2)));
+        }
+
+        [Test]
+        public void FindTargets_WithoutObstacleMask_KeepsThePreviousOverlapOnlyBehaviour()
+        {
+            int targetLayer = LayerMask.NameToLayer("Default");
+            int obstacleLayer = LayerMask.NameToLayer("WorldCollision");
+            CreateTarget(new EntityId(2), new Vector2(1.2f, 0f), targetLayer);
+            CreateWall(new Vector2(0.7f, 0f), new Vector2(0.1f, 2f), obstacleLayer);
+
+            var targets = _query.FindTargets(new AttackTargetQuery(
+                new EntityId(1), new Vector2(0.4f, 0f), Vector2.right, 0.6f, 0.6f, 5, 1 << targetLayer));
+
+            Assert.That(targets, Has.Count.EqualTo(1), "Ability areas keep their unchanged query.");
+        }
+
         [Test]
         public void FindTargets_ExcludesColliderWithoutEntity()
         {

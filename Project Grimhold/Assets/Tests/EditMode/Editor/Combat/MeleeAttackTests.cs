@@ -66,6 +66,21 @@ namespace Tests.EditMode.Combat
         }
 
         [Test]
+        public void Execute_OccludesTargetsByWorldCollisionFromTheAttackersBody()
+        {
+            Initialize(CreateConfig());
+            _holder.transform.position = new Vector3(3f, -2f, 0f);
+
+            // The swing origin (hand) may sit inside a wall or a closed door; the body never can.
+            var request = new AttackRequest(new EntityId(1), new Vector2(3.8f, -2f), Vector2.right, 10);
+            _meleeAttack.Execute(request);
+
+            Assert.That(_fakeQuery.LastQuery.ObstacleLayerMask, Is.EqualTo(LayerMask.GetMask("WorldCollision")));
+            Assert.That(_fakeQuery.LastQuery.OcclusionOrigin, Is.EqualTo(new Vector2(3f, -2f)));
+            Assert.That(_fakeQuery.LastQuery.Origin, Is.EqualTo(new Vector2(3.8f, -2f)), "Reach still starts at the swing origin.");
+        }
+
+        [Test]
         public void Execute_WithoutTargets_ReturnsExecuted()
         {
             var config = CreateConfig();

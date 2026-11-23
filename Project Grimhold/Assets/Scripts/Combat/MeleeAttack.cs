@@ -10,6 +10,9 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class MeleeAttack : MonoBehaviour, IAttack
 {
+    // Walls, closed doors, railings and pillars (the layer NetworkDoor's blocker and the map tilemaps use).
+    private const int WorldCollisionMask = 1 << 6;
+
     [Header("Configuration")]
     [SerializeField]
     private MeleeAttackConfig _config;
@@ -243,7 +246,8 @@ public sealed class MeleeAttack : MonoBehaviour, IAttack
 
         float damage = parameters.Damage * damageMultiplier;
 
-        // 1. Build the target query (with normalized direction)
+        // 1. Build the target query (with normalized direction). Reach starts at the swing origin, but line of
+        // sight starts at the attacker's body: the hand can poke into a wall or closed door, the body cannot.
         AttackTargetQuery targetQuery = new AttackTargetQuery(
             request.AttackerId,
             request.Origin,
@@ -251,7 +255,9 @@ public sealed class MeleeAttack : MonoBehaviour, IAttack
             parameters.Range - _config.Radius,
             _config.Radius,
             _config.MaximumTargets,
-            _config.TargetLayerMask.value
+            _config.TargetLayerMask.value,
+            transform.position,
+            WorldCollisionMask
         );
 
         // 2. Perform spatial query

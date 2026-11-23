@@ -125,6 +125,13 @@ public sealed class Physics2DAttackTargetQuery : NetworkBehaviour, IAttackTarget
             // Hit point: closest point to the attack origin on the collider
             Vector2 hitPoint = col.ClosestPoint(query.Origin);
 
+            // A wall or closed door between the attacker's body and the hit point hides the target.
+            if (query.ObstacleLayerMask != 0 &&
+                Physics2D.Linecast(query.OcclusionOrigin, hitPoint, query.ObstacleLayerMask).collider != null)
+            {
+                continue;
+            }
+
             float sqrDistance = (hitPoint - query.Origin).sqrMagnitude;
 
             // Deduplicate before sorting: retain the closest hit per EntityId
