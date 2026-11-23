@@ -4,32 +4,556 @@
 
 Release: Unreleased
 
-367 original commits; 367 canonical entries.
+376 original commits; 376 canonical entries.
 
 ## Canonical classification
 
-129 features; 115 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 24 tests; 11 maintenance; 21 other changes
+132 features; 119 bug fixes; 4 refactoring; 1 architecture & infrastructure; 63 documentation; 25 tests; 11 maintenance; 21 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 17 | 13 | 1 | 0 | 10 | 1 |
-| Art & Animation | 30 | 13 | 3 | 0 | 9 | 8 |
+| Art & Animation | 31 | 14 | 3 | 0 | 9 | 8 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 93 | 78 | 4 | 1 | 26 | 6 |
-| Combat | 54 | 25 | 2 | 0 | 16 | 2 |
-| Documentation | 41 | 45 | 0 | 0 | 20 | 1 |
-| Extraction | 19 | 22 | 2 | 0 | 10 | 5 |
+| Build & Tooling | 93 | 78 | 4 | 1 | 27 | 6 |
+| Combat | 55 | 26 | 2 | 0 | 18 | 2 |
+| Documentation | 41 | 45 | 0 | 0 | 21 | 1 |
+| Extraction | 20 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
 | Inventory & Loot | 86 | 64 | 4 | 1 | 29 | 5 |
-| Movement | 8 | 7 | 0 | 0 | 2 | 0 |
-| Networking & Sessions | 44 | 44 | 0 | 0 | 19 | 2 |
+| Movement | 9 | 7 | 0 | 0 | 3 | 0 |
+| Networking & Sessions | 44 | 45 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 50 | 57 | 2 | 1 | 22 | 3 |
-| Tests | 124 | 109 | 4 | 1 | 35 | 4 |
+| Tests | 124 | 109 | 4 | 1 | 36 | 4 |
 | UI | 45 | 23 | 2 | 0 | 14 | 4 |
-| Unassigned | 0 | 1 | 0 | 0 | 28 | 1 |
-| World & Visibility | 37 | 19 | 1 | 0 | 4 | 12 |
+| Unassigned | 0 | 3 | 0 | 0 | 28 | 1 |
+| World & Visibility | 37 | 20 | 1 | 0 | 4 | 12 |
 
 ## Original commit records
+
+### 5e240912ef356a9a68ea7b7be42a4a22bfe74d9c
+
+[5e240912ef356a9a68ea7b7be42a4a22bfe74d9c](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/5e240912ef356a9a68ea7b7be42a4a22bfe74d9c)
+
+Date: 2026-11-23T20:37:31-03:00 · Classification: Documentation (explicit) · Systems: Combat, Documentation
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(architecture): update pathfinding, combat contracts, and US-87 tracker
+```
+
+#### Original body
+
+```text
+Update PathfindingArchitecture.md and EnemyCombatArchitecture.md to
+reflect tile-aligned OverlapCircle(0.42) clearance, shared AStarPathSolver,
+TopologyVersion door invalidation, ReturnHome FSM state, and
+TickTimer-authoritative enemy attack anticipation. Record US-87
+verification evidence in odd/tasks/us-87-enemy-navigation-behavior.md.
+
+Refs: US-87, TASK-312, TASK-316, TASK-320
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/EnemyCombatArchitecture.md
+Project Grimhold/Docs/Architecture/PathfindingArchitecture.md
+odd/tasks/us-87-enemy-navigation-behavior.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Combat: Project Grimhold/Docs/Architecture/EnemyCombatArchitecture.md
+- message-term → Combat: combat
+- path → Documentation: Project Grimhold/Docs/Architecture/EnemyCombatArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/PathfindingArchitecture.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### bd5e21b904f2f59b10300887bf0077b2093f9293
+
+[bd5e21b904f2f59b10300887bf0077b2093f9293](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bd5e21b904f2f59b10300887bf0077b2093f9293)
+
+Date: 2026-11-23T20:37:31-03:00 · Classification: Tests (explicit) · Systems: Combat, Movement, Build & Tooling, Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+test(ai): add EditMode and PlayMode suites for US-87 enemy behavior
+```
+
+#### Original body
+
+```text
+Add TDD test coverage across TASK-311 through TASK-320:
+- EnemyVisionAndLosTests (wall LOS, grace, attack block, prefab masks)
+- PathfindingGridAndSolverTests (1-tile corridors, heap optimality, smoothing, shared solver)
+- EnemyPathfindingNavigatorRobustnessTests (partial fallback, cadence, arrival, stuck, doors, stagger)
+- EnemyLeashAndSpecterPrefabTests and SpecterLeashPlayModeTests (Fusion runner leash fade return)
+- EnemyAuthoritativeAttackTests (TickTimer anticipation, cancellation, hysteresis)
+- EnemyLocomotionAndFacingTests (acceleration, braking, turn clamp, 6-sector hysteresis)
+- EnemyCrowdAndRangedTests (surround slots, corridor flow, Ranged retreat and LOS vantage)
+
+Refs: US-87, TASK-311, TASK-312, TASK-313, TASK-314, TASK-315, TASK-316, TASK-317, TASK-318, TASK-319, TASK-320
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/EnemyAuthoritativeAttackTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/EnemyAuthoritativeAttackTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Movement/EnemyPathfindingNavigatorRobustnessTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Movement/EnemyPathfindingNavigatorRobustnessTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Movement/PathfindingGridAndSolverTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Movement/PathfindingGridAndSolverTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyCrowdAndRangedTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyCrowdAndRangedTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLeashAndSpecterPrefabTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLeashAndSpecterPrefabTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLocomotionAndFacingTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLocomotionAndFacingTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyVisionAndLosTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyVisionAndLosTests.cs.meta
+Project Grimhold/Assets/Tests/PlayMode/SpecterLeashPlayModeTests.cs
+Project Grimhold/Assets/Tests/PlayMode/SpecterLeashPlayModeTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Tests: test
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/EnemyAuthoritativeAttackTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/EnemyAuthoritativeAttackTests.cs.meta
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Movement/EnemyPathfindingNavigatorRobustnessTests.cs
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Movement/EnemyPathfindingNavigatorRobustnessTests.cs.meta
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Movement/PathfindingGridAndSolverTests.cs
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Movement/PathfindingGridAndSolverTests.cs.meta
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyCrowdAndRangedTests.cs
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyCrowdAndRangedTests.cs.meta
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLeashAndSpecterPrefabTests.cs
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLeashAndSpecterPrefabTests.cs.meta
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLocomotionAndFacingTests.cs
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLocomotionAndFacingTests.cs.meta
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyVisionAndLosTests.cs
+- path → Movement: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyVisionAndLosTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/EnemyAuthoritativeAttackTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/EnemyAuthoritativeAttackTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Movement/EnemyPathfindingNavigatorRobustnessTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Movement/EnemyPathfindingNavigatorRobustnessTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Movement/PathfindingGridAndSolverTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Movement/PathfindingGridAndSolverTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyCrowdAndRangedTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyCrowdAndRangedTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLeashAndSpecterPrefabTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLeashAndSpecterPrefabTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLocomotionAndFacingTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLocomotionAndFacingTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyVisionAndLosTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyVisionAndLosTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/EnemyAuthoritativeAttackTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/EnemyAuthoritativeAttackTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Movement/EnemyPathfindingNavigatorRobustnessTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Movement/EnemyPathfindingNavigatorRobustnessTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Movement/PathfindingGridAndSolverTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Movement/PathfindingGridAndSolverTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyCrowdAndRangedTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyCrowdAndRangedTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLeashAndSpecterPrefabTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLeashAndSpecterPrefabTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLocomotionAndFacingTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyLocomotionAndFacingTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyVisionAndLosTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Player/Movement/EnemyVisionAndLosTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/SpecterLeashPlayModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/SpecterLeashPlayModeTests.cs.meta
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### d63bf090b4bc20d7d333ec463f2b405b035fc322
+
+[d63bf090b4bc20d7d333ec463f2b405b035fc322](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/d63bf090b4bc20d7d333ec463f2b405b035fc322)
+
+Date: 2026-11-23T20:37:31-03:00 · Classification: Bug Fixes (explicit) · Systems: Unassigned
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(prefabs): configure wall LOS, smoothing, leash, and ranged AI
+```
+
+#### Original body
+
+```text
+Set _obstacleLayer to WorldCollision | Obstacles (2112) and enable
+_enablePathSmoothing on NetworkEnemy.prefab (inherited by all Slimes
+and Ranged), and configure Ranged overrides on NetworkEnemyRanged.prefab
+(leash 14, anticipation 0.4s, exit hysteresis 0.75, turn speed 480 deg/s,
+preferred distance band 3-5u, retreat 2.5u, LOS vantage search 6u).
+
+Refs: US-87, TASK-311, TASK-314, TASK-316, TASK-317, TASK-318, TASK-319
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/Enemies/NetworkEnemy.prefab
+Project Grimhold/Assets/Prefabs/Enemies/NetworkEnemyRanged.prefab
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### 580885aa92bd7cc09460a1f924ed13eaa36bf355
+
+[580885aa92bd7cc09460a1f924ed13eaa36bf355](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/580885aa92bd7cc09460a1f924ed13eaa36bf355)
+
+Date: 2026-11-23T20:37:30-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Art & Animation
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(combat): make enemy attack timing authoritative with anticipation
+```
+
+#### Original body
+
+```text
+Drive enemy melee and ranged attack wind-up strictly from Fusion
+TickTimer on State Authority (EnemyAttackAnticipationRules +
+EnemyCombatAIController), replicating IsPreparingAttack,
+PreparedAttackDirection, and PreparationSequence to Host, Clients, and
+Proxies.
+
+Decouple damage resolution from Animator events so culled or disabled
+presenters never stall enemy attacks, convert EnemyAttackAnimationListener
+into a safe no-op for legacy clip events, and render readable melee tint
+and ranged directional aim telegraphs in EnemyCombatPresenter.
+
+Refs: US-87, TASK-316, TASK-41
+Player-Fixed: Enemies can no longer stop attacking permanently when their animations are interrupted or off-screen.
+Player-Improved: Enemy melee and ranged attacks now show clear anticipation cues before striking or firing.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Character/CombatPresenterBase.cs
+Project Grimhold/Assets/Scripts/Character/EnemyAnimatorView.cs
+Project Grimhold/Assets/Scripts/Character/EnemyAttackAnimationListener.cs
+Project Grimhold/Assets/Scripts/Character/EnemyCombatPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Combat/EnemyAttackAnticipationRules.cs
+Project Grimhold/Assets/Scripts/Player/Combat/EnemyAttackAnticipationRules.cs.meta
+Project Grimhold/Assets/Scripts/Player/Combat/EnemyCombatAIController.cs
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Combat: Project Grimhold/Assets/Scripts/Character/CombatPresenterBase.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Character/EnemyAttackAnimationListener.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Character/EnemyCombatPresenter.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Combat/EnemyAttackAnticipationRules.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Combat/EnemyAttackAnticipationRules.cs.meta
+- path → Combat: Project Grimhold/Assets/Scripts/Player/Combat/EnemyCombatAIController.cs
+- scope → Combat: combat
+- message-term → Combat: combat
+- path → Art &amp; Animation: Project Grimhold/Assets/Scripts/Character/EnemyAnimatorView.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Scripts/Character/EnemyAttackAnimationListener.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 1e186effafebc34a785c34194dbd026a8f62e8d1
+
+[1e186effafebc34a785c34194dbd026a8f62e8d1](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/1e186effafebc34a785c34194dbd026a8f62e8d1)
+
+Date: 2026-11-23T20:37:30-03:00 · Classification: Bug Fixes (explicit) · Systems: Networking & Sessions, World & Visibility
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(specter): navigate around walls and return to Home Area via fade
+```
+
+#### Original body
+
+```text
+Keep EnemyPathfindingNavigator enabled on NetworkEnemySpecter and route
+SpecterAIController pursuit through the shared PathfindingGrid instead
+of pushing straight into walls.
+
+When exceeding Leash or losing all eligible players away from home,
+return to HomeAreaPosition via Desvanecimiento -> Desvanecido ->
+Reaparicion -> Reposo without consuming ReactiveDisplacementTimer, and
+preserve HomeAreaPosition on Host Migration restore.
+
+Refs: US-87, TASK-315
+Player-Fixed: The Catacombs Specter now navigates around walls during pursuit and reliably fades back to its home area instead of freezing after its first leash.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/Enemies/NetworkEnemySpecter.prefab
+Project Grimhold/Assets/Scripts/Character/EnemyCharacter.cs
+Project Grimhold/Assets/Scripts/Character/Specter/SpecterAIController.cs
+Project Grimhold/Assets/Scripts/Character/Specter/SpecterRules.cs
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Networking &amp; Sessions: Host Migration
+- message-term → World &amp; Visibility: Catacombs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 56a7440417e3d44ae6243f5890c366339cec07e4
+
+[56a7440417e3d44ae6243f5890c366339cec07e4](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/56a7440417e3d44ae6243f5890c366339cec07e4)
+
+Date: 2026-11-23T20:36:59-03:00 · Classification: Features (explicit) · Systems: Combat, Extraction
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(ai): add ReturnHome state to EnemyFSM for leash return
+```
+
+#### Original body
+
+```text
+Register EnemyStateType.ReturnHome and EnemyReturnHomeState in EnemyFSM
+and wire transitions from Chase, Attack, Idle, and Patrol so Slimes and
+Ranged enemies cleanly navigate back to their Home Area when leashed or
+after losing their target.
+
+Refs: US-87, TASK-314
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Character/EnemyFSM.cs
+Project Grimhold/Assets/Scripts/Character/EnemyStateType.cs
+Project Grimhold/Assets/Scripts/Character/States/EnemyAttackState.cs
+Project Grimhold/Assets/Scripts/Character/States/EnemyChaseState.cs
+Project Grimhold/Assets/Scripts/Character/States/EnemyIdleState.cs
+Project Grimhold/Assets/Scripts/Character/States/EnemyPatrolState.cs
+Project Grimhold/Assets/Scripts/Character/States/EnemyReturnHomeState.cs
+Project Grimhold/Assets/Scripts/Character/States/EnemyReturnHomeState.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Scripts/Character/States/EnemyAttackState.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Character/States/EnemyReturnHomeState.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Character/States/EnemyReturnHomeState.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 7e2a385bad0d7b8b30f1ec83c90266d8649d992a
+
+[7e2a385bad0d7b8b30f1ec83c90266d8649d992a](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7e2a385bad0d7b8b30f1ec83c90266d8649d992a)
+
+Date: 2026-11-23T20:36:59-03:00 · Classification: Features (explicit) · Systems: Movement
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(ai): overhaul enemy navigation, LOS, leash, crowd, and ranged AI
+```
+
+#### Original body
+
+```text
+Upgrade PathfindingGrid to tile-aligned OverlapCircle(0.42) clearance,
+own a single shared AStarPathSolver (O(1) memory across N enemies),
+track dynamic TopologyVersion changes on RefreshRegion for doors, and
+own a scene-scoped EnemyCrowdCoordinator.
+
+Harden EnemyPathfindingNavigator with partial-path fallback, cadence
+enforcement on unreachable targets, rate-limited warnings, real arrival
+detection, tick-based stuck recovery, and deterministic initial stagger.
+
+Integrate modular SOLID rules into EnemyMovementAIController with
+Inspector-configurable parameters: wall-blocked LOS before detection
+and attack, Home Area Leash over aggro with anti-oscillation lockout,
+attack-range hysteresis, smooth acceleration/braking/turn rate, local
+crowd separation with single-file narrow-corridor flow and surround
+slots, and Ranged preferred-distance retreat plus LOS repositioning.
+
+Refs: US-87, TASK-311, TASK-312, TASK-313, TASK-314, TASK-317, TASK-318, TASK-319, TASK-320
+Player-Fixed: Enemies no longer see or attack through solid walls, get blocked in 1-tile corridors, or ignore closed doors.
+Player-Improved: Enemies now accelerate, turn, spread around players, return to their home area when pulled too far, and reposition when ranged shots are blocked by cover.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Pathfinding/EnemyPathfindingNavigator.cs
+Project Grimhold/Assets/Scripts/Pathfinding/PathfindingGrid.cs
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyCrowdCoordinator.cs
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyCrowdCoordinator.cs.meta
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyCrowdRules.cs
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyCrowdRules.cs.meta
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyLeashRules.cs
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyLeashRules.cs.meta
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyLocomotionRules.cs
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyLocomotionRules.cs.meta
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyMovementAIController.cs
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyRangeHysteresisRules.cs
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyRangeHysteresisRules.cs.meta
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyRangedPositioningRules.cs
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyRangedPositioningRules.cs.meta
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyVisionRules.cs
+Project Grimhold/Assets/Scripts/Player/Movement/EnemyVisionRules.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyCrowdCoordinator.cs
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyCrowdCoordinator.cs.meta
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyCrowdRules.cs
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyCrowdRules.cs.meta
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyLeashRules.cs
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyLeashRules.cs.meta
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyLocomotionRules.cs
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyLocomotionRules.cs.meta
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyMovementAIController.cs
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyRangeHysteresisRules.cs
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyRangeHysteresisRules.cs.meta
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyRangedPositioningRules.cs
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyRangedPositioningRules.cs.meta
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyVisionRules.cs
+- path → Movement: Project Grimhold/Assets/Scripts/Player/Movement/EnemyVisionRules.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 662fc60c97152c2484c7fd4aaa397aad1757e07d
+
+[662fc60c97152c2484c7fd4aaa397aad1757e07d](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/662fc60c97152c2484c7fd4aaa397aad1757e07d)
+
+Date: 2026-11-23T20:36:58-03:00 · Classification: Features (explicit) · Systems: Art & Animation
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(animation): add sector hysteresis to prevent sprite flicker
+```
+
+#### Original body
+
+```text
+Add ResolveWithHysteresis to CharacterVisualDirectionResolver with an
+Inspector-configurable angular margin (default 8 degrees) used by
+CharacterAnimatorView while preserving the exact Resolve contract.
+
+Refs: US-87, TASK-317
+Player-Improved: Characters and enemies no longer flicker facing sprites when moving along diagonal angles.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Character/CharacterAnimatorView.cs
+Project Grimhold/Assets/Scripts/Character/CharacterVisualDirectionResolver.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Art &amp; Animation: Project Grimhold/Assets/Scripts/Character/CharacterAnimatorView.cs
+- scope → Art &amp; Animation: animation
+- message-term → Art &amp; Animation: animation
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 08d83eec65613c6d75a107621259d74e14a0271d
+
+[08d83eec65613c6d75a107621259d74e14a0271d](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/08d83eec65613c6d75a107621259d74e14a0271d)
+
+Date: 2026-11-23T20:36:58-03:00 · Classification: Bug Fixes (explicit) · Systems: Unassigned
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(pathfinding): optimize A* solver and align grid config contract
+```
+
+#### Original body
+
+```text
+Replace the open-set heap with an indexed BinaryMinHeap supporting
+O(log n) PushOrDecreaseKey so A* preserves optimal minimum-cost paths,
+add partial-path fallback status, bound CircleCast smoothing to O(n)
+while validating the final segment to endWorld, and emit iteration
+warnings only when open nodes remain unexplored.
+
+Align PathfindingGridConfig.asset with the enemy collider footprint
+(0.40 collider + 0.02 safety margin = 0.42 clearance) and the 8000
+iteration contract.
+
+Refs: US-87, TASK-312, TASK-320
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scriptable Objects/PathfindingGridConfig.asset
+Project Grimhold/Assets/Scripts/Pathfinding/AStarPathSolver.cs
+Project Grimhold/Assets/Scripts/Pathfinding/BinaryMinHeap.cs
+Project Grimhold/Assets/Scripts/Pathfinding/PathfindingGridConfig.cs
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
 
 ### 7dc0a28f1b3a4e1e5e40e0ab8c6f8d5da84135c8
 

@@ -77,6 +77,9 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - You now need to stand next to a Town character to interact with it.
 - The interaction prompt now looks the same in Town and in the dungeon and fits the length of its text.
 - Chests, crates and jars are solid, so you can no longer walk through them.
+- Characters and enemies no longer flicker facing sprites when moving along diagonal angles.
+- Enemies now accelerate, turn, spread around players, return to their home area when pulled too far, and reposition when ranged shots are blocked by cover.
+- Enemy melee and ranged attacks now show clear anticipation cues before striking or firing.
 
 ### Fixed
 
@@ -152,6 +155,9 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - You can no longer walk through stair railings and arch pillars in the Catacombs.
 - Melee attacks no longer hit enemies or players through walls and closed doors.
 - Characters now pass behind Catacombs arches and doors instead of over them, and three doors that opened into a wall lead through again.
+- Enemies no longer see or attack through solid walls, get blocked in 1-tile corridors, or ignore closed doors.
+- The Catacombs Specter now navigates around walls during pursuit and reliably fades back to its home area instead of freezing after its first leash.
+- Enemies can no longer stop attacking permanently when their animations are interrupted or off-screen.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08
