@@ -1,35 +1,35 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1242,
-  "canonicalEntries": 1239,
+  "rawCommits": 1244,
+  "canonicalEntries": 1241,
   "before": {
-    "Bug Fixes": 192,
+    "Tests": 48,
+    "Bug Fixes": 193,
     "Features": 450,
     "Other Changes": 376,
     "Refactoring": 17,
     "Documentation": 136,
-    "Tests": 47,
     "Architecture & Infrastructure": 24
   },
   "after": {
-    "Bug Fixes": 208,
+    "Tests": 53,
+    "Bug Fixes": 209,
     "Features": 589,
     "Other Changes": 183,
     "Refactoring": 30,
     "Documentation": 152,
-    "Tests": 52,
     "Maintenance": 22,
     "Architecture & Infrastructure": 6
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Combat": 414,
+    "World & Visibility": 183,
+    "Build & Tooling": 649,
+    "Tests": 798,
+    "Combat": 415,
+    "Abilities": 146,
     "Inventory & Loot": 505,
-    "World & Visibility": 181,
     "Art & Animation": 273,
-    "Build & Tooling": 647,
-    "Tests": 796,
-    "Abilities": 145,
     "Movement": 106,
     "Networking & Sessions": 365,
     "Unassigned": 48,
@@ -42,23 +42,23 @@
   },
   "canonical": {
     "sections": {
-      "Bug Fixes": 207,
+      "Tests": 53,
+      "Bug Fixes": 208,
       "Features": 588,
       "Other Changes": 182,
       "Refactoring": 30,
       "Documentation": 152,
-      "Tests": 52,
       "Maintenance": 22,
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Combat": 412,
+      "World & Visibility": 181,
+      "Build & Tooling": 647,
+      "Tests": 796,
+      "Combat": 413,
+      "Abilities": 144,
       "Inventory & Loot": 505,
-      "World & Visibility": 179,
       "Art & Animation": 270,
-      "Build & Tooling": 645,
-      "Tests": 794,
-      "Abilities": 143,
       "Movement": 106,
       "Networking & Sessions": 365,
       "Unassigned": 48,
@@ -74694,8 +74694,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 365,
-      "canonicalEntries": 365
+      "originalCommits": 367,
+      "canonicalEntries": 367
     },
     {
       "key": "v0.5.0",
@@ -74739,6 +74739,281 @@
     }
   ],
   "commits": [
+    {
+      "sha": "7dc0a28f1b3a4e1e5e40e0ab8c6f8d5da84135c8",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7dc0a28f1b3a4e1e5e40e0ab8c6f8d5da84135c8",
+      "subject": "test(level): pin the 3-row door blocker and doorway rift exclusion",
+      "body": "Align the Catacombs door and traversal tests with the 3-row blocker and\nadd a check that no collapse floor rift can spawn inside a doorway.\n",
+      "date": "2026-11-23T19:57:18-03:00",
+      "files": [
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs.meta"
+      ],
+      "originalType": "test",
+      "originalScope": "level",
+      "originalSection": "Tests",
+      "breaking": false,
+      "reverts": null,
+      "section": "Tests",
+      "confidence": "explicit",
+      "systems": [
+        "World & Visibility",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "test",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "Catacombs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "e78f3f0b7b2f00e6b043404303228e4a51341b2a",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e78f3f0b7b2f00e6b043404303228e4a51341b2a",
+      "subject": "fix(combat): block abilities, bombs and traps through walls and doors",
+      "body": "Add WorldOcclusion, a shared WorldCollision line check. Area abilities\n(enemies and allies), bomb landing and blast, trap triggers and\nprotective orbs now skip targets behind a wall or closed door. The\ndart trap impact mask now includes WorldCollision.\n",
+      "date": "2026-11-23T19:57:18-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scriptable Objects/DartTrapConfig.asset",
+        "Project Grimhold/Assets/Scripts/Abilities/Effects/ProtectiveOrbsNetworkEffect.cs",
+        "Project Grimhold/Assets/Scripts/Abilities/Runtime/AbilityAreaTargetFinder.cs",
+        "Project Grimhold/Assets/Scripts/Abilities/Traps/NetworkTrap.cs",
+        "Project Grimhold/Assets/Scripts/Combat/MeleeAttack.cs",
+        "Project Grimhold/Assets/Scripts/Combat/WorldOcclusion.cs",
+        "Project Grimhold/Assets/Scripts/Combat/WorldOcclusion.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/Consumables/NetworkExplosiveBomb.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAllyTargetingTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAreaTargetingTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs.meta"
+      ],
+      "originalType": "fix",
+      "originalScope": "combat",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Abilities",
+        "World & Visibility",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/MeleeAttack.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/WorldOcclusion.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/WorldOcclusion.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "scope",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Effects/ProtectiveOrbsNetworkEffect.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Runtime/AbilityAreaTargetFinder.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Traps/NetworkTrap.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAllyTargetingTests.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAreaTargetingTests.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "message-term",
+          "value": "abilities",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/WorldOcclusion.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/WorldOcclusion.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAllyTargetingTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAreaTargetingTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAllyTargetingTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAreaTargetingTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs.meta",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "3f4ffcc05a753937bfed79be483459e79d7371cb",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3f4ffcc05a753937bfed79be483459e79d7371cb",

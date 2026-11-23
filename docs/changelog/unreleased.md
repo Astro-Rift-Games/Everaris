@@ -4,19 +4,19 @@
 
 Release: Unreleased
 
-365 original commits; 365 canonical entries.
+367 original commits; 367 canonical entries.
 
 ## Canonical classification
 
-129 features; 114 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 23 tests; 11 maintenance; 21 other changes
+129 features; 115 bug fixes; 4 refactoring; 1 architecture & infrastructure; 62 documentation; 24 tests; 11 maintenance; 21 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Abilities | 17 | 12 | 1 | 0 | 10 | 1 |
+| Abilities | 17 | 13 | 1 | 0 | 10 | 1 |
 | Art & Animation | 30 | 13 | 3 | 0 | 9 | 8 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 93 | 77 | 4 | 1 | 25 | 6 |
-| Combat | 54 | 24 | 2 | 0 | 16 | 2 |
+| Build & Tooling | 93 | 78 | 4 | 1 | 26 | 6 |
+| Combat | 54 | 25 | 2 | 0 | 16 | 2 |
 | Documentation | 41 | 45 | 0 | 0 | 20 | 1 |
 | Extraction | 19 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
@@ -24,12 +24,137 @@ Release: Unreleased
 | Movement | 8 | 7 | 0 | 0 | 2 | 0 |
 | Networking & Sessions | 44 | 44 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 50 | 57 | 2 | 1 | 22 | 3 |
-| Tests | 124 | 108 | 4 | 1 | 34 | 4 |
+| Tests | 124 | 109 | 4 | 1 | 35 | 4 |
 | UI | 45 | 23 | 2 | 0 | 14 | 4 |
 | Unassigned | 0 | 1 | 0 | 0 | 28 | 1 |
-| World & Visibility | 37 | 18 | 1 | 0 | 3 | 12 |
+| World & Visibility | 37 | 19 | 1 | 0 | 4 | 12 |
 
 ## Original commit records
+
+### 7dc0a28f1b3a4e1e5e40e0ab8c6f8d5da84135c8
+
+[7dc0a28f1b3a4e1e5e40e0ab8c6f8d5da84135c8](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7dc0a28f1b3a4e1e5e40e0ab8c6f8d5da84135c8)
+
+Date: 2026-11-23T19:57:18-03:00 · Classification: Tests (explicit) · Systems: World & Visibility, Build & Tooling, Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+test(level): pin the 3-row door blocker and doorway rift exclusion
+```
+
+#### Original body
+
+```text
+Align the Catacombs door and traversal tests with the 3-row blocker and
+add a check that no collapse floor rift can spawn inside a doorway.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Tests: test
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs.meta
+- message-term → World &amp; Visibility: Catacombs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsAccessTraversalTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/CatacombsDoorwayRiftTests.cs.meta
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### e78f3f0b7b2f00e6b043404303228e4a51341b2a
+
+[e78f3f0b7b2f00e6b043404303228e4a51341b2a](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e78f3f0b7b2f00e6b043404303228e4a51341b2a)
+
+Date: 2026-11-23T19:57:18-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Abilities, World & Visibility, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(combat): block abilities, bombs and traps through walls and doors
+```
+
+#### Original body
+
+```text
+Add WorldOcclusion, a shared WorldCollision line check. Area abilities
+(enemies and allies), bomb landing and blast, trap triggers and
+protective orbs now skip targets behind a wall or closed door. The
+dart trap impact mask now includes WorldCollision.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scriptable Objects/DartTrapConfig.asset
+Project Grimhold/Assets/Scripts/Abilities/Effects/ProtectiveOrbsNetworkEffect.cs
+Project Grimhold/Assets/Scripts/Abilities/Runtime/AbilityAreaTargetFinder.cs
+Project Grimhold/Assets/Scripts/Abilities/Traps/NetworkTrap.cs
+Project Grimhold/Assets/Scripts/Combat/MeleeAttack.cs
+Project Grimhold/Assets/Scripts/Combat/WorldOcclusion.cs
+Project Grimhold/Assets/Scripts/Combat/WorldOcclusion.cs.meta
+Project Grimhold/Assets/Scripts/Gameplay/Consumables/NetworkExplosiveBomb.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAllyTargetingTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAreaTargetingTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/MeleeAttack.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/WorldOcclusion.cs
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/WorldOcclusion.cs.meta
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs
+- path → Combat: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs.meta
+- scope → Combat: combat
+- message-term → Combat: combat
+- path → Abilities: Project Grimhold/Assets/Scripts/Abilities/Effects/ProtectiveOrbsNetworkEffect.cs
+- path → Abilities: Project Grimhold/Assets/Scripts/Abilities/Runtime/AbilityAreaTargetFinder.cs
+- path → Abilities: Project Grimhold/Assets/Scripts/Abilities/Traps/NetworkTrap.cs
+- path → Abilities: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAllyTargetingTests.cs
+- path → Abilities: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAreaTargetingTests.cs
+- message-term → Abilities: abilities
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Combat/WorldOcclusion.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Combat/WorldOcclusion.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAllyTargetingTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAreaTargetingTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAllyTargetingTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Abilities/AbilityAreaTargetingTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Combat/WorldOcclusionTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 3f4ffcc05a753937bfed79be483459e79d7371cb
 
