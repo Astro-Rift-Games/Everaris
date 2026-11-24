@@ -6,7 +6,7 @@ using System.Collections.Generic;
 /// </summary>
 public sealed class LocalProfileSnapshot
 {
-    public const int CurrentSchemaVersion = 14;
+    public const int CurrentSchemaVersion = 15;
     public const int MaxLoadoutSlots = 30;
     public const int MaxAppliedExtractionReceipts = 256;
     public const int MaxAppliedShopTransactionReceipts = 256;
@@ -17,7 +17,9 @@ public sealed class LocalProfileSnapshot
     public ProfileId ProfileId { get; set; }
     public long Currency { get; set; } = InitialCurrency;
     public int GuildReputation { get; set; } = 0;
-    public MissionRank GuildRank => GuildReputation >= 100 ? MissionRank.D : MissionRank.E;
+    public MissionRank GetGuildRank(GuildRankProgressionConfig config = null) =>
+        GuildRankProgressionRules.ResolveRank(GuildReputation, config);
+    public MissionRank GuildRank => GetGuildRank(GuildRankProgressionConfig.Default);
     public int Level { get; set; } = ExperienceCurve.InitialLevel;
     public long CurrentExperience { get; set; }
     public CharacterAttributeState CharacterAttributes { get; set; } =
@@ -40,6 +42,7 @@ public sealed class LocalProfileSnapshot
     public List<ShopTransactionReceipt> AppliedShopTransactionReceipts { get; } = new();
     public List<ProgressionReceipt> AppliedProgressionReceipts { get; } = new();
     public List<MissionInstanceState> ActiveMissions { get; } = new();
+    public DailyMissionRotationState DailyRotation { get; set; } = new();
     public List<AbilityId> UnlockedAbilities { get; } = new();
     public PreparedAbilityLoadout PreparedAbilities { get; set; }
     public QuickSlotBindings QuickSlots { get; set; }
@@ -70,7 +73,8 @@ public sealed class LocalProfileSnapshot
             QuickSlots = QuickSlots,
             RemoteRevision = RemoteRevision,
             InventorySchemaVersion = InventorySchemaVersion,
-            RequiresEquipmentHydration = RequiresEquipmentHydration
+            RequiresEquipmentHydration = RequiresEquipmentHydration,
+            DailyRotation = DailyRotation != null ? DailyRotation.Clone() : new DailyMissionRotationState()
         };
 
         clone.Stash.AddRange(Stash);
