@@ -43,6 +43,7 @@ public static class LocalProfileSaveCodec
         public long shopIdempotencyWatermark;
         public ShopReceiptData[] appliedShopTransactionReceipts;
         public MissionInstanceStateData[] activeMissions;
+        public DailyRotationData dailyRotation;
         public string[] unlockedAbilityIds;
         public string preparedAbilitySlot1;
         public string preparedAbilitySlot2;
@@ -160,6 +161,21 @@ public static class LocalProfileSaveCodec
         public string expeditionId;
     }
 
+    [Serializable]
+    private sealed class DailyRotationData
+    {
+        public string rotationWindowId;
+        public string[] offeredMissionIds;
+        public DailyRotationHistoryData[] recentRotations;
+    }
+
+    [Serializable]
+    private sealed class DailyRotationHistoryData
+    {
+        public string windowId;
+        public string[] offeredMissionIds;
+    }
+
     public static string Encode(LocalProfileSnapshot snapshot)
     {
         var data = new SaveData
@@ -230,6 +246,7 @@ public static class LocalProfileSaveCodec
             shopIdempotencyWatermark = snapshot.ShopIdempotencyWatermark,
             appliedShopTransactionReceipts = ToShopReceipts(snapshot.AppliedShopTransactionReceipts),
             activeMissions = ToMissions(snapshot.ActiveMissions),
+            dailyRotation = ToDailyRotation(snapshot.DailyRotation),
             unlockedAbilityIds = ToAbilityIds(snapshot.UnlockedAbilities),
             preparedAbilitySlot1 = snapshot.PreparedAbilities.Slot1.Value ?? string.Empty,
             preparedAbilitySlot2 = snapshot.PreparedAbilities.Slot2.Value ?? string.Empty,
@@ -668,6 +685,15 @@ public static class LocalProfileSaveCodec
                 }
                 candidate.ActiveMissions.Add(mission);
             }
+        }
+
+        if (data.schemaVersion >= 15 && data.dailyRotation != null)
+        {
+            if (!TryReadDailyRotation(data.dailyRotation, out DailyMissionRotationState decodedRotation, out error))
+            {
+                return false;
+            }
+            candidate.DailyRotation = decodedRotation;
         }
 
         if (data.schemaVersion >= 11 && candidate.InventorySchemaVersion == 3 && !candidate.RequiresEquipmentHydration)
@@ -1207,5 +1233,104 @@ public static class LocalProfileSaveCodec
     {
         items = new List<StashItem>();
         return TryReadItems(data, catalog, items, label, out error, physical, aggregate);
+    }
+
+    private static DailyRotationData ToDailyRotation(DailyMissionRotationState state)
+    {
+        if (state == null)
+        {
+            return null;
+        }
+
+        var offered = new string[state.OfferedMissionIds?.Count ?? 0];
+        for (int i = 0; i < offered.Length; i++)
+        {
+            offered[i] = state.OfferedMissionIds[i].Value ?? string.Empty;
+        }
+
+        var history = new DailyRotationHistoryData[state.RecentRotations?.Count ?? 0];
+        for (int i = 0; i < history.Length; i++)
+        {
+            var record = state.RecentRotations[i];
+            var recordIds = new string[record?.OfferedMissionIds?.Count ?? 0];
+            for (int j = 0; j < recordIds.Length; j++)
+            {
+                recordIds[j] = record.OfferedMissionIds[j].Value ?? string.Empty;
+            }
+            history[i] = new DailyRotationHistoryData
+            {
+                windowId = record?.WindowId ?? string.Empty,
+                offeredMissionIds = recordIds
+            };
+        }
+
+        return new DailyRotationData
+        {
+            rotationWindowId = state.RotationWindowId ?? string.Empty,
+            offeredMissionIds = offered,
+            recentRotations = history
+        };
+    }
+
+    private static bool TryReadDailyRotation(
+        DailyRotationData data,
+        out DailyMissionRotationState state,
+        out string error)
+    {
+        state = new DailyMissionRotationState
+        {
+            RotationWindowId = data.rotationWindowId ?? string.Empty
+        };
+        error = null;
+
+        if (data.offeredMissionIds != null)
+        {
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < data.offeredMissionIds.Length; i++)
+            {
+                string rawId = data.offeredMissionIds[i];
+                if (string.IsNullOrWhiteSpace(rawId))
+                {
+                    error = "Daily rotation contains an empty mission ID.";
+                    return false;
+                }
+                if (seen.Add(rawId))
+                {
+                    state.OfferedMissionIds.Add(new MissionId(rawId));
+                }
+            }
+        }
+
+        if (data.recentRotations != null)
+        {
+            for (int i = 0; i < data.recentRotations.Length; i++)
+            {
+                var recordData = data.recentRotations[i];
+                if (recordData == null) continue;
+
+                var ids = new List<MissionId>();
+                if (recordData.offeredMissionIds != null)
+                {
+                    var seen = new HashSet<string>(StringComparer.Ordinal);
+                    for (int j = 0; j < recordData.offeredMissionIds.Length; j++)
+                    {
+                        string rawId = recordData.offeredMissionIds[j];
+                        if (string.IsNullOrWhiteSpace(rawId))
+                        {
+                            error = "Daily rotation history contains an empty mission ID.";
+                            return false;
+                        }
+                        if (seen.Add(rawId))
+                        {
+                            ids.Add(new MissionId(rawId));
+                        }
+                    }
+                }
+
+                state.RecentRotations.Add(new DailyRotationHistoryRecord(recordData.windowId, ids));
+            }
+        }
+
+        return true;
     }
 }

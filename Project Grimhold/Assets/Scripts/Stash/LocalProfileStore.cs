@@ -13,6 +13,10 @@ public sealed class LocalProfileStore : IMissionClaimService
     private readonly ProfileId _profileId;
     private readonly LootDefinitionCatalog _lootCatalog;
     private readonly MissionDefinitionCatalog _missionCatalog;
+    private readonly MissionGuildConfiguration _missionGuildConfiguration;
+    private readonly GuildRankProgressionConfig _rankProgressionConfigOverride;
+    private readonly DailyContractRotationConfig _dailyRotationConfigOverride;
+    private readonly IMissionClock _missionClock;
     private readonly AbilityDefinitionCatalog _abilityCatalog;
     private readonly HashSet<string> _processedMissionEventIds = new();
     private readonly Queue<string> _processedMissionEventQueue = new();
@@ -27,6 +31,8 @@ public sealed class LocalProfileStore : IMissionClaimService
     public string LastError => _repository.LastError;
     public bool IsAvailable => Status == LocalProfilePersistenceStatus.Ready || Status == LocalProfilePersistenceStatus.RecoveredFromBackup;
     public MissionDefinitionCatalog MissionCatalog => _missionCatalog;
+    public MissionGuildConfiguration MissionGuildConfiguration => _missionGuildConfiguration;
+    public IMissionClock MissionClock => _missionClock;
     public LootDefinitionCatalog LootCatalog => _lootCatalog;
     public const int DefaultStashCapacity = 60;
     public int StashCapacity { get; }
@@ -37,7 +43,11 @@ public sealed class LocalProfileStore : IMissionClaimService
         LootDefinitionCatalog lootCatalog = null,
         MissionDefinitionCatalog missionCatalog = null,
         AbilityDefinitionCatalog abilityCatalog = null,
-        int stashCapacity = DefaultStashCapacity)
+        int stashCapacity = DefaultStashCapacity,
+        MissionGuildConfiguration missionGuildConfiguration = null,
+        IMissionClock missionClock = null,
+        GuildRankProgressionConfig rankProgressionConfig = null,
+        DailyContractRotationConfig dailyRotationConfig = null)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         if (stashCapacity <= 0) throw new ArgumentOutOfRangeException(nameof(stashCapacity));
@@ -45,6 +55,10 @@ public sealed class LocalProfileStore : IMissionClaimService
         _profileId = profileId;
         _lootCatalog = lootCatalog;
         _missionCatalog = missionCatalog;
+        _missionGuildConfiguration = missionGuildConfiguration;
+        _rankProgressionConfigOverride = rankProgressionConfig;
+        _dailyRotationConfigOverride = dailyRotationConfig;
+        _missionClock = missionClock ?? SystemUtcMissionClock.Instance;
         _abilityCatalog = abilityCatalog;
     }
 
@@ -517,12 +531,172 @@ public sealed class LocalProfileStore : IMissionClaimService
                 : AbilityPreparationResult.PersistenceFailed;
         }
     }
+    public GuildRankProgressionConfig GetRankProgressionConfig()
+    {
+        if (_rankProgressionConfigOverride != null) return _rankProgressionConfigOverride;
+        if (_missionGuildConfiguration != null) return _missionGuildConfiguration.BuildRankProgressionConfig();
+        return GuildRankProgressionConfig.Default;
+    }
+
+    public DailyContractRotationConfig GetDailyRotationConfig()
+    {
+        if (_dailyRotationConfigOverride != null) return _dailyRotationConfigOverride;
+        if (_missionGuildConfiguration != null) return _missionGuildConfiguration.BuildDailyRotationConfig();
+        return DailyContractRotationConfig.Default;
+    }
+
     public int GuildReputation => _repository.Snapshot?.GuildReputation ?? 0;
-    public MissionRank GuildRank => _repository.Snapshot?.GuildRank ?? MissionRank.E;
+    public MissionRank GuildRank => GuildRankProgressionRules.ResolveRank(GuildReputation, GetRankProgressionConfig());
+    public GuildRankProgress GetGuildRankProgress() => GuildRankProgressionRules.GetProgress(GuildReputation, GetRankProgressionConfig());
+
+    public DailyRotationWindow GetCurrentDailyRotationWindow()
+    {
+        return DailyContractRotationEngine.ComputeWindow(_missionClock.UtcNow, GetDailyRotationConfig());
+    }
+
+    public DailyMissionRotationState GetDailyRotationState()
+    {
+        lock (_sync)
+        {
+            return _repository.Snapshot?.DailyRotation?.Clone() ?? new DailyMissionRotationState();
+        }
+    }
+
+    /// <summary>
+    /// Ensures the persisted daily contract rotation matches the active global UTC reset window.
+    /// Does not modify any accepted/active missions.
+    /// </summary>
+    public bool TryRefreshDailyRotation(out DailyRotationWindow activeWindow, MissionDefinitionCatalog catalogOverride = null)
+    {
+        lock (_sync)
+        {
+            var rotationConfig = GetDailyRotationConfig();
+            activeWindow = DailyContractRotationEngine.ComputeWindow(_missionClock.UtcNow, rotationConfig);
+
+            var catalog = catalogOverride ?? _missionCatalog;
+            var current = _repository.Snapshot;
+            if (!IsAvailable || current == null || catalog == null)
+            {
+                return false;
+            }
+
+            MissionRank unlockedRank = GuildRankProgressionRules.ResolveRank(current.GuildReputation, GetRankProgressionConfig());
+            var next = current.Clone();
+            if (next.DailyRotation == null)
+            {
+                next.DailyRotation = new DailyMissionRotationState();
+            }
+
+            string previousWindowId = next.DailyRotation.RotationWindowId;
+            bool rotated = DailyContractRotationEngine.TryAdvanceRotation(
+                next.DailyRotation,
+                activeWindow,
+                catalog.Definitions,
+                unlockedRank,
+                rotationConfig,
+                _profileId.Value);
+
+            if (!rotated)
+            {
+                return false;
+            }
+
+            var commitResult = Commit(next);
+            if (commitResult != StashOperationResult.Success)
+            {
+                Debug.LogWarning($"[MissionRotation] Failed to commit daily rotation '{activeWindow.WindowId}': {commitResult}");
+                return false;
+            }
+
+            var offeredNames = new List<string>(next.DailyRotation.OfferedMissionIds.Count);
+            for (int i = 0; i < next.DailyRotation.OfferedMissionIds.Count; i++)
+            {
+                offeredNames.Add(next.DailyRotation.OfferedMissionIds[i].Value);
+            }
+
+            Debug.Log(
+                $"[MissionRotation] Rotación diaria actualizada: '{previousWindowId}' -> '{activeWindow.WindowId}' " +
+                $"(Próximo reset UTC: {activeWindow.NextResetUtc:yyyy-MM-dd HH:mm}Z, Rango: {unlockedRank}, " +
+                $"Ofrecidos ({offeredNames.Count}): [{string.Join(", ", offeredNames)}])");
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Returns the daily repeatable contracts currently offered for the active global rotation window,
+    /// refreshing and persisting the rotation automatically if the global reset time has passed.
+    /// </summary>
+    public IReadOnlyList<MissionDefinition> GetDailyOfferedMissions(MissionDefinitionCatalog catalogOverride = null)
+    {
+        var catalog = catalogOverride ?? _missionCatalog;
+        if (catalog == null)
+        {
+            return Array.Empty<MissionDefinition>();
+        }
+
+        TryRefreshDailyRotation(out _, catalog);
+
+        lock (_sync)
+        {
+            var current = _repository.Snapshot;
+            if (!IsAvailable || current?.DailyRotation == null)
+            {
+                return Array.Empty<MissionDefinition>();
+            }
+
+            var result = new List<MissionDefinition>(current.DailyRotation.OfferedMissionIds.Count);
+            for (int i = 0; i < current.DailyRotation.OfferedMissionIds.Count; i++)
+            {
+                MissionId id = current.DailyRotation.OfferedMissionIds[i];
+                if (catalog.TryGet(id.Value, out var def) && def != null)
+                {
+                    result.Add(def);
+                }
+            }
+
+            return result;
+        }
+    }
+
+    public StashOperationResult TryAddGuildReputationForDebug(int delta)
+    {
+        if (!Application.isEditor && !Debug.isDebugBuild)
+        {
+            return StashOperationResult.InvalidInventory;
+        }
+
+        lock (_sync)
+        {
+            var current = _repository.Snapshot;
+            if (!IsAvailable || current == null)
+            {
+                return StashOperationResult.InvalidInventory;
+            }
+
+            var rankConfig = GetRankProgressionConfig();
+            MissionRank previousRank = GuildRankProgressionRules.ResolveRank(current.GuildReputation, rankConfig);
+            int nextReputation = Math.Max(0, current.GuildReputation + delta);
+            MissionRank nextRank = GuildRankProgressionRules.ResolveRank(nextReputation, rankConfig);
+
+            var next = current.Clone();
+            next.GuildReputation = nextReputation;
+            var result = Commit(next);
+            if (result == StashOperationResult.Success)
+            {
+                Debug.Log($"[MissionRotation] [Debug] Reputación actualizada: {current.GuildReputation} -> {nextReputation} RP (Rango: {previousRank} -> {nextRank}).");
+            }
+            return result;
+        }
+    }
 
     public StashOperationResult TryAcceptMission(MissionDefinition mission)
     {
         if (mission == null || !mission.MissionId.IsValid) return StashOperationResult.InvalidInventory;
+        if (_missionCatalog != null && mission.Type == MissionType.Normal && _missionCatalog.TryGet(mission.Id, out _))
+        {
+            TryRefreshDailyRotation(out _, _missionCatalog);
+        }
+
         var current = _repository.Snapshot;
         if (!IsAvailable || current == null) return StashOperationResult.InvalidInventory;
 
@@ -545,9 +719,21 @@ public sealed class LocalProfileStore : IMissionClaimService
             }
         }
 
-        if (mission.RankRequired > current.GuildRank)
+        MissionRank currentRank = GuildRankProgressionRules.ResolveRank(current.GuildReputation, GetRankProgressionConfig());
+        if (mission.RankRequired > currentRank)
         {
-            Debug.LogWarning($"[MissionBoard] Rango insuficiente para aceptar '{mission.Title}'. Requerido: {mission.RankRequired}, Actual: {current.GuildRank}.");
+            Debug.LogWarning($"[MissionBoard] Rango insuficiente para aceptar '{mission.Title}'. Requerido: {mission.RankRequired}, Actual: {currentRank}.");
+            return StashOperationResult.InvalidInventory;
+        }
+
+        if (_missionCatalog != null &&
+            mission.Type == MissionType.Normal &&
+            _missionCatalog.TryGet(mission.Id, out _) &&
+            current.DailyRotation != null &&
+            current.DailyRotation.HasActiveRotation &&
+            !current.DailyRotation.IsOffered(mission.MissionId))
+        {
+            Debug.LogWarning($"[MissionBoard] El contrato '{mission.Title}' ({mission.Id}) no pertenece a la rotación diaria vigente ({current.DailyRotation.RotationWindowId}).");
             return StashOperationResult.InvalidInventory;
         }
 
@@ -900,7 +1086,8 @@ public sealed class LocalProfileStore : IMissionClaimService
                         if (reward.Amount > 0)
                         {
                             next.GuildReputation += reward.Amount;
-                            Debug.Log($"[MissionBoard] Recompensa reclamada: {reward.Amount} Reputación. (Total: {next.GuildReputation}, Rango: {next.GuildRank})");
+                            MissionRank resultingRank = GuildRankProgressionRules.ResolveRank(next.GuildReputation, GetRankProgressionConfig());
+                            Debug.Log($"[MissionBoard] Recompensa reclamada: {reward.Amount} Reputación. (Total: {next.GuildReputation}, Rango: {resultingRank})");
                         }
                     }
                     else if (reward.Type == RewardDefinition.RewardType.Experience)

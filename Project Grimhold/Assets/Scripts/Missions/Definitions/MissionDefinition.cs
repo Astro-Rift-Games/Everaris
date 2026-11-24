@@ -24,6 +24,10 @@ public class MissionDefinition : ScriptableObject
     [Tooltip("The rank required to accept this mission.")]
     public MissionRank RankRequired;
 
+    [Tooltip("Relative appearance weight used when selecting this contract in daily rotations (Doc 12 §17).")]
+    [SerializeField, Min(0.01f)]
+    private float _appearanceWeight = 1f;
+
     [Tooltip("The sequential phases of the mission.")]
     public List<PhaseDefinition> Phases = new();
 
@@ -36,6 +40,12 @@ public class MissionDefinition : ScriptableObject
     public MissionId MissionId => new MissionId(_id);
 
     public string Id => _id;
+
+    /// <summary>
+    /// Relative weight used during weighted daily rotation selection.
+    /// Existing assets that do not serialize this field default cleanly to 1.
+    /// </summary>
+    public float AppearanceWeight => _appearanceWeight > 0f ? _appearanceWeight : 1f;
 
     /// <summary>
     /// Validates the mission definition for correctness.

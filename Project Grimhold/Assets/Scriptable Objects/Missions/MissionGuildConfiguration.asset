@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1eea84c8fd653894b903ea39b44de0de, type: 3}
+  m_Name: MissionGuildConfiguration
+  m_EditorClassIdentifier: Assembly-CSharp::MissionGuildConfiguration
+  _dailyOfferedContracts: 6
+  _globalResetHourUtc: 0
+  _globalResetMinuteUtc: 0
+  _rankThresholds:
+  - Rank: 0
+    RequiredReputation: 0
+  - Rank: 1
+    RequiredReputation: 100
+  - Rank: 2
+    RequiredReputation: 300
+  _rankWeights:
+  - Rank: 0
+    Weight: 1
+  - Rank: 1
+    Weight: 1
+  - Rank: 2
+    Weight: 1
+  _defaultRankWeight: 1
+  _recentAppearanceWeightMultiplier: 0.5
+  _recentHistoryRotationCount: 2

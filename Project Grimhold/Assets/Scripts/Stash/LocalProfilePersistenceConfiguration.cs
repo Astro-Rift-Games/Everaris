@@ -8,11 +8,13 @@ public sealed class LocalProfilePersistenceConfiguration : ScriptableObject
 {
     [SerializeField] private LootDefinitionCatalog _lootCatalog;
     [SerializeField] private MissionDefinitionCatalog _missionCatalog;
+    [SerializeField] private MissionGuildConfiguration _missionGuildConfiguration;
     [SerializeField] private AbilityDefinitionCatalog _abilityCatalog;
     [SerializeField, Min(1)] private int _receiptCapacity = LocalProfileSnapshot.MaxAppliedExtractionReceipts;
 
     public LootDefinitionCatalog LootCatalog => _lootCatalog;
     public MissionDefinitionCatalog MissionCatalog => _missionCatalog;
+    public MissionGuildConfiguration MissionGuildConfiguration => _missionGuildConfiguration;
     public AbilityDefinitionCatalog AbilityCatalog => _abilityCatalog;
     public int ReceiptCapacity => _receiptCapacity;
 

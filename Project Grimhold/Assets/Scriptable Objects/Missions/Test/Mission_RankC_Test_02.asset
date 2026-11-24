@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e78370bc118bf40baebe3b64c51dc2, type: 3}
+  m_Name: Mission_RankC_Test_02
+  m_EditorClassIdentifier: Assembly-CSharp::MissionDefinition
+  _id: CON_C_TEST_002
+  Title: "[TEST] Incursi\xF3n en Catacumbas"
+  Description: "[Misi\xF3n de prueba Rango C] Explora las Catacumbas y elimina 4 esqueletos en la zona."
+  Type: 0
+  RankRequired: 2
+  _appearanceWeight: 1
+  Phases:
+  - Objectives:
+    - Family: 2
+      Condition:
+        TargetId: 
+        ZoneId: Catacombs_Main
+        RequiredAmount: 1
+  - Objectives:
+    - Family: 1
+      Condition:
+        TargetId: skeleton
+        ZoneId: Catacombs_Main
+        RequiredAmount: 4
+  Rewards:
+  - Type: 0
+    Amount: 200
+    ReferenceId: 
+  - Type: 2
+    Amount: 85
+    ReferenceId: 
+  - Type: 1
+    Amount: 22
+    ReferenceId: 

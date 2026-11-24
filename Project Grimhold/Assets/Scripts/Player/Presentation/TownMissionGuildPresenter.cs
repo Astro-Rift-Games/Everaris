@@ -26,6 +26,8 @@ public sealed class TownMissionGuildPresenter : NetworkBehaviour
     private PlayerInputReader _inputReader;
     private LocalProfileStore _store;
     private bool _isListening;
+    private bool _isRefreshing;
+    private string _lastRenderedRotationWindowId;
     private MissionDefinition _selectedMission;
 
     public TownMissionGuildView View => _view;
@@ -86,6 +88,16 @@ public sealed class TownMissionGuildPresenter : NetworkBehaviour
         if (Runner == null || !Runner.IsRunning || _openNpc == null || !_openNpc.IsValid)
         {
             ClosePanel();
+            return;
+        }
+
+        if (_store != null && _store.IsAvailable)
+        {
+            string activeWindowId = _store.GetCurrentDailyRotationWindow().WindowId;
+            if (!string.Equals(activeWindowId, _lastRenderedRotationWindowId, StringComparison.Ordinal))
+            {
+                Refresh();
+            }
         }
     }
 
@@ -339,54 +351,96 @@ public sealed class TownMissionGuildPresenter : NetworkBehaviour
 
     public void Refresh()
     {
+        if (_isRefreshing) return;
         EnsureStore();
         if (_store == null || _view == null) return;
 
-        var catalog = _missionCatalog != null ? _missionCatalog : _store.MissionCatalog;
-        var activeMissions = _store.GetActiveMissions();
-        int activeCount = activeMissions.Count(m => m.State == MissionState.Activa || m.State == MissionState.PendienteDeReclamar);
-
-        _view.PresentHeader(_store.GuildRank, _store.GuildReputation, activeCount, MaxActiveContracts);
-
-        // Filter missions according to active tab
-        List<MissionDefinition> displayList = new List<MissionDefinition>();
-
-        if (catalog != null)
+        _isRefreshing = true;
+        try
         {
-            for (int i = 0; i < catalog.DefinitionCount; i++)
+            var catalog = _missionCatalog != null ? _missionCatalog : _store.MissionCatalog;
+            IReadOnlyList<MissionDefinition> dailyOffered = catalog != null
+                ? _store.GetDailyOfferedMissions(catalog)
+                : Array.Empty<MissionDefinition>();
+            _lastRenderedRotationWindowId = _store.GetCurrentDailyRotationWindow().WindowId;
+
+            var activeMissions = _store.GetActiveMissions();
+            int activeCount = activeMissions.Count(m => m.State == MissionState.Activa || m.State == MissionState.PendienteDeReclamar);
+            MissionRank currentRank = _store.GuildRank;
+
+            _view.PresentHeader(_store.GetGuildRankProgress(), _store.GuildReputation, activeCount, MaxActiveContracts);
+
+            // Filter missions according to active tab
+            List<MissionDefinition> displayList = new List<MissionDefinition>();
+
+            if (catalog != null)
             {
-                if (!catalog.TryGetByIndex(i, out var def) || def == null) continue;
-
-                var instance = activeMissions.FirstOrDefault(m => m.MissionId == def.MissionId);
-                bool isActive = instance != null && (instance.State == MissionState.Activa || instance.State == MissionState.PendienteDeReclamar);
-                bool isReclaimed = instance != null && instance.State == MissionState.Reclamada;
-
                 if (_view.ActiveTab == GuildViewTab.Available)
                 {
-                    // Available: Rank matches or lower, not active, not already reclaimed
-                    if (!isActive && !isReclaimed && def.RankRequired <= _store.GuildRank)
+                    var addedIds = new HashSet<string>(StringComparer.Ordinal);
+
+                    // 1. Daily repeatable contracts from the current global rotation
+                    for (int i = 0; i < dailyOffered.Count; i++)
                     {
-                        displayList.Add(def);
+                        var def = dailyOffered[i];
+                        if (def == null || !addedIds.Add(def.Id)) continue;
+
+                        var instance = activeMissions.FirstOrDefault(m => m.MissionId == def.MissionId);
+                        bool isActive = instance != null && (instance.State == MissionState.Activa || instance.State == MissionState.PendienteDeReclamar);
+                        bool isReclaimed = instance != null && instance.State == MissionState.Reclamada;
+
+                        if (!isActive && !isReclaimed && def.RankRequired <= currentRank)
+                        {
+                            displayList.Add(def);
+                        }
+                    }
+
+                    // 2. Unique missions do not depend on daily rotation (Doc 12 §12.2)
+                    for (int i = 0; i < catalog.DefinitionCount; i++)
+                    {
+                        if (!catalog.TryGetByIndex(i, out var def) || def == null) continue;
+                        if (def.Type != MissionType.Unica || !addedIds.Add(def.Id)) continue;
+
+                        var instance = activeMissions.FirstOrDefault(m => m.MissionId == def.MissionId);
+                        bool isActive = instance != null && (instance.State == MissionState.Activa || instance.State == MissionState.PendienteDeReclamar);
+                        bool isReclaimed = instance != null && instance.State == MissionState.Reclamada;
+
+                        if (!isActive && !isReclaimed && def.RankRequired <= currentRank)
+                        {
+                            displayList.Add(def);
+                        }
                     }
                 }
-                else // Active tab
+                else // Active tab: accepted contracts remain active even after rotation changes (Doc 12 §12.1)
                 {
-                    if (isActive)
+                    for (int i = 0; i < catalog.DefinitionCount; i++)
                     {
-                        displayList.Add(def);
+                        if (!catalog.TryGetByIndex(i, out var def) || def == null) continue;
+
+                        var instance = activeMissions.FirstOrDefault(m => m.MissionId == def.MissionId);
+                        bool isActive = instance != null && (instance.State == MissionState.Activa || instance.State == MissionState.PendienteDeReclamar);
+
+                        if (isActive)
+                        {
+                            displayList.Add(def);
+                        }
                     }
                 }
             }
-        }
 
-        // Keep current selected if in list, otherwise select first or null
-        if (_selectedMission == null || !displayList.Contains(_selectedMission))
+            // Keep current selected if in list, otherwise select first or null
+            if (_selectedMission == null || !displayList.Contains(_selectedMission))
+            {
+                _selectedMission = displayList.FirstOrDefault();
+            }
+
+            _view.PresentMissionList(displayList, activeMissions, _selectedMission);
+            PresentSelectedDetails(activeMissions, activeCount);
+        }
+        finally
         {
-            _selectedMission = displayList.FirstOrDefault();
+            _isRefreshing = false;
         }
-
-        _view.PresentMissionList(displayList, activeMissions, _selectedMission);
-        PresentSelectedDetails(activeMissions, activeCount);
     }
 
     private void PresentSelectedDetails(IReadOnlyList<MissionInstanceState> activeMissions, int activeCount)

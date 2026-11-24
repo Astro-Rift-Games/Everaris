@@ -109,13 +109,16 @@ public static class ApplicationStashServiceBootstrapper
             return false;
         }
 
+        var missionClock = new AdjustableMissionClock(SystemUtcMissionClock.Instance);
         var store = new LocalProfileStore(
             repository,
             profileId,
             _configuration.LootCatalog,
             _configuration.MissionCatalog,
             _configuration.AbilityCatalog,
-            _configuration.StashCapacity);
+            _configuration.StashCapacity,
+            _configuration.MissionGuildConfiguration,
+            missionClock);
         string usedReservationId = ResolveAdmissionMarkOnLogin(store, inventoryData);
         bool? orphanRollback = null;
         string orphanReservationId = store.PendingReservation?.ReservationId;

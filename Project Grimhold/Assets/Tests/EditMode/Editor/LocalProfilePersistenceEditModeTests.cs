@@ -692,9 +692,10 @@ public sealed class LocalProfilePersistenceEditModeTests
             out _,
             out string error), Is.True, error);
 
-        Assert.That(LocalProfileSnapshot.CurrentSchemaVersion, Is.EqualTo(14));
+        Assert.That(LocalProfileSnapshot.CurrentSchemaVersion, Is.EqualTo(15));
         Assert.That(migrated.SchemaVersion, Is.EqualTo(LocalProfileSnapshot.CurrentSchemaVersion));
         Assert.That(migrated.PendingDefeatCommit, Is.Null);
+        Assert.That(migrated.DailyRotation.HasActiveRotation, Is.False);
         Assert.That(migrated.Stash.Count, Is.EqualTo(1));
         Assert.That(migrated.Stash[0].LootId.Value, Is.EqualTo("CON_HEALTH_POTION"));
         Assert.That(migrated.Stash[0].Amount, Is.EqualTo(5));
