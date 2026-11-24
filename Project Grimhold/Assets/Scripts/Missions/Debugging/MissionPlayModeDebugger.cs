@@ -19,19 +19,42 @@ public sealed class MissionPlayModeDebugger : MonoBehaviour
     public MissionDefinitionCatalog Catalog;
 
     [Header("IMGUI Overlay Settings")]
-    [SerializeField] private bool _showOverlay = true;
+    [SerializeField] private bool _showOverlay;
     [SerializeField] private KeyCode _toggleKey = KeyCode.F7;
 
+    public static MissionPlayModeDebugger Instance { get; private set; }
+
     private ApplicationStashContext _context;
-    private Rect _windowRect = new(12f, 220f, 480f, 380f);
+    private Rect _windowRect = new(12f, 220f, 480f, 460f);
     private Vector2 _scrollPosition;
     private string _simulateTargetId = "";
     private int _simulateAmount = 1;
 
     private LocalProfileStore Store => _context != null ? _context.Store : null;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void AutoInitialize()
+    {
+#if UNITY_INCLUDE_TESTS
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        if (sceneName.StartsWith("InitTestScene")) return;
+#endif
+        if (Instance != null || FindAnyObjectByType<MissionPlayModeDebugger>() != null) return;
+        var go = new GameObject("MissionPlayModeDebugger");
+        var debugger = go.AddComponent<MissionPlayModeDebugger>();
+        debugger._showOverlay = false;
+        DontDestroyOnLoad(go);
+    }
+
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
         _context = FindAnyObjectByType<ApplicationStashContext>();
         if (Catalog == null)
         {
@@ -40,6 +63,14 @@ public sealed class MissionPlayModeDebugger : MonoBehaviour
             {
                 Catalog = config.MissionCatalog;
             }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
         }
     }
 
@@ -147,6 +178,69 @@ public sealed class MissionPlayModeDebugger : MonoBehaviour
         Debug.Log($"[MissionDebugger] TryClaimMission('{MissionToAccept.Id}') result: {result}");
     }
 
+    [ContextMenu("Simulate Next Global Daily Reset")]
+    public void SimulateNextGlobalDailyReset()
+    {
+        if (Store == null || !Store.IsAvailable)
+        {
+            Debug.LogWarning("[MissionDebugger] LocalProfileStore is not available yet.");
+            return;
+        }
+
+        if (Store.MissionClock is not AdjustableMissionClock adjustableClock)
+        {
+            Debug.LogWarning("[MissionDebugger] Active MissionClock is not adjustable; cannot simulate global reset.");
+            return;
+        }
+
+        DailyRotationWindow beforeWindow = Store.GetCurrentDailyRotationWindow();
+        adjustableClock.AdvanceTo(beforeWindow.NextResetUtc.AddSeconds(1));
+        Store.TryRefreshDailyRotation(out DailyRotationWindow afterWindow, Catalog);
+
+        var presenter = FindAnyObjectByType<TownMissionGuildPresenter>();
+        if (presenter != null && presenter.IsOpen)
+        {
+            presenter.Refresh();
+        }
+
+        var offered = Store.GetDailyOfferedMissions(Catalog);
+        var ids = new List<string>(offered.Count);
+        for (int i = 0; i < offered.Count; i++) ids.Add(offered[i].Id);
+
+        Debug.Log(
+            $"[MissionDebugger] Reinicio global simulado: '{beforeWindow.WindowId}' -> '{afterWindow.WindowId}' | " +
+            $"UTC Simulado: {adjustableClock.UtcNow:yyyy-MM-dd HH:mm:ss}Z | " +
+            $"Próximo Reset: {afterWindow.NextResetUtc:yyyy-MM-dd HH:mm:ss}Z | " +
+            $"Oferta ({ids.Count}): [{string.Join(", ", ids)}]");
+    }
+
+    [ContextMenu("Reset Simulated Clock To Real UTC")]
+    public void ResetSimulatedClock()
+    {
+        if (Store?.MissionClock is AdjustableMissionClock adjustableClock)
+        {
+            adjustableClock.ResetOffset();
+            Store.TryRefreshDailyRotation(out DailyRotationWindow activeWindow, Catalog);
+            var presenter = FindAnyObjectByType<TownMissionGuildPresenter>();
+            if (presenter != null && presenter.IsOpen)
+            {
+                presenter.Refresh();
+            }
+            Debug.Log($"[MissionDebugger] Reloj restaurado a UTC real: {adjustableClock.UtcNow:yyyy-MM-dd HH:mm:ss}Z (Ventana: '{activeWindow.WindowId}').");
+        }
+    }
+
+    public void AddReputationForDebug(int delta)
+    {
+        if (Store == null || !Store.IsAvailable) return;
+        Store.TryAddGuildReputationForDebug(delta);
+        var presenter = FindAnyObjectByType<TownMissionGuildPresenter>();
+        if (presenter != null && presenter.IsOpen)
+        {
+            presenter.Refresh();
+        }
+    }
+
     public MissionDefinition FindDefinition(string missionId)
     {
         if (MissionToAccept != null && MissionToAccept.Id == missionId)
@@ -164,25 +258,21 @@ public sealed class MissionPlayModeDebugger : MonoBehaviour
 
     private void OnGUI()
     {
+        if (!_showOverlay)
+        {
+            return;
+        }
+
         if (Store == null || !Store.IsAvailable)
         {
-            GUI.Label(new Rect(12f, 180f, 300f, 24f), "[Missions] Waiting for Profile Store...");
+            GUI.Label(new Rect(12f, 180f, 320f, 24f), $"[Missions] Waiting for Profile Store... [{_toggleKey} to hide]");
             return;
         }
 
         var activeMissions = Store.GetActiveMissions();
         int activeCount = activeMissions != null ? activeMissions.Count : 0;
 
-        if (!_showOverlay)
-        {
-            if (GUI.Button(new Rect(12f, 180f, 200f, 26f), $"Missions Debug ({activeCount} Active) [{_toggleKey}]"))
-            {
-                _showOverlay = true;
-            }
-            return;
-        }
-
-        _windowRect = GUI.Window(888123, _windowRect, DrawWindow, $"Missions PlayMode Debugger ({activeCount} Active)");
+        _windowRect = GUI.Window(888123, _windowRect, DrawWindow, $"Missions PlayMode Debugger ({activeCount} Active) [{_toggleKey}]");
         _windowRect.x = Mathf.Clamp(_windowRect.x, 0f, Mathf.Max(0f, Screen.width - _windowRect.width));
         _windowRect.y = Mathf.Clamp(_windowRect.y, 0f, Mathf.Max(0f, Screen.height - _windowRect.height));
     }
@@ -198,6 +288,44 @@ public sealed class MissionPlayModeDebugger : MonoBehaviour
         GUILayout.EndHorizontal();
 
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
+
+        // Section 0: Daily Rotation & Guild Rank Progression
+        GUILayout.Space(4);
+        GUILayout.Label("--- Rotación Diaria Global y Rango de Gremio ---", GUI.skin.box);
+        var rankProgress = Store.GetGuildRankProgress();
+        var window = Store.GetCurrentDailyRotationWindow();
+        var rotConfig = Store.GetDailyRotationConfig();
+        string nextRankLabel = rankProgress.HasNextRank
+            ? $"{rankProgress.RemainingReputation} RP para Rango {rankProgress.NextRank}"
+            : "Rango Máximo";
+        GUILayout.Label($"Rango: <b>{rankProgress.CurrentRank}</b> ({Store.GuildReputation} RP — {nextRankLabel})");
+        GUILayout.Label($"Ventana Global: <b>{window.WindowId}</b> | Reset: {rotConfig.GlobalResetHourUtc:D2}:{rotConfig.GlobalResetMinuteUtc:D2} UTC");
+        GUILayout.Label($"UTC Actual: {Store.MissionClock.UtcNow:yyyy-MM-dd HH:mm:ss}Z | Próximo: {window.NextResetUtc:yyyy-MM-dd HH:mm}Z");
+
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("Simular Reinicio Global"))
+        {
+            SimulateNextGlobalDailyReset();
+        }
+        if (GUILayout.Button("UTC Real", GUILayout.Width(80)))
+        {
+            ResetSimulatedClock();
+        }
+        GUILayout.EndHorizontal();
+
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("+50 RP")) AddReputationForDebug(50);
+        if (GUILayout.Button("+100 RP")) AddReputationForDebug(100);
+        if (GUILayout.Button("Reset RP")) AddReputationForDebug(-Store.GuildReputation);
+        GUILayout.EndHorizontal();
+
+        var dailyOffers = Store.GetDailyOfferedMissions(Catalog);
+        GUILayout.Label($"Oferta diaria vigente ({dailyOffers.Count}/{rotConfig.OfferedContractCount}):");
+        for (int d = 0; d < dailyOffers.Count; d++)
+        {
+            var offer = dailyOffers[d];
+            GUILayout.Label($"  • [{offer.RankRequired}] {offer.Title} ({offer.Id})");
+        }
 
         // Section 1: Accept Configured Mission
         GUILayout.Space(6);

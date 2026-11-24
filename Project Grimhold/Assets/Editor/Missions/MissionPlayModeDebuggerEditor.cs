@@ -29,6 +29,37 @@ public class MissionPlayModeDebuggerEditor : Editor
 
         EditorGUILayout.HelpBox($"Perfil Activo: {store.ProfileId.Value}", MessageType.None);
 
+        var rankProgress = store.GetGuildRankProgress();
+        var window = store.GetCurrentDailyRotationWindow();
+        var rotConfig = store.GetDailyRotationConfig();
+        string nextRankLabel = rankProgress.HasNextRank
+            ? $"{rankProgress.RemainingReputation} RP para Rango {rankProgress.NextRank}"
+            : "Rango Máximo";
+
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        EditorGUILayout.LabelField("Rotación Diaria Global y Rango", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField($"Rango: {rankProgress.CurrentRank} ({store.GuildReputation} RP — {nextRankLabel})");
+        EditorGUILayout.LabelField($"Ventana: {window.WindowId} (Reset {rotConfig.GlobalResetHourUtc:D2}:{rotConfig.GlobalResetMinuteUtc:D2} UTC)");
+        EditorGUILayout.LabelField($"UTC Actual: {store.MissionClock.UtcNow:yyyy-MM-dd HH:mm:ss}Z");
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Simular Reinicio Global"))
+        {
+            debugger.SimulateNextGlobalDailyReset();
+        }
+        if (GUILayout.Button("UTC Real", GUILayout.Width(80)))
+        {
+            debugger.ResetSimulatedClock();
+        }
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("+50 RP")) debugger.AddReputationForDebug(50);
+        if (GUILayout.Button("+100 RP")) debugger.AddReputationForDebug(100);
+        if (GUILayout.Button("Reset RP")) debugger.AddReputationForDebug(-store.GuildReputation);
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndVertical();
+
         if (debugger.MissionToAccept != null)
         {
             if (GUILayout.Button($"Aceptar Misión Seleccionada ({debugger.MissionToAccept.Id})", GUILayout.Height(30)))
