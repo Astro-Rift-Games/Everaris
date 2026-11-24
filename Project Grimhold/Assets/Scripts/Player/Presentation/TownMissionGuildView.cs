@@ -79,6 +79,7 @@ public sealed class TownMissionGuildView : MonoBehaviour
     }
     public GuildViewTab ActiveTab => _activeTab;
     public MissionDefinition SelectedMission => _currentSelected;
+    public int DisplayedMissionCount => _instantiatedEntries.Count;
 
     public event Action<MissionDefinition> AcceptRequested;
     public event Action<MissionDefinition> AbandonRequested;
@@ -243,11 +244,17 @@ public sealed class TownMissionGuildView : MonoBehaviour
 
     public void PresentHeader(MissionRank rank, int reputation, int activeCount, int maxSlots)
     {
+        PresentHeader(GuildRankProgressionRules.GetProgress(reputation), reputation, activeCount, maxSlots);
+    }
+
+    public void PresentHeader(GuildRankProgress rankProgress, int reputation, int activeCount, int maxSlots)
+    {
         if (_rankText != null)
         {
-            int toNext = rank == MissionRank.E ? Mathf.Max(0, 100 - reputation) : 0;
-            string nextText = toNext > 0 ? $" ({toNext} RP para siguiente rango)" : " (Rango Máximo)";
-            _rankText.text = $"Gremio: Rango {rank} — {reputation} RP{nextText}";
+            string nextText = rankProgress.HasNextRank
+                ? $" ({rankProgress.RemainingReputation} RP para Rango {rankProgress.NextRank})"
+                : " (Rango Máximo)";
+            _rankText.text = $"Gremio: Rango {rankProgress.CurrentRank} — {reputation} RP{nextText}";
         }
 
         if (_activeSlotsText != null)
@@ -558,7 +565,11 @@ public sealed class TownMissionGuildView : MonoBehaviour
     {
         for (int i = 0; i < _instantiatedEntries.Count; i++)
         {
-            if (_instantiatedEntries[i] != null) Destroy(_instantiatedEntries[i]);
+            if (_instantiatedEntries[i] != null)
+            {
+                if (Application.isPlaying) Destroy(_instantiatedEntries[i]);
+                else DestroyImmediate(_instantiatedEntries[i]);
+            }
         }
         _instantiatedEntries.Clear();
     }
