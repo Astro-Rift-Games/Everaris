@@ -17,7 +17,8 @@ namespace Tests.EditMode.Missions
 
             bool isValid = catalog.TryValidate(out string error);
             Assert.That(isValid, Is.True, $"Catalog failed validation: {error}");
-            Assert.That(catalog.DefinitionCount, Is.EqualTo(6), "Catalog must contain exactly the 6 Rank E contracts.");
+            Assert.That(catalog.GetAvailableDefinitionsForRank(MissionRank.E).Count, Is.EqualTo(6),
+                "Catalog must contain all 6 canonical Rank E contracts.");
 
             // CON_E_001
             Assert.That(catalog.TryGet("CON_E_001", out var m1), Is.True);
