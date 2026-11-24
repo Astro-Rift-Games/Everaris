@@ -4,18 +4,18 @@
 
 Release: Unreleased
 
-376 original commits; 376 canonical entries.
+383 original commits; 383 canonical entries.
 
 ## Canonical classification
 
-132 features; 119 bug fixes; 4 refactoring; 1 architecture & infrastructure; 63 documentation; 25 tests; 11 maintenance; 21 other changes
+137 features; 119 bug fixes; 4 refactoring; 1 architecture & infrastructure; 63 documentation; 26 tests; 12 maintenance; 21 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 17 | 13 | 1 | 0 | 10 | 1 |
 | Art & Animation | 31 | 14 | 3 | 0 | 9 | 8 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 93 | 78 | 4 | 1 | 27 | 6 |
+| Build & Tooling | 94 | 78 | 4 | 1 | 28 | 6 |
 | Combat | 55 | 26 | 2 | 0 | 18 | 2 |
 | Documentation | 41 | 45 | 0 | 0 | 21 | 1 |
 | Extraction | 20 | 22 | 2 | 0 | 10 | 5 |
@@ -23,13 +23,320 @@ Release: Unreleased
 | Inventory & Loot | 86 | 64 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 0 |
 | Networking & Sessions | 44 | 45 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 50 | 57 | 2 | 1 | 22 | 3 |
-| Tests | 124 | 109 | 4 | 1 | 36 | 4 |
-| UI | 45 | 23 | 2 | 0 | 14 | 4 |
-| Unassigned | 0 | 3 | 0 | 0 | 28 | 1 |
+| Persistence & Backend | 52 | 57 | 2 | 1 | 23 | 3 |
+| Tests | 124 | 109 | 4 | 1 | 38 | 4 |
+| UI | 46 | 23 | 2 | 0 | 14 | 4 |
+| Unassigned | 1 | 3 | 0 | 0 | 28 | 1 |
 | World & Visibility | 37 | 20 | 1 | 0 | 4 | 12 |
 
 ## Original commit records
+
+### 9a7da10a4e790b2ef96b0e3baf7eec17285d2394
+
+[9a7da10a4e790b2ef96b0e3baf7eec17285d2394](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/9a7da10a4e790b2ef96b0e3baf7eec17285d2394)
+
+Date: 2026-11-23T21:41:11-03:00 · Classification: Tests (explicit) · Systems: Persistence & Backend, Build & Tooling, Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+test(missions): add EditMode tests for daily rotation, global reset, and rank config
+```
+
+#### Original body
+
+```text
+Adds controlled-clock EditMode tests for global UTC reset, 6-contract daily rotation, <6 pool handling, anti-repetition weighting, Rank C reachability, live Inspector threshold changes, and SchemaVersion 15 persistence roundtrip/migration (TASK-325).
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Missions/DailyContractRotationAndRankConfigTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Missions/DailyContractRotationAndRankConfigTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RankEContractsAndGuildReputationTests.cs
+```
+
+#### Classification evidence
+
+- type → Tests: test
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs
+- message-term → Persistence &amp; Backend: persistence
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Missions/DailyContractRotationAndRankConfigTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Missions/DailyContractRotationAndRankConfigTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RankEContractsAndGuildReputationTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Missions/DailyContractRotationAndRankConfigTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Missions/DailyContractRotationAndRankConfigTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RankEContractsAndGuildReputationTests.cs
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 37416fa12e3ca7a9d020aae77e19dbde2fa279f6
+
+[37416fa12e3ca7a9d020aae77e19dbde2fa279f6](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/37416fa12e3ca7a9d020aae77e19dbde2fa279f6)
+
+Date: 2026-11-23T21:41:10-03:00 · Classification: Maintenance (explicit) · Systems: Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+chore(missions): add Rank D and C test contracts for daily rotation validation
+```
+
+#### Original body
+
+```text
+Adds 3 Rank D and 3 Rank C test contracts under Missions/Test and registers them in MissionDefinitionCatalog for in-game validation of multi-rank daily rotation (TASK-325).
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scriptable Objects/Missions/MissionDefinitionCatalog.asset
+Project Grimhold/Assets/Scriptable Objects/Missions/Test.meta
+Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_01.asset
+Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_01.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_02.asset
+Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_02.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_03.asset
+Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_03.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_01.asset
+Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_01.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_02.asset
+Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_02.asset.meta
+Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_03.asset
+Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_03.asset.meta
+```
+
+#### Classification evidence
+
+- type → Maintenance: chore
+- path → Tests: Project Grimhold/Assets/Scriptable Objects/Missions/Test.meta
+- path → Tests: Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission\_RankC\_Test\_01.asset
+- path → Tests: Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission\_RankC\_Test\_01.asset.meta
+- path → Tests: Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission\_RankC\_Test\_02.asset
+- path → Tests: Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission\_RankC\_Test\_02.asset.meta
+- path → Tests: Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission\_RankC\_Test\_03.asset
+- path → Tests: Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission\_RankC\_Test\_03.asset.meta
+- path → Tests: Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission\_RankD\_Test\_01.asset
+- path → Tests: Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission\_RankD\_Test\_01.asset.meta
+- path → Tests: Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission\_RankD\_Test\_02.asset
+- path → Tests: Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission\_RankD\_Test\_02.asset.meta
+- path → Tests: Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission\_RankD\_Test\_03.asset
+- path → Tests: Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission\_RankD\_Test\_03.asset.meta
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 13b9853ac678a8a9db2764e286f6e63f20055600
+
+[13b9853ac678a8a9db2764e286f6e63f20055600](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/13b9853ac678a8a9db2764e286f6e63f20055600)
+
+Date: 2026-11-23T21:41:10-03:00 · Classification: Features (explicit) · Systems: Build & Tooling
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(missions): add PlayMode debugger auto-init and global reset simulation
+```
+
+#### Original body
+
+```text
+Auto-initializes MissionPlayModeDebugger across scenes (toggled via F7) and adds controls to simulate the global UTC daily reset and adjust Guild Reputation with structured logs (TASK-325).
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Editor/Missions/MissionPlayModeDebuggerEditor.cs
+Project Grimhold/Assets/Scripts/Missions/Debugging/MissionPlayModeDebugger.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/Missions/MissionPlayModeDebuggerEditor.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 01fb0084886223388bfe028a80dc3b0158046a73
+
+[01fb0084886223388bfe028a80dc3b0158046a73](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/01fb0084886223388bfe028a80dc3b0158046a73)
+
+Date: 2026-11-23T21:40:56-03:00 · Classification: Features (explicit) · Systems: UI
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(ui): display daily contract rotation and configurable rank progress in Town Guild
+```
+
+#### Original body
+
+```text
+Filters the Town Mission Guild Available tab by the active daily rotation (preserving active contracts and unique missions), refreshes on global reset rollover, and replaces the hardcoded header threshold with configured rank progression (TASK-325).
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/Presentation/TownMissionGuildPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownMissionGuildView.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- scope → UI: ui
+- message-term → UI: ui
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 8eeeb9c136293a34e994a30ce770b30824b851bb
+
+[8eeeb9c136293a34e994a30ce770b30824b851bb](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/8eeeb9c136293a34e994a30ce770b30824b851bb)
+
+Date: 2026-11-23T21:40:56-03:00 · Classification: Features (explicit) · Systems: Persistence & Backend
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(persistence): persist daily rotation state and resolve rank from config
+```
+
+#### Original body
+
+```text
+Removes hardcoded rank threshold from LocalProfileSnapshot, adds dailyRotation persistence at SchemaVersion 15 with v14 backward migration, and wires MissionGuildConfiguration and AdjustableMissionClock into LocalProfileStore (TASK-325).
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileSnapshot.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileSnapshot.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+- scope → Persistence &amp; Backend: persistence
+- message-term → Persistence &amp; Backend: persistence
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 3f2bdfb84ad68fbca10fd62612bb48fba6909210
+
+[3f2bdfb84ad68fbca10fd62612bb48fba6909210](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3f2bdfb84ad68fbca10fd62612bb48fba6909210)
+
+Date: 2026-11-23T21:40:55-03:00 · Classification: Features (explicit) · Systems: Persistence & Backend
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(missions): add Inspector-configurable MissionGuildConfiguration asset and weights
+```
+
+#### Original body
+
+```text
+Exposes daily offer size, global UTC reset time, rank reputation thresholds (E/D/C), rank weights, anti-repetition history parameters, and per-mission appearance weight in Unity Inspector and wires the asset into LocalProfilePersistenceConfiguration (TASK-325).
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Resources/LocalProfilePersistenceConfiguration.asset
+Project Grimhold/Assets/Scriptable Objects/Missions/MissionGuildConfiguration.asset
+Project Grimhold/Assets/Scriptable Objects/Missions/MissionGuildConfiguration.asset.meta
+Project Grimhold/Assets/Scripts/Missions/Definitions/MissionDefinition.cs
+Project Grimhold/Assets/Scripts/Missions/Definitions/MissionGuildConfiguration.cs
+Project Grimhold/Assets/Scripts/Missions/Definitions/MissionGuildConfiguration.cs.meta
+Project Grimhold/Assets/Scripts/Stash/LocalProfilePersistenceConfiguration.cs
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Resources/LocalProfilePersistenceConfiguration.asset
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfilePersistenceConfiguration.cs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 918b38853545ca537067913642546e0da12fa9b2
+
+[918b38853545ca537067913642546e0da12fa9b2](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/918b38853545ca537067913642546e0da12fa9b2)
+
+Date: 2026-11-23T21:40:55-03:00 · Classification: Features (explicit) · Systems: Unassigned
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(missions): add daily contract rotation engine and configurable rank rules
+```
+
+#### Original body
+
+```text
+Adds pure C# clock abstraction, global UTC daily rotation window computation, weighted daily offer selection with recent-history de-weighting, and configurable rank progression rules (TASK-325).
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Missions/Engine/DailyContractRotationEngine.cs
+Project Grimhold/Assets/Scripts/Missions/Engine/DailyContractRotationEngine.cs.meta
+Project Grimhold/Assets/Scripts/Missions/Engine/IMissionClock.cs
+Project Grimhold/Assets/Scripts/Missions/Engine/IMissionClock.cs.meta
+Project Grimhold/Assets/Scripts/Missions/State/DailyMissionRotationState.cs
+Project Grimhold/Assets/Scripts/Missions/State/DailyMissionRotationState.cs.meta
+Project Grimhold/Assets/Scripts/Missions/State/GuildRankProgressionRules.cs
+Project Grimhold/Assets/Scripts/Missions/State/GuildRankProgressionRules.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
 
 ### 5e240912ef356a9a68ea7b7be42a4a22bfe74d9c
 

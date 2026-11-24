@@ -1,71 +1,71 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1253,
-  "canonicalEntries": 1250,
+  "rawCommits": 1260,
+  "canonicalEntries": 1257,
   "before": {
+    "Tests": 50,
+    "Architecture & Infrastructure": 25,
+    "Features": 458,
     "Documentation": 137,
-    "Tests": 49,
     "Bug Fixes": 197,
-    "Features": 453,
     "Other Changes": 376,
-    "Refactoring": 17,
-    "Architecture & Infrastructure": 24
+    "Refactoring": 17
   },
   "after": {
+    "Tests": 55,
+    "Maintenance": 23,
+    "Features": 597,
     "Documentation": 153,
-    "Tests": 54,
     "Bug Fixes": 213,
-    "Features": 592,
     "Other Changes": 183,
     "Refactoring": 30,
-    "Maintenance": 22,
     "Architecture & Infrastructure": 6
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Persistence & Backend": 323,
+    "Build & Tooling": 652,
+    "Tests": 801,
+    "UI": 358,
+    "Unassigned": 51,
     "Combat": 419,
     "Documentation": 451,
     "Movement": 108,
-    "Build & Tooling": 650,
-    "Tests": 799,
-    "Unassigned": 50,
     "Art & Animation": 275,
     "Networking & Sessions": 366,
     "World & Visibility": 184,
     "Extraction": 178,
     "Abilities": 146,
     "Inventory & Loot": 505,
-    "Persistence & Backend": 320,
-    "UI": 357,
     "Audio": 42,
     "Input": 32
   },
   "canonical": {
     "sections": {
+      "Tests": 55,
+      "Maintenance": 23,
+      "Features": 596,
       "Documentation": 153,
-      "Tests": 54,
       "Bug Fixes": 212,
-      "Features": 591,
       "Other Changes": 182,
       "Refactoring": 30,
-      "Maintenance": 22,
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Persistence & Backend": 323,
+      "Build & Tooling": 650,
+      "Tests": 799,
+      "UI": 357,
+      "Unassigned": 51,
       "Combat": 417,
       "Documentation": 449,
       "Movement": 108,
-      "Build & Tooling": 648,
-      "Tests": 797,
-      "Unassigned": 50,
       "Art & Animation": 272,
       "Networking & Sessions": 366,
       "World & Visibility": 182,
       "Extraction": 178,
       "Abilities": 144,
       "Inventory & Loot": 505,
-      "Persistence & Backend": 320,
-      "UI": 356,
       "Audio": 42,
       "Input": 32
     }
@@ -74694,8 +74694,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 376,
-      "canonicalEntries": 376
+      "originalCommits": 383,
+      "canonicalEntries": 383
     },
     {
       "key": "v0.5.0",
@@ -74739,6 +74739,430 @@
     }
   ],
   "commits": [
+    {
+      "sha": "9a7da10a4e790b2ef96b0e3baf7eec17285d2394",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/9a7da10a4e790b2ef96b0e3baf7eec17285d2394",
+      "subject": "test(missions): add EditMode tests for daily rotation, global reset, and rank config",
+      "body": "Adds controlled-clock EditMode tests for global UTC reset, 6-contract daily rotation, <6 pool handling, anti-repetition weighting, Rank C reachability, live Inspector threshold changes, and SchemaVersion 15 persistence roundtrip/migration (TASK-325).\n",
+      "date": "2026-11-23T21:41:11-03:00",
+      "files": [
+        "Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/DailyContractRotationAndRankConfigTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/DailyContractRotationAndRankConfigTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RankEContractsAndGuildReputationTests.cs"
+      ],
+      "originalType": "test",
+      "originalScope": "missions",
+      "originalSection": "Tests",
+      "breaking": false,
+      "reverts": null,
+      "section": "Tests",
+      "confidence": "explicit",
+      "systems": [
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "test",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "persistence",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/DailyContractRotationAndRankConfigTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/DailyContractRotationAndRankConfigTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RankEContractsAndGuildReputationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/LocalProfilePersistenceEditModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/DailyContractRotationAndRankConfigTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/DailyContractRotationAndRankConfigTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RankEContractsAndGuildReputationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "37416fa12e3ca7a9d020aae77e19dbde2fa279f6",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/37416fa12e3ca7a9d020aae77e19dbde2fa279f6",
+      "subject": "chore(missions): add Rank D and C test contracts for daily rotation validation",
+      "body": "Adds 3 Rank D and 3 Rank C test contracts under Missions/Test and registers them in MissionDefinitionCatalog for in-game validation of multi-rank daily rotation (TASK-325).\n",
+      "date": "2026-11-23T21:41:10-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scriptable Objects/Missions/MissionDefinitionCatalog.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/Test.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_01.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_01.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_02.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_02.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_03.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_03.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_01.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_01.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_02.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_02.asset.meta",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_03.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_03.asset.meta"
+      ],
+      "originalType": "chore",
+      "originalScope": "missions",
+      "originalSection": "Architecture & Infrastructure",
+      "breaking": false,
+      "reverts": null,
+      "section": "Maintenance",
+      "confidence": "explicit",
+      "systems": [
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "chore",
+          "supports": "Maintenance"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Missions/Test.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_01.asset",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_01.asset.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_02.asset",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_02.asset.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_03.asset",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankC_Test_03.asset.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_01.asset",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_01.asset.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_02.asset",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_02.asset.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_03.asset",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Missions/Test/Mission_RankD_Test_03.asset.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "13b9853ac678a8a9db2764e286f6e63f20055600",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/13b9853ac678a8a9db2764e286f6e63f20055600",
+      "subject": "feat(missions): add PlayMode debugger auto-init and global reset simulation",
+      "body": "Auto-initializes MissionPlayModeDebugger across scenes (toggled via F7) and adds controls to simulate the global UTC daily reset and adjust Guild Reputation with structured logs (TASK-325).\n",
+      "date": "2026-11-23T21:41:10-03:00",
+      "files": [
+        "Project Grimhold/Assets/Editor/Missions/MissionPlayModeDebuggerEditor.cs",
+        "Project Grimhold/Assets/Scripts/Missions/Debugging/MissionPlayModeDebugger.cs"
+      ],
+      "originalType": "feat",
+      "originalScope": "missions",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Build & Tooling"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Editor/Missions/MissionPlayModeDebuggerEditor.cs",
+          "supports": "Build & Tooling"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "01fb0084886223388bfe028a80dc3b0158046a73",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/01fb0084886223388bfe028a80dc3b0158046a73",
+      "subject": "feat(ui): display daily contract rotation and configurable rank progress in Town Guild",
+      "body": "Filters the Town Mission Guild Available tab by the active daily rotation (preserving active contracts and unique missions), refreshes on global reset rollover, and replaces the hardcoded header threshold with configured rank progression (TASK-325).\n",
+      "date": "2026-11-23T21:40:56-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownMissionGuildPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownMissionGuildView.cs"
+      ],
+      "originalType": "feat",
+      "originalScope": "ui",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "UI"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "scope",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "ui",
+          "supports": "UI"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "8eeeb9c136293a34e994a30ce770b30824b851bb",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/8eeeb9c136293a34e994a30ce770b30824b851bb",
+      "subject": "feat(persistence): persist daily rotation state and resolve rank from config",
+      "body": "Removes hardcoded rank threshold from LocalProfileSnapshot, adds dailyRotation persistence at SchemaVersion 15 with v14 backward migration, and wires MissionGuildConfiguration and AdjustableMissionClock into LocalProfileStore (TASK-325).\n",
+      "date": "2026-11-23T21:40:56-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs",
+        "Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs",
+        "Project Grimhold/Assets/Scripts/Stash/LocalProfileSnapshot.cs",
+        "Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs"
+      ],
+      "originalType": "feat",
+      "originalScope": "persistence",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Persistence & Backend"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/LocalProfileSaveCodec.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/LocalProfileSnapshot.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "persistence",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "persistence",
+          "supports": "Persistence & Backend"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "3f2bdfb84ad68fbca10fd62612bb48fba6909210",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3f2bdfb84ad68fbca10fd62612bb48fba6909210",
+      "subject": "feat(missions): add Inspector-configurable MissionGuildConfiguration asset and weights",
+      "body": "Exposes daily offer size, global UTC reset time, rank reputation thresholds (E/D/C), rank weights, anti-repetition history parameters, and per-mission appearance weight in Unity Inspector and wires the asset into LocalProfilePersistenceConfiguration (TASK-325).\n",
+      "date": "2026-11-23T21:40:55-03:00",
+      "files": [
+        "Project Grimhold/Assets/Resources/LocalProfilePersistenceConfiguration.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/MissionGuildConfiguration.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Missions/MissionGuildConfiguration.asset.meta",
+        "Project Grimhold/Assets/Scripts/Missions/Definitions/MissionDefinition.cs",
+        "Project Grimhold/Assets/Scripts/Missions/Definitions/MissionGuildConfiguration.cs",
+        "Project Grimhold/Assets/Scripts/Missions/Definitions/MissionGuildConfiguration.cs.meta",
+        "Project Grimhold/Assets/Scripts/Stash/LocalProfilePersistenceConfiguration.cs"
+      ],
+      "originalType": "feat",
+      "originalScope": "missions",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Persistence & Backend"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Resources/LocalProfilePersistenceConfiguration.asset",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/LocalProfilePersistenceConfiguration.cs",
+          "supports": "Persistence & Backend"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "918b38853545ca537067913642546e0da12fa9b2",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/918b38853545ca537067913642546e0da12fa9b2",
+      "subject": "feat(missions): add daily contract rotation engine and configurable rank rules",
+      "body": "Adds pure C# clock abstraction, global UTC daily rotation window computation, weighted daily offer selection with recent-history de-weighting, and configurable rank progression rules (TASK-325).\n",
+      "date": "2026-11-23T21:40:55-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Missions/Engine/DailyContractRotationEngine.cs",
+        "Project Grimhold/Assets/Scripts/Missions/Engine/DailyContractRotationEngine.cs.meta",
+        "Project Grimhold/Assets/Scripts/Missions/Engine/IMissionClock.cs",
+        "Project Grimhold/Assets/Scripts/Missions/Engine/IMissionClock.cs.meta",
+        "Project Grimhold/Assets/Scripts/Missions/State/DailyMissionRotationState.cs",
+        "Project Grimhold/Assets/Scripts/Missions/State/DailyMissionRotationState.cs.meta",
+        "Project Grimhold/Assets/Scripts/Missions/State/GuildRankProgressionRules.cs",
+        "Project Grimhold/Assets/Scripts/Missions/State/GuildRankProgressionRules.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "missions",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "unassigned-system",
+          "message": "No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system."
+        }
+      ],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "5e240912ef356a9a68ea7b7be42a4a22bfe74d9c",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/5e240912ef356a9a68ea7b7be42a4a22bfe74d9c",
