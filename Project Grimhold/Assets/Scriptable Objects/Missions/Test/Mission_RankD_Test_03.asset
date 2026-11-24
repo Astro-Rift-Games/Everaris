@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e78370bc118bf40baebe3b64c51dc2, type: 3}
+  m_Name: Mission_RankD_Test_03
+  m_EditorClassIdentifier: Assembly-CSharp::MissionDefinition
+  _id: CON_D_TEST_003
+  Title: "[TEST] Extracci\xF3n de Hierro Negro"
+  Description: "[Misi\xF3n de prueba Rango D] Extrae 3 unidades de hierro negro en una misma expedici\xF3n."
+  Type: 0
+  RankRequired: 1
+  _appearanceWeight: 1
+  Phases:
+  - Objectives:
+    - Family: 5
+      Condition:
+        TargetId: RES_BLACK_IRON
+        ZoneId: 
+        RequiredAmount: 3
+  Rewards:
+  - Type: 0
+    Amount: 120
+    ReferenceId: 
+  - Type: 2
+    Amount: 55
+    ReferenceId: 
+  - Type: 1
+    Amount: 15
+    ReferenceId: 
