@@ -260,3 +260,61 @@ test('shared buyback caps at 16 entries with FIFO eviction', async () => {
   assert.equal(updated.inventory.buyback.entries.some(e => e.entryId === 'entry_1'), false, 'entry_1 must be evicted');
   assert.equal(updated.inventory.buyback.entries[15].lootId, 'arming_sword', 'Newest item must be at end of list');
 });
+
+test('shopTrade commits multiple buybacks atomically and rejects without partial writes on failure (TASK-332)', async () => {
+  const currentWeek = getWeeklyRotation();
+  const instA = { instanceId: 'aaaaaaaaaaaaaaaaaaaaaaaa', modifiers: { primary: { grade: 'E' }, gemSocketCount: 0, gems: [] } };
+  const instB = { instanceId: 'bbbbbbbbbbbbbbbbbbbbbbbb', modifiers: { upgradeLevel: 1 } };
+  const buybackEntries = [
+    { entryId: 'bb_a', lootId: 'arming_sword', amount: 1, unitPrice: 30, instance: instA },
+    { entryId: 'bb_b', lootId: 'heavy_armor_helmet', amount: 1, unitPrice: 25, instance: instB },
+    { entryId: 'bb_c', lootId: 'CON_THROWING_DAGGER', amount: 2, unitPrice: 12 }
+  ];
+
+  // 1. Multiple buybacks succeed atomically in one transaction
+  const { account } = await createTestCharacter({
+    currency: 100,
+    loadout: [],
+    buyback: { entries: buybackEntries }
+  });
+
+  const ok = await InventoryService.shopTrade(account._id, {
+    transactionId: `tx_mbb_ok_${Date.now()}`,
+    expectedRevision: 1,
+    weekId: currentWeek.weekId,
+    purchases: [],
+    sales: [],
+    buybacks: [
+      { entryId: 'bb_a', amount: 1 },
+      { entryId: 'bb_b', amount: 1 },
+      { entryId: 'bb_c', amount: 1 }
+    ]
+  });
+  assert.equal(ok.currency, 33);
+  assert.equal(ok.revision, 2);
+  assert.equal(ok.loadout.length, 3);
+  assert.deepEqual(ok.buyback.entries.map(e => [e.entryId, e.amount]), [['bb_c', 1]]);
+
+  // 2. Partial failure (2nd buyback causes insufficient funds) rolls back completely
+  const { account: poorAccount } = await createTestCharacter({
+    currency: 40, // covers bb_a (30), fails on bb_b (+25 = 55)
+    loadout: [],
+    buyback: { entries: buybackEntries }
+  });
+  const beforePoor = await Character.findOne({ accountId: poorAccount._id }).lean();
+  await assert.rejects(
+    InventoryService.shopTrade(poorAccount._id, {
+      transactionId: `tx_mbb_fail_${Date.now()}`,
+      expectedRevision: 1,
+      weekId: currentWeek.weekId,
+      purchases: [],
+      sales: [],
+      buybacks: [
+        { entryId: 'bb_a', amount: 1 },
+        { entryId: 'bb_b', amount: 1 }
+      ]
+    }),
+    err => err.errorCode === 'INSUFFICIENT_FUNDS'
+  );
+  assert.deepEqual(await Character.findOne({ accountId: poorAccount._id }).lean(), beforePoor);
+});

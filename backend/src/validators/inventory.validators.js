@@ -238,8 +238,9 @@ const shopTradeValidator = [
           Object.keys(line).some(key => !['entryId', 'amount'].includes(key)) ||
           typeof line.entryId !== 'string' || !line.entryId.trim() ||
           !Number.isSafeInteger(line.amount) || line.amount < 1 || line.amount > MAX_TRANSACTION_AMOUNT) return false;
-      if (buybackEntryIds.has(line.entryId)) return false;
-      buybackEntryIds.add(line.entryId);
+      const canonicalEntryId = line.entryId.trim();
+      if (buybackEntryIds.has(canonicalEntryId)) return false;
+      buybackEntryIds.add(canonicalEntryId);
     }
 
     return true;
