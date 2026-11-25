@@ -25,8 +25,10 @@ public sealed class TownMissionGuildPresenter : NetworkBehaviour
     private IDisposable _inputSuppression;
     private PlayerInputReader _inputReader;
     private LocalProfileStore _store;
+    private IRemoteMissionClaimService _remoteClaimService;
     private bool _isListening;
     private bool _isRefreshing;
+    private bool _claimInFlight;
     private string _lastRenderedRotationWindowId;
     private MissionDefinition _selectedMission;
 
@@ -39,10 +41,16 @@ public sealed class TownMissionGuildPresenter : NetworkBehaviour
         _store = store ?? throw new ArgumentNullException(nameof(store));
     }
 
+    public void SetRemoteClaimService(IRemoteMissionClaimService service)
+    {
+        _remoteClaimService = service;
+    }
+
     public void UnbindProfile()
     {
         ClosePanel();
         _store = null;
+        _remoteClaimService = null;
     }
 
     public void SetView(TownMissionGuildView view)
@@ -314,12 +322,19 @@ public sealed class TownMissionGuildPresenter : NetworkBehaviour
 
     private void EnsureStore()
     {
-        if (_store == null)
+        if (_store == null || _remoteClaimService == null)
         {
             var stashContext = FindAnyObjectByType<ApplicationStashContext>();
             if (stashContext != null && stashContext.IsAvailable)
             {
-                _store = stashContext.Store;
+                if (_store == null)
+                {
+                    _store = stashContext.Store;
+                }
+                if (_remoteClaimService == null)
+                {
+                    _remoteClaimService = stashContext.MissionClaimService;
+                }
             }
         }
     }
@@ -538,11 +553,17 @@ public sealed class TownMissionGuildPresenter : NetworkBehaviour
 
     public void OnClaimRequested(MissionDefinition def)
     {
-        if (def == null || _store == null) return;
+        if (def == null || _store == null || _claimInFlight) return;
 
         if (!_store.CanClaimMission(def, out string reason))
         {
             _view.ShowFeedback(reason, isError: true);
+            return;
+        }
+
+        if (_remoteClaimService != null)
+        {
+            _ = ClaimMissionRemotelyAsync(def);
             return;
         }
 
@@ -555,6 +576,30 @@ public sealed class TownMissionGuildPresenter : NetworkBehaviour
         else
         {
             _view.ShowFeedback($"Error al reclamar recompensa: {result}", isError: true);
+        }
+    }
+
+    private async System.Threading.Tasks.Task ClaimMissionRemotelyAsync(MissionDefinition def)
+    {
+        _claimInFlight = true;
+        try
+        {
+            var (result, message) = await _remoteClaimService.ClaimMissionAsync(def);
+            if (_view != null)
+            {
+                _view.ShowFeedback(
+                    string.IsNullOrEmpty(message) ? $"Error al reclamar recompensa: {result}" : message,
+                    isError: result != StashOperationResult.Success);
+            }
+
+            if (result == StashOperationResult.Success && _view != null)
+            {
+                Refresh();
+            }
+        }
+        finally
+        {
+            _claimInFlight = false;
         }
     }
 

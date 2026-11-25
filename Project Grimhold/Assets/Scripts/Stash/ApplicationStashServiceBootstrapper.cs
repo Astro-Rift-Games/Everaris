@@ -182,8 +182,10 @@ public static class ApplicationStashServiceBootstrapper
         currencyService.Initialize(store);
         var abilityPurchaseService = contextObject.AddComponent<RemoteAbilityPurchaseService>();
         abilityPurchaseService.Initialize(store, reconciliationService);
+        var missionClaimService = contextObject.AddComponent<RemoteMissionClaimService>();
+        missionClaimService.Initialize(store, reconciliationService);
         shopTransactionService.Initialize(store, _configuration, reconciliationService, _context.BuybackLedger);
-        _context.Initialize(store, stashService, loadoutService, currencyService, shopTransactionService, abilityPurchaseService);
+        _context.Initialize(store, stashService, loadoutService, currencyService, shopTransactionService, abilityPurchaseService, missionClaimService);
         // HydrateSnapshot deliberately excludes this memory-only, backend-owned ledger.
         if (inventoryData.HasValue) _context.HydrateBuyback(inventoryData.Value);
 
@@ -427,6 +429,7 @@ public static class ApplicationStashServiceBootstrapper
                 {
                     snapshot.LastAppliedProgressionResultSequence = 0;
                     snapshot.LastProgressionReceipt = null;
+                    snapshot.AppliedProgressionReceipts.Clear();
                 }
                 snapshot.CharacterAttributes = validatedAttributes.Value;
             }
