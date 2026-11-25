@@ -147,7 +147,7 @@ namespace Tests.EditMode.Scenario
         }
 
         [Test]
-        public void TryGetAssignment_ResolvesEachTeamToItsExclusiveSanctuary()
+        public void TryGetAssignment_ResolvesEachTeamToItsOwnSanctuary()
         {
             Assert.That(RaidTeamId.TryCreate(1, out RaidTeamId team1), Is.True);
             Assert.That(RaidTeamId.TryCreate(2, out RaidTeamId team2), Is.True);
@@ -155,7 +155,6 @@ namespace Tests.EditMode.Scenario
 
             var firstSanctuary = new Sanctuary(new EntityId(500), team1);
             var secondSanctuary = new Sanctuary(new EntityId(600), team2);
-            Assert.That(firstSanctuary.TryAssignTeam(team2), Is.False);
             Register(firstSanctuary);
             Register(secondSanctuary);
 
@@ -168,6 +167,27 @@ namespace Tests.EditMode.Scenario
             Assert.That(res2.Success, Is.True);
             Assert.That(res2.SanctuaryId, Is.EqualTo(secondSanctuary.Id));
             Assert.That(res3.FailureReason, Is.EqualTo(SanctuaryAssignmentFailureReason.AssignmentNotFound));
+        }
+
+        [Test]
+        public void TryGetAssignment_ResolvesSeveralTeamsToTheSameSharedSanctuary()
+        {
+            Assert.That(RaidTeamId.TryCreate(1, out RaidTeamId team1), Is.True);
+            Assert.That(RaidTeamId.TryCreate(2, out RaidTeamId team2), Is.True);
+
+            var shared = new Sanctuary(new EntityId(500), team1);
+            var other = new Sanctuary(new EntityId(600));
+            Assert.That(shared.TryAssignTeam(team2), Is.True);
+            Register(shared);
+            Register(other);
+
+            SanctuaryAssignmentResult res1 = _service.TryGetAssignment(team1);
+            SanctuaryAssignmentResult res2 = _service.TryGetAssignment(team2);
+
+            Assert.That(res1.Success, Is.True);
+            Assert.That(res1.SanctuaryId, Is.EqualTo(shared.Id));
+            Assert.That(res2.Success, Is.True, "A shared Sanctuary is not a duplicate assignment.");
+            Assert.That(res2.SanctuaryId, Is.EqualTo(shared.Id));
         }
 
         [Test]
@@ -284,7 +304,7 @@ namespace Tests.EditMode.Scenario
 
             public bool TryAssignTeam(RaidTeamId teamId)
             {
-                if (!teamId.IsValid || (IsReserved && !_assignedTeams.Contains(teamId)))
+                if (!teamId.IsValid)
                 {
                     return false;
                 }

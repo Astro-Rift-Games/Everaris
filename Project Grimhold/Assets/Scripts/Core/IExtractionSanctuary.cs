@@ -1,6 +1,7 @@
 /// <summary>
 /// Network sanctuary capability whose replicated team slots maintain authoritative reservation and ritual state.
-/// A Sanctuary is reserved exclusively for one owning team (GD 06 section 10).
+/// Several teams may be assigned to the same Sanctuary simultaneously (GD 10 section 8); each assigned team
+/// owns one slot and its own ritual state.
 /// </summary>
 public interface IExtractionSanctuary : IEntity
 {
@@ -19,10 +20,16 @@ public interface IExtractionSanctuary : IEntity
     /// <summary>Gets whether any assigned team has completed their ritual at this sanctuary.</summary>
     bool IsAnyRitualCompleted { get; }
 
-    /// <summary>Gets whether at least one team is currently assigned to this sanctuary.</summary>
+    /// <summary>
+    /// Gets whether at least one team is currently assigned to this sanctuary. It does not mean the sanctuary is
+    /// exclusive to one team: other teams may still be assigned to it.
+    /// </summary>
     bool IsReserved { get; }
 
-    /// <summary>Legacy helper: gets the first assigned team identity or default.</summary>
+    /// <summary>
+    /// Legacy helper: gets the first assigned team identity or default. With a shared sanctuary it identifies only
+    /// one of the assigned teams; use <see cref="IsAssignedToTeam"/> to decide whether a team is assigned.
+    /// </summary>
     EntityId OwnerId { get; }
 
     /// <summary>Legacy helper: aggregate ritual lifecycle for this sanctuary.</summary>

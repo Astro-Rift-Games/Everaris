@@ -15,7 +15,7 @@ The authoritative extraction core owns zones, the player extraction process and 
 | Zone identity & geometry | `ExtractionZone` | `EntityId` derived from `NetworkObject`, serialized `Collider2D` |
 | Zone availability | `ExtractionZone` | Private `[Networked] NetworkBool`, exposed as `bool` |
 | Team sanctuary assignment | `ExtractionSanctuaryAssignmentService` | Runner-local deterministic assignment by `RaidTeamId` |
-| Team sanctuary ritual | `ExtractionSanctuary` | `[Networked, Capacity(RaidSessionRules.MaxTeams)]` slots `{TeamId, RitualState, RitualTimer}` |
+| Team sanctuary ritual | `ExtractionSanctuary` | `[Networked, Capacity(RaidSessionRules.MaxTeams)]` slots `{TeamId, RitualState, RitualTimer}`, one per assigned team (several teams may share a Sanctuary) |
 | Team countdown coordination | `TeamExtractionCoordinator` | `NetworkBehaviour` (order 115) on `NetworkMatchController`, slots by `RaidTeamId` |
 | Individual player outcome | `PlayerExtractionController` | Individual terminal `ExtractionState.Extracted`, restrictions, loot saver hooks |
 | Death & Downed state | `ICharacter` / `PlayerCharacter` | `IsAlive`; Downed counts as alive for extraction |
@@ -226,26 +226,26 @@ Team progress is networked authoritatively on `NetworkMatchController` via `Team
 
 The pre-ritual flow is `team quota -> team request -> team assignment -> sanctuary reservation`. When a team completes its quota under State Authority, `TeamExtractionProgress` triggers `ExtractionSanctuaryAssignmentService` for the team's `RaidTeamId`.
 
-**Exclusive reservation (Game Design 06 sections 10 and 12):**
-A Sanctuary is reserved for exactly one owning team. Other teams may approach and fight in its area, but cannot activate, capture, deactivate or extract through it. This resolves the former divergence D-3 (US-53), under which several teams could share one Sanctuary, in favor of Game Design.
+**Shared Sanctuary (Game Design 10 section 8, TASK-334):**
+Several teams may receive the same Sanctuary simultaneously. Doc 10 section 8 states that Duo members share the assigned Sanctuary and that several teams may receive the same one, and that the point can be selected even while players or enemies are present. The owner decision of 2026-11-22 is that the newer Doc 10 governs. Doc 06 section 10 still describes the Sanctuary as exclusive; that discrepancy is a Game Design blocker (the Doc 06 correction is owned by Game Design) and does not change this contract. This reverses the former exclusive reservation and returns to the shared model of the former divergence D-3 (US-53).
 
-Each `ExtractionSanctuary` keeps its networked team slots (`[Networked, Capacity(RaidSessionRules.MaxTeams)]`) storing `{TeamId, RitualState, RitualTimer}`, so the replicated layout is unchanged, but `TryAssignTeam` accepts a team only while no other team holds a slot. The owner's repeated reservation remains idempotent. All reservation paths, including the legacy `TryReserve`, go through `TryAssignTeam`.
+Each `ExtractionSanctuary` keeps its networked team slots (`[Networked, Capacity(RaidSessionRules.MaxTeams)]`) storing `{TeamId, RitualState, RitualTimer}`; the replicated layout is unchanged. Each assigned team owns exactly one slot, so the capacity is `RaidSessionRules.MaxTeams` and every team of the Raid can hold a slot on the same Sanctuary. `TryAssignTeam` accepts any valid team while a slot is free and never rejects because another team already holds one; a repeated assignment of the same team remains idempotent. All reservation paths, including the legacy `TryReserve`, go through `TryAssignTeam`. `IsReserved` means "at least one team is assigned", not "reserved for one team"; the legacy `OwnerId` returns only the first assigned slot's team and must not be used to decide ownership. Team-level checks (`IsAssignedToTeam`, `CanUseExtraction(RaidTeamId)`, `TryGetRitualProgress(RaidTeamId, ...)`) are the contract. Assignment is keyed by `RaidTeamId`, so both members of a Duo always resolve to the same Sanctuary.
 
-Host simulation selects only among registered Sanctuaries that are not reserved (`IsReserved == false`), in ascending identity order, with the pure policy: pseudorandom mixing of seed, tick, team identity and free candidate count. When every Sanctuary is reserved, assignment fails closed with `NoFreeSanctuary`; the team keeps its pending request and `TeamExtractionProgress` retries it on later ticks. Game Design does not yet define the outcome when a raid has more teams than Sanctuaries; Level Design must provide at least one Sanctuary per team until it does.
+Host simulation selects over every registered Sanctuary, including those already assigned to other teams, in ascending identity order, with the pure policy: pseudorandom mixing of seed, tick, team identity and the candidate count (the number of registered Sanctuaries). Selection stays deterministic for the session seed and does not consider other teams' assignments. `NoFreeSanctuary` is no longer produced; the enum member remains only to keep the failure contract stable. A raid with more teams than Sanctuaries is valid, and Level Design no longer needs to provide one Sanctuary per team. When no Sanctuary is registered, assignment still fails closed with `NoSanctuariesConfigured`, and the team keeps its pending request, which `TeamExtractionProgress` retries on later ticks.
 
 Scene composition currently provides four `ExtractionSanctuary` instances in `Gameplay.unity`
 and eight in `CatacombsMap.unity`. Both scenes share each instance's `Spawnpoint 1–4` children
 with player spawn-area configuration as an authoring convention, not an assignment-service dependency.
-These counts do not change quota, team limits or the fail-closed assignment policy.
+These counts do not change quota, team limits or the fail-closed behavior when no Sanctuary is registered.
 
-A pending request is retried every simulation tick, so the assignment service reports `NoSanctuariesConfigured`, `NoFreeSanctuary`, `ReservationConflict`, `SanctuaryRegistryInconsistent` and `DuplicateExistingAssignment` once per Raid generation (until `ResetForRaidClosure`) as a configuration failure, and retried attempts log nothing.
+A pending request is retried every simulation tick, so the assignment service reports `NoSanctuariesConfigured`, `ReservationConflict`, `SanctuaryRegistryInconsistent` and `DuplicateExistingAssignment` once per Raid generation (until `ResetForRaidClosure`) as a configuration failure, and retried attempts log nothing.
 
 ## Authoritative team ritual and shared extraction coordination (supersedes Authoritative individual ritual)
 
 Each `ExtractionSanctuary` composes one `ExtractionZone` on the same root `NetworkObject`. The Sanctuary is the team interaction target for initiating the extraction ritual.
 
 ### Team Ritual Rules (`TeamRitualRules`)
-1. **Initiation**: Any living, active (not Downed), connected member of the assigned team can initiate the ritual via interaction with the assigned sanctuary (`CanInitiateRitual`).
+1. **Initiation**: Any living, active (not Downed), connected member of the assigned team can initiate the ritual via interaction with the assigned sanctuary (`CanInitiateRitual`). Each team starts, continues, cancels and completes its own ritual in its own slot; another team's ritual on the same Sanctuary neither starts, blocks, cancels nor completes it.
 2. **Continuation & Cancellation**: Once started, the ritual continues counting down. It cancels only if no living, connected members of that team remain in the raid (`ShouldCancelRitual`, rule A-4 / D-5).
 3. **Completion**: Upon ritual timer expiry, the ritual transitions to `Completed`, activating the extraction zone countdown for that team.
 
@@ -257,6 +257,8 @@ Countdown and extraction completion are coordinated per team by `TeamExtractionC
 - **Downed Extraction (Rule D-6)**: A Downed teammate inside the zone extracts together with their active teammate(s) upon countdown completion.
 - **Team Composition Signature**: Evaluated dynamically. If alive/connected membership changes during countdown (e.g. death or confirmed absence), the composition signature changes and the countdown restarts safely with the updated required roster.
 - **Completion**: When the team countdown completes, `TeamExtractionCoordinator` authoritatively transitions all present eligible team members to `ExtractionState.Extracted` via their `PlayerExtractionController`.
+- **Concurrent teams on one Sanctuary**: Countdown slots are keyed by `RaidTeamId` and resolve the team's sanctuary through `TryGetAssignment(teamId)`, so teams sharing a Sanctuary run independent countdowns. A team may start only when its own ritual is `Completed` (`CanUseExtraction(teamId)`); another team completing its ritual or extraction does not extract, cancel or block it. Zone availability is Sanctuary-wide and becomes permanently available once any assigned team completes its ritual; the per-team ritual check still gates each team.
+- **Host Migration**: The slots are keyed by the immutable `RaidTeamId`, so `CopyStateFrom` restores every assigned team's slot and ritual state identically. The assignment service's session seed is runner-local and not restored; a migrated Host initializes a fresh seed (`Initialize(runner, GameMode.Host)` on the replacement runner), which only affects teams assigned after the migration.
 
 ## Ritual presentation boundary
 

@@ -5,8 +5,8 @@ using UnityEngine;
 
 /// <summary>
 /// Authoritative reservation and ritual endpoint for an extraction point.
-/// Reserves the Sanctuary exclusively for one owning team (GD 06 section 10) and runs its ritual
-/// under rules A-4 / D-5.
+/// Several teams may be assigned to the same Sanctuary simultaneously (GD 10 section 8); each
+/// assigned team owns one replicated slot and runs its own ritual under rules A-4 / D-5.
 /// The co-located ExtractionZone shares this NetworkObject identity while retaining its
 /// independent registry capability and geometry responsibility.
 /// </summary>
@@ -306,13 +306,7 @@ public sealed class ExtractionSanctuary : NetworkBehaviour, IExtractionSanctuary
             return true;
         }
 
-        // A Sanctuary is reserved exclusively for its owning team (GD 06 section 10).
-        if (IsReserved)
-        {
-            Debug.LogWarning($"[{nameof(ExtractionSanctuary)} {name}] TryAssignTeam for team {teamId.Value} rejected: reserved by another team.");
-            return false;
-        }
-
+        // Several teams may share this Sanctuary (GD 10 section 8): each one takes its own slot.
         int emptyIndex = FindEmptySlotIndex();
         if (emptyIndex < 0)
         {
@@ -544,7 +538,16 @@ public sealed class ExtractionSanctuary : NetworkBehaviour, IExtractionSanctuary
 
     public void CopyStateFrom(ExtractionSanctuary source)
     {
-        base.CopyStateFrom(source);
+#if UNITY_EDITOR
+        // Unspawned EditMode instances have no network state to copy: the slot loop below mirrors it.
+        bool unspawnedEditMode = source != null &&
+            (Object == null || !Object.IsValid) && (source.Object == null || !source.Object.IsValid);
+        if (!unspawnedEditMode)
+#endif
+        {
+            base.CopyStateFrom(source);
+        }
+
         if (source == null)
         {
             return;
