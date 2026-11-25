@@ -94,7 +94,7 @@ const weeklyStockSchema = new mongoose.Schema({
 
 const shopReceiptSchema = new mongoose.Schema({
   transactionId: { type: String, required: true },
-  type:          { type: String, enum: ['buy', 'sell', 'buyback', 'ability_purchase', 'install_gem', 'trade', 'upgrade', 'respec'], required: true },
+  type:          { type: String, enum: ['buy', 'sell', 'buyback', 'ability_purchase', 'install_gem', 'trade', 'upgrade', 'respec', 'mission_claim'], required: true },
   entryId:       { type: String },
   intent:        { type: mongoose.Schema.Types.Mixed },
   outcome:       { type: mongoose.Schema.Types.Mixed },
@@ -147,9 +147,11 @@ const characterSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  // Newest 64 Shop/ability receipts: the replay window. Older receipts are evicted, so a retry of an
+  // Newest 64 Shop/ability/mission receipts: the replay window. Older receipts are evicted, so a retry of an
   // evicted timestamped id is rejected through shopReceiptWatermark instead of being applied again.
   appliedShopReceipts: { type: [shopReceiptSchema], default: [] },
+  // Durable mission claim keys (TASK-310): never evicted, ensuring each mission instance claims gold at most once.
+  appliedMissionClaims: { type: [String], default: [] },
   // Highest id timestamp (unix ms) among evicted receipts; see services/ShopReceiptRetention.js.
   shopReceiptWatermark: { type: Number, default: 0 },
   revision: {

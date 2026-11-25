@@ -5,6 +5,7 @@ const assert = require('node:assert/strict');
 const {
   getWeeklyRotation,
   getWeeklyWindow,
+  selectDemandItems,
   getMerchantOffers,
   WEAPON_POOL,
   ARMOR_POOL,
@@ -119,5 +120,31 @@ test('getMerchantOffers filters offers according to Doc 23 §3', () => {
   for (const w of arcanist.weapons) {
     assert.ok(['magic_wand', 'spell_book', 'magic_staff', 'magic_sword', 'magic_cinquedea'].includes(w.lootId));
   }
+});
+
+test('getWeeklyRotation weekly demand prioritizes candidates absent from previous week (Doc 23 §7)', () => {
+  const weekMs = 7 * 24 * 60 * 60 * 1000;
+  let previousIds = null;
+  for (let i = 0; i < 20; i++) {
+    const date = new Date(Date.UTC(2026, 0, 5, 12, 0, 0) + i * weekMs);
+    const rot = getWeeklyRotation(date);
+    const currentIds = rot.demandItems.map(d => d.lootId);
+    assert.equal(new Set(currentIds).size, currentIds.length, `week ${rot.weekId} demand must be distinct`);
+    if (previousIds) {
+      const overlap = currentIds.filter(id => previousIds.includes(id));
+      assert.deepEqual(overlap, [], `week ${rot.weekId} repeated demand from previous week: ${overlap.join(', ')}`);
+    }
+    previousIds = currentIds;
+  }
+});
+
+test('selectDemandItems allows repeats only when non-previous pool is insufficient (Doc 23 §7)', () => {
+  const smallPool = ['A', 'B', 'C', 'D'];
+  const previous = ['A', 'B', 'C'];
+  const selected = selectDemandItems(smallPool, 3, '2026-11-23', previous);
+
+  assert.equal(selected.length, 3);
+  assert.equal(new Set(selected).size, 3);
+  assert.ok(selected.includes('D'), 'The only non-previous candidate must be prioritized before any repeat');
 });
 

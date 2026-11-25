@@ -1016,6 +1016,19 @@ public sealed class LocalProfileStore : IMissionClaimService
 
     public StashOperationResult TryClaimMission(MissionDefinition mission)
     {
+        return TryClaimMissionWithAuthority(mission, authoritativeCurrency: null, authoritativeRevision: null);
+    }
+
+    /// <summary>
+    /// Atomically commits a mission claim in the local profile. When <paramref name="authoritativeCurrency"/>
+    /// and <paramref name="authoritativeRevision"/> are supplied (TASK-310 backend confirmation),
+    /// the local snapshot adopts the exact backend Gold balance and revision instead of adding Gold locally.
+    /// </summary>
+    public StashOperationResult TryClaimMissionWithAuthority(
+        MissionDefinition mission,
+        long? authoritativeCurrency,
+        int? authoritativeRevision)
+    {
         lock (_sync)
         {
             if (!CanClaimMission(mission, out string failureReason))
@@ -1077,9 +1090,12 @@ public sealed class LocalProfileStore : IMissionClaimService
                 {
                     if (reward.Type == RewardDefinition.RewardType.Gold)
                     {
-                        if (next.Currency > long.MaxValue - reward.Amount) return StashOperationResult.InvalidInventory;
-                        next.Currency += reward.Amount;
-                        Debug.Log($"[MissionBoard] Recompensa reclamada: {reward.Amount} Oro. (Total: {next.Currency})");
+                        if (!authoritativeCurrency.HasValue)
+                        {
+                            if (next.Currency > long.MaxValue - reward.Amount) return StashOperationResult.InvalidInventory;
+                            next.Currency += reward.Amount;
+                            Debug.Log($"[MissionBoard] Recompensa reclamada: {reward.Amount} Oro. (Total: {next.Currency})");
+                        }
                     }
                     else if (reward.Type == RewardDefinition.RewardType.GuildReputation)
                     {
@@ -1156,6 +1172,18 @@ public sealed class LocalProfileStore : IMissionClaimService
                         return StashOperationResult.PersistenceFailed;
                     Debug.Log($"[MissionBoard] {itemsToAdd.Count} items de recompensa añadidos al Stash local exitosamente.");
                 }
+            }
+
+            if (authoritativeCurrency.HasValue)
+            {
+                if (authoritativeCurrency.Value < 0) return StashOperationResult.InvalidInventory;
+                next.Currency = authoritativeCurrency.Value;
+                Debug.Log($"[MissionBoard] Saldo de Oro sincronizado autoritativamente tras reclamo: {next.Currency}");
+            }
+
+            if (authoritativeRevision.HasValue && authoritativeRevision.Value > next.RemoteRevision)
+            {
+                next.RemoteRevision = authoritativeRevision.Value;
             }
 
             next.ActiveMissions[index].State = MissionState.Reclamada;

@@ -126,6 +126,17 @@ function recordRespec(character, { cost, pointsReturned }) {
   });
 }
 
+/** Records a committed authoritative mission reward claim (TASK-310, Doc 22 §6). */
+function recordMissionReward(character, { missionId, claimKey, gold }) {
+  return record({
+    characterId: character._id,
+    operation: 'mission_reward',
+    gold: gold > 0 ? [{ direction: 'generated', category: 'mission_reward', amount: gold }] : [],
+    balanceAfter: character.inventory?.currency,
+    details: { missionId, claimKey }
+  });
+}
+
 /*
  * Entry profile (Doc 22 §5: Naked / Budget / Geared) is approximate (S5 "perfil aproximado"): it is
  * classified from the replacement gold (buy price) of the non-training prepared equipment carried
@@ -233,7 +244,7 @@ function trackCapacityBlock(character, source, place) {
 }
 
 module.exports = {
-  record, recordCommerce, recordUpgrade, recordRespec, recordRaidClose, recordCapacityBlock, trackCapacityBlock,
+  record, recordCommerce, recordUpgrade, recordRespec, recordMissionReward, recordRaidClose, recordCapacityBlock, trackCapacityBlock,
   flush, purchaseOfferType, buildEvent, classifyEntryProfile, extractedEntries,
   ENTRY_PROFILE_NAKED_MAX_GOLD, ENTRY_PROFILE_GEARED_MIN_GOLD
 };

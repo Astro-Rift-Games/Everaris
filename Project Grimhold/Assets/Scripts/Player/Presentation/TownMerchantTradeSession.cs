@@ -131,26 +131,27 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
             return false;
         }
 
-        if (_draft.Buyback.HasValue && _draft.Purchases.Count == 0 && _draft.Sales.Count == 0)
+        if (_draft.Buybacks.Count > 0 && _draft.Purchases.Count == 0 && _draft.Sales.Count == 0)
         {
             _persisting = true;
             Refresh();
-            MerchantBuybackEntry entry = _draft.Buyback.Value;
             if (_buybackTransaction.Value != requestId)
                 _buybackTransaction = new ShopTransactionId(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), requestId);
 
-            if (_buybackService != null)
+            if (_draft.Buybacks.Count == 1 && _buybackService != null)
             {
+                MerchantDraftBuybackLine single = _draft.Buybacks[0];
                 _ = PersistBuybackAsync(new MerchantBuybackRequest(_buybackTransaction,
-                    entry.EntryId, entry.LootId, _draft.BuybackAmount, entry.UnitPrice));
+                    single.Entry.EntryId, single.Entry.LootId, single.Amount, single.Entry.UnitPrice));
             }
             else
             {
+                var buybackLines = BuildDraftBuybackTicketLines();
                 var ticket = new MerchantTradeTicket(_buybackTransaction,
                     Array.Empty<MerchantPricedTradeLine>(),
                     Array.Empty<MerchantPricedTradeLine>(),
-                    new[] { new MerchantPricedBuybackLine(entry.EntryId, entry.LootId, _draft.BuybackAmount, entry.UnitPrice) });
-                _ = PersistAndReportAsync(MerchantTradeResponse.Approved(requestId, ticket));
+                    buybackLines);
+                _ = PersistBuybackTicketAsync(ticket);
             }
             return true;
         }
@@ -247,24 +248,51 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
         Complete(MapPersistenceResult(result));
     }
 
+    private MerchantPricedBuybackLine[] BuildDraftBuybackTicketLines()
+    {
+        var lines = new MerchantPricedBuybackLine[_draft.Buybacks.Count];
+        for (int i = 0; i < _draft.Buybacks.Count; i++)
+        {
+            MerchantDraftBuybackLine line = _draft.Buybacks[i];
+            lines[i] = new MerchantPricedBuybackLine(line.Entry.EntryId, line.Entry.LootId, line.Amount, line.Entry.UnitPrice);
+        }
+        return lines;
+    }
+
+    private async Task PersistBuybackTicketAsync(MerchantTradeTicket ticket)
+    {
+        StashOperationResult result;
+        try
+        {
+            result = await _shopService.ExecuteTradeAsync(_profileId, ticket);
+        }
+        catch (Exception exception)
+        {
+            UnityEngine.Debug.LogWarning($"[TownMerchantTradeSession] Multi-buyback persistence failed: {exception.Message}");
+            result = StashOperationResult.PersistenceFailed;
+        }
+        _persisting = false;
+        if (_disposed) return;
+        if (result == StashOperationResult.Success || result == StashOperationResult.AlreadyApplied)
+            _draft.MarkSubmissionSucceeded();
+        else
+            _draft.MarkSubmissionRejectedOrFailed();
+        Complete(MapPersistenceResult(result));
+    }
+
     private async Task PersistAndReportAsync(MerchantTradeResponse response)
     {
         StashOperationResult result;
         try
         {
             MerchantTradeTicket ticketToPersist = response.Ticket;
-            if (_draft.Buyback.HasValue)
+            if (_draft.Buybacks.Count > 0)
             {
-                var entry = _draft.Buyback.Value;
-                var buybackLines = new[]
-                {
-                    new MerchantPricedBuybackLine(entry.EntryId, entry.LootId, _draft.BuybackAmount, entry.UnitPrice)
-                };
                 ticketToPersist = new MerchantTradeTicket(
                     response.Ticket.TransactionId,
                     response.Ticket.Purchases,
                     response.Ticket.Sales,
-                    buybackLines);
+                    BuildDraftBuybackTicketLines());
             }
 
             // Keep Unity's SynchronizationContext: endpoint and presentation are main-thread only.
@@ -474,10 +502,10 @@ public sealed class TownMerchantTradeSession : IMerchantShopIntentions, IBuyback
             {
                 if (!_endpoint.Catalog.TryGet(entry.LootId.Value, out LootDefinition definition) || definition == null)
                     continue;
-                int draftAmount = _draft.Buyback?.EntryId == entry.EntryId ? _draft.BuybackAmount : 0;
+                int draftAmount = _draft.GetBuybackAmount(entry.EntryId);
                 rows.Add(new MerchantShopRowViewModel(definition, entry.LootId, true,
                     entry.UnitPrice, entry.Amount, draftAmount, entry.UnitPrice * draftAmount,
-                    canEdit && (_buybackService != null || _shopService != null) && (!_draft.Buyback.HasValue || draftAmount > 0),
+                    canEdit && (_buybackService != null || _shopService != null),
                     Math.Max(entry.Amount, draftAmount), entry.EntryId));
             }
         }
