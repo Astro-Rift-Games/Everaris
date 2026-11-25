@@ -179,6 +179,81 @@ function rollSpecialModifier(rand) {
   return SPECIAL_MODIFIERS[SPECIAL_MODIFIERS.length - 1];
 }
 
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+const DEMAND_EPOCH_MS = Date.UTC(2025, 0, 6, 0, 0, 0, 0); // Fixed Monday 00:00 UTC anchor
+const MAX_DEMAND_CACHE_ENTRIES = 512;
+const demandRotationCache = new Map();
+
+/**
+ * Selects `count` distinct demand items from `pool` prioritizing candidates NOT selected
+ * in `previousSelectedIds`. Repeats from `previousSelectedIds` are allowed only when the
+ * non-repeated pool is smaller than `count` (Doc 23 §7).
+ */
+function selectDemandItems(pool, count, weekId, previousSelectedIds = []) {
+  const uniquePool = [...new Set(pool || [])];
+  if (uniquePool.length === 0 || count <= 0) return [];
+  const targetCount = Math.min(count, uniquePool.length);
+  const previousSet = new Set(previousSelectedIds || []);
+  const rand = createPrng(`grimhold_demand_${weekId}`);
+
+  const fresh = shuffle(uniquePool.filter(id => !previousSet.has(id)), rand);
+  if (fresh.length >= targetCount) {
+    return fresh.slice(0, targetCount);
+  }
+
+  const repeated = shuffle(uniquePool.filter(id => previousSet.has(id)), rand);
+  return [...fresh, ...repeated.slice(0, targetCount - fresh.length)];
+}
+
+/**
+ * Deterministically resolves the weekly demand loot IDs for `window`, chaining from the
+ * fixed Monday anchor so every week W prioritizes candidates absent from week W-1.
+ */
+function getWeeklyDemandIds(window, pool = DEMAND_CANDIDATE_POOL, count = ROTATION_COUNTS.demandItems) {
+  const useDefaultCache = pool === DEMAND_CANDIDATE_POOL && count === ROTATION_COUNTS.demandItems;
+  if (useDefaultCache && demandRotationCache.has(window.weekId)) {
+    return demandRotationCache.get(window.weekId);
+  }
+
+  if (window.timestamp <= DEMAND_EPOCH_MS) {
+    const selected = selectDemandItems(pool, count, window.weekId, []);
+    if (useDefaultCache) cacheDemandWeek(window.weekId, selected);
+    return selected;
+  }
+
+  const weeksFromEpoch = Math.floor((window.timestamp - DEMAND_EPOCH_MS) / WEEK_MS);
+  // Start from the nearest cached predecessor if available
+  let startStep = 0;
+  let previous = [];
+  if (useDefaultCache) {
+    for (let step = weeksFromEpoch - 1; step >= 0; step--) {
+      const candidateWeekId = new Date(DEMAND_EPOCH_MS + step * WEEK_MS).toISOString().slice(0, 10);
+      if (demandRotationCache.has(candidateWeekId)) {
+        previous = demandRotationCache.get(candidateWeekId);
+        startStep = step + 1;
+        break;
+      }
+    }
+  }
+
+  let current = previous;
+  for (let step = startStep; step <= weeksFromEpoch; step++) {
+    const stepWeekId = new Date(DEMAND_EPOCH_MS + step * WEEK_MS).toISOString().slice(0, 10);
+    current = selectDemandItems(pool, count, stepWeekId, current);
+    if (useDefaultCache) cacheDemandWeek(stepWeekId, current);
+  }
+
+  return current;
+}
+
+function cacheDemandWeek(weekId, ids) {
+  if (demandRotationCache.size >= MAX_DEMAND_CACHE_ENTRIES) {
+    const oldestKey = demandRotationCache.keys().next().value;
+    demandRotationCache.delete(oldestKey);
+  }
+  demandRotationCache.set(weekId, ids);
+}
+
 /**
  * Generates the authoritative weekly rotation for the given date.
  * @param {Date|number|string} date
@@ -257,9 +332,9 @@ function getWeeklyRotation(date = new Date()) {
     };
   });
 
-  // 5. Demand Items (Doc 23 §7)
-  const shuffledDemand = shuffle(DEMAND_CANDIDATE_POOL, rand);
-  const selectedDemand = shuffledDemand.slice(0, ROTATION_COUNTS.demandItems).map(lootId => {
+  // 5. Demand Items (Doc 23 §7): prioritize candidates absent from the previous weekly rotation
+  const selectedDemandIds = getWeeklyDemandIds(window);
+  const selectedDemand = selectedDemandIds.map(lootId => {
     const sellOffer = SELL_CATALOG[lootId];
     const objectValue = sellOffer.sellValue;
     return {
@@ -427,6 +502,7 @@ module.exports = {
   SPECIAL_MODIFIERS,
   getWeeklyWindow,
   getWeeklyRotation,
+  selectDemandItems,
   getMerchantOffers,
   isAllowedByMerchant
 };

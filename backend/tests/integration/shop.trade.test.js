@@ -175,4 +175,97 @@ test('atomic merchant trade HTTP contract', async t => {
       assert.deepEqual(await Character.findOne({ accountId }).lean(), raced);
     } finally { Character.findOneAndUpdate = original; }
   });
+
+  await t.test('multiple buybacks in one cart commit and reject atomically (TASK-332)', async () => {
+    const equipment = Object.fromEntries(require('../../src/config/equipmentSlots').EQUIPMENT_SLOTS.map(slot => [slot, null]));
+    const instA = { instanceId: 'aaaaaaaaaaaaaaaaaaaaaaaa', modifiers: { primary: { grade: 'E' }, gemSocketCount: 0, gems: [] } };
+    const instB = { instanceId: 'bbbbbbbbbbbbbbbbbbbbbbbb', modifiers: { upgradeLevel: 1 } };
+    const buybackEntries = [
+      { entryId: 'bb-1', lootId: 'arming_sword', amount: 1, unitPrice: 30, instance: instA },
+      { entryId: 'bb-2', lootId: 'heavy_armor_helmet', amount: 1, unitPrice: 25, instance: instB },
+      { entryId: 'bb-3', lootId: 'CON_EXPLOSIVE_BOMB', amount: 2, unitPrice: 10 }
+    ];
+
+    // 1. Multiple buybacks alone commit atomically in 1 revision & 1 receipt, preserving instances
+    await reset({
+      'inventory.inventorySchemaVersion': 3,
+      'inventory.preparedEquipment': equipment,
+      'inventory.currency': 100,
+      'inventory.loadout': [],
+      'inventory.buyback': { sessionEpoch: 'town', entries: buybackEntries }
+    });
+    const res = await post(ticket({
+      transactionId: 'multi-buyback-ok',
+      purchases: [],
+      sales: [],
+      buybacks: [
+        { entryId: 'bb-1', amount: 1 },
+        { entryId: 'bb-2', amount: 1 },
+        { entryId: 'bb-3', amount: 1 }
+      ]
+    }));
+    assert.equal(res.status, 200, JSON.stringify(res.body));
+    assert.equal(res.body.currency, 35);
+    assert.equal(res.body.revision, 1);
+    assert.equal(res.body.loadout.length, 3);
+    assert.equal(res.body.loadout.find(i => i.lootId === 'arming_sword').instance.instanceId, instA.instanceId);
+    assert.equal(res.body.loadout.find(i => i.lootId === 'heavy_armor_helmet').instance.instanceId, instB.instanceId);
+    assert.deepEqual(res.body.buyback.entries.map(e => [e.entryId, e.amount]), [['bb-3', 1]]);
+
+    // 2. Mixed cart: sale funds multiple buybacks + purchase in one atomic trade
+    await reset({
+      'inventory.inventorySchemaVersion': 3,
+      'inventory.preparedEquipment': equipment,
+      'inventory.currency': 40,
+      'inventory.loadout': [{ slot: 0, lootId: 'TRE_CHALICE', amount: 1 }],
+      'inventory.buyback': { sessionEpoch: 'town', entries: buybackEntries }
+    });
+    const mixed = await post(ticket({
+      transactionId: 'multi-buyback-mixed',
+      sales: [{ lootId: 'TRE_CHALICE', amount: 1, sourceSlot: 0 }],
+      purchases: [{ lootId: 'CON_HEALTH_POTION', amount: 1 }],
+      buybacks: [
+        { entryId: 'bb-1', amount: 1 },
+        { entryId: 'bb-2', amount: 1 }
+      ]
+    }));
+    assert.equal(mixed.status, 200, JSON.stringify(mixed.body));
+    assert.equal(mixed.body.revision, 1);
+    assert.equal(mixed.body.loadout.length, 3);
+    assert.deepEqual(mixed.body.buyback.entries.map(e => e.entryId), ['bb-3']);
+
+    // 3. Atomic rejection: 2nd buyback fails -> zero partial writes
+    await reset({
+      'inventory.inventorySchemaVersion': 3,
+      'inventory.preparedEquipment': equipment,
+      'inventory.currency': 40, // enough for bb-1 (30), NOT enough for bb-1 + bb-2 (55)
+      'inventory.loadout': [],
+      'inventory.buyback': { sessionEpoch: 'town', entries: buybackEntries }
+    });
+    await unchanged(ticket({
+      transactionId: 'multi-buyback-funds-fail',
+      purchases: [], sales: [],
+      buybacks: [{ entryId: 'bb-1', amount: 1 }, { entryId: 'bb-2', amount: 1 }]
+    }), 409, 'INSUFFICIENT_FUNDS');
+
+    await reset({
+      'inventory.inventorySchemaVersion': 3,
+      'inventory.preparedEquipment': equipment,
+      'inventory.currency': 200,
+      'inventory.loadout': [],
+      'inventory.buyback': { sessionEpoch: 'town', entries: buybackEntries }
+    });
+    await unchanged(ticket({
+      transactionId: 'multi-buyback-missing-fail',
+      purchases: [], sales: [],
+      buybacks: [{ entryId: 'bb-1', amount: 1 }, { entryId: 'bb-missing', amount: 1 }]
+    }), 404, 'BUYBACK_ENTRY_NOT_FOUND');
+
+    // 4. Duplicate buyback entryId differing only by whitespace must be rejected
+    await unchanged(ticket({
+      transactionId: 'multi-buyback-dup-ws',
+      purchases: [], sales: [],
+      buybacks: [{ entryId: 'bb-1', amount: 1 }, { entryId: ' bb-1 ', amount: 1 }]
+    }), 400, 'VALIDATION_FAILED');
+  });
 });

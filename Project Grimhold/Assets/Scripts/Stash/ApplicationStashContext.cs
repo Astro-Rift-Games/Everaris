@@ -12,6 +12,7 @@ public sealed class ApplicationStashContext : MonoBehaviour
     public IPlayerCurrencyService CurrencyService { get; private set; }
     public IShopTransactionService ShopTransactionService { get; private set; }
     public IAbilityPurchaseService AbilityPurchaseService { get; private set; }
+    public IRemoteMissionClaimService MissionClaimService { get; private set; }
     public LocalProfileStore Store { get; private set; }
     public BuybackLedger BuybackLedger { get; } = new();
     public IBuybackService BuybackService => ShopTransactionService as IBuybackService;
@@ -70,7 +71,8 @@ public sealed class ApplicationStashContext : MonoBehaviour
         IPlayerLoadoutService loadoutService,
         IPlayerCurrencyService currencyService,
         IShopTransactionService shopTransactionService,
-        IAbilityPurchaseService abilityPurchaseService = null)
+        IAbilityPurchaseService abilityPurchaseService = null,
+        IRemoteMissionClaimService missionClaimService = null)
     {
         if (Store != null)
         {
@@ -85,6 +87,7 @@ public sealed class ApplicationStashContext : MonoBehaviour
         CurrencyService = currencyService;
         ShopTransactionService = shopTransactionService;
         AbilityPurchaseService = abilityPurchaseService;
+        MissionClaimService = missionClaimService;
         if (Store != null)
         {
             Store.ProfileCommitted += OnProfileCommitted;

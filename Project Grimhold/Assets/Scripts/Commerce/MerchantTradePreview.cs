@@ -150,25 +150,36 @@ public sealed class MerchantTradePreview
             overflow |= !TryAdd(purchaseTotal, (long)definition.BuyValuePerUnit * line.Amount, out purchaseTotal);
         }
 
-        if (draft.Buyback.HasValue)
+        if (draft.Buybacks != null && draft.Buybacks.Count > 0)
         {
-            MerchantBuybackEntry entry = draft.Buyback.Value;
-
-            bool available = false;
-            if (buybackLedger != null)
-                foreach (MerchantBuybackEntry current in buybackLedger.Entries)
-                    if (current.EntryId == entry.EntryId && current.LootId == entry.LootId &&
-                        current.UnitPrice == entry.UnitPrice && current.Amount >= draft.BuybackAmount)
-                        available = true;
-            if (!available)
-                blocks.Add(new MerchantTradeBlock(MerchantTradeBlockReason.InsufficientStock, entry.LootId));
-            if (TryResolve(catalog, entry.LootId, blocks, out _))
+            foreach (MerchantDraftBuybackLine buybackLine in draft.Buybacks)
             {
-                purchased.Add(new StashItem(entry.LootId, draft.BuybackAmount));
-                if (entry.UnitPrice > 0 && draft.BuybackAmount > long.MaxValue / entry.UnitPrice)
-                    overflow = true;
-                else
-                    overflow |= !TryAdd(purchaseTotal, entry.UnitPrice * draft.BuybackAmount, out purchaseTotal);
+                MerchantBuybackEntry entry = buybackLine.Entry;
+                int buybackAmount = buybackLine.Amount;
+
+                bool available = false;
+                if (buybackLedger != null)
+                {
+                    foreach (MerchantBuybackEntry current in buybackLedger.Entries)
+                    {
+                        if (current.EntryId == entry.EntryId && current.LootId == entry.LootId &&
+                            current.UnitPrice == entry.UnitPrice && current.Amount >= buybackAmount)
+                        {
+                            available = true;
+                            break;
+                        }
+                    }
+                }
+                if (!available)
+                    blocks.Add(new MerchantTradeBlock(MerchantTradeBlockReason.InsufficientStock, entry.LootId));
+                if (TryResolve(catalog, entry.LootId, blocks, out _))
+                {
+                    purchased.Add(new StashItem(entry.LootId, buybackAmount));
+                    if (entry.UnitPrice > 0 && buybackAmount > long.MaxValue / entry.UnitPrice)
+                        overflow = true;
+                    else
+                        overflow |= !TryAdd(purchaseTotal, entry.UnitPrice * buybackAmount, out purchaseTotal);
+                }
             }
         }
 

@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1260,
-  "canonicalEntries": 1257,
+  "rawCommits": 1265,
+  "canonicalEntries": 1262,
   "before": {
+    "Documentation": 138,
+    "Features": 462,
     "Tests": 50,
     "Architecture & Infrastructure": 25,
-    "Features": 458,
-    "Documentation": 137,
     "Bug Fixes": 197,
     "Other Changes": 376,
     "Refactoring": 17
   },
   "after": {
+    "Documentation": 154,
+    "Features": 601,
     "Tests": 55,
     "Maintenance": 23,
-    "Features": 597,
-    "Documentation": 153,
     "Bug Fixes": 213,
     "Other Changes": 183,
     "Refactoring": 30,
@@ -23,49 +23,49 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Persistence & Backend": 323,
-    "Build & Tooling": 652,
-    "Tests": 801,
+    "Persistence & Backend": 327,
+    "Documentation": 452,
+    "Build & Tooling": 654,
+    "Tests": 805,
+    "Networking & Sessions": 367,
+    "Combat": 420,
+    "Inventory & Loot": 506,
     "UI": 358,
     "Unassigned": 51,
-    "Combat": 419,
-    "Documentation": 451,
     "Movement": 108,
     "Art & Animation": 275,
-    "Networking & Sessions": 366,
     "World & Visibility": 184,
     "Extraction": 178,
     "Abilities": 146,
-    "Inventory & Loot": 505,
     "Audio": 42,
     "Input": 32
   },
   "canonical": {
     "sections": {
+      "Documentation": 154,
+      "Features": 600,
       "Tests": 55,
       "Maintenance": 23,
-      "Features": 596,
-      "Documentation": 153,
       "Bug Fixes": 212,
       "Other Changes": 182,
       "Refactoring": 30,
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Persistence & Backend": 323,
-      "Build & Tooling": 650,
-      "Tests": 799,
+      "Persistence & Backend": 327,
+      "Documentation": 450,
+      "Build & Tooling": 652,
+      "Tests": 803,
+      "Networking & Sessions": 367,
+      "Combat": 418,
+      "Inventory & Loot": 506,
       "UI": 357,
       "Unassigned": 51,
-      "Combat": 417,
-      "Documentation": 449,
       "Movement": 108,
       "Art & Animation": 272,
-      "Networking & Sessions": 366,
       "World & Visibility": 182,
       "Extraction": 178,
       "Abilities": 144,
-      "Inventory & Loot": 505,
       "Audio": 42,
       "Input": 32
     }
@@ -74694,8 +74694,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 383,
-      "canonicalEntries": 383
+      "originalCommits": 388,
+      "canonicalEntries": 388
     },
     {
       "key": "v0.5.0",
@@ -74739,6 +74739,408 @@
     }
   ],
   "commits": [
+    {
+      "sha": "16d4e85e4831724e39b75aaab7018e5099060b70",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/16d4e85e4831724e39b75aaab7018e5099060b70",
+      "subject": "docs(missions): document authoritative claim boundary and telemetry",
+      "body": "Update MissionSystemArchitecture.md with the remote-first backend Gold\nclaim boundary for guild contracts while keeping mission progress local,\nand update EconomyTelemetryArchitecture.md to document the\nmission_reward emitter.\n\nRefs: TASK-310\n",
+      "date": "2026-11-25T00:35:26-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md",
+        "Project Grimhold/Docs/Architecture/MissionSystemArchitecture.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "missions",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Persistence & Backend",
+        "Documentation"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/MissionSystemArchitecture.md",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "a4c1ff710689badc20d9fa9d64ef1dbeb6769cf7",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a4c1ff710689badc20d9fa9d64ef1dbeb6769cf7",
+      "subject": "feat(missions): wire remote-first mission gold claims in Town Guild",
+      "body": "Integrate MissionClient and RemoteMissionClaimService into\nApplicationStashContext and TownMissionGuildPresenter so contract claims\nrequest authoritative Gold from POST /character/me/missions/claim before\ncommitting locally, reusing deterministic claimKeys and per-claim retry\ntransaction IDs while preventing double-click races.\n\nAlso clear local AppliedProgressionReceipts in\nApplicationStashServiceBootstrapper.HydrateSnapshot when the backend\nprogression sequence is 0 so reconciliation succeeds after local mission\nXP claims.\n\nTests:\n- RemoteMissionClaimServiceTests.cs: authoritative gold and revision\n  commit, network retry idempotency, backend rejection reconciliation,\n  presenter wiring, and HydrateSnapshot sequence-0 regression test.\n\nPlayer-Improved: Gold rewards from claiming guild contracts are now persisted authoritatively to your character.\nRefs: TASK-310\n",
+      "date": "2026-11-25T00:35:25-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Backend/MissionClient.cs",
+        "Project Grimhold/Assets/Scripts/Backend/MissionClient.cs.meta",
+        "Project Grimhold/Assets/Scripts/Missions/Engine/IRemoteMissionClaimService.cs",
+        "Project Grimhold/Assets/Scripts/Missions/Engine/IRemoteMissionClaimService.cs.meta",
+        "Project Grimhold/Assets/Scripts/Missions/Engine/RemoteMissionClaimService.cs",
+        "Project Grimhold/Assets/Scripts/Missions/Engine/RemoteMissionClaimService.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownMissionGuildPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Stash/ApplicationStashContext.cs",
+        "Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs",
+        "Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RemoteMissionClaimServiceTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RemoteMissionClaimServiceTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "missions",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/MissionClient.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/MissionClient.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RemoteMissionClaimServiceTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RemoteMissionClaimServiceTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RemoteMissionClaimServiceTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RemoteMissionClaimServiceTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "f5b23cabfc4b3edbbf326b2f5ea32c0fca896423",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f5b23cabfc4b3edbbf326b2f5ea32c0fca896423",
+      "subject": "feat(missions): add authoritative mission claim endpoint and telemetry",
+      "body": "Add POST /character/me/missions/claim to credit mission Gold rewards\nauthoritatively from a server-owned mission catalog mirrored against\nUnity MissionDefinition assets. Strict payload validation rejects\nclient-declared reward amounts, and atomic revision-guarded updates\nenforce pendingReservation, durable appliedMissionClaims deduplication,\nand idempotent replay receipts (type mission_claim).\n\nEmit EconomyTelemetry.recordMissionReward (mission_reward) strictly\nafter the authoritative database commit succeeds.\n\nTests:\n- backend/tests/mission.catalog.parity.test.js: parity check between\n  missionCatalog.js and all Unity Mission_*.asset gold rewards.\n- backend/tests/mission.claim.test.js: authoritative credit, telemetry\n  emission, idempotent replay, duplicate claimKey rejection, reservation\n  and revision guards, and client-gold payload rejection.\n\nRefs: TASK-310\n",
+      "date": "2026-11-25T00:35:25-03:00",
+      "files": [
+        "backend/src/app.js",
+        "backend/src/config/missionCatalog.js",
+        "backend/src/models/Character.js",
+        "backend/src/routes/mission.routes.js",
+        "backend/src/services/EconomyTelemetry.js",
+        "backend/src/services/MissionClaimService.js",
+        "backend/src/validators/mission.validators.js",
+        "backend/tests/mission.catalog.parity.test.js",
+        "backend/tests/mission.claim.test.js"
+      ],
+      "originalType": "feat",
+      "originalScope": "missions",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/app.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/missionCatalog.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/Character.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/routes/mission.routes.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/EconomyTelemetry.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/MissionClaimService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/validators/mission.validators.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/mission.catalog.parity.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/mission.claim.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/mission.catalog.parity.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/mission.claim.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "51cfe032e1b8b510508fbd9490f400bf7c5f4757",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/51cfe032e1b8b510508fbd9490f400bf7c5f4757",
+      "subject": "feat(commerce): support multiple buybacks in one atomic trade cart",
+      "body": "Replace the single-buyback draft restriction with a multi-line buyback\nlist (up to 16 entries) across MerchantTradeDraft, MerchantTradePreview,\nand TownMerchantTradeSession while keeping single-buyback compatibility.\nMultiple buybacks and mixed carts now validate combined cost and slot\ncapacity and submit as one atomic MerchantTradeTicket.\n\nTests:\n- MultiBuybackCartTests.cs: multi-entry draft edits, combined cost and\n  capacity preview, and single atomic trade ticket submission.\n\nPlayer-Added: You can now add multiple buyback items to the same merchant cart and confirm them together.\nRefs: TASK-332\n",
+      "date": "2026-11-25T00:35:05-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Commerce/MerchantTradeDraft.cs",
+        "Project Grimhold/Assets/Scripts/Commerce/MerchantTradePreview.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantTradeSession.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MultiBuybackCartTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MultiBuybackCartTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "commerce",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Networking & Sessions",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantTradeSession.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MultiBuybackCartTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MultiBuybackCartTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MultiBuybackCartTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MultiBuybackCartTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "a6af966a193637877fbdd3540e19805e2be8c8dd",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a6af966a193637877fbdd3540e19805e2be8c8dd",
+      "subject": "feat(commerce): prioritize fresh weekly demand and validate buybacks",
+      "body": "Select weekly demand items by prioritizing candidates absent from the\nprevious weekly rotation (W-1), allowing repeats only when the\nnon-previous pool is smaller than the configured demand count. Selection\nchains deterministically from a fixed Monday UTC anchor using an\nindependent PRNG stream so weapon, armor, and utility rotations remain\nunchanged.\n\nAlso canonicalize trimmed buyback entry IDs during shop trade validation\nso whitespace-padded duplicate entries are rejected consistently.\n\nTests:\n- backend/tests/commerce.rotation.test.js: 20-week non-repeat priority\n  and small-pool repeat fallback.\n- backend/tests/commerce.cart.test.js and\n  backend/tests/integration/shop.trade.test.js: atomic multi-buyback\n  commits, mixed carts, partial-failure rollback, and trimmed duplicate\n  rejection.\n\nPlayer-Improved: Weekly merchant demand now prioritizes items that were not featured during the previous week.\nRefs: TASK-332\n",
+      "date": "2026-11-25T00:35:04-03:00",
+      "files": [
+        "backend/src/services/CommerceRotationService.js",
+        "backend/src/validators/inventory.validators.js",
+        "backend/tests/commerce.cart.test.js",
+        "backend/tests/commerce.rotation.test.js",
+        "backend/tests/integration/shop.trade.test.js"
+      ],
+      "originalType": "feat",
+      "originalScope": "commerce",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/validators/inventory.validators.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/CommerceRotationService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/validators/inventory.validators.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/commerce.cart.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/commerce.rotation.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/shop.trade.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/commerce.cart.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/commerce.rotation.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/shop.trade.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "9a7da10a4e790b2ef96b0e3baf7eec17285d2394",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/9a7da10a4e790b2ef96b0e3baf7eec17285d2394",
