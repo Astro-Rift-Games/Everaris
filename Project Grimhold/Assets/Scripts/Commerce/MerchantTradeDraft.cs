@@ -3,44 +3,89 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 /// <summary>
-/// Local pending state of one merchant trade: ordered buy and sell lines plus the request
+/// One pending buyback line in a <see cref="MerchantTradeDraft"/>.
+/// </summary>
+public readonly struct MerchantDraftBuybackLine
+{
+    public MerchantBuybackEntry Entry { get; }
+    public int Amount { get; }
+
+    public MerchantDraftBuybackLine(MerchantBuybackEntry entry, int amount)
+    {
+        Entry = entry;
+        Amount = amount;
+    }
+}
+
+/// <summary>
+/// Local pending state of one merchant trade: ordered buy, sell and buyback lines plus the request
 /// identity of its current submission. It never reads or mutates Inventory, Currency, stock,
 /// persistence or networked state, and it computes no prices, balance or capacity.
 /// </summary>
 public sealed class MerchantTradeDraft
 {
+    public const int MaxBuybackLines = 16;
+
     private readonly List<MerchantTradeLine> _purchases = new List<MerchantTradeLine>();
     private readonly List<MerchantTradeLine> _sales = new List<MerchantTradeLine>();
+    private readonly List<MerchantDraftBuybackLine> _buybacks = new List<MerchantDraftBuybackLine>();
     private readonly ReadOnlyCollection<MerchantTradeLine> _purchasesView;
     private readonly ReadOnlyCollection<MerchantTradeLine> _salesView;
+    private readonly ReadOnlyCollection<MerchantDraftBuybackLine> _buybacksView;
     private readonly Func<Guid> _requestIdProvider;
 
     public IReadOnlyList<MerchantTradeLine> Purchases => _purchasesView;
     public IReadOnlyList<MerchantTradeLine> Sales => _salesView;
+    public IReadOnlyList<MerchantDraftBuybackLine> Buybacks => _buybacksView;
 
-    public MerchantBuybackEntry? Buyback { get; private set; }
-    public int BuybackAmount { get; private set; }
-    public bool IsEmpty => _purchases.Count == 0 && _sales.Count == 0 && !Buyback.HasValue;
+    /// <summary>First pending buyback entry, preserved for single-entry callers.</summary>
+    public MerchantBuybackEntry? Buyback => _buybacks.Count > 0 ? _buybacks[0].Entry : (MerchantBuybackEntry?)null;
+    public int BuybackAmount => _buybacks.Count > 0 ? _buybacks[0].Amount : 0;
+    public bool IsEmpty => _purchases.Count == 0 && _sales.Count == 0 && _buybacks.Count == 0;
+
+    public int GetBuybackAmount(string entryId)
+    {
+        if (string.IsNullOrWhiteSpace(entryId)) return 0;
+        int index = IndexOfBuyback(entryId);
+        return index >= 0 ? _buybacks[index].Amount : 0;
+    }
 
     public bool TrySetBuyback(MerchantBuybackEntry entry, int amount)
     {
         if (IsInFlight || string.IsNullOrWhiteSpace(entry.EntryId) || !entry.LootId.IsValid ||
-            amount < 1 || amount > entry.Amount || entry.UnitPrice < 0 ||
-            (Buyback.HasValue && Buyback.Value.EntryId != entry.EntryId)) return false;
-        if (!Buyback.HasValue || BuybackAmount != amount)
+            amount < 1 || amount > entry.Amount || entry.UnitPrice < 0)
         {
-            Buyback = entry;
-            BuybackAmount = amount;
-            RequestId = null;
+            return false;
         }
+
+        int index = IndexOfBuyback(entry.EntryId);
+        if (index >= 0)
+        {
+            if (_buybacks[index].Amount != amount || _buybacks[index].Entry.UnitPrice != entry.UnitPrice)
+            {
+                _buybacks[index] = new MerchantDraftBuybackLine(entry, amount);
+                RequestId = null;
+            }
+            return true;
+        }
+
+        if (_buybacks.Count >= MaxBuybackLines)
+        {
+            return false;
+        }
+
+        _buybacks.Add(new MerchantDraftBuybackLine(entry, amount));
+        RequestId = null;
         return true;
     }
 
     public bool TryRemoveBuyback(string entryId)
     {
-        if (IsInFlight || !Buyback.HasValue || Buyback.Value.EntryId != entryId) return false;
-        Buyback = null;
-        BuybackAmount = 0;
+        if (IsInFlight || string.IsNullOrWhiteSpace(entryId)) return false;
+        int index = IndexOfBuyback(entryId);
+        if (index < 0) return false;
+
+        _buybacks.RemoveAt(index);
         RequestId = null;
         return true;
     }
@@ -57,6 +102,7 @@ public sealed class MerchantTradeDraft
         _requestIdProvider = requestIdProvider ?? Guid.NewGuid;
         _purchasesView = _purchases.AsReadOnly();
         _salesView = _sales.AsReadOnly();
+        _buybacksView = _buybacks.AsReadOnly();
     }
 
     public bool TryAddPurchase(LootId lootId, int amount) => TryAdd(_purchases, lootId, amount);
@@ -79,8 +125,7 @@ public sealed class MerchantTradeDraft
 
         _purchases.Clear();
         _sales.Clear();
-        Buyback = null;
-        BuybackAmount = 0;
+        _buybacks.Clear();
         RequestId = null;
         return true;
     }
@@ -127,8 +172,7 @@ public sealed class MerchantTradeDraft
 
         _purchases.Clear();
         _sales.Clear();
-        Buyback = null;
-        BuybackAmount = 0;
+        _buybacks.Clear();
         RequestId = null;
         IsInFlight = false;
     }
@@ -206,6 +250,19 @@ public sealed class MerchantTradeDraft
         for (int i = 0; i < lines.Count; i++)
         {
             if (lines[i].LootId == lootId)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private int IndexOfBuyback(string entryId)
+    {
+        for (int i = 0; i < _buybacks.Count; i++)
+        {
+            if (string.Equals(_buybacks[i].Entry.EntryId, entryId, StringComparison.Ordinal))
             {
                 return i;
             }
