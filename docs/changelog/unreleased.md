@@ -4,32 +4,1775 @@
 
 Release: Unreleased
 
-389 original commits; 389 canonical entries.
+391 original commits; 391 canonical entries.
 
 ## Canonical classification
 
-141 features; 119 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 12 maintenance; 22 other changes
+141 features; 119 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 12 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 17 | 13 | 1 | 0 | 10 | 1 |
 | Art & Animation | 31 | 14 | 3 | 0 | 9 | 8 |
-| Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 96 | 78 | 4 | 1 | 28 | 6 |
+| Audio | 8 | 2 | 0 | 0 | 2 | 1 |
+| Build & Tooling | 96 | 78 | 4 | 1 | 28 | 7 |
 | Combat | 56 | 26 | 2 | 0 | 18 | 2 |
-| Documentation | 41 | 45 | 0 | 0 | 22 | 1 |
+| Documentation | 41 | 45 | 0 | 0 | 22 | 2 |
 | Extraction | 20 | 22 | 2 | 0 | 10 | 5 |
-| Input | 2 | 1 | 0 | 0 | 1 | 0 |
+| Input | 2 | 1 | 0 | 0 | 1 | 1 |
 | Inventory & Loot | 87 | 64 | 4 | 1 | 29 | 5 |
-| Movement | 9 | 7 | 0 | 0 | 3 | 0 |
+| Movement | 9 | 7 | 0 | 0 | 3 | 1 |
 | Networking & Sessions | 45 | 45 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 55 | 57 | 2 | 1 | 24 | 3 |
+| Persistence & Backend | 55 | 57 | 2 | 1 | 24 | 4 |
 | Tests | 128 | 109 | 4 | 1 | 38 | 4 |
-| UI | 46 | 23 | 2 | 0 | 14 | 4 |
+| UI | 46 | 23 | 2 | 0 | 14 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 28 | 2 |
-| World & Visibility | 37 | 20 | 1 | 0 | 4 | 12 |
+| World & Visibility | 37 | 20 | 1 | 0 | 4 | 13 |
 
 ## Original commit records
+
+### 7e7fc9a00b342de929cc93261d7f6938d654d5b6
+
+[7e7fc9a00b342de929cc93261d7f6938d654d5b6](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7e7fc9a00b342de929cc93261d7f6938d654d5b6)
+
+Date: 2026-11-25T01:31:21-03:00 · Classification: Other Changes (unknown) · Systems: UI
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+Update MainMenu.unity
+```
+
+#### Original body
+
+```text
+quedo algo sin guardar
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scenes/MainMenu.unity
+```
+
+#### Classification evidence
+
+- path → UI: Project Grimhold/Assets/Scenes/MainMenu.unity
+
+#### Diagnostics
+
+- **ambiguous-kind:** No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages.
+
+### ca93057376739a46cd0b00ffefc2eada84aeb001
+
+[ca93057376739a46cd0b00ffefc2eada84aeb001](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ca93057376739a46cd0b00ffefc2eada84aeb001)
+
+Date: 2026-11-25T01:25:41-03:00 · Classification: Other Changes (unknown) · Systems: Movement, UI, World & Visibility, Persistence & Backend, Audio, Input, Build & Tooling, Documentation
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+Integrate Wwise
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+.DS_Store
+.gitignore
+Project Grimhold/Assets/Prefabs/Audio/WwiseGlobal.prefab
+Project Grimhold/Assets/Prefabs/Audio/WwiseGlobal.prefab.meta
+Project Grimhold/Assets/Scenes/MainMenu.unity
+Project Grimhold/Assets/StreamingAssets.meta
+Project Grimhold/Assets/StreamingAssets/.DS_Store
+Project Grimhold/Assets/StreamingAssets/Audio.meta
+Project Grimhold/Assets/StreamingAssets/Audio/.DS_Store
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/.DS_Store
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Bus.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Bus/English(US).meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/English(US).meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Event.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Event/English(US).meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/General.bnk
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/General.bnk.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/General.json
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/General.json.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/General.txt
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/General.txt.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Init.bnk
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Init.bnk.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Init.json
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Init.json.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Init.txt
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Init.txt.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/PlatformInfo.json
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/PlatformInfo.json.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/PluginInfo.json
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/PluginInfo.json.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Bus.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Bus/English(US).meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/English(US).meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Event.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Event/English(US).meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/General.bnk
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/General.bnk.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/General.json
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/General.json.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/General.txt
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/General.txt.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Init.bnk
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Init.bnk.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Init.json
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Init.json.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Init.txt
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Init.txt.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/PlatformInfo.json
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/PlatformInfo.json.meta
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/PluginInfo.json
+Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/PluginInfo.json.meta
+Project Grimhold/Assets/StreamingAssets/ProjectInfo.json
+Project Grimhold/Assets/StreamingAssets/ProjectInfo.json.meta
+Project Grimhold/Assets/StreamingAssets/Wwise_IDs.h
+Project Grimhold/Assets/StreamingAssets/Wwise_IDs.h.meta
+Project Grimhold/Assets/StreamingAssets/desc.txt
+Project Grimhold/Assets/StreamingAssets/desc.txt.meta
+Project Grimhold/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
+Project Grimhold/Assets/Wwise.meta
+Project Grimhold/Assets/Wwise/API.meta
+Project Grimhold/Assets/Wwise/API/CHANGELOG.md
+Project Grimhold/Assets/Wwise/API/CHANGELOG.md.meta
+Project Grimhold/Assets/Wwise/API/Editor.meta
+Project Grimhold/Assets/Wwise/API/Editor/AK.Wwise.Unity.API.Editor.asmdef
+Project Grimhold/Assets/Wwise/API/Editor/AK.Wwise.Unity.API.Editor.asmdef.meta
+Project Grimhold/Assets/Wwise/API/Editor/AkSoundBankDirectoryWatcher.cs
+Project Grimhold/Assets/Wwise/API/Editor/AkSoundBankDirectoryWatcher.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator.meta
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common.meta
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPlatformPluginActivator.cs
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPlatformPluginActivator.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPlatformPluginList.cs
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPlatformPluginList.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivator.cs
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivator.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivatorConstants.cs
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivatorConstants.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivatorMenus.cs
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivatorMenus.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginInfo.cs
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/StaticPluginRegistration.cs
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/StaticPluginRegistration.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Mac.meta
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Mac/AkMacPluginActivator.cs
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Mac/AkMacPluginActivator.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Windows.meta
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Windows/AkWindowsPluginActivator.cs
+Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Windows/AkWindowsPluginActivator.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkUnityBuilderBase.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkUnityBuilderBase.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkUnityPluginInstallerBase.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkUnityPluginInstallerBase.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkWwiseIdConverter.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkWwiseIdConverter.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Mac.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Mac/AkWwiseMenu_Mac.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Mac/AkWwiseMenu_Mac.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Windows.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Windows/AkWwiseMenu_Windows.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Windows/AkWwiseMenu_Windows.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/AcousticTextureDrawer.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/AcousticTextureDrawer.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/AuxBusDrawer.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/AuxBusDrawer.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/BankDrawer.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/BankDrawer.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/BaseTypeDrawer.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/BaseTypeDrawer.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/EventDrawer.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/EventDrawer.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/RTPCDrawer.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/RTPCDrawer.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/StateDrawer.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/StateDrawer.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/SwitchDrawer.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/SwitchDrawer.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/TriggerDrawer.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/TriggerDrawer.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseBrowser.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseBrowser.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseBrowserFilter.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseBrowserFilter.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseComponentPicker.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseComponentPicker.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseEditorSettingsView.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseEditorSettingsView.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseJSONBuilder.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseJSONBuilder.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseProjectData.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseProjectData.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseProjectInfo.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseProjectInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeDataSource.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeDataSource.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeMergedDataSource.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeMergedDataSource.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeProjectDataSource.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeProjectDataSource.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeView.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeView.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeViewItem.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeViewItem.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeWAAPIDataSource.cs
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeWAAPIDataSource.cs.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcon.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcon.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcons.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcons/GraphNode_CollapseAll.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcons/GraphNode_CollapseAll.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcons/GraphNode_ExpandAll.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcons/GraphNode_ExpandAll.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/acoustictexture_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/acoustictexture_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/auxbus_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/auxbus_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/blank.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/blank.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/bus_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/bus_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/event_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/event_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/folder_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/folder_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/gameparameter_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/gameparameter_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/physical_folder_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/physical_folder_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/soundbank_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/soundbank_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/state_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/state_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/stategroup_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/stategroup_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/switch_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/switch_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/switchgroup_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/switchgroup_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/trigger_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/trigger_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/workunit_nor.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/workunit_nor.png.meta
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/wproj.png
+Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/wproj.png.meta
+Project Grimhold/Assets/Wwise/API/LICENSE.md
+Project Grimhold/Assets/Wwise/API/LICENSE.md.meta
+Project Grimhold/Assets/Wwise/API/README.md
+Project Grimhold/Assets/Wwise/API/README.md.meta
+Project Grimhold/Assets/Wwise/API/Runtime.meta
+Project Grimhold/Assets/Wwise/API/Runtime/AK.Wwise.Unity.API.asmdef
+Project Grimhold/Assets/Wwise/API/Runtime/AK.Wwise.Unity.API.asmdef.meta
+Project Grimhold/Assets/Wwise/API/Runtime/AkUnitySoundEngine.extensions.cs
+Project Grimhold/Assets/Wwise/API/Runtime/AkUnitySoundEngine.extensions.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AKRESULT.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AKRESULT.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/Ak3DAudioSinkCapabilities.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/Ak3DAudioSinkCapabilities.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/Ak3DPositionType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/Ak3DPositionType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/Ak3DSpatializationMode.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/Ak3DSpatializationMode.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/Ak3dData.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/Ak3dData.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAcousticSurface.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAcousticSurface.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkActionOnEventType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkActionOnEventType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAttenuationCurveType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAttenuationCurveType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioDeviceEvent.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioDeviceEvent.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioDeviceState.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioDeviceState.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioFormat.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioFormat.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioInterruptionCallbackInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioInterruptionCallbackInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioObjectDestination.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioObjectDestination.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioSourceChangeCallbackInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioSourceChangeCallbackInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAuxSendValue.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAuxSendValue.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkBankCallbackInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkBankCallbackInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkBankContent.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkBankContent.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkBankTypeEnum.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkBankTypeEnum.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkBehavioralPositioningData.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkBehavioralPositioningData.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkCallbackCategory.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkCallbackCategory.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkCallbackInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkCallbackInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkCallbackSerializer.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkCallbackSerializer.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkCallbackType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkCallbackType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkChannelConfig.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkChannelConfig.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkChannelConfigType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkChannelConfigType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkChannelEmitter.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkChannelEmitter.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkChannelOrdering.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkChannelOrdering.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkConnectionType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkConnectionType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkCurveInterpolation.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkCurveInterpolation.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDeviceDescription.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDeviceDescription.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDeviceSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDeviceSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDiffractionPathInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDiffractionPathInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDurationCallbackInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDurationCallbackInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDynamicSequenceItemCallbackInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDynamicSequenceItemCallbackInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDynamicSequenceOp.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDynamicSequenceOp.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDynamicSequenceSelectCallbackInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDynamicSequenceSelectCallbackInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDynamicSequenceType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkDynamicSequenceType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkEngineRenderingMode.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkEngineRenderingMode.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkEventCallbackInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkEventCallbackInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkExtent.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkExtent.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkExternalSourceInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkExternalSourceInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkFloorPlane.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkFloorPlane.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkGeometryInstanceParams.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkGeometryInstanceParams.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkGlobalCallbackLocation.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkGlobalCallbackLocation.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkGroupType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkGroupType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkImageSourceParams.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkImageSourceParams.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkImageSourceSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkImageSourceSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkInitSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkInitSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkInitializationSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkInitializationSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkIterator.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkIterator.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkListenerOp.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkListenerOp.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDICC.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDICC.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDICcTypes.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDICcTypes.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIChannelAftertouch.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIChannelAftertouch.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIEvent.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIEvent.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIEventCallbackInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIEventCallbackInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIEventTypes.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIEventTypes.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIGen.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIGen.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDINote.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDINote.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDINoteAftertouch.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDINoteAftertouch.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIPitchbend.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIPitchbend.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIPost.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIPost.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIProgramChange.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIProgramChange.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIWwiseCmd.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMIDIWwiseCmd.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMarkerCallbackInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMarkerCallbackInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMeteringFlags.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMeteringFlags.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMonitorErrorCode.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMonitorErrorCode.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMonitorErrorLevel.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMonitorErrorLevel.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMonitoringCallbackInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMonitoringCallbackInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMotionDeviceData.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMotionDeviceData.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMotionDeviceType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMotionDeviceType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMotionInputProfile.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMotionInputProfile.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMultiPositionType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMultiPositionType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMusicPlaylistCallbackInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMusicPlaylistCallbackInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMusicSyncCallbackInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMusicSyncCallbackInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkObjectInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkObjectInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkObstructionOcclusionValues.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkObstructionOcclusionValues.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkOutputDeviceInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkOutputDeviceInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkOutputSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkOutputSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPanningRule.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPanningRule.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPlaylist.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPlaylist.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPlaylistArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPlaylistArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPlaylistItem.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPlaylistItem.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPluginType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPluginType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPositioningData.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPositioningData.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPositioningInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPositioningInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPreparationType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkPreparationType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkQueryRTPCValue.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkQueryRTPCValue.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkRamp.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkRamp.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkReflectionPathInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkReflectionPathInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkResourceMonitorDataSummary.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkResourceMonitorDataSummary.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkRoomDistanceBehavior.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkRoomDistanceBehavior.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkRoomParams.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkRoomParams.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSegmentInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSegmentInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSerializedCallbackHeader.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSerializedCallbackHeader.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSetPositionFlags.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSetPositionFlags.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSourceSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSourceSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSpatialAudioInitSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSpatialAudioInitSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSpeakerPanningType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSpeakerPanningType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkStdMovePolicy.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkStdMovePolicy.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkStreamMgrSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkStreamMgrSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkTransform.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkTransform.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkTransmissionOperation.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkTransmissionOperation.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkTriangle.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkTriangle.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkTrivialStdMovePolicy.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkTrivialStdMovePolicy.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkWorldTransform.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkWorldTransform.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/MonitorErrorInfo.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/MonitorErrorInfo.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/MsgContext.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/MsgContext.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkAudioAPI_Mac.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkAudioAPI_Mac.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkCommunicationSettings_Mac.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkCommunicationSettings_Mac.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkPlatformInitSettings_Mac.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkPlatformInitSettings_Mac.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkThreadProperties_Mac.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkThreadProperties_Mac.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkUnitySoundEnginePINVOKE_Mac.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkUnitySoundEnginePINVOKE_Mac.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkUnitySoundEngine_Mac.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkUnitySoundEngine_Mac.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkCommunicationSettings_Windows.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkCommunicationSettings_Windows.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkPlatformInitSettings_Windows.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkPlatformInitSettings_Windows.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkThreadProperties_Windows.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkThreadProperties_Windows.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkUnitySoundEnginePINVOKE_Windows.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkUnitySoundEnginePINVOKE_Windows.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkUnitySoundEngine_Windows.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkUnitySoundEngine_Windows.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkAudioInputManager.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkAudioInputManager.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkBankManager.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkBankManager.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkBasePathGetter.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkBasePathGetter.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkCallbackManager.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkCallbackManager.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkCommonPlatformSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkCommonPlatformSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkEnumFlagAttribute.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkEnumFlagAttribute.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkLogger.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkLogger.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkShowOnlyAttribute.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkShowOnlyAttribute.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkUnitySoundEngine.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkUnitySoundEngine.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkUnitySoundEngineInitialization.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkUnitySoundEngineInitialization.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkVector.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkVector.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkVector64.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkVector64.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkVertex.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkVertex.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkWwiseEditorSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkWwiseEditorSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkWwiseInitializationSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkWwiseInitializationSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkAcousticSurfaceArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkAcousticSurfaceArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkAuxSendArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkAuxSendArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkBaseArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkBaseArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkChannelEmitterArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkChannelEmitterArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkDeviceDescriptionArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkDeviceDescriptionArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkDiffractionPathInfoArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkDiffractionPathInfoArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkExternalSourceInfoArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkExternalSourceInfoArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkMIDIPostArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkMIDIPostArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkObjectInfoArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkObjectInfoArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkObstructionOcclusionValuesArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkObstructionOcclusionValuesArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkPositionArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkPositionArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkReflectionPathInfoArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkReflectionPathInfoArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkSourceSettingsArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkSourceSettingsArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkTriangleArray.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/Arrays/AkTriangleArray.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Mac.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Mac/AkMacBasePathGetter.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Mac/AkMacBasePathGetter.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Mac/AkMacSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Mac/AkMacSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Mac/AkUnitySoundEngine.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Mac/AkUnitySoundEngine.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/WAAPI.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/WAAPI/Ak.Wwise.Api.WAAPI.asmdef
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/WAAPI/Ak.Wwise.Api.WAAPI.asmdef.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/WAAPI/AkWaapiClient.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/WAAPI/AkWaapiClient.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/WAAPI/AkWaapiHelper.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/WAAPI/AkWaapiHelper.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/WAAPI/AkWaapiUtilities.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/WAAPI/AkWaapiUtilities.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/WAAPI/Uri.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/WAAPI/Uri.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/WAAPI/Wamp.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/WAAPI/Wamp.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Windows.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Windows/AkUnitySoundEngine.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Windows/AkUnitySoundEngine.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Windows/AkWindowsBasePathGetter.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Windows/AkWindowsBasePathGetter.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Windows/AkWindowsSettings.cs
+Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Windows/AkWindowsSettings.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkFlanger.bundle
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkFlanger.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkMeter.bundle
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkMeter.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkRecorderADM.bundle
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkRecorderADM.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkSidechain.bundle
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkSidechain.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkSoundSeedAir.bundle
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkSoundSeedAir.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkSynthOne.bundle
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkSynthOne.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAuro.bundle
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAuro.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libMasteringSuite.bundle
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libMasteringSuite.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libMcDSP.bundle
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libMcDSP.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libTempest3dAudio.bundle
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libTempest3dAudio.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libiZotope.bundle
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libiZotope.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86_64.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86_64/AkUnitySoundEngine.yml
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86_64/AkUnitySoundEngine.yml.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle/Contents/Info.plist
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle/Contents/MacOS/AkUnitySoundEngine
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle/Contents/_CodeSignature/CodeResources
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86_64.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86_64/AkUnitySoundEngine.yml
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86_64/AkUnitySoundEngine.yml.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle/Contents/Info.plist
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle/Contents/MacOS/AkUnitySoundEngine
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle/Contents/_CodeSignature/CodeResources
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86_64.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86_64/AkUnitySoundEngine.yml
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86_64/AkUnitySoundEngine.yml.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle/Contents/Info.plist
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle/Contents/MacOS/AkUnitySoundEngine
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle/Contents/_CodeSignature/CodeResources
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkConvolutionReverb.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkConvolutionReverb.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkMeter.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkMeter.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkMotion.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkMotion.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkRecorderADM.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkRecorderADM.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkSidechain.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkSidechain.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkSoundSeedAir.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkSoundSeedAir.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkSoundSeedGrain.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkSoundSeedGrain.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkSynthOne.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkSynthOne.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/Auro.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/Auro.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/MasteringSuite.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/MasteringSuite.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/McDSP.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/McDSP.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/Tempest3dAudio.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/Tempest3dAudio.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/iZotope.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/iZotope.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Debug.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Debug/AkUnitySoundEngine.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Debug/AkUnitySoundEngine.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Profile.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Profile/AkUnitySoundEngine.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Profile/AkUnitySoundEngine.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Release.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Release/AkUnitySoundEngine.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Release/AkUnitySoundEngine.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkConvolutionReverb.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkConvolutionReverb.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkMeter.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkMeter.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkMotion.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkMotion.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkRecorderADM.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkRecorderADM.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkSidechain.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkSidechain.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkSoundSeedAir.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkSoundSeedAir.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkSoundSeedGrain.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkSoundSeedGrain.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkSynthOne.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/AkSynthOne.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/Auro.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/Auro.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/MasteringSuite.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/MasteringSuite.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/McDSP.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/McDSP.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/Tempest3dAudio.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/Tempest3dAudio.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/iZotope.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/DSP/iZotope.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/Debug.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/Debug/AkUnitySoundEngine.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/Debug/AkUnitySoundEngine.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/Profile.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/Profile/AkUnitySoundEngine.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/Profile/AkUnitySoundEngine.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/Release.meta
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/Release/AkUnitySoundEngine.dll
+Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86_64/Release/AkUnitySoundEngine.dll.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/AK.Wwise.Unity.API.WwiseTypes.asmdef
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/AK.Wwise.Unity.API.WwiseTypes.asmdef.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseAcousticTextureReference.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseAcousticTextureReference.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseAuxBusReference.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseAuxBusReference.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseBankReference.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseBankReference.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseEventReference.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseEventReference.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseObjectReference.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseObjectReference.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseObjectType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseObjectType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseRtpcReference.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseRtpcReference.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseStateGroupReference.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseStateGroupReference.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseStateReference.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseStateReference.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseSwitchGroupReference.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseSwitchGroupReference.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseSwitchReference.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseSwitchReference.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseTriggerReference.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjects/WwiseTriggerReference.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjectsManagers.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjectsManagers/WwiseEventReferencesManager.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseObjectsManagers/WwiseEventReferencesManager.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseAcousticTexture.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseAcousticTexture.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseAuxBus.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseAuxBus.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseBank.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseBank.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseBaseGroupType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseBaseGroupType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseBaseType.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseBaseType.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseCallbackFlags.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseCallbackFlags.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseEvent.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseEvent.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseRtpc.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseRtpc.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseState.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseState.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseSwitch.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseSwitch.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseTrigger.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseTrigger.cs.meta
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseTypeMigration.cs
+Project Grimhold/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseTypeMigration.cs.meta
+Project Grimhold/Assets/Wwise/API/package.json
+Project Grimhold/Assets/Wwise/API/package.json.meta
+Project Grimhold/Assets/Wwise/Documentation.meta
+Project Grimhold/Assets/Wwise/Documentation/AppleCommon.meta
+Project Grimhold/Assets/Wwise/Documentation/AppleCommon/en.meta
+Project Grimhold/Assets/Wwise/Documentation/AppleCommon/en/WwiseUnityIntegrationHelp_Mac_en.chm
+Project Grimhold/Assets/Wwise/Documentation/AppleCommon/en/WwiseUnityIntegrationHelp_Mac_en.chm.meta
+Project Grimhold/Assets/Wwise/Documentation/AppleCommon/ja.meta
+Project Grimhold/Assets/Wwise/Documentation/AppleCommon/ja/WwiseUnityIntegrationHelp_Mac_ja.chm
+Project Grimhold/Assets/Wwise/Documentation/AppleCommon/ja/WwiseUnityIntegrationHelp_Mac_ja.chm.meta
+Project Grimhold/Assets/Wwise/Documentation/AppleCommon/ko.meta
+Project Grimhold/Assets/Wwise/Documentation/AppleCommon/ko/WwiseUnityIntegrationHelp_Mac_ko.chm
+Project Grimhold/Assets/Wwise/Documentation/AppleCommon/ko/WwiseUnityIntegrationHelp_Mac_ko.chm.meta
+Project Grimhold/Assets/Wwise/Documentation/AppleCommon/zh.meta
+Project Grimhold/Assets/Wwise/Documentation/AppleCommon/zh/WwiseUnityIntegrationHelp_Mac_zh.chm
+Project Grimhold/Assets/Wwise/Documentation/AppleCommon/zh/WwiseUnityIntegrationHelp_Mac_zh.chm.meta
+Project Grimhold/Assets/Wwise/Documentation/Windows.meta
+Project Grimhold/Assets/Wwise/Documentation/Windows/en.meta
+Project Grimhold/Assets/Wwise/Documentation/Windows/en/WwiseUnityIntegrationHelp_en.chm
+Project Grimhold/Assets/Wwise/Documentation/Windows/en/WwiseUnityIntegrationHelp_en.chm.meta
+Project Grimhold/Assets/Wwise/Documentation/Windows/ja.meta
+Project Grimhold/Assets/Wwise/Documentation/Windows/ja/WwiseUnityIntegrationHelp_ja.chm
+Project Grimhold/Assets/Wwise/Documentation/Windows/ja/WwiseUnityIntegrationHelp_ja.chm.meta
+Project Grimhold/Assets/Wwise/Documentation/Windows/ko.meta
+Project Grimhold/Assets/Wwise/Documentation/Windows/ko/WwiseUnityIntegrationHelp_ko.chm
+Project Grimhold/Assets/Wwise/Documentation/Windows/ko/WwiseUnityIntegrationHelp_ko.chm.meta
+Project Grimhold/Assets/Wwise/Documentation/Windows/zh.meta
+Project Grimhold/Assets/Wwise/Documentation/Windows/zh/WwiseUnityIntegrationHelp_zh.chm
+Project Grimhold/Assets/Wwise/Documentation/Windows/zh/WwiseUnityIntegrationHelp_zh.chm.meta
+Project Grimhold/Assets/Wwise/Editor.meta
+Project Grimhold/Assets/Wwise/Editor/ProjectData.meta
+Project Grimhold/Assets/Wwise/Gizmos.meta
+Project Grimhold/Assets/Wwise/Gizmos/WwiseAudioSpeaker.png
+Project Grimhold/Assets/Wwise/Gizmos/WwiseAudioSpeaker.png.meta
+Project Grimhold/Assets/Wwise/Gizmos/wwise_white_on_gray.png
+Project Grimhold/Assets/Wwise/Gizmos/wwise_white_on_gray.png.meta
+Project Grimhold/Assets/Wwise/LauncherInfo.json
+Project Grimhold/Assets/Wwise/LauncherInfo.json.meta
+Project Grimhold/Assets/Wwise/Logging.meta
+Project Grimhold/Assets/Wwise/Logging/Runtime.meta
+Project Grimhold/Assets/Wwise/Logging/Runtime/AK.Wwise.Unity.Logging.asmdef
+Project Grimhold/Assets/Wwise/Logging/Runtime/AK.Wwise.Unity.Logging.asmdef.meta
+Project Grimhold/Assets/Wwise/Logging/Runtime/WwiseLogger.cs
+Project Grimhold/Assets/Wwise/Logging/Runtime/WwiseLogger.cs.meta
+Project Grimhold/Assets/Wwise/Logging/Runtime/WwiseLoggerSettings.cs
+Project Grimhold/Assets/Wwise/Logging/Runtime/WwiseLoggerSettings.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/CHANGELOG.md
+Project Grimhold/Assets/Wwise/MonoBehaviour/CHANGELOG.md.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AK.Wwise.Unity.MonoBehaviour.Editor.asmdef
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AK.Wwise.Unity.MonoBehaviour.Editor.asmdef.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkAmbientInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkAmbientInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkAudioListenerInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkAudioListenerInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkBankInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkBankInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkBaseInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkBaseInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkEnvironmentInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkEnvironmentInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkEnvironmentPortalInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkEnvironmentPortalInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkEventInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkEventInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkGameObjListenerListDrawer.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkGameObjListenerListDrawer.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkGameObjectInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkGameObjectInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkPortalManager.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkPortalManager.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRadialEmitterInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRadialEmitterInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomAwareObjectInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomAwareObjectInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomPortalInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomPortalInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSpatialAudioListenerInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSpatialAudioListenerInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkStateInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkStateInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSurfaceReflectorInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSurfaceReflectorInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSwitchInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSwitchInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkUnityEventHandlerInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkUnityEventHandlerInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkWwiseTriggerInspector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkWwiseTriggerInspector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers/Mac.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers/Mac/AkMacBuildPreprocessor.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers/Mac/AkMacBuildPreprocessor.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers/Windows.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers/Windows/AkWindowsBuildPreprocessor.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers/Windows/AkWindowsBuildPreprocessor.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkBuildPreprocessor.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkBuildPreprocessor.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkUnitySettingsParser.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkUnitySettingsParser.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkWwisePostImportCallbackSetup.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkWwisePostImportCallbackSetup.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkWwiseSetupWizard.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkWwiseSetupWizard.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkXboxOneUtils.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkXboxOneUtils.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/LICENSE.md
+Project Grimhold/Assets/Wwise/MonoBehaviour/LICENSE.md.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/README.md
+Project Grimhold/Assets/Wwise/MonoBehaviour/README.md.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AK.Wwise.Unity.MonoBehaviour.asmdef
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AK.Wwise.Unity.MonoBehaviour.asmdef.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkAmbient.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkAmbient.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkAmbientLargeModePositioner.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkAmbientLargeModePositioner.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkAudioListener.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkAudioListener.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkBank.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkBank.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkEarlyReflections.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkEarlyReflections.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkEmitterObstructionOcclusion.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkEmitterObstructionOcclusion.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkEnvironment.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkEnvironment.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkEnvironmentPortal.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkEnvironmentPortal.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkEvent.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkEvent.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkEventCallbackData.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkEventCallbackData.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkGameObj.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkGameObj.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkGameObjEnvironmentData.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkGameObjEnvironmentData.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkGameObjListenerList.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkGameObjListenerList.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkGameObjPosOffsetData.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkGameObjPosOffsetData.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkGameObjPositionData.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkGameObjPositionData.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkGameObjPositionOffsetData.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkGameObjPositionOffsetData.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkInitializer.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkInitializer.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkListenerDistanceProbe.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkListenerDistanceProbe.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkMemBankLoader.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkMemBankLoader.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkObstructionOcclusion.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkObstructionOcclusion.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRadialEmitter.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRadialEmitter.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkReverbZone.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkReverbZone.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoom.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoom.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomAwareManager.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomAwareManager.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomAwareObject.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomAwareObject.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomManager.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomManager.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomPortal.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomPortal.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomPortalObstruction.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomPortalObstruction.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSoundEngineController.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSoundEngineController.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSpatialAudioDebugDraw.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSpatialAudioDebugDraw.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSpatialAudioEmitter.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSpatialAudioEmitter.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSpatialAudioListener.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSpatialAudioListener.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkState.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkState.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSurfaceReflector.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSurfaceReflector.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSwitch.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSwitch.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTerminator.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTerminator.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerBase.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerBase.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerCollisionEnter.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerCollisionEnter.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerCollisionExit.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerCollisionExit.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerDisable.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerDisable.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerEnable.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerEnable.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerEnter.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerEnter.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerExit.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerExit.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerHandler.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerHandler.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerMouseDown.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerMouseDown.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerMouseEnter.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerMouseEnter.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerMouseExit.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerMouseExit.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerMouseUp.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerMouseUp.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkWwiseTrigger.cs
+Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkWwiseTrigger.cs.meta
+Project Grimhold/Assets/Wwise/MonoBehaviour/package.json
+Project Grimhold/Assets/Wwise/MonoBehaviour/package.json.meta
+Project Grimhold/Assets/Wwise/OpenXR.meta
+Project Grimhold/Assets/Wwise/OpenXR/CHANGELOG.md
+Project Grimhold/Assets/Wwise/OpenXR/CHANGELOG.md.meta
+Project Grimhold/Assets/Wwise/OpenXR/LICENSE.md
+Project Grimhold/Assets/Wwise/OpenXR/LICENSE.md.meta
+Project Grimhold/Assets/Wwise/OpenXR/README.md
+Project Grimhold/Assets/Wwise/OpenXR/README.md.meta
+Project Grimhold/Assets/Wwise/OpenXR/Runtime.meta
+Project Grimhold/Assets/Wwise/OpenXR/Runtime/AK.Wwise.Unity.OpenXR.asmdef
+Project Grimhold/Assets/Wwise/OpenXR/Runtime/AK.Wwise.Unity.OpenXR.asmdef.meta
+Project Grimhold/Assets/Wwise/OpenXR/Runtime/AkWwiseOpenXRMotionBridge.cs
+Project Grimhold/Assets/Wwise/OpenXR/Runtime/AkWwiseOpenXRMotionBridge.cs.meta
+Project Grimhold/Assets/Wwise/OpenXR/Runtime/AkWwiseOpenXRMotionFeature.cs
+Project Grimhold/Assets/Wwise/OpenXR/Runtime/AkWwiseOpenXRMotionFeature.cs.meta
+Project Grimhold/Assets/Wwise/OpenXR/Runtime/AkWwiseOpenXRMotionOutput.cs
+Project Grimhold/Assets/Wwise/OpenXR/Runtime/AkWwiseOpenXRMotionOutput.cs.meta
+Project Grimhold/Assets/Wwise/OpenXR/package.json
+Project Grimhold/Assets/Wwise/OpenXR/package.json.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/AK.Wwise.Unity.ProjectDataBase.asmdef
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/AK.Wwise.Unity.ProjectDataBase.asmdef.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseAcousticTextureRef.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseAcousticTextureRef.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseAcousticTextureRefArray.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseAcousticTextureRefArray.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseAuxBusRef.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseAuxBusRef.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseAuxBusRefArray.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseAuxBusRefArray.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseBusRef.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseBusRef.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseBusRefArray.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseBusRefArray.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseEventRef.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseEventRef.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseEventRefArray.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseEventRefArray.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseEventRefMediaArray.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseEventRefMediaArray.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseGameParameterRef.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseGameParameterRef.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseGameParameterRefArray.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseGameParameterRefArray.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseMediaRef.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseMediaRef.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseMediaRefArray.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseMediaRefArray.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwisePlatformRef.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwisePlatformRef.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwisePluginRef.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwisePluginRef.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwisePluginRefArray.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwisePluginRefArray.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseProjectDataBasePINVOKE.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseProjectDataBasePINVOKE.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseProjectDatabase.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseProjectDatabase.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseSoundBankRef.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseSoundBankRef.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseSoundBankRefArray.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseSoundBankRefArray.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseStateRef.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseStateRef.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseStateRefArray.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseStateRefArray.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseSwitchRef.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseSwitchRef.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseSwitchRefArray.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseSwitchRefArray.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseTriggerRef.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseTriggerRef.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseTriggerRefArray.cs
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseTriggerRefArray.cs.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Plugins.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Plugins/Mac.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Plugins/Mac/DSP.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Plugins/Mac/DSP/libWwiseProjectDatabase.dylib
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Plugins/Mac/DSP/libWwiseProjectDatabase.dylib.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Plugins/Windows.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Plugins/Windows/x86_64.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Plugins/Windows/x86_64/DSP.meta
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Plugins/Windows/x86_64/DSP/WwiseProjectDatabase.dll
+Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Plugins/Windows/x86_64/DSP/WwiseProjectDatabase.dll.meta
+Project Grimhold/Assets/Wwise/Resources.meta
+Project Grimhold/Assets/Wwise/Resources/WwiseLoggerSettings.asset
+Project Grimhold/Assets/Wwise/Resources/WwiseLoggerSettings.asset.meta
+Project Grimhold/Assets/Wwise/ScriptableObjects.meta
+Project Grimhold/Assets/Wwise/ScriptableObjects/AkWwiseInitializationSettings.asset
+Project Grimhold/Assets/Wwise/ScriptableObjects/AkWwiseInitializationSettings.asset.meta
+Project Grimhold/Assets/Wwise/ScriptableObjects/Event.meta
+Project Grimhold/Assets/Wwise/ScriptableObjects/Event/6D419FAB-AAD8-4399-9CDE-03D9901BCC0C.asset
+Project Grimhold/Assets/Wwise/ScriptableObjects/Event/6D419FAB-AAD8-4399-9CDE-03D9901BCC0C.asset.meta
+Project Grimhold/Assets/Wwise/ScriptableObjects/Mac.asset
+Project Grimhold/Assets/Wwise/ScriptableObjects/Mac.asset.meta
+Project Grimhold/Assets/Wwise/ScriptableObjects/Soundbank.meta
+Project Grimhold/Assets/Wwise/ScriptableObjects/Soundbank/C19017E3-1C82-4CFC-9A2F-0579A4D099FF.asset
+Project Grimhold/Assets/Wwise/ScriptableObjects/Soundbank/C19017E3-1C82-4CFC-9A2F-0579A4D099FF.asset.meta
+Project Grimhold/Assets/Wwise/ScriptableObjects/Windows.asset
+Project Grimhold/Assets/Wwise/ScriptableObjects/Windows.asset.meta
+Project Grimhold/Assets/Wwise/Timeline.meta
+Project Grimhold/Assets/Wwise/Timeline/CHANGELOG.md
+Project Grimhold/Assets/Wwise/Timeline/CHANGELOG.md.meta
+Project Grimhold/Assets/Wwise/Timeline/Editor.meta
+Project Grimhold/Assets/Wwise/Timeline/Editor/AK.Wwise.Unity.Timeline.Editor.asmdef
+Project Grimhold/Assets/Wwise/Timeline/Editor/AK.Wwise.Unity.Timeline.Editor.asmdef.meta
+Project Grimhold/Assets/Wwise/Timeline/Editor/AkEventPlayableInspector.cs
+Project Grimhold/Assets/Wwise/Timeline/Editor/AkEventPlayableInspector.cs.meta
+Project Grimhold/Assets/Wwise/Timeline/Editor/AkRTPCPlayableInspector.cs
+Project Grimhold/Assets/Wwise/Timeline/Editor/AkRTPCPlayableInspector.cs.meta
+Project Grimhold/Assets/Wwise/Timeline/Editor/AkRTPCTrackInspector.cs
+Project Grimhold/Assets/Wwise/Timeline/Editor/AkRTPCTrackInspector.cs.meta
+Project Grimhold/Assets/Wwise/Timeline/LICENSE.md
+Project Grimhold/Assets/Wwise/Timeline/LICENSE.md.meta
+Project Grimhold/Assets/Wwise/Timeline/README.md
+Project Grimhold/Assets/Wwise/Timeline/README.md.meta
+Project Grimhold/Assets/Wwise/Timeline/Runtime.meta
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AK.Wwise.Unity.Timeline.asmdef
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AK.Wwise.Unity.Timeline.asmdef.meta
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkEventPlayable.cs
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkEventPlayable.cs.meta
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkEventPlayableBehavior.cs
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkEventPlayableBehavior.cs.meta
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkEventTrack.cs
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkEventTrack.cs.meta
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkRTPCPlayable.cs
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkRTPCPlayable.cs.meta
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkRTPCTrack.cs
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkRTPCTrack.cs.meta
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkTimelineEventPlayable.cs
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkTimelineEventPlayable.cs.meta
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkTimelineEventTrack.cs
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkTimelineEventTrack.cs.meta
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkTimelineRtpcPlayable.cs
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkTimelineRtpcPlayable.cs.meta
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkTimelineRtpcTrack.cs
+Project Grimhold/Assets/Wwise/Timeline/Runtime/AkTimelineRtpcTrack.cs.meta
+Project Grimhold/Assets/Wwise/Timeline/package.json
+Project Grimhold/Assets/Wwise/Timeline/package.json.meta
+Project Grimhold/Assets/Wwise/Tools.meta
+Project Grimhold/Assets/Wwise/Tools/AddressableInstaller.meta
+Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor.meta
+Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AK.Wwise.Unity.AddressableInstaller.asmdef
+Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AK.Wwise.Unity.AddressableInstaller.asmdef.meta
+Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AddressableAssetBuilder.cs
+Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AddressableAssetBuilder.cs.meta
+Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AddressableBankPathSetter.cs
+Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AddressableBankPathSetter.cs.meta
+Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AddressableInstaller.cs
+Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AddressableInstaller.cs.meta
+Project Grimhold/Assets/Wwise/Tools/AddressableUpdater.meta
+Project Grimhold/Assets/Wwise/Tools/AddressableUpdater/Editor.meta
+Project Grimhold/Assets/Wwise/Tools/AddressableUpdater/Editor/AK.Wwise.Unity.AddressableUpdater.asmdef
+Project Grimhold/Assets/Wwise/Tools/AddressableUpdater/Editor/AK.Wwise.Unity.AddressableUpdater.asmdef.meta
+Project Grimhold/Assets/Wwise/Tools/AddressableUpdater/Editor/AddressableUpdater.cs
+Project Grimhold/Assets/Wwise/Tools/AddressableUpdater/Editor/AddressableUpdater.cs.meta
+Project Grimhold/Assets/Wwise/Tools/WwiseIDConverter.py
+Project Grimhold/Assets/Wwise/Tools/WwiseIDConverter.py.meta
+Project Grimhold/Assets/Wwise/Utilities.meta
+Project Grimhold/Assets/Wwise/Utilities/Runtime.meta
+Project Grimhold/Assets/Wwise/Utilities/Runtime/AK.Wwise.Unity.Runtime.Utilities.asmdef
+Project Grimhold/Assets/Wwise/Utilities/Runtime/AK.Wwise.Unity.Runtime.Utilities.asmdef.meta
+Project Grimhold/Assets/Wwise/Utilities/Runtime/AkDelegates.cs
+Project Grimhold/Assets/Wwise/Utilities/Runtime/AkDelegates.cs.meta
+Project Grimhold/Assets/Wwise/Utilities/Runtime/AkUtilities.cs
+Project Grimhold/Assets/Wwise/Utilities/Runtime/AkUtilities.cs.meta
+Project Grimhold/Assets/Wwise/Version.txt
+Project Grimhold/Assets/Wwise/Version.txt.meta
+Project Grimhold/Assets/WwiseSettings.xml
+Project Grimhold/Assets/WwiseSettings.xml.meta
+Project Grimhold/ProjectSettings/AudioManager.asset
+Project Grimhold/ProjectSettings/ProjectSettings.asset
+Project Grimhold/ProjectSettings/VersionControlSettings.asset
+Project Grimhold/WwiseUnityIntegration_Mac_Src.zip
+Project Grimhold/WwiseUnityIntegration_Windows_Src.zip
+Project Grimhold/logRunSetup.txt
+```
+
+#### Classification evidence
+
+- path → Movement: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerCollisionEnter.cs
+- path → Movement: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerCollisionEnter.cs.meta
+- path → Movement: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerCollisionExit.cs
+- path → Movement: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkTriggerCollisionExit.cs.meta
+- path → UI: Project Grimhold/Assets/Scenes/MainMenu.unity
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivatorMenus.cs
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivatorMenus.cs.meta
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu.meta
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common.meta
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkUnityBuilderBase.cs
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkUnityBuilderBase.cs.meta
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkUnityPluginInstallerBase.cs
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkUnityPluginInstallerBase.cs.meta
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkWwiseIdConverter.cs
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkWwiseIdConverter.cs.meta
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Mac.meta
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Mac/AkWwiseMenu\_Mac.cs
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Mac/AkWwiseMenu\_Mac.cs.meta
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Windows.meta
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Windows/AkWwiseMenu\_Windows.cs
+- path → UI: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Windows/AkWwiseMenu\_Windows.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkRoomDistanceBehavior.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkRoomDistanceBehavior.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkRoomParams.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkRoomParams.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkWorldTransform.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkWorldTransform.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomAwareObjectInspector.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomAwareObjectInspector.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomInspector.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomInspector.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomPortalInspector.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomPortalInspector.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoom.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoom.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomAwareManager.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomAwareManager.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomAwareObject.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomAwareObject.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomManager.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomManager.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomPortal.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomPortal.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomPortalObstruction.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkRoomPortalObstruction.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMotionInputProfile.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMotionInputProfile.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86\_64.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86\_64/AkUnitySoundEngine.yml
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86\_64/AkUnitySoundEngine.yml.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle/Contents/Info.plist
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle/Contents/MacOS/AkUnitySoundEngine
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle/Contents/\_CodeSignature/CodeResources
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Profile.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Profile/AkUnitySoundEngine.dll
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Profile/AkUnitySoundEngine.dll.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/Profile.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/Profile/AkUnitySoundEngine.dll
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/Profile/AkUnitySoundEngine.dll.meta
+- path → Audio: Project Grimhold/Assets/Prefabs/Audio/WwiseGlobal.prefab
+- path → Audio: Project Grimhold/Assets/Prefabs/Audio/WwiseGlobal.prefab.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/.DS\_Store
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/.DS\_Store
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Bus.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Bus/English(US).meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/English(US).meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Event.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Event/English(US).meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/General.bnk
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/General.bnk.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/General.json
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/General.json.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/General.txt
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/General.txt.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Init.bnk
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Init.bnk.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Init.json
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Init.json.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Init.txt
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/Init.txt.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/PlatformInfo.json
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/PlatformInfo.json.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/PluginInfo.json
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Mac/PluginInfo.json.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Bus.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Bus/English(US).meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/English(US).meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Event.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Event/English(US).meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/General.bnk
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/General.bnk.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/General.json
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/General.json.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/General.txt
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/General.txt.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Init.bnk
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Init.bnk.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Init.json
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Init.json.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Init.txt
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Init.txt.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/PlatformInfo.json
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/PlatformInfo.json.meta
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/PluginInfo.json
+- path → Audio: Project Grimhold/Assets/StreamingAssets/Audio/GeneratedSoundBanks/Windows/PluginInfo.json.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Editor/AkSoundBankDirectoryWatcher.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Editor/AkSoundBankDirectoryWatcher.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/AkUnitySoundEngine.extensions.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/AkUnitySoundEngine.extensions.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioDeviceEvent.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioDeviceEvent.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioDeviceState.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioDeviceState.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioFormat.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioFormat.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioInterruptionCallbackInfo.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioInterruptionCallbackInfo.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioObjectDestination.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioObjectDestination.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioSettings.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioSettings.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioSourceChangeCallbackInfo.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkAudioSourceChangeCallbackInfo.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMusicPlaylistCallbackInfo.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMusicPlaylistCallbackInfo.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMusicSyncCallbackInfo.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMusicSyncCallbackInfo.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSpatialAudioInitSettings.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkSpatialAudioInitSettings.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkAudioAPI\_Mac.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkAudioAPI\_Mac.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkUnitySoundEnginePINVOKE\_Mac.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkUnitySoundEnginePINVOKE\_Mac.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkUnitySoundEngine\_Mac.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Mac/AkUnitySoundEngine\_Mac.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkUnitySoundEnginePINVOKE\_Windows.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkUnitySoundEnginePINVOKE\_Windows.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkUnitySoundEngine\_Windows.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Windows/AkUnitySoundEngine\_Windows.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkAudioInputManager.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkAudioInputManager.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkUnitySoundEngine.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkUnitySoundEngine.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkUnitySoundEngineInitialization.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkUnitySoundEngineInitialization.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Mac/AkUnitySoundEngine.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Mac/AkUnitySoundEngine.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Windows/AkUnitySoundEngine.cs
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Windows/AkUnitySoundEngine.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkSoundSeedAir.bundle
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libAkSoundSeedAir.bundle.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libTempest3dAudio.bundle
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/DSP/libTempest3dAudio.bundle.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86\_64.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86\_64/AkUnitySoundEngine.yml
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86\_64/AkUnitySoundEngine.yml.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle/Contents/Info.plist
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle/Contents/MacOS/AkUnitySoundEngine
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Debug/AkUnitySoundEngine.bundle/Contents/\_CodeSignature/CodeResources
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86\_64.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86\_64/AkUnitySoundEngine.yml
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86\_64/AkUnitySoundEngine.yml.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle/Contents/Info.plist
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle/Contents/MacOS/AkUnitySoundEngine
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Profile/AkUnitySoundEngine.bundle/Contents/\_CodeSignature/CodeResources
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Info.plist.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/DWARF/AkUnitySoundEngine.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/aarch64/AkUnitySoundEngine.yml.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86\_64.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86\_64/AkUnitySoundEngine.yml
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.dSYM/Contents/Resources/Relocations/x86\_64/AkUnitySoundEngine.yml.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle/Contents/Info.plist
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle/Contents/MacOS/AkUnitySoundEngine
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Mac/Release/AkUnitySoundEngine.bundle/Contents/\_CodeSignature/CodeResources
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkSoundSeedAir.dll
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkSoundSeedAir.dll.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkSoundSeedGrain.dll
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/AkSoundSeedGrain.dll.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/Tempest3dAudio.dll
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/DSP/Tempest3dAudio.dll.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Debug/AkUnitySoundEngine.dll
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Debug/AkUnitySoundEngine.dll.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Profile/AkUnitySoundEngine.dll
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Profile/AkUnitySoundEngine.dll.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Release/AkUnitySoundEngine.dll
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86/Release/AkUnitySoundEngine.dll.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/DSP/AkSoundSeedAir.dll
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/DSP/AkSoundSeedAir.dll.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/DSP/AkSoundSeedGrain.dll
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/DSP/AkSoundSeedGrain.dll.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/DSP/Tempest3dAudio.dll
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/DSP/Tempest3dAudio.dll.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/Debug/AkUnitySoundEngine.dll
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/Debug/AkUnitySoundEngine.dll.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/Profile/AkUnitySoundEngine.dll
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/Profile/AkUnitySoundEngine.dll.meta
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/Release/AkUnitySoundEngine.dll
+- path → Audio: Project Grimhold/Assets/Wwise/API/Runtime/Plugins/Windows/x86\_64/Release/AkUnitySoundEngine.dll.meta
+- path → Audio: Project Grimhold/Assets/Wwise/Gizmos/WwiseAudioSpeaker.png
+- path → Audio: Project Grimhold/Assets/Wwise/Gizmos/WwiseAudioSpeaker.png.meta
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkAudioListenerInspector.cs
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkAudioListenerInspector.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSpatialAudioListenerInspector.cs
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSpatialAudioListenerInspector.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkAudioListener.cs
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkAudioListener.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSoundEngineController.cs
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSoundEngineController.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSpatialAudioDebugDraw.cs
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSpatialAudioDebugDraw.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSpatialAudioEmitter.cs
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSpatialAudioEmitter.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSpatialAudioListener.cs
+- path → Audio: Project Grimhold/Assets/Wwise/MonoBehaviour/Runtime/AkSpatialAudioListener.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseSoundBankRef.cs
+- path → Audio: Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseSoundBankRef.cs.meta
+- path → Audio: Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseSoundBankRefArray.cs
+- path → Audio: Project Grimhold/Assets/Wwise/ProjectDatabase/Runtime/Handwritten/Common/WwiseSoundBankRefArray.cs.meta
+- path → Audio: Project Grimhold/ProjectSettings/AudioManager.asset
+- path → Input: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMotionInputProfile.cs
+- path → Input: Project Grimhold/Assets/Wwise/API/Runtime/Generated/Common/AkMotionInputProfile.cs.meta
+- path → Input: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkAudioInputManager.cs
+- path → Input: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkAudioInputManager.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/CHANGELOG.md
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/CHANGELOG.md.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/AK.Wwise.Unity.API.Editor.asmdef
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/AK.Wwise.Unity.API.Editor.asmdef.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/AkSoundBankDirectoryWatcher.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/AkSoundBankDirectoryWatcher.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPlatformPluginActivator.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPlatformPluginActivator.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPlatformPluginList.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPlatformPluginList.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivator.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivator.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivatorConstants.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivatorConstants.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivatorMenus.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginActivatorMenus.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginInfo.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/AkPluginInfo.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/StaticPluginRegistration.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Common/StaticPluginRegistration.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Mac.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Mac/AkMacPluginActivator.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Mac/AkMacPluginActivator.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Windows.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Windows/AkWindowsPluginActivator.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/PluginActivator/Windows/AkWindowsPluginActivator.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkUnityBuilderBase.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkUnityBuilderBase.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkUnityPluginInstallerBase.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkUnityPluginInstallerBase.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkWwiseIdConverter.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Common/AkWwiseIdConverter.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Mac.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Mac/AkWwiseMenu\_Mac.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Mac/AkWwiseMenu\_Mac.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Windows.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Windows/AkWwiseMenu\_Windows.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseMenu/Windows/AkWwiseMenu\_Windows.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/AcousticTextureDrawer.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/AcousticTextureDrawer.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/AuxBusDrawer.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/AuxBusDrawer.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/BankDrawer.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/BankDrawer.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/BaseTypeDrawer.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/BaseTypeDrawer.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/EventDrawer.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/EventDrawer.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/RTPCDrawer.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/RTPCDrawer.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/StateDrawer.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/StateDrawer.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/SwitchDrawer.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/SwitchDrawer.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/TriggerDrawer.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseTypes/TriggerDrawer.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseBrowser.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseBrowser.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseBrowserFilter.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseBrowserFilter.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseComponentPicker.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseComponentPicker.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseEditorSettingsView.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseEditorSettingsView.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseJSONBuilder.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseJSONBuilder.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseProjectData.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseProjectData.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseProjectInfo.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseProjectInfo.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeDataSource.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeDataSource.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeMergedDataSource.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeMergedDataSource.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeProjectDataSource.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeProjectDataSource.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeView.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeView.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeViewItem.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeViewItem.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeWAAPIDataSource.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/AkWwiseTreeWAAPIDataSource.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcon.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcon.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcons.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcons/GraphNode\_CollapseAll.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcons/GraphNode\_CollapseAll.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcons/GraphNode\_ExpandAll.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/BrowserIcons/GraphNode\_ExpandAll.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/acoustictexture\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/acoustictexture\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/auxbus\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/auxbus\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/blank.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/blank.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/bus\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/bus\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/event\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/event\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/folder\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/folder\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/gameparameter\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/gameparameter\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/physical\_folder\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/physical\_folder\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/soundbank\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/soundbank\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/state\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/state\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/stategroup\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/stategroup\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/switch\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/switch\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/switchgroup\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/switchgroup\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/trigger\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/trigger\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/workunit\_nor.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/workunit\_nor.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/wproj.png
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Editor/WwiseWindows/TreeViewIcons/wproj.png.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkWwiseEditorSettings.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/API/Runtime/Handwritten/Common/AkWwiseEditorSettings.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Editor.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Editor/ProjectData.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/CHANGELOG.md
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/CHANGELOG.md.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AK.Wwise.Unity.MonoBehaviour.Editor.asmdef
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AK.Wwise.Unity.MonoBehaviour.Editor.asmdef.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkAmbientInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkAmbientInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkAudioListenerInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkAudioListenerInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkBankInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkBankInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkBaseInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkBaseInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkEnvironmentInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkEnvironmentInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkEnvironmentPortalInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkEnvironmentPortalInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkEventInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkEventInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkGameObjListenerListDrawer.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkGameObjListenerListDrawer.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkGameObjectInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkGameObjectInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkPortalManager.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkPortalManager.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRadialEmitterInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRadialEmitterInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomAwareObjectInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomAwareObjectInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomPortalInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkRoomPortalInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSpatialAudioListenerInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSpatialAudioListenerInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkStateInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkStateInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSurfaceReflectorInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSurfaceReflectorInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSwitchInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkSwitchInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkUnityEventHandlerInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkUnityEventHandlerInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkWwiseTriggerInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/AkWwiseTriggerInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers/Mac.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers/Mac/AkMacBuildPreprocessor.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers/Mac/AkMacBuildPreprocessor.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers/Windows.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers/Windows/AkWindowsBuildPreprocessor.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/EditorPlatformHelpers/Windows/AkWindowsBuildPreprocessor.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkBuildPreprocessor.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkBuildPreprocessor.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkUnitySettingsParser.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkUnitySettingsParser.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkWwisePostImportCallbackSetup.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkWwisePostImportCallbackSetup.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkWwiseSetupWizard.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkWwiseSetupWizard.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkXboxOneUtils.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/MonoBehaviour/Editor/WwiseSetupWizard/AkXboxOneUtils.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/OpenXR/CHANGELOG.md
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/OpenXR/CHANGELOG.md.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Timeline/CHANGELOG.md
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Timeline/CHANGELOG.md.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Timeline/Editor.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Timeline/Editor/AK.Wwise.Unity.Timeline.Editor.asmdef
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Timeline/Editor/AK.Wwise.Unity.Timeline.Editor.asmdef.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Timeline/Editor/AkEventPlayableInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Timeline/Editor/AkEventPlayableInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Timeline/Editor/AkRTPCPlayableInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Timeline/Editor/AkRTPCPlayableInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Timeline/Editor/AkRTPCTrackInspector.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Timeline/Editor/AkRTPCTrackInspector.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableInstaller.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AK.Wwise.Unity.AddressableInstaller.asmdef
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AK.Wwise.Unity.AddressableInstaller.asmdef.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AddressableAssetBuilder.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AddressableAssetBuilder.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AddressableBankPathSetter.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AddressableBankPathSetter.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AddressableInstaller.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableInstaller/Editor/AddressableInstaller.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableUpdater.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableUpdater/Editor.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableUpdater/Editor/AK.Wwise.Unity.AddressableUpdater.asmdef
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableUpdater/Editor/AK.Wwise.Unity.AddressableUpdater.asmdef.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableUpdater/Editor/AddressableUpdater.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/AddressableUpdater/Editor/AddressableUpdater.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/WwiseIDConverter.py
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/Tools/WwiseIDConverter.py.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/AppleCommon.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/AppleCommon/en.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/AppleCommon/en/WwiseUnityIntegrationHelp\_Mac\_en.chm
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/AppleCommon/en/WwiseUnityIntegrationHelp\_Mac\_en.chm.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/AppleCommon/ja.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/AppleCommon/ja/WwiseUnityIntegrationHelp\_Mac\_ja.chm
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/AppleCommon/ja/WwiseUnityIntegrationHelp\_Mac\_ja.chm.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/AppleCommon/ko.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/AppleCommon/ko/WwiseUnityIntegrationHelp\_Mac\_ko.chm
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/AppleCommon/ko/WwiseUnityIntegrationHelp\_Mac\_ko.chm.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/AppleCommon/zh.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/AppleCommon/zh/WwiseUnityIntegrationHelp\_Mac\_zh.chm
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/AppleCommon/zh/WwiseUnityIntegrationHelp\_Mac\_zh.chm.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/Windows.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/Windows/en.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/Windows/en/WwiseUnityIntegrationHelp\_en.chm
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/Windows/en/WwiseUnityIntegrationHelp\_en.chm.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/Windows/ja.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/Windows/ja/WwiseUnityIntegrationHelp\_ja.chm
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/Windows/ja/WwiseUnityIntegrationHelp\_ja.chm.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/Windows/ko.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/Windows/ko/WwiseUnityIntegrationHelp\_ko.chm
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/Windows/ko/WwiseUnityIntegrationHelp\_ko.chm.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/Windows/zh.meta
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/Windows/zh/WwiseUnityIntegrationHelp\_zh.chm
+- path → Documentation: Project Grimhold/Assets/Wwise/Documentation/Windows/zh/WwiseUnityIntegrationHelp\_zh.chm.meta
+
+#### Diagnostics
+
+- **ambiguous-kind:** No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages.
 
 ### 16d4e85e4831724e39b75aaab7018e5099060b70
 

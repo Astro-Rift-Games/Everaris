@@ -1,0 +1,39 @@
+Event	ID	Name			Wwise Object Path	Notes
+	978692378	Attack_Swing			\Default Work Unit\Attacks\Attack_Swing	
+	1281810935	Start			\Default Work Unit\Start	
+	2260571858	Bow_Charge			\Default Work Unit\Attacks\Bow_Charge	
+	2274384713	Attack_Hit_Arrow			\Default Work Unit\Attacks\Attack_Hit_Arrow	
+	3248342671	Attack_Hit			\Default Work Unit\Attacks\Attack_Hit	
+	3821338389	Bow_Release			\Default Work Unit\Attacks\Bow_Release	
+
+Switch Group	ID	Name			Wwise Object Path	Notes
+	3893417221	Weapon			\Default Work Unit\Weapon	
+
+Switch	ID	Name	Switch Group			Notes
+	546945295	Bow	Weapon			
+	646465998	ArmingSword	Weapon			
+	1238745546	Rapier	Weapon			
+	1692362604	Zweihander	Weapon			
+	2932462918	GreatHammer	Weapon			
+	2967815805	MagicSword	Weapon			
+	3179814814	TrainingShortSword	Weapon			
+	3955957070	LongSword	Weapon			
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	60372916	SFX_Everaris_Swing_Player-Zweihander-Attack-S Fr6_02	.cache\15\{153C06E3-8BA4-6E4D-AC27-6BD180668797}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\Zweihander\SFX_Everaris_Swing_Player-Zweihander-Attack-S Fr6_02		58896
+	67048294	SFX_Everaris_Swing_Player-GreatHammer-Attack-S Fr6_02	.cache\BA\{BA60773E-7A85-CC0D-427F-97F7EA76887F}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\GreatHammer\SFX_Everaris_Swing_Player-GreatHammer-Attack-S Fr6_02		117696
+	71106431	SFX_Everaris_Swing_Player-TrainingShortSword-Attack-S Fr4_02	.cache\6D\{6D9214B6-58FB-7676-B340-A45D3FE8F0E9}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\TrainingShorSword\SFX_Everaris_Swing_Player-TrainingShortSword-Attack-S Fr4_02		73596
+	89610162	SFX_Everaris_Swing_Player-GreatHammer-Attack-S Fr6_01	.cache\B4\{B403B5BF-9E9F-D91C-9AE4-9C8849FF6562}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\GreatHammer\SFX_Everaris_Swing_Player-GreatHammer-Attack-S Fr6_01		117696
+	108866475	SFX_Everaris_Swing_Player-Zweihander-Attack-S Fr6_01	.cache\AD\{AD32B871-B6F9-F9A7-7228-B5C84CB0DEE7}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\Zweihander\SFX_Everaris_Swing_Player-Zweihander-Attack-S Fr6_01		66248
+	163976937	SFX_Everaris_Swing_Player-Rapier-Attack-S - Fr7_01	.cache\E0\{E024A1B4-7C99-59A2-4CE2-54FE53AF3FD4}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\Rapier\SFX_Everaris_Swing_Player-Rapier-Attack-S - Fr7_01		80948
+	228369822	SFX_Everaris_Swing_Player-Zweihander-Attack-S Fr6_03	.cache\E4\{E44CA1FC-551F-38A4-DDA1-5BD5D7996AA0}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\Zweihander\SFX_Everaris_Swing_Player-Zweihander-Attack-S Fr6_03		58896
+	300216809	SFX_Everaris_Swing_Player-GreatHammer-Attack-S Fr6_03	.cache\6E\{6E6AAFC0-95E5-6D8C-9F7C-987971F4F5AE}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\GreatHammer\SFX_Everaris_Swing_Player-GreatHammer-Attack-S Fr6_03		117696
+	360494308	SFX_Everaris_Swing_Player-ArmingSword-Attack-S Fr4_03	.cache\60\{60BBFDD8-AEE8-4B6B-738D-3169A5D6875B}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\ArmingSword\SFX_Everaris_Swing_Player-ArmingSword-Attack-S Fr4_03		58896
+	549216478	SFX_Everaris_Swing_Player-Zweihander-Attack-S Fr6_04	.cache\0E\{0EB1A2A0-0D1B-9496-0AAC-325E10EACDF8}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\Zweihander\SFX_Everaris_Swing_Player-Zweihander-Attack-S Fr6_04		58896
+	560096869	SFX_Everaris_Swing_Player-Rapier-Attack-S - Fr7_03	.cache\2E\{2E821615-B4B2-8D77-10CA-F127054AC294}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\Rapier\SFX_Everaris_Swing_Player-Rapier-Attack-S - Fr7_03		80948
+	590411896	SFX_Everaris_Swing_Player-TrainingShortSword-Attack-S Fr4_03	.cache\C7\{C7E023F7-C305-A06F-D00A-1CE585C17BA5}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\TrainingShorSword\SFX_Everaris_Swing_Player-TrainingShortSword-Attack-S Fr4_03		73596
+	862721013	SFX_Everaris_Swing_Player-Rapier-Attack-S - Fr7_02	.cache\AD\{ADAC37D7-BD71-B56B-B7DF-37F73D3EFED8}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\Rapier\SFX_Everaris_Swing_Player-Rapier-Attack-S - Fr7_02		80948
+	864630040	SFX_Everaris_Swing_Player-ArmingSword-Attack-S Fr4_02	.cache\04\{046CB32F-59A2-F7D7-8D4E-7A55ECECB760}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\ArmingSword\SFX_Everaris_Swing_Player-ArmingSword-Attack-S Fr4_02		80944
+	872773181	SFX_Everaris_Swing_Player-TrainingShortSword-Attack-S Fr4_01	.cache\BB\{BB7D8936-F6AA-5709-C7D3-41B2158BB13E}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\TrainingShorSword\SFX_Everaris_Swing_Player-TrainingShortSword-Attack-S Fr4_01		73596
+	923181226	SFX_Everaris_Swing_Player-ArmingSword-Attack-S Fr4_01	.cache\4F\{4F3A718B-10A4-A527-0BA2-588201DC2B37}.wem		\Containers\Default Work Unit\Player\Attacks\Swings\ArmingSword\SFX_Everaris_Swing_Player-ArmingSword-Attack-S Fr4_01		63944
+
