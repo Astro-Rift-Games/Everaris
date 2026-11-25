@@ -4,32 +4,342 @@
 
 Release: Unreleased
 
-383 original commits; 383 canonical entries.
+388 original commits; 388 canonical entries.
 
 ## Canonical classification
 
-137 features; 119 bug fixes; 4 refactoring; 1 architecture & infrastructure; 63 documentation; 26 tests; 12 maintenance; 21 other changes
+141 features; 119 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 12 maintenance; 21 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 17 | 13 | 1 | 0 | 10 | 1 |
 | Art & Animation | 31 | 14 | 3 | 0 | 9 | 8 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 0 |
-| Build & Tooling | 94 | 78 | 4 | 1 | 28 | 6 |
-| Combat | 55 | 26 | 2 | 0 | 18 | 2 |
-| Documentation | 41 | 45 | 0 | 0 | 21 | 1 |
+| Build & Tooling | 96 | 78 | 4 | 1 | 28 | 6 |
+| Combat | 56 | 26 | 2 | 0 | 18 | 2 |
+| Documentation | 41 | 45 | 0 | 0 | 22 | 1 |
 | Extraction | 20 | 22 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 0 |
-| Inventory & Loot | 86 | 64 | 4 | 1 | 29 | 5 |
+| Inventory & Loot | 87 | 64 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 0 |
-| Networking & Sessions | 44 | 45 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 52 | 57 | 2 | 1 | 23 | 3 |
-| Tests | 124 | 109 | 4 | 1 | 38 | 4 |
+| Networking & Sessions | 45 | 45 | 0 | 0 | 19 | 2 |
+| Persistence & Backend | 55 | 57 | 2 | 1 | 24 | 3 |
+| Tests | 128 | 109 | 4 | 1 | 38 | 4 |
 | UI | 46 | 23 | 2 | 0 | 14 | 4 |
 | Unassigned | 1 | 3 | 0 | 0 | 28 | 1 |
 | World & Visibility | 37 | 20 | 1 | 0 | 4 | 12 |
 
 ## Original commit records
+
+### 16d4e85e4831724e39b75aaab7018e5099060b70
+
+[16d4e85e4831724e39b75aaab7018e5099060b70](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/16d4e85e4831724e39b75aaab7018e5099060b70)
+
+Date: 2026-11-25T00:35:26-03:00 · Classification: Documentation (explicit) · Systems: Persistence & Backend, Documentation
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(missions): document authoritative claim boundary and telemetry
+```
+
+#### Original body
+
+```text
+Update MissionSystemArchitecture.md with the remote-first backend Gold
+claim boundary for guild contracts while keeping mission progress local,
+and update EconomyTelemetryArchitecture.md to document the
+mission_reward emitter.
+
+Refs: TASK-310
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md
+Project Grimhold/Docs/Architecture/MissionSystemArchitecture.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- message-term → Persistence &amp; Backend: backend
+- path → Documentation: Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/MissionSystemArchitecture.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### a4c1ff710689badc20d9fa9d64ef1dbeb6769cf7
+
+[a4c1ff710689badc20d9fa9d64ef1dbeb6769cf7](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a4c1ff710689badc20d9fa9d64ef1dbeb6769cf7)
+
+Date: 2026-11-25T00:35:25-03:00 · Classification: Features (explicit) · Systems: Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(missions): wire remote-first mission gold claims in Town Guild
+```
+
+#### Original body
+
+```text
+Integrate MissionClient and RemoteMissionClaimService into
+ApplicationStashContext and TownMissionGuildPresenter so contract claims
+request authoritative Gold from POST /character/me/missions/claim before
+committing locally, reusing deterministic claimKeys and per-claim retry
+transaction IDs while preventing double-click races.
+
+Also clear local AppliedProgressionReceipts in
+ApplicationStashServiceBootstrapper.HydrateSnapshot when the backend
+progression sequence is 0 so reconciliation succeeds after local mission
+XP claims.
+
+Tests:
+- RemoteMissionClaimServiceTests.cs: authoritative gold and revision
+  commit, network retry idempotency, backend rejection reconciliation,
+  presenter wiring, and HydrateSnapshot sequence-0 regression test.
+
+Player-Improved: Gold rewards from claiming guild contracts are now persisted authoritatively to your character.
+Refs: TASK-310
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Backend/MissionClient.cs
+Project Grimhold/Assets/Scripts/Backend/MissionClient.cs.meta
+Project Grimhold/Assets/Scripts/Missions/Engine/IRemoteMissionClaimService.cs
+Project Grimhold/Assets/Scripts/Missions/Engine/IRemoteMissionClaimService.cs.meta
+Project Grimhold/Assets/Scripts/Missions/Engine/RemoteMissionClaimService.cs
+Project Grimhold/Assets/Scripts/Missions/Engine/RemoteMissionClaimService.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/TownMissionGuildPresenter.cs
+Project Grimhold/Assets/Scripts/Stash/ApplicationStashContext.cs
+Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs
+Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RemoteMissionClaimServiceTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RemoteMissionClaimServiceTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/MissionClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/MissionClient.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RemoteMissionClaimServiceTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RemoteMissionClaimServiceTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RemoteMissionClaimServiceTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Missions/RemoteMissionClaimServiceTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### f5b23cabfc4b3edbbf326b2f5ea32c0fca896423
+
+[f5b23cabfc4b3edbbf326b2f5ea32c0fca896423](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f5b23cabfc4b3edbbf326b2f5ea32c0fca896423)
+
+Date: 2026-11-25T00:35:25-03:00 · Classification: Features (explicit) · Systems: Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(missions): add authoritative mission claim endpoint and telemetry
+```
+
+#### Original body
+
+```text
+Add POST /character/me/missions/claim to credit mission Gold rewards
+authoritatively from a server-owned mission catalog mirrored against
+Unity MissionDefinition assets. Strict payload validation rejects
+client-declared reward amounts, and atomic revision-guarded updates
+enforce pendingReservation, durable appliedMissionClaims deduplication,
+and idempotent replay receipts (type mission_claim).
+
+Emit EconomyTelemetry.recordMissionReward (mission_reward) strictly
+after the authoritative database commit succeeds.
+
+Tests:
+- backend/tests/mission.catalog.parity.test.js: parity check between
+  missionCatalog.js and all Unity Mission_*.asset gold rewards.
+- backend/tests/mission.claim.test.js: authoritative credit, telemetry
+  emission, idempotent replay, duplicate claimKey rejection, reservation
+  and revision guards, and client-gold payload rejection.
+
+Refs: TASK-310
+```
+
+#### Changed paths
+
+```text
+backend/src/app.js
+backend/src/config/missionCatalog.js
+backend/src/models/Character.js
+backend/src/routes/mission.routes.js
+backend/src/services/EconomyTelemetry.js
+backend/src/services/MissionClaimService.js
+backend/src/validators/mission.validators.js
+backend/tests/mission.catalog.parity.test.js
+backend/tests/mission.claim.test.js
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Persistence &amp; Backend: backend/src/app.js
+- path → Persistence &amp; Backend: backend/src/config/missionCatalog.js
+- path → Persistence &amp; Backend: backend/src/models/Character.js
+- path → Persistence &amp; Backend: backend/src/routes/mission.routes.js
+- path → Persistence &amp; Backend: backend/src/services/EconomyTelemetry.js
+- path → Persistence &amp; Backend: backend/src/services/MissionClaimService.js
+- path → Persistence &amp; Backend: backend/src/validators/mission.validators.js
+- path → Persistence &amp; Backend: backend/tests/mission.catalog.parity.test.js
+- path → Persistence &amp; Backend: backend/tests/mission.claim.test.js
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/mission.catalog.parity.test.js
+- path → Tests: backend/tests/mission.claim.test.js
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 51cfe032e1b8b510508fbd9490f400bf7c5f4757
+
+[51cfe032e1b8b510508fbd9490f400bf7c5f4757](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/51cfe032e1b8b510508fbd9490f400bf7c5f4757)
+
+Date: 2026-11-25T00:35:05-03:00 · Classification: Features (explicit) · Systems: Networking & Sessions, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(commerce): support multiple buybacks in one atomic trade cart
+```
+
+#### Original body
+
+```text
+Replace the single-buyback draft restriction with a multi-line buyback
+list (up to 16 entries) across MerchantTradeDraft, MerchantTradePreview,
+and TownMerchantTradeSession while keeping single-buyback compatibility.
+Multiple buybacks and mixed carts now validate combined cost and slot
+capacity and submit as one atomic MerchantTradeTicket.
+
+Tests:
+- MultiBuybackCartTests.cs: multi-entry draft edits, combined cost and
+  capacity preview, and single atomic trade ticket submission.
+
+Player-Added: You can now add multiple buyback items to the same merchant cart and confirm them together.
+Refs: TASK-332
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Commerce/MerchantTradeDraft.cs
+Project Grimhold/Assets/Scripts/Commerce/MerchantTradePreview.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantTradeSession.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MultiBuybackCartTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MultiBuybackCartTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Player/Presentation/TownMerchantTradeSession.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MultiBuybackCartTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MultiBuybackCartTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MultiBuybackCartTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Commerce/MultiBuybackCartTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### a6af966a193637877fbdd3540e19805e2be8c8dd
+
+[a6af966a193637877fbdd3540e19805e2be8c8dd](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a6af966a193637877fbdd3540e19805e2be8c8dd)
+
+Date: 2026-11-25T00:35:04-03:00 · Classification: Features (explicit) · Systems: Combat, Inventory & Loot, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(commerce): prioritize fresh weekly demand and validate buybacks
+```
+
+#### Original body
+
+```text
+Select weekly demand items by prioritizing candidates absent from the
+previous weekly rotation (W-1), allowing repeats only when the
+non-previous pool is smaller than the configured demand count. Selection
+chains deterministically from a fixed Monday UTC anchor using an
+independent PRNG stream so weapon, armor, and utility rotations remain
+unchanged.
+
+Also canonicalize trimmed buyback entry IDs during shop trade validation
+so whitespace-padded duplicate entries are rejected consistently.
+
+Tests:
+- backend/tests/commerce.rotation.test.js: 20-week non-repeat priority
+  and small-pool repeat fallback.
+- backend/tests/commerce.cart.test.js and
+  backend/tests/integration/shop.trade.test.js: atomic multi-buyback
+  commits, mixed carts, partial-failure rollback, and trimmed duplicate
+  rejection.
+
+Player-Improved: Weekly merchant demand now prioritizes items that were not featured during the previous week.
+Refs: TASK-332
+```
+
+#### Changed paths
+
+```text
+backend/src/services/CommerceRotationService.js
+backend/src/validators/inventory.validators.js
+backend/tests/commerce.cart.test.js
+backend/tests/commerce.rotation.test.js
+backend/tests/integration/shop.trade.test.js
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- message-term → Combat: weapon
+- path → Inventory &amp; Loot: backend/src/validators/inventory.validators.js
+- path → Persistence &amp; Backend: backend/src/services/CommerceRotationService.js
+- path → Persistence &amp; Backend: backend/src/validators/inventory.validators.js
+- path → Persistence &amp; Backend: backend/tests/commerce.cart.test.js
+- path → Persistence &amp; Backend: backend/tests/commerce.rotation.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/shop.trade.test.js
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/commerce.cart.test.js
+- path → Tests: backend/tests/commerce.rotation.test.js
+- path → Tests: backend/tests/integration/shop.trade.test.js
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 9a7da10a4e790b2ef96b0e3baf7eec17285d2394
 

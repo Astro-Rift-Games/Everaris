@@ -42,6 +42,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Braziers and candles now burn with animated flickering flames.
 - Catacombs raids now have coffins to loot and jars to break alongside chests and crates.
 - Catacombs doors can now be opened and closed; closed doors block movement, attacks and sight.
+- You can now add multiple buyback items to the same merchant cart and confirm them together.
 
 ### Improved
 
@@ -80,6 +81,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Characters and enemies no longer flicker facing sprites when moving along diagonal angles.
 - Enemies now accelerate, turn, spread around players, return to their home area when pulled too far, and reposition when ranged shots are blocked by cover.
 - Enemy melee and ranged attacks now show clear anticipation cues before striking or firing.
+- Weekly merchant demand now prioritizes items that were not featured during the previous week.
+- Gold rewards from claiming guild contracts are now persisted authoritatively to your character.
 
 ### Fixed
 
