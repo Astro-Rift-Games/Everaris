@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1265,
-  "canonicalEntries": 1262,
+  "rawCommits": 1266,
+  "canonicalEntries": 1263,
   "before": {
     "Documentation": 138,
     "Features": 462,
+    "Other Changes": 377,
     "Tests": 50,
     "Architecture & Infrastructure": 25,
     "Bug Fixes": 197,
-    "Other Changes": 376,
     "Refactoring": 17
   },
   "after": {
     "Documentation": 154,
     "Features": 601,
+    "Other Changes": 184,
     "Tests": 55,
     "Maintenance": 23,
     "Bug Fixes": 213,
-    "Other Changes": 183,
     "Refactoring": 30,
     "Architecture & Infrastructure": 6
   },
@@ -30,8 +30,8 @@
     "Networking & Sessions": 367,
     "Combat": 420,
     "Inventory & Loot": 506,
+    "Unassigned": 52,
     "UI": 358,
-    "Unassigned": 51,
     "Movement": 108,
     "Art & Animation": 275,
     "World & Visibility": 184,
@@ -44,10 +44,10 @@
     "sections": {
       "Documentation": 154,
       "Features": 600,
+      "Other Changes": 183,
       "Tests": 55,
       "Maintenance": 23,
       "Bug Fixes": 212,
-      "Other Changes": 182,
       "Refactoring": 30,
       "Architecture & Infrastructure": 6
     },
@@ -59,8 +59,8 @@
       "Networking & Sessions": 367,
       "Combat": 418,
       "Inventory & Loot": 506,
+      "Unassigned": 52,
       "UI": 357,
-      "Unassigned": 51,
       "Movement": 108,
       "Art & Animation": 272,
       "World & Visibility": 182,
@@ -71,6 +71,37 @@
     }
   },
   "unknownEntries": [
+    {
+      "sha": "4746731eb46fdce2b3983acaadd57e9a757ef649",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/4746731eb46fdce2b3983acaadd57e9a757ef649",
+      "subject": "Update .gitignore",
+      "body": "",
+      "date": "2026-11-25T00:39:21-03:00",
+      "files": [
+        ".gitignore"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [],
+      "evidence": [],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        },
+        {
+          "code": "unassigned-system",
+          "message": "No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system."
+        }
+      ],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "6c2712798f7e3596d670eb408812af6c32dbc6df",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6c2712798f7e3596d670eb408812af6c32dbc6df",
@@ -74694,8 +74725,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 388,
-      "canonicalEntries": 388
+      "originalCommits": 389,
+      "canonicalEntries": 389
     },
     {
       "key": "v0.5.0",
@@ -75138,6 +75169,37 @@
         }
       ],
       "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "4746731eb46fdce2b3983acaadd57e9a757ef649",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/4746731eb46fdce2b3983acaadd57e9a757ef649",
+      "subject": "Update .gitignore",
+      "body": "",
+      "date": "2026-11-25T00:39:21-03:00",
+      "files": [
+        ".gitignore"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [],
+      "evidence": [],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        },
+        {
+          "code": "unassigned-system",
+          "message": "No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system."
+        }
+      ],
       "generic": false,
       "secondary": false
     },

@@ -4,11 +4,11 @@
 
 Release: Unreleased
 
-388 original commits; 388 canonical entries.
+389 original commits; 389 canonical entries.
 
 ## Canonical classification
 
-141 features; 119 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 12 maintenance; 21 other changes
+141 features; 119 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 12 maintenance; 22 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -26,7 +26,7 @@ Release: Unreleased
 | Persistence & Backend | 55 | 57 | 2 | 1 | 24 | 3 |
 | Tests | 128 | 109 | 4 | 1 | 38 | 4 |
 | UI | 46 | 23 | 2 | 0 | 14 | 4 |
-| Unassigned | 1 | 3 | 0 | 0 | 28 | 1 |
+| Unassigned | 1 | 3 | 0 | 0 | 28 | 2 |
 | World & Visibility | 37 | 20 | 1 | 0 | 4 | 12 |
 
 ## Original commit records
@@ -340,6 +340,41 @@ backend/tests/integration/shop.trade.test.js
 #### Diagnostics
 
 - No classification ambiguity detected.
+
+### 4746731eb46fdce2b3983acaadd57e9a757ef649
+
+[4746731eb46fdce2b3983acaadd57e9a757ef649](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/4746731eb46fdce2b3983acaadd57e9a757ef649)
+
+Date: 2026-11-25T00:39:21-03:00 · Classification: Other Changes (unknown) · Systems: Unassigned
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+Update .gitignore
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+.gitignore
+```
+
+#### Classification evidence
+
+- No sufficient classification evidence.
+
+#### Diagnostics
+
+- **ambiguous-kind:** No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages.
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
 
 ### 9a7da10a4e790b2ef96b0e3baf7eec17285d2394
 
