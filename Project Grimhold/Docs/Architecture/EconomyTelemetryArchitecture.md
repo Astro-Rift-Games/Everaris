@@ -1,6 +1,6 @@
 # Economy Telemetry Architecture
 
-Status: current (TASK-305). Owners: backend. Game Design sources: Doc 22 §§5, 10, 14 and Doc 23 §12.
+Status: current (TASK-305, updated in TASK-310). Owners: backend. Game Design sources: Doc 12 §14, Doc 22 §§5, 6, 10, 14 and Doc 23 §12.
 
 Internal, analytics-only record of confirmed economic operations for playtest balance. It is never read by gameplay, pricing, rewards or the Unity client: no dynamic prices, taxes, subsidies or automatic bankruptcy advantages are derived from it (Doc 22 §14).
 
@@ -28,7 +28,7 @@ Gold categories (the schema rejects a category in the wrong direction):
 | Direction | Category | Emitted by |
 | --- | --- | --- |
 | generated | `npc_sale` | `shopSell`, `shopTrade` |
-| generated | `mission_reward` | **No emitter yet**: the backend has no mission claim path (follow-up) |
+| generated | `mission_reward` | `MissionClaimService.claim` (`POST /character/me/missions/claim`, TASK-310) |
 | spent | `purchase` (`offerType`: `consumable`, `utility`, `weapon`, `armor`, `other`) | `shopBuy`, `shopTrade` |
 | spent | `buyback` | `shopBuyback`, `shopTrade` |
 | spent | `weapon_upgrade` (`primary_scaling`, `first_socket`) / `armor_upgrade` (`armor_level`) | `InventoryService.upgradeItem` |
@@ -39,6 +39,7 @@ Gold categories (the schema rejects a category in the wrong direction):
 - Commerce (`sell`, `buy`, `buyback`, `trade`): `sales[] { lootId, amount, revenue, demandBonus }`, `purchases[] { lootId, amount, cost, offerType }`, `buybacks[] { lootId, amount, cost }`, `demandBonusUnits`, `demandBonusGold` (extra gold paid by the weekly +20% demand), `merchant` when the cart named one.
 - `upgrade`: `merchant`, `upgradeOperation`, `lootId`, `levelAfter` (primary grade, socket count or armor level), `materials { lootId: amount }`, `objectValueAfter`.
 - `respec`: `pointsReturned`.
+- `mission_reward`: `missionId`, `claimKey`.
 - `raid_close`: `outcome` (`extraction`, `defeat`, `abandon`), `raidId`, `entryProfile`, `carriedEquipmentReplacementGold`, `carriedItemsValue`, `extractedItemsValue` (extraction), `lostValue` and `lostItems[] { lootId, amount }` (defeat/abandon), `experienceGranted`. No gold lines: extraction never grants gold (Doc 22 §2).
 - `capacity_block`: `source` (`purchase`, `buyback`, `trade`, `extraction`), `limit: 'capacity'`. Recorded when a new operation is refused with `INVENTORY_FULL`; the original error is rethrown unchanged.
 
@@ -69,7 +70,6 @@ db.economytelemetryevents.aggregate([
 
 ## Known gaps (out of this contract)
 
-- `mission_reward` has no emitter until a backend mission claim exists.
 - MaxTransportable blocks are enforced in Unity (`CommerceArchitecture.md`); the backend records only `INVENTORY_FULL` capacity blocks.
 - Gem installation (`installGem`) is not recorded; it moves no gold.
 - Single sales (`shopSell`) do not apply weekly demand (only `shopTrade` does); telemetry reports what the commit applied.

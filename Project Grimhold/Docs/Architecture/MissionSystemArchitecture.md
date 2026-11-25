@@ -15,10 +15,15 @@ Following the pattern used in `Progression/` and `Scenario/Extraction/`, the sys
 
 ## 3. Mission State Ownership
 
-Consistent with `LocalPlayerPersistenceArchitecture.md`, the local profile is the only persistent store for the MVP.
+Consistent with `LocalPlayerPersistenceArchitecture.md`, mission progress and daily rotation state reside in the local profile (`LocalProfileSnapshot`), while **monetary Gold reward claims are authoritative in the backend** (TASK-310):
 
-- **Static Definitions:** The static catalog of Missions (definitions) resides in ScriptableObjects (content), similar to `LootDefinitionCatalog`. It is not part of the profile.
-- **Mutable State:** Mission progress (active missions, current phase, objective progress, pending claims, weekly rotation data) is added to `LocalProfileSnapshot` as a new section with its own `SchemaVersion` bump. This adheres to the explicit exclusion of physical backend persistence for this milestone.
+- **Static Definitions:** The static catalog of Missions (definitions) resides in ScriptableObjects (`MissionDefinitionCatalog`), mirrored for monetary rewards in `backend/src/config/missionCatalog.js` (verified by `backend/tests/mission.catalog.parity.test.js`). Clients never declare Gold reward amounts.
+- **Mutable Progress & Rotation State:** Active missions, current phase, objective progress, and global daily rotation state (`DailyRotation`) reside in `LocalProfileSnapshot` (`SchemaVersion = 15`).
+- **Authoritative Gold Claim Boundary (TASK-310):** Claiming a mission in Town goes remote-first through `RemoteMissionClaimService` -> `POST /character/me/missions/claim` (`MissionClaimService.claim`):
+  1. Local pre-validation (`LocalProfileStore.CanClaimMission`) verifies `PendienteDeReclamar`, delivery items, and Stash capacity.
+  2. The backend resolves `goldReward` exclusively from `missionCatalog.js`, validates `expectedRevision`, `pendingReservation == null`, receipt idempotency (`appliedShopReceipts`, `type: 'mission_claim'`), and durable instance uniqueness (`Character.appliedMissionClaims` keyed by `claimKey`, never evicted).
+  3. One atomic `Character.findOneAndUpdate` credits `inventory.currency`, records `claimKey` and receipt, and increments `revision`. Post-commit only, `EconomyTelemetry.recordMissionReward` emits `mission_reward`.
+  4. On acknowledgement, Unity commits the local mission claim via `LocalProfileStore.TryClaimMissionWithAuthority`, adopting the exact backend `currency` and `revision`. Rejections or network failures trigger `ProfileReconciliationService.ReconcileAsync` and leave the mission unclaimed locally.
 
 ## 4. Flow of Progress (Raid to Local Profile)
 
