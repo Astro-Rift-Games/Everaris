@@ -119,64 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &8950093 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7407442194074608642, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-  m_PrefabInstance: {fileID: 2444452983829880490}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8950096
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8950093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f03dd3bf84e0c4ff4ba4a439b1c54d8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: AK.Wwise.Unity.MonoBehaviour::AkEvent
-  triggerList: f7e1664ci
-  useOtherObject: 0
-  actionOnEventType: 0
-  curveInterpolation: 4
-  enableActionOnEvent: 0
-  data:
-    idInternal: 0
-    valueGuidInternal: 
-    WwiseObjectReference: {fileID: 11400000, guid: e48e284d26650497d95508a2d82b404e, type: 2}
-  useCallbacks: 0
-  stopSoundOnDisable: 1
-  Callbacks: []
-  soundEmitterObject: {fileID: 0}
-  transitionDuration: 0
-  eventIdInternal: 0
-  valueGuidInternal: 
-  m_callbackDataInternal: {fileID: 0}
---- !u!114 &8950097
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8950093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ced1d4d7824d4de4b800a4e1f4c3792, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: AK.Wwise.Unity.MonoBehaviour::AkGameObj
-  m_listeners:
-    initialListenerList: []
-    useDefaultListeners: 1
-  isEnvironmentAware: 1
-  isStaticObject: 0
-  usePositionOffsetData: 0
-  m_positionOffsetData:
-    KeepMe: 0
-    positionOffset: {x: 0, y: 0, z: 0}
-  scalingFactor: 1
-  m_posOffsetData: {fileID: 0}
-  listenerMask: 1
 --- !u!1 &329725051
 GameObject:
   m_ObjectHideFlags: 0
@@ -770,13 +712,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7407442194074608642, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8950097}
-    - targetCorrespondingSourceObject: {fileID: 7407442194074608642, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8950096}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 625360d8c75d7da45adef05930d0cc43, type: 3}
 --- !u!1001 &3377729003410833548
 PrefabInstance:
