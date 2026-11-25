@@ -1,0 +1,429 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "133642231",
+    "Type": "User",
+    "GUID": "{C19017E3-1C82-4CFC-9A2F-0579A4D099FF}",
+    "Language": "SFX",
+    "Hash": "{22A61E39-29CB-9A60-FD37-C2209CC0B7F9}",
+    "ObjectPath": "\\SoundBanks\\Default Work Unit\\General",
+    "ShortName": "General",
+    "Path": "General.bnk",
+    "Media": [
+     {
+      "Id": "60372916",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-Zweihander-Attack-S Fr6_02.wav",
+      "CachePath": "15/{153C06E3-8BA4-6E4D-AC27-6BD180668797}.wem"
+     },
+     {
+      "Id": "67048294",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-GreatHammer-Attack-S Fr6_02.wav",
+      "CachePath": "BA/{BA60773E-7A85-CC0D-427F-97F7EA76887F}.wem"
+     },
+     {
+      "Id": "71106431",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-TrainingShortSword-Attack-S Fr4_02.wav",
+      "CachePath": "6D/{6D9214B6-58FB-7676-B340-A45D3FE8F0E9}.wem"
+     },
+     {
+      "Id": "89610162",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-GreatHammer-Attack-S Fr6_01.wav",
+      "CachePath": "B4/{B403B5BF-9E9F-D91C-9AE4-9C8849FF6562}.wem"
+     },
+     {
+      "Id": "108866475",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-Zweihander-Attack-S Fr6_01.wav",
+      "CachePath": "AD/{AD32B871-B6F9-F9A7-7228-B5C84CB0DEE7}.wem"
+     },
+     {
+      "Id": "163976937",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-Rapier-Attack-S - Fr7_01.wav",
+      "CachePath": "E0/{E024A1B4-7C99-59A2-4CE2-54FE53AF3FD4}.wem"
+     },
+     {
+      "Id": "228369822",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-Zweihander-Attack-S Fr6_03.wav",
+      "CachePath": "E4/{E44CA1FC-551F-38A4-DDA1-5BD5D7996AA0}.wem"
+     },
+     {
+      "Id": "300216809",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-GreatHammer-Attack-S Fr6_03.wav",
+      "CachePath": "6E/{6E6AAFC0-95E5-6D8C-9F7C-987971F4F5AE}.wem"
+     },
+     {
+      "Id": "360494308",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-ArmingSword-Attack-S Fr4_03.wav",
+      "CachePath": "60/{60BBFDD8-AEE8-4B6B-738D-3169A5D6875B}.wem"
+     },
+     {
+      "Id": "549216478",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-Zweihander-Attack-S Fr6_04.wav",
+      "CachePath": "0E/{0EB1A2A0-0D1B-9496-0AAC-325E10EACDF8}.wem"
+     },
+     {
+      "Id": "560096869",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-Rapier-Attack-S - Fr7_03.wav",
+      "CachePath": "2E/{2E821615-B4B2-8D77-10CA-F127054AC294}.wem"
+     },
+     {
+      "Id": "590411896",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-TrainingShortSword-Attack-S Fr4_03.wav",
+      "CachePath": "C7/{C7E023F7-C305-A06F-D00A-1CE585C17BA5}.wem"
+     },
+     {
+      "Id": "862721013",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-Rapier-Attack-S - Fr7_02.wav",
+      "CachePath": "AD/{ADAC37D7-BD71-B56B-B7DF-37F73D3EFED8}.wem"
+     },
+     {
+      "Id": "864630040",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-ArmingSword-Attack-S Fr4_02.wav",
+      "CachePath": "04/{046CB32F-59A2-F7D7-8D4E-7A55ECECB760}.wem"
+     },
+     {
+      "Id": "872773181",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-TrainingShortSword-Attack-S Fr4_01.wav",
+      "CachePath": "BB/{BB7D8936-F6AA-5709-C7D3-41B2158BB13E}.wem"
+     },
+     {
+      "Id": "923181226",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "SFX_Everaris_Swing_Player-ArmingSword-Attack-S Fr4_01.wav",
+      "CachePath": "4F/{4F3A718B-10A4-A527-0BA2-588201DC2B37}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "3248342671",
+      "Name": "Attack_Hit",
+      "ObjectPath": "\\Events\\Default Work Unit\\Attacks\\Attack_Hit",
+      "GUID": "{34BB08B1-C7DE-4555-968C-03F5A39ED9DD}",
+      "Color": "10",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0"
+     },
+     {
+      "Id": "2274384713",
+      "Name": "Attack_Hit_Arrow",
+      "ObjectPath": "\\Events\\Default Work Unit\\Attacks\\Attack_Hit_Arrow",
+      "GUID": "{F11E51AD-599D-4205-B064-0C50B10CC84B}",
+      "Color": "10",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0"
+     },
+     {
+      "Id": "978692378",
+      "Name": "Attack_Swing",
+      "ObjectPath": "\\Events\\Default Work Unit\\Attacks\\Attack_Swing",
+      "GUID": "{C966BA29-845A-4662-9AED-D498C59F9458}",
+      "Color": "8",
+      "DurationType": "OneShot",
+      "DurationMin": "0.33333334",
+      "DurationMax": "0.6666667",
+      "SwitchContainers": [
+       {
+        "SwitchValue": {
+         "GroupType": "Switch",
+         "GroupId": "3893417221",
+         "Id": "646465998",
+         "GUID": "{E265D519-F2C3-46CE-9C40-922FADDA99D6}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "360494308"
+         },
+         {
+          "Id": "864630040"
+         },
+         {
+          "Id": "923181226"
+         }
+        ]
+       },
+       {
+        "SwitchValue": {
+         "GroupType": "Switch",
+         "GroupId": "3893417221",
+         "Id": "2932462918",
+         "GUID": "{847BD021-F215-4DC7-B69F-9941210240AF}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "67048294"
+         },
+         {
+          "Id": "89610162"
+         },
+         {
+          "Id": "300216809"
+         }
+        ]
+       },
+       {
+        "SwitchValue": {
+         "GroupType": "Switch",
+         "GroupId": "3893417221",
+         "Id": "1692362604",
+         "GUID": "{960A7E75-1EFA-484C-9C2E-681F533B364D}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "60372916"
+         },
+         {
+          "Id": "108866475"
+         },
+         {
+          "Id": "228369822"
+         },
+         {
+          "Id": "549216478"
+         }
+        ]
+       },
+       {
+        "SwitchValue": {
+         "GroupType": "Switch",
+         "GroupId": "3893417221",
+         "Id": "1238745546",
+         "GUID": "{2EFEC5BE-8A1A-4827-86D2-4B2FBD9C1E98}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "163976937"
+         },
+         {
+          "Id": "560096869"
+         },
+         {
+          "Id": "862721013"
+         }
+        ]
+       },
+       {
+        "SwitchValue": {
+         "GroupType": "Switch",
+         "GroupId": "3893417221",
+         "Id": "2967815805",
+         "GUID": "{0C0EC6C3-01F1-49FA-ACBB-3C46898ADCC6}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "360494308"
+         },
+         {
+          "Id": "864630040"
+         },
+         {
+          "Id": "923181226"
+         }
+        ]
+       },
+       {
+        "SwitchValue": {
+         "GroupType": "Switch",
+         "GroupId": "3893417221",
+         "Id": "3955957070",
+         "GUID": "{0A65FADE-02BE-4F9A-915D-C0AE61304299}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "60372916"
+         },
+         {
+          "Id": "108866475"
+         },
+         {
+          "Id": "228369822"
+         },
+         {
+          "Id": "360494308"
+         },
+         {
+          "Id": "549216478"
+         },
+         {
+          "Id": "864630040"
+         },
+         {
+          "Id": "923181226"
+         }
+        ]
+       },
+       {
+        "SwitchValue": {
+         "GroupType": "Switch",
+         "GroupId": "3893417221",
+         "Id": "3179814814",
+         "GUID": "{7AF669EA-42E5-4D5B-85B7-0F73BB981BD8}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "71106431"
+         },
+         {
+          "Id": "590411896"
+         },
+         {
+          "Id": "872773181"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "Id": "2260571858",
+      "Name": "Bow_Charge",
+      "ObjectPath": "\\Events\\Default Work Unit\\Attacks\\Bow_Charge",
+      "GUID": "{5F4D8887-E778-4430-8FDC-C4BDF51E7804}",
+      "Color": "10",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0"
+     },
+     {
+      "Id": "3821338389",
+      "Name": "Bow_Release",
+      "ObjectPath": "\\Events\\Default Work Unit\\Attacks\\Bow_Release",
+      "GUID": "{2CB93628-2DF5-4306-848D-E57E8303821F}",
+      "Color": "10",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0"
+     },
+     {
+      "Id": "1281810935",
+      "Name": "Start",
+      "ObjectPath": "\\Events\\Default Work Unit\\Start",
+      "GUID": "{6D419FAB-AAD8-4399-9CDE-03D9901BCC0C}",
+      "DurationType": "OneShot",
+      "DurationMin": "0.458322",
+      "DurationMax": "0.458322",
+      "MediaRefs": [
+       {
+        "Id": "864630040"
+       }
+      ]
+     }
+    ],
+    "SwitchGroups": [
+     {
+      "Id": "3893417221",
+      "Name": "Weapon",
+      "ObjectPath": "\\Switches\\Default Work Unit\\Weapon",
+      "GUID": "{7DA26330-DCBD-4F4B-9380-1F01235C33B8}",
+      "Switches": [
+       {
+        "Id": "546945295",
+        "Name": "Bow",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\Bow",
+        "GUID": "{781630A2-46C6-4345-975A-105B7D1AE6EB}"
+       },
+       {
+        "Id": "646465998",
+        "Name": "ArmingSword",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\ArmingSword",
+        "GUID": "{E265D519-F2C3-46CE-9C40-922FADDA99D6}"
+       },
+       {
+        "Id": "1238745546",
+        "Name": "Rapier",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\Rapier",
+        "GUID": "{2EFEC5BE-8A1A-4827-86D2-4B2FBD9C1E98}"
+       },
+       {
+        "Id": "1692362604",
+        "Name": "Zweihander",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\Zweihander",
+        "GUID": "{960A7E75-1EFA-484C-9C2E-681F533B364D}"
+       },
+       {
+        "Id": "2932462918",
+        "Name": "GreatHammer",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\GreatHammer",
+        "GUID": "{847BD021-F215-4DC7-B69F-9941210240AF}"
+       },
+       {
+        "Id": "2967815805",
+        "Name": "MagicSword",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\MagicSword",
+        "GUID": "{0C0EC6C3-01F1-49FA-ACBB-3C46898ADCC6}"
+       },
+       {
+        "Id": "3179814814",
+        "Name": "TrainingShortSword",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\TrainingShortSword",
+        "GUID": "{7AF669EA-42E5-4D5B-85B7-0F73BB981BD8}"
+       },
+       {
+        "Id": "3955957070",
+        "Name": "LongSword",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\LongSword",
+        "GUID": "{0A65FADE-02BE-4F9A-915D-C0AE61304299}"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{F118FFE4-ACAE-C286-5958-E217D800D2A8}"
+ }
+}
