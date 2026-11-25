@@ -296,7 +296,7 @@ namespace Tests.PlayMode.Extraction
             Assert.That(progress.CurrentProgress, Is.EqualTo(15));
 
             yield return Execute(runner => progress.TryApplyContribution(new ExtractionProgressContribution(
-                ExtractionProgressSourceType.LootFirstAcquisition, new EntityId(503), long.MaxValue, runner.Tick)));
+                ExtractionProgressSourceType.ContainerFirstOpen, new EntityId(503), long.MaxValue, runner.Tick)));
             Assert.That(progress.CurrentProgress, Is.EqualTo(progress.Quota));
             Assert.That(progress.Quota, Is.EqualTo(100));
             Assert.That((bool)progress.AssignmentRequested, Is.True);
@@ -604,28 +604,65 @@ namespace Tests.PlayMode.Extraction
         }
 
         [UnityTest]
-        public IEnumerator Pickups_AwardNaturalUnitsAndNeverAwardCreditedDrops()
+        public IEnumerator Pickups_NaturalLootAndTreasureNeverContributeExpeditionProgress()
         {
+            // GD 06 §6: picking up normal Loot or owning treasures never generates Expedition Progress.
             yield return ComposeTeamProgress();
             NetworkObject player = Spawn(PlayerGuid, Vector3.zero);
             PlayerCharacter character = player.GetComponent<PlayerCharacter>();
+            PlayerLootReceiver inventory = player.GetComponent<PlayerLootReceiver>();
             PlayerExtractionProgressController progress = player.GetComponent<PlayerExtractionProgressController>();
+
             NetworkObject natural = SpawnPickup(new LootEntry(new LootId("bone"), 2), 2, Vector3.right);
             NetworkLootPickup naturalPickup = natural.GetComponent<NetworkLootPickup>();
-            // The catalog owns the per-unit value; every eligible natural unit contributes it once.
-            int valuePerUnit = naturalPickup.LootDefinition.ExtractionValuePerUnit;
-            Assert.That(valuePerUnit, Is.Positive);
-            int naturalProgress = 2 * valuePerUnit;
-
+            // A catalog value that used to be converted into progress must no longer be.
+            Assert.That(naturalPickup.LootDefinition.ExtractionValuePerUnit, Is.Positive);
             yield return Execute(runner => naturalPickup.Interact(
                 new InteractionRequest(character.Id, naturalPickup.Id, runner.Tick)));
-            Assert.That(progress.CurrentProgress, Is.EqualTo(naturalProgress));
+            Assert.That(inventory.GetLootAmount(new LootId("bone")), Is.EqualTo(2));
+            Assert.That(progress.CurrentProgress, Is.Zero);
 
-            NetworkObject credited = SpawnPickup(new LootEntry(new LootId("bone"), 2), 0, Vector3.left);
-            NetworkLootPickup creditedPickup = credited.GetComponent<NetworkLootPickup>();
-            yield return Execute(runner => creditedPickup.Interact(
-                new InteractionRequest(character.Id, creditedPickup.Id, runner.Tick)));
-            Assert.That(progress.CurrentProgress, Is.EqualTo(naturalProgress));
+            NetworkObject treasure = SpawnPickup(new LootEntry(new LootId("TRE_CHALICE"), 1), 1, Vector3.left);
+            NetworkLootPickup treasurePickup = treasure.GetComponent<NetworkLootPickup>();
+            Assert.That(treasurePickup.LootDefinition.Category, Is.EqualTo(LootCategory.Treasure));
+            Assert.That(treasurePickup.LootDefinition.ExtractionValuePerUnit, Is.GreaterThanOrEqualTo(progress.Quota));
+            yield return Execute(runner => treasurePickup.Interact(
+                new InteractionRequest(character.Id, treasurePickup.Id, runner.Tick)));
+            Assert.That(inventory.GetLootAmount(new LootId("TRE_CHALICE")), Is.EqualTo(1));
+            Assert.That(progress.CurrentProgress, Is.Zero);
+            Assert.That((bool)progress.AssignmentRequested, Is.False);
+        }
+
+        [UnityTest]
+        public IEnumerator ContainerWithdrawal_ThroughTransferControllerNeverContributesExpeditionProgress()
+        {
+            // GD 06 §6: transferring Loot never generates Expedition Progress; the first open still does.
+            yield return ComposeTeamProgress();
+            NetworkObject player = Spawn(PlayerGuid, Vector3.zero, _runner.LocalPlayer);
+            EntityId playerId = player.GetComponent<PlayerCharacter>().Id;
+            PlayerLootReceiver inventory = player.GetComponent<PlayerLootReceiver>();
+            PlayerLootTransferNetworkController transfer = player.GetComponent<PlayerLootTransferNetworkController>();
+            PlayerExtractionProgressController progress = player.GetComponent<PlayerExtractionProgressController>();
+            NetworkObject natural = SpawnContainer(
+                new[] { new LootEntry(new LootId("bone"), 4) }, new Vector3(0.5f, 0f, 0f));
+            NetworkLootContainer container = natural.GetComponent<NetworkLootContainer>();
+            NetworkLootContainerInteractable interactable = natural.GetComponent<NetworkLootContainerInteractable>();
+
+            yield return Execute(runner => interactable.Interact(
+                new InteractionRequest(playerId, container.Id, runner.Tick)));
+            Assert.That(progress.CurrentProgress, Is.EqualTo(5));
+
+            Assert.That(transfer.TryRequestTransfer(container.Id, inventory.Id, new LootId("bone"),
+                LootTransferQuantityMode.FullStack), Is.True);
+            int frames = 240;
+            while ((transfer.HasRequestInFlight || !container.IsEmpty) && frames-- > 0)
+            {
+                yield return null;
+            }
+
+            Assert.That(container.IsEmpty, Is.True, "The withdrawal was not committed.");
+            Assert.That(inventory.GetLootAmount(new LootId("bone")), Is.EqualTo(4));
+            Assert.That(progress.CurrentProgress, Is.EqualTo(5));
         }
 
         [UnityTest]
@@ -846,10 +883,10 @@ namespace Tests.PlayMode.Extraction
             Assert.That(_driver.LastException, Is.Null, _driver.LastException?.ToString());
         }
 
-        private NetworkObject Spawn(string guid, Vector3 position)
+        private NetworkObject Spawn(string guid, Vector3 position, PlayerRef? inputAuthority = null)
         {
             NetworkObject prefab = Load(guid);
-            NetworkObject spawned = _runner.Spawn(prefab, position, Quaternion.identity, inputAuthority: null);
+            NetworkObject spawned = _runner.Spawn(prefab, position, Quaternion.identity, inputAuthority: inputAuthority);
             Assert.That(spawned, Is.Not.Null);
             return spawned;
         }

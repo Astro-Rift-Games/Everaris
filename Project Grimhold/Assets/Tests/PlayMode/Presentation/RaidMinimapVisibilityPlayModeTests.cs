@@ -330,7 +330,7 @@ namespace Tests.PlayMode.Presentation
         private IEnumerator CompleteQuota()
         {
             yield return Execute(runner => Assert.That(_progress.TryApplyContribution(
-                new ExtractionProgressContribution(ExtractionProgressSourceType.LootFirstAcquisition,
+                new ExtractionProgressContribution(ExtractionProgressSourceType.Defeat,
                     new EntityId(8001), long.MaxValue, runner.Tick)), Is.True));
             yield return NextPresentation();
         }

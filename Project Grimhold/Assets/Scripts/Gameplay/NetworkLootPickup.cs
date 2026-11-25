@@ -398,19 +398,6 @@ public sealed class NetworkLootPickup : NetworkBehaviour, IPickup
                     isCompanionContribution: false);
             }
         }
-        if (eligibleAmount > 0 && _resolvedLootDefinition.ExtractionValuePerUnit > 0 &&
-            _registry.TryGetExtractionProgressReceiver(
-                request.InteractorId,
-                out IExtractionProgressReceiver progressReceiver))
-        {
-            long progressAmount = checked(
-                (long)_resolvedLootDefinition.ExtractionValuePerUnit * eligibleAmount);
-            progressReceiver.TryApplyContribution(new ExtractionProgressContribution(
-                ExtractionProgressSourceType.LootFirstAcquisition,
-                Id,
-                progressAmount,
-                request.SimulationTick));
-        }
         if (eligibleAmount > 0 && _resolvedLootDefinition != null && _resolvedLootDefinition.Category == LootCategory.Treasure &&
             _registry != null && _registry.TryGetDungeonInstabilitySink(out IDungeonInstabilitySink sink))
         {

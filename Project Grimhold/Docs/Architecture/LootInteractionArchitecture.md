@@ -153,8 +153,9 @@ side-effect-free receiver validators accept. Prefixes are nested, so the bounded
 binary search over that amount is exact. Zero admissible units reject with the
 one-unit failure. A partial success commits only the taken buckets, consumes
 first-acquisition eligibility eligible-first through
-`LootFirstAcquisitionRules`, and contributes Progress and treasure instability
-only for consumed eligible units. Pickup feedback reports the transferred
+`LootFirstAcquisitionRules`, and records treasure instability only for consumed
+eligible units. Picking up loot never contributes Expedition Progress (GD 06 §6).
+Pickup feedback reports the transferred
 amount. The pickup then writes the remaining quantity, origin state and
 eligibility, and stays published with the same `NetworkObject`. The result is
 `Succeeded(isConsumed: false)`. The remainder's origin state is encoded before
@@ -239,9 +240,9 @@ participant's stable `NetworkString<_32>` `ProfileId` rather than a `NetworkId`.
 
 `LootTransferRequest` carries optional source-address metadata but no provenance payload. After source validation, `LootTransferTransaction` performs the side-effect-free `ILootFirstAcquisitionSource` query, validates `0 <= EligibleAmount <= RequestedAmount`, validates reception, then executes the existing mandatory extraction and reception commits. A successful result exposes a separate immutable `LootFirstAcquisitionResult`; every rejection exposes zero. Out-of-range provenance is an integration violation. There is no second provenance commit, yield, callback or general transaction rollback. Existing provisional initialization, corpse-loading, pickup-spawn and drop-publication flows compensate total and eligibility together when they already support compensation.
 
-`PlayerLootTransferNetworkController` contributes only after both commits when the destination is its own `PlayerLootReceiver` and the eligible amount is positive. Deposits, other destinations, rejected transfers and credited-only units contribute zero. The definition's authoritative `ExtractionValuePerUnit` is multiplied by eligible units using `long`; the individual receiver performs final quota saturation. `PlayerLootReceiver` stores no first-acquisition eligibility. Raid ownership provenance is a separate contract described below.
+No loot transfer contributes Expedition Progress (GD 06 §6): withdrawals, deposits and every other destination contribute zero. The only Progress sources are creature defeat, first valid container open and definitive enemy-player defeat. `PlayerLootTransferNetworkController` still records the withdrawal mission contribution after both commits when the destination is its own `PlayerLootReceiver`. `PlayerLootReceiver` stores no first-acquisition eligibility. Raid ownership provenance is a separate contract described below.
 
-Economy and progression Value are independent: `ExtractionValuePerUnit` measures quota contribution,
+Economy and progression Value are independent: `ExtractionValuePerUnit` is retained catalog data that no longer feeds the Expedition Progress quota,
 `SellValuePerUnit` measures money, and `IRaidLootValueSource` provides the provisional positive Value
 used only to calculate extracted-Loot Experience. Inventory total-value calculations and economic
 presentation use only the sell value. The current local progression catalog assigns replaceable

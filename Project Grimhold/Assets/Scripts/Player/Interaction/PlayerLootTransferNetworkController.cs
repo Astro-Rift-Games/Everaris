@@ -33,7 +33,6 @@ public sealed class PlayerLootTransferNetworkController : NetworkBehaviour
     private IInteractionTargetQuery _query;
     private EntityRegistry _registry;
     private PlayerExtractionController _extractionController;
-    private IExtractionProgressReceiver _progressReceiver;
     private NetworkMatchController _matchController;
     private bool _dependenciesValid;
 
@@ -582,22 +581,10 @@ public sealed class PlayerLootTransferNetworkController : NetworkBehaviour
             extractor,
             receiver,
             request,
-            out LootFirstAcquisitionResult firstAcquisition);
+            out _);
         if (result.Success && isWithdrawal &&
             ReferenceEquals(receiver, _lootReceiver))
         {
-            if (firstAcquisition.EligibleAmount > 0 &&
-                definition.ExtractionValuePerUnit > 0)
-            {
-                long progressAmount = checked(
-                    (long)definition.ExtractionValuePerUnit * firstAcquisition.EligibleAmount);
-                _progressReceiver?.TryApplyContribution(new ExtractionProgressContribution(
-                    ExtractionProgressSourceType.LootFirstAcquisition,
-                    identity.SourceId,
-                    progressAmount,
-                    tick));
-            }
-
             if (TryGetComponent(out RaidAvatarParticipantLink link) &&
                 link.TryResolveParticipant(out NetworkRaidParticipant participant))
             {
@@ -687,7 +674,6 @@ public sealed class PlayerLootTransferNetworkController : NetworkBehaviour
         {
             _extractionController = GetComponent<PlayerExtractionController>();
         }
-        _progressReceiver = GetComponent<PlayerExtractionProgressController>();
     }
 
     private bool ValidateDependencies()
@@ -700,7 +686,7 @@ public sealed class PlayerLootTransferNetworkController : NetworkBehaviour
         }
 
         if (_interactionConfig == null || _character == null || _lootReceiver == null ||
-            _query == null || _registry == null || _progressReceiver == null)
+            _query == null || _registry == null)
         {
             Debug.LogError($"{nameof(PlayerLootTransferNetworkController)}: Required interaction, character, query or registry dependency is missing.", this);
             return false;
