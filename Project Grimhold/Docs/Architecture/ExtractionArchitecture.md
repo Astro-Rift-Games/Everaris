@@ -35,13 +35,13 @@ authoritative movement, damage, interaction, loot, projectiles and AI
     -> PlayerExtractionController (execution order 110)
 ```
 
-Enemy AI keeps its existing execution orders. Movement and all ordinary gameplay for the tick therefore finish before extraction reads the final authoritative position and state. A zone may request a start before the participant controller runs in the same tick. The controller evaluates zone existence, availability, vitality and geometry before timer expiry, so leaving or dying on the terminal tick cancels when configured.
+Enemy AI keeps its existing execution orders. Movement and all ordinary gameplay for the tick therefore finish before extraction reads the final authoritative position and state. A zone may request a start before the participant controller runs in the same tick. The controller evaluates zone existence, availability, vitality and geometry before timer expiry, so loss of required presence or eligibility takes precedence over timer expiry.
 
 An operation legitimately processed while the player was still `InProgress` is not rolled back if extraction completes later in that tick. Once `State` is written as `Extracted`, later operations cannot mutate gameplay; from the next tick all owner validations observe the terminal state or the disabled control APIs.
 
 ## Geometry and occupancy
 
-Entry always uses `ContainsExact(ValidationPoint)`. Continuation uses `ContainsWithTolerance(ValidationPoint, BoundaryTolerance)` only when `CancelWhenLeavingArea` is enabled. Geometry rejects non-finite points, invalid tolerances, and disabled or incorrectly composed colliders. Exact containment uses the concrete collider and tolerant continuation uses `ClosestPoint`.
+Entry always uses `ContainsExact(ValidationPoint)`. Continuation uses `ContainsWithTolerance(ValidationPoint, BoundaryTolerance)`. Geometry rejects non-finite points, invalid tolerances, and disabled or incorrectly composed colliders. Exact containment uses the concrete collider and tolerant continuation uses `ClosestPoint`.
 
 The zone runs one reusable non-alloc broadphase buffer filtered to the `Character` layer, resolves collider identities through `EntityRegistry`, deduplicates by `EntityId`, and performs a narrowphase check against each participant's validation point. The local occupant set is auxiliary: it deduplicates candidates and identifies possible exact-volume exits, but it is not authoritative process state.
 
@@ -53,7 +53,7 @@ An unavailable zone requests no starts and does not modify participants. Active 
 
 ## Player process
 
-Start requires State Authority, complete prefab composition, a valid configuration, a valid participant identity and registration, `State == None`, a registered available zone, exact containment, and `IsAlive` when `RequireAliveToStart` is enabled. A second or overlapping zone cannot replace an active process.
+Start requires State Authority, complete prefab composition, a valid configuration, a valid participant identity and registration, `State == None`, a registered available zone, exact containment, and an eligible living participant (Active or Downed). A second or overlapping zone cannot replace an active process.
 
 Additionally, a participant must be `Connected` to initiate or complete extraction (the connectivity gate). A disconnected participant cannot start or continue extraction, and any active extraction process is cancelled upon disconnection.
 
@@ -63,11 +63,11 @@ While `InProgress`, evaluation order is:
 
 1. Resolve the active zone.
 2. Validate availability.
-3. Validate `ICharacter.IsAlive` when `CancelWhenNotAlive` is enabled.
-4. Validate tolerant continuation when `CancelWhenLeavingArea` is enabled.
+3. Validate vitality; Downed is not definitive defeat.
+4. Validate continued presence using the configured boundary tolerance.
 5. Evaluate timer expiration.
 
-Cancellation writes `None`, invalidates `ActiveZoneId` and clears the timer. An exit notification from a non-active zone is ignored. Disabling leaving cancellation also makes exact-volume exit notifications harmless, while zone loss and unavailability remain tick-authoritative cancellation causes.
+Cancellation writes `None`, invalidates `ActiveZoneId` and clears the timer. An exit notification from a non-active zone is ignored. Leaving the required area cancels the countdown; zone loss and unavailability are also authoritative cancellation causes. Damage and enemy presence are not cancellation conditions.
 
 Completion writes `Extracted` first, preserves the completing zone identity, clears the timer and applies movement and attack restrictions through `TrySetControlEnabled(false)` and `TrySetAttackEnabled(false)`. These calls are reapplied idempotently while terminal. Player movement and combat retain only their existing enabled, vitality, cooldown and input rules; they do not depend on extraction types.
 

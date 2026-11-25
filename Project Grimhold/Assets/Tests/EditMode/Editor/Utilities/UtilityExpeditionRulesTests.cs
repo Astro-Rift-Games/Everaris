@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Fusion;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 using Assert = NUnit.Framework.Assert;
 
@@ -78,6 +79,50 @@ namespace Tests.EditMode.Utilities
 
             public void SetUtilityCooldown(LootId lootId, TickTimer timer) =>
                 _cooldowns[lootId] = timer;
+        }
+
+        [TestCase("UTL_RUNE_COMPASS", ItemUseMode.Instant, 30f)]
+        [TestCase("UTL_ARCANE_DETECTOR", ItemUseMode.Channeled, 20f)]
+        public void PlayerLootCatalog_ProvidesEditableUtilityCooldownWithOriginalDefault(
+            string id, ItemUseMode useMode, float originalCooldown)
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/NetworkPlayer.prefab");
+            Assert.That(prefab, Is.Not.Null);
+            var controller = prefab.GetComponent<PlayerConsumableNetworkController>();
+            Assert.That(controller, Is.Not.Null);
+            using var controllerData = new SerializedObject(controller);
+            var catalog = (LootDefinitionCatalog)controllerData.FindProperty("_lootCatalog").objectReferenceValue;
+            Assert.That(catalog, Is.Not.Null);
+            Assert.That(catalog.TryGetIndex(new LootId(id), out int index), Is.True);
+            Assert.That(catalog.TryGetByIndex(index, out LootDefinition definition), Is.True);
+            Assert.That(definition.Category, Is.EqualTo(LootCategory.Utility));
+            Assert.That(definition.UseMode, Is.EqualTo(useMode));
+
+            // Reflection lets the test run against the pre-change assembly rather than failing to compile.
+            PropertyInfo cooldown = typeof(LootDefinition).GetProperty("UtilityCooldownSeconds");
+            Assert.That(cooldown, Is.Not.Null, "Utility cooldown must be exposed by the loot definition.");
+            Assert.That(cooldown.CanWrite, Is.False);
+            Assert.That(cooldown.GetValue(definition), Is.EqualTo(originalCooldown));
+
+            LootDefinition edited = Object.Instantiate(definition);
+            try
+            {
+                using var editedData = new SerializedObject(edited);
+                SerializedProperty duration = editedData.FindProperty("_utilityCooldownSeconds");
+                Assert.That(duration, Is.Not.Null, "Utility cooldown must be editable in the Inspector.");
+                const float adjustedCooldown = 7.5f;
+                duration.floatValue = adjustedCooldown;
+                editedData.ApplyModifiedPropertiesWithoutUndo();
+
+                Assert.That(edited.TryValidate(out string error), Is.True, error);
+                Assert.That(cooldown.GetValue(edited), Is.EqualTo(adjustedCooldown));
+                Assert.That(edited.UseMode, Is.EqualTo(useMode));
+                Assert.That(cooldown.GetValue(definition), Is.EqualTo(originalCooldown));
+            }
+            finally
+            {
+                Object.DestroyImmediate(edited);
+            }
         }
 
         [Test]

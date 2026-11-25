@@ -42,6 +42,7 @@ public sealed class ValidatedLootContainerContentSnapshot
     public ulong TotalWeight { get; }
     public int SlotCapacity { get; }
     public int NetworkCapacity { get; }
+    public int ChaosCoinChanceBasisPoints { get; }
 
     internal ValidatedLootContainerContentSnapshot(
         Entry[] entries,
@@ -50,7 +51,8 @@ public sealed class ValidatedLootContainerContentSnapshot
         bool allowEmpty,
         ulong totalWeight,
         int slotCapacity,
-        int networkCapacity)
+        int networkCapacity,
+        int chaosCoinChanceBasisPoints)
     {
         _entries = entries ?? Array.Empty<Entry>();
         MinimumDistinctStacks = minimumDistinctStacks;
@@ -59,6 +61,7 @@ public sealed class ValidatedLootContainerContentSnapshot
         TotalWeight = totalWeight;
         SlotCapacity = slotCapacity;
         NetworkCapacity = networkCapacity;
+        ChaosCoinChanceBasisPoints = chaosCoinChanceBasisPoints;
     }
 
     /// <summary>

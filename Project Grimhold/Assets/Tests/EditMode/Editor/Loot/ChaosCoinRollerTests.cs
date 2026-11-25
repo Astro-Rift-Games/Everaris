@@ -153,6 +153,59 @@ namespace Tests.EditMode.Loot
         }
 
         [Test]
+        public void Roller_ChaosCoinUsesTheChanceCapturedFromTheTableWithoutAffectingNonCarriers()
+        {
+            LootDefinition d1 = CreateDefinition("item_1");
+            LootDefinition d2 = CreateDefinition("item_2");
+            LootDefinition d3 = CreateDefinition("item_3");
+            SetCatalog(d1, d2, d3);
+            LootContainerContentTable table = CreateTable(
+                1, 1, false,
+                new LootContainerContentTableEntry(d1, 10, 1, 1),
+                new LootContainerContentTableEntry(d2, 10, 1, 1),
+                new LootContainerContentTableEntry(d3, 10, 1, 1));
+
+            SetChaosCoinChance(table, 0);
+            Assert.That(TrySnapshot(table, out ValidatedLootContainerContentSnapshot disabled, out string error), Is.True, error);
+            SetChaosCoinChance(table, 10000);
+            Assert.That(TrySnapshot(table, out ValidatedLootContainerContentSnapshot guaranteed, out error), Is.True, error);
+
+            for (ulong seed = 1; seed <= 20; seed++)
+            {
+                IReadOnlyList<LootEntry> baseAndLuck = Roll(disabled, seed, 10000, false);
+                Assert.That(baseAndLuck, Has.Count.EqualTo(2), $"Seed {seed}: base + Luck.");
+                Assert.That(Roll(disabled, seed, 10000, true), Is.EqualTo(baseAndLuck), $"Seed {seed}: 0% Coin.");
+                Assert.That(Roll(guaranteed, seed, 10000, false), Is.EqualTo(baseAndLuck), $"Seed {seed}: no carrier.");
+
+                IReadOnlyList<LootEntry> withCoin = Roll(guaranteed, seed, 10000, true);
+                Assert.That(withCoin, Has.Count.EqualTo(3), $"Seed {seed}: 100% Coin.");
+                Assert.That(withCoin, Is.SupersetOf(baseAndLuck), $"Seed {seed}: base and Luck remain intact.");
+            }
+        }
+
+        [TestCase(-1)]
+        [TestCase(10001)]
+        public void Snapshot_RejectsChaosCoinChanceOutsideBasisPointRange(int chance)
+        {
+            LootDefinition definition = CreateDefinition("item_1");
+            SetCatalog(definition);
+            LootContainerContentTable table = CreateTable(
+                1, 1, false, new LootContainerContentTableEntry(definition, 10, 1, 1));
+            SetChaosCoinChance(table, chance);
+
+            bool success = TrySnapshot(table, out ValidatedLootContainerContentSnapshot snapshot, out string error);
+
+            Assert.That(success, Is.False, "An out-of-range chance must not reach the roller.");
+            Assert.That(snapshot, Is.Null);
+            Assert.That(error, Is.EqualTo("Chaos Coin chance must be between 0 and 10000 basis points."));
+        }
+
+        private static void SetChaosCoinChance(LootContainerContentTable table, int chance)
+        {
+            JsonUtility.FromJsonOverwrite($"{{\"_chaosCoinChanceBasisPoints\":{chance}}}", table);
+        }
+
+        [Test]
         public void Roller_ChaosCoinRateIsIndependentOfLuckWhenLuckFillsTheContainer()
         {
             // 2 entries, capacity 2, base 1: Luck 10000 always fills the container.

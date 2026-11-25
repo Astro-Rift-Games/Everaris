@@ -83,6 +83,10 @@ public sealed class LootDefinition : ScriptableObject
     [Tooltip("Modalidad de uso (Instant, Channeled, AimedQuickSlot).")]
     private ItemUseMode _useMode = ItemUseMode.None;
 
+    [SerializeField, Min(0f)]
+    [Tooltip("Tiempo de reutilización, en segundos, para utilidades con cooldown.")]
+    private float _utilityCooldownSeconds;
+
     [SerializeField]
     [Tooltip("¿Es un arma de entrenamiento de cortesía (Doc 09 §15)?")]
     private bool _isTrainingWeapon;
@@ -154,6 +158,7 @@ public sealed class LootDefinition : ScriptableObject
     public bool CanBeUsed => _canBeUsed;
     public bool MissionCompatible => _missionCompatible;
     public ItemUseMode UseMode => _useMode;
+    public float UtilityCooldownSeconds => _utilityCooldownSeconds;
     public bool IsTrainingWeapon => _isTrainingWeapon;
     public int ExtractionValuePerUnit => _extractionValuePerUnit;
     public int SellValuePerUnit => _sellValuePerUnit;
@@ -275,6 +280,12 @@ public sealed class LootDefinition : ScriptableObject
         if (_worldSprite == null)
         {
             error = $"Loot definition '{_id}' lacks a valid World Sprite reference.";
+            return false;
+        }
+
+        if (!float.IsFinite(_utilityCooldownSeconds) || _utilityCooldownSeconds < 0f)
+        {
+            error = $"Loot definition '{_id}' must have a finite, non-negative utility cooldown.";
             return false;
         }
 

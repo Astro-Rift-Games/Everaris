@@ -60,6 +60,14 @@ public static class LootContainerContentTableValidation
             return false;
         }
 
+        int chaosCoinChanceBasisPoints = table.ChaosCoinChanceBasisPoints;
+        if (chaosCoinChanceBasisPoints < 0 ||
+            chaosCoinChanceBasisPoints > CharacterDerivedStatisticsCalculator.BasisPointsDenominator)
+        {
+            error = "Chaos Coin chance must be between 0 and 10000 basis points.";
+            return false;
+        }
+
         IReadOnlyList<LootContainerContentTableEntry> configuredEntries = table.Entries;
         int entryCount = configuredEntries?.Count ?? 0;
         int effectiveMaximum = Math.Min(
@@ -86,7 +94,8 @@ public static class LootContainerContentTableValidation
                 true,
                 0,
                 slotCapacity,
-                distinctLootCapacity);
+                distinctLootCapacity,
+                chaosCoinChanceBasisPoints);
             return true;
         }
 
@@ -158,7 +167,8 @@ public static class LootContainerContentTableValidation
             table.AllowEmpty,
             totalWeight,
             slotCapacity,
-            distinctLootCapacity);
+            distinctLootCapacity,
+            chaosCoinChanceBasisPoints);
         return true;
     }
 

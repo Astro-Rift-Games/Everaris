@@ -37,7 +37,6 @@ namespace Tests.EditMode.Scenario
 
             _config = ScriptableObject.CreateInstance<ExtractionConfig>();
             SetField(_config, "_countdownDurationSeconds", 3f);
-            SetField(_config, "_cancelWhenLeavingArea", true);
             SetField(_config, "_boundaryTolerance", 0.5f);
             SetField(_config, "_soloProgressQuota", 100);
             SetField(_config, "_duoProgressQuota", 150);

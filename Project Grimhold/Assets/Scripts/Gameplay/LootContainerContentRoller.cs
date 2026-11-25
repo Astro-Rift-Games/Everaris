@@ -76,7 +76,6 @@ public static class LootContainerContentRoller
             out error);
     }
 
-    public const int ChaosCoinLootChanceBasisPoints = 2000;
     public const ulong ChaosCoinSalt = 0xC4A05C0192A7E11DUL;
 
     /// <summary>
@@ -229,7 +228,7 @@ public static class LootContainerContentRoller
     }
 
     /// <summary>
-    /// Applies the independent Chaos Coin roll. The 20% trigger never depends on remaining
+    /// Applies the independent Chaos Coin roll. The configured chance never depends on remaining
     /// candidates or capacity. With free capacity the item is drawn from table entries not yet in the
     /// result; only when every entry is already present is it drawn from the full table and merged into
     /// its stack (clamped to StackMax). With a full container the amount is merged into a result entry
@@ -245,7 +244,7 @@ public static class LootContainerContentRoller
         var chaosRandom = new DeterministicRandom(seed ^ ChaosCoinSalt);
         ulong chanceRoll = chaosRandom.NextBelow(
             CharacterDerivedStatisticsCalculator.BasisPointsDenominator);
-        if (chanceRoll >= (ulong)ChaosCoinLootChanceBasisPoints)
+        if (chanceRoll >= (ulong)snapshot.ChaosCoinChanceBasisPoints)
         {
             return true;
         }

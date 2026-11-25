@@ -25,17 +25,8 @@ public sealed class ExtractionConfig : ScriptableObject
     [SerializeField, Min(0.001f)]
     private float _countdownDurationSeconds = 5f;
 
-    [SerializeField]
-    private bool _cancelWhenLeavingArea = true;
-
     [SerializeField, Min(0f)]
     private float _boundaryTolerance = 0.5f;
-
-    [SerializeField]
-    private bool _requireAliveToStart = true;
-
-    [SerializeField]
-    private bool _cancelWhenNotAlive = true;
 
     [Header("Team Quota")]
     [SerializeField, Min(1)]
@@ -60,25 +51,10 @@ public sealed class ExtractionConfig : ScriptableObject
     public float CountdownDurationSeconds => _countdownDurationSeconds;
 
     /// <summary>
-    /// Whether the extraction countdown cancels automatically when the player leaves the zone boundary.
-    /// </summary>
-    public bool CancelWhenLeavingArea => _cancelWhenLeavingArea;
-
-    /// <summary>
     /// Non-negative tolerance applied outward from the concrete zone collider during continuation checks.
     /// Must be finite and greater than or equal to zero.
     /// </summary>
     public float BoundaryTolerance => _boundaryTolerance;
-
-    /// <summary>
-    /// Whether the player must be alive (according to <c>ICharacter.IsAlive</c>) to initiate extraction.
-    /// </summary>
-    public bool RequireAliveToStart => _requireAliveToStart;
-
-    /// <summary>
-    /// Whether the extraction process cancels automatically if the player ceases to be alive during countdown.
-    /// </summary>
-    public bool CancelWhenNotAlive => _cancelWhenNotAlive;
 
     /// <summary>
     /// Positive individual/Solo progress required before sanctuary assignment can be requested.

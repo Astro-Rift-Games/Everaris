@@ -15,17 +15,8 @@ namespace Tests.EditMode.Scenario
         private static readonly FieldInfo CountdownDurationField =
             typeof(ExtractionConfig).GetField("_countdownDurationSeconds", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        private static readonly FieldInfo CancelWhenLeavingAreaField =
-            typeof(ExtractionConfig).GetField("_cancelWhenLeavingArea", BindingFlags.Instance | BindingFlags.NonPublic);
-
         private static readonly FieldInfo BoundaryToleranceField =
             typeof(ExtractionConfig).GetField("_boundaryTolerance", BindingFlags.Instance | BindingFlags.NonPublic);
-
-        private static readonly FieldInfo RequireAliveToStartField =
-            typeof(ExtractionConfig).GetField("_requireAliveToStart", BindingFlags.Instance | BindingFlags.NonPublic);
-
-        private static readonly FieldInfo CancelWhenNotAliveField =
-            typeof(ExtractionConfig).GetField("_cancelWhenNotAlive", BindingFlags.Instance | BindingFlags.NonPublic);
 
         private static readonly FieldInfo RitualDurationField =
             typeof(ExtractionConfig).GetField("_ritualDurationSeconds", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -140,23 +131,13 @@ namespace Tests.EditMode.Scenario
             Assert.That(_config.BoundaryTolerance, Is.EqualTo(0f));
         }
 
-        [TestCase(true, true, true)]
-        [TestCase(false, true, false)]
-        [TestCase(true, false, false)]
-        [TestCase(false, false, true)]
-        public void BooleanPolicies_PreserveConfiguredValues(bool cancelLeaving, bool requireAlive, bool cancelNotAlive)
+        [TestCase("_cancelWhenLeavingArea")]
+        [TestCase("_requireAliveToStart")]
+        [TestCase("_cancelWhenNotAlive")]
+        public void Inspector_DoesNotOfferSwitchesForMandatoryRules(string field)
         {
-            Assert.That(CancelWhenLeavingAreaField, Is.Not.Null);
-            Assert.That(RequireAliveToStartField, Is.Not.Null);
-            Assert.That(CancelWhenNotAliveField, Is.Not.Null);
-
-            CancelWhenLeavingAreaField.SetValue(_config, cancelLeaving);
-            RequireAliveToStartField.SetValue(_config, requireAlive);
-            CancelWhenNotAliveField.SetValue(_config, cancelNotAlive);
-
-            Assert.That(_config.CancelWhenLeavingArea, Is.EqualTo(cancelLeaving));
-            Assert.That(_config.RequireAliveToStart, Is.EqualTo(requireAlive));
-            Assert.That(_config.CancelWhenNotAlive, Is.EqualTo(cancelNotAlive));
+            using var serialized = new SerializedObject(_config);
+            Assert.That(serialized.FindProperty(field), Is.Null);
         }
 
         [Test]

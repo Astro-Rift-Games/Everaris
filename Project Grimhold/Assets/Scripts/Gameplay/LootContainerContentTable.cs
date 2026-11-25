@@ -21,8 +21,13 @@ public sealed class LootContainerContentTable : ScriptableObject
     [SerializeField]
     private bool _allowEmpty;
 
+    [SerializeField, Range(0, CharacterDerivedStatisticsCalculator.BasisPointsDenominator)]
+    [Tooltip("Chance in basis points for a Chaos Coin bonus from a compatible source (2000 = 20%).")]
+    private int _chaosCoinChanceBasisPoints = 2000;
+
     public IReadOnlyList<LootContainerContentTableEntry> Entries => _entries;
     public int MinimumDistinctStacks => _minimumDistinctStacks;
     public int MaximumDistinctStacks => _maximumDistinctStacks;
     public bool AllowEmpty => _allowEmpty;
+    public int ChaosCoinChanceBasisPoints => _chaosCoinChanceBasisPoints;
 }

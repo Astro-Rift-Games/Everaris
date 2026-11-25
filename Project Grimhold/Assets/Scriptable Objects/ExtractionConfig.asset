@@ -13,10 +13,7 @@ MonoBehaviour:
   m_Name: ExtractionConfig
   m_EditorClassIdentifier: Assembly-CSharp::ExtractionConfig
   _countdownDurationSeconds: 5
-  _cancelWhenLeavingArea: 1
   _boundaryTolerance: 0.5
-  _requireAliveToStart: 1
-  _cancelWhenNotAlive: 1
   _progressQuota: 100
   _duoProgressQuota: 150
   _maxTeamsPerRaid: 4

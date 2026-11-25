@@ -344,3 +344,4 @@ MonoBehaviour:
   _minimumDistinctStacks: 2
   _maximumDistinctStacks: 3
   _allowEmpty: 0
+  _chaosCoinChanceBasisPoints: 2000

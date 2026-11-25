@@ -75,6 +75,60 @@ namespace Tests.PlayMode.Utilities
         }
 
         [UnityTest]
+        public IEnumerator EditedUtilityDurations_ReachBothAuthoritativeTimers()
+        {
+            yield return Begin();
+            var player = SpawnAvatar(1, Vector3.zero);
+            var consume = player.GetComponent<PlayerConsumableNetworkController>();
+            var loot = player.GetComponent<PlayerLootReceiver>();
+            using var controller = new UnityEditor.SerializedObject(consume);
+            var binding = controller.FindProperty("_lootCatalog");
+            var original = (LootDefinitionCatalog)binding.objectReferenceValue;
+            var catalog = Object.Instantiate(original);
+            var copies = new List<LootDefinition>();
+            try
+            {
+                using var settings = new UnityEditor.SerializedObject(catalog);
+                var entries = settings.FindProperty("_definitions");
+                for (int i = 0; i < entries.arraySize; i++)
+                {
+                    var entry = entries.GetArrayElementAtIndex(i);
+                    var item = entry.objectReferenceValue as LootDefinition;
+                    if (!item || (item.LootId != CompassId && item.LootId != DetectorId)) continue;
+                    var copy = Object.Instantiate(item);
+                    copies.Add(copy);
+                    using var tuning = new UnityEditor.SerializedObject(copy);
+                    tuning.FindProperty("_utilityCooldownSeconds").floatValue = item.LootId == CompassId ? 8f : 12f;
+                    tuning.ApplyModifiedPropertiesWithoutUndo();
+                    entry.objectReferenceValue = copy;
+                }
+                settings.ApplyModifiedPropertiesWithoutUndo();
+                binding.objectReferenceValue = catalog;
+                controller.ApplyModifiedPropertiesWithoutUndo();
+                SpawnSanctuary(new Vector3(0f, 10f, 0f));
+                foreach (var id in new[] { CompassId, DetectorId })
+                {
+                    yield return InSimulation(() => AddLoot(loot, id, 1));
+                    Assert.That(consume.TryRequestConsume(id), Is.True);
+                    float deadline = Time.realtimeSinceStartup + 5f;
+                    while (!consume.GetUtilityCooldown(id).IsRunning && Time.realtimeSinceStartup < deadline)
+                        yield return null;
+                    float expected = id == CompassId ? 8f : 12f;
+                    float remaining = consume.GetUtilityCooldown(id).RemainingTime(_runner) ?? 0f;
+                    Assert.That(remaining, Is.GreaterThan(expected - 1f).And.LessThanOrEqualTo(expected));
+                }
+            }
+            finally
+            {
+                controller.Update();
+                controller.FindProperty("_lootCatalog").objectReferenceValue = original;
+                controller.ApplyModifiedPropertiesWithoutUndo();
+                Object.DestroyImmediate(catalog);
+                foreach (var copy in copies) Object.DestroyImmediate(copy);
+            }
+        }
+
+        [UnityTest]
         public IEnumerator RuneCompass_InstantActivation_OrientatesTowardsSanctuary_AndSetsCooldown()
         {
             yield return Begin();

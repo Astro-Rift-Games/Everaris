@@ -531,8 +531,8 @@ extraction while Downed.
 Verified in code:
 
 * Extraction gates are **not** Downed-gated, and `IsAlive` is true while Downed.
-  `PlayerExtractionController.EvaluateContinuation` (`CancelWhenNotAlive`) therefore keeps an
-  in-progress countdown running while Downed.
+  Becoming Downed does not by itself cancel the team countdown. A connected Downed member
+  still counts as required and must remain inside the extraction area.
 * On definitive Defeat `IsAlive` becomes false, so the next tick cancels with
   `CancellationReason.CharacterNotAlive`. `ExtractionSanctuary` also cancels its ritual when
   `owner.IsAlive` is false. No new extraction code is needed for the per-player interruption.

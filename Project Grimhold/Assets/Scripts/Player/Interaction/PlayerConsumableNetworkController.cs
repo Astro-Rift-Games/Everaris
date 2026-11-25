@@ -253,7 +253,7 @@ public sealed class PlayerConsumableNetworkController : NetworkBehaviour,
                 }
                 else if (_lootCatalog != null && _lootCatalog.TryGetByIndex(index, out LootDefinition def) && def.LootId == ArcaneDetectorId)
                 {
-                    ExecuteArcaneDetector();
+                    ExecuteArcaneDetector(def.UtilityCooldownSeconds);
                     RPC_ReceiveConsumeConfirmation(sequence, index, true, (int)ConsumableFailureReason.None);
                 }
                 else
@@ -289,7 +289,7 @@ public sealed class PlayerConsumableNetworkController : NetworkBehaviour,
                     return;
                 }
 
-                RuneCompassCooldown = TickTimer.CreateFromSeconds(Runner, 30.0f);
+                RuneCompassCooldown = TickTimer.CreateFromSeconds(Runner, definition.UtilityCooldownSeconds);
                 CardinalDirection direction = ExecuteRuneCompass(out Vector2 sanctuaryPos);
                 RPC_ReceiveCompassActivation(pending, (byte)direction, sanctuaryPos, CardinalDirectionHelper.DisplayDuration);
                 RPC_ReceiveConsumeConfirmation(pending, catalogIndex, true, (int)ConsumableFailureReason.None);
@@ -633,9 +633,9 @@ public sealed class PlayerConsumableNetworkController : NetworkBehaviour,
         return CardinalDirection.None;
     }
 
-    private void ExecuteArcaneDetector()
+    private void ExecuteArcaneDetector(float cooldownSeconds)
     {
-        ArcaneDetectorCooldown = TickTimer.CreateFromSeconds(Runner, 20.0f);
+        ArcaneDetectorCooldown = TickTimer.CreateFromSeconds(Runner, cooldownSeconds);
         Vector2 playerPos = (Vector2)transform.position;
         Collider2D[] hits = Physics2D.OverlapCircleAll(playerPos, ArcaneElementDetectionRules.DetectionRadius);
         var detectedNetworkIds = new List<NetworkId>();

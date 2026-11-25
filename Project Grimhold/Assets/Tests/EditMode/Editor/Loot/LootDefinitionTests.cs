@@ -125,6 +125,19 @@ namespace Tests.EditMode.Loot
             Assert.That(error, Does.Contain("category other than None"));
         }
 
+        [TestCase(-1f)]
+        [TestCase(float.NaN)]
+        [TestCase(float.PositiveInfinity)]
+        public void InvalidUtilityCooldown_FailsValidation(float invalidCooldown)
+        {
+            SetValidDefaults();
+            SetField("_category", LootCategory.Utility);
+            SetField("_utilityCooldownSeconds", invalidCooldown);
+
+            Assert.That(_loot.TryValidate(out string error), Is.False);
+            Assert.That(error, Is.EqualTo("Loot definition 'ancient_coin' must have a finite, non-negative utility cooldown."));
+        }
+
         [Test]
         public void NegativeExtractionValue_FailsValidation()
         {

@@ -34,6 +34,7 @@ MonoBehaviour:
   _canBeUsed: 1
   _missionCompatible: 0
   _useMode: 1
+  _utilityCooldownSeconds: 30
   _extractionValuePerUnit: 140
   _sellValuePerUnit: 140
   _buyValuePerUnit: 280
