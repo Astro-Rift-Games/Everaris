@@ -4,32 +4,320 @@
 
 Release: Unreleased
 
-394 original commits; 394 canonical entries.
+399 original commits; 399 canonical entries.
 
 ## Canonical classification
 
-143 features; 120 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 12 maintenance; 24 other changes
+143 features; 120 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 17 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 17 | 13 | 1 | 0 | 10 | 1 |
-| Art & Animation | 31 | 14 | 3 | 0 | 9 | 8 |
+| Art & Animation | 31 | 14 | 3 | 0 | 11 | 8 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 1 |
-| Build & Tooling | 98 | 78 | 4 | 1 | 28 | 7 |
-| Combat | 56 | 26 | 2 | 0 | 18 | 2 |
+| Build & Tooling | 98 | 78 | 4 | 1 | 30 | 7 |
+| Combat | 56 | 26 | 2 | 0 | 19 | 2 |
 | Documentation | 43 | 46 | 0 | 0 | 22 | 2 |
 | Extraction | 22 | 23 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
 | Inventory & Loot | 87 | 65 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
 | Networking & Sessions | 45 | 45 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 55 | 57 | 2 | 1 | 24 | 4 |
-| Tests | 130 | 110 | 4 | 1 | 38 | 4 |
-| UI | 46 | 24 | 2 | 0 | 14 | 6 |
+| Persistence & Backend | 55 | 57 | 2 | 1 | 25 | 4 |
+| Tests | 130 | 110 | 4 | 1 | 40 | 4 |
+| UI | 46 | 24 | 2 | 0 | 18 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 28 | 2 |
-| World & Visibility | 37 | 21 | 1 | 0 | 4 | 13 |
+| World & Visibility | 37 | 21 | 1 | 0 | 5 | 13 |
 
 ## Original commit records
+
+### 1df5fda515160e88667f4515f6524b8d9b69c0ce
+
+[1df5fda515160e88667f4515f6524b8d9b69c0ce](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/1df5fda515160e88667f4515f6524b8d9b69c0ce)
+
+Date: 2026-11-25T14:01:08-03:00 · Classification: Maintenance (explicit) · Systems: Build & Tooling
+
+Flags: secondary
+
+#### Original subject
+
+```text
+chore(editor): stop tracking Project Auditor settings
+```
+
+#### Original body
+
+```text
+Project Auditor re-serializes ProjectAuditorSettings.asset on every Editor
+load, so it kept showing up as modified. It holds no custom rules, and the
+package recreates it with defaults on each machine.
+```
+
+#### Changed paths
+
+```text
+.gitignore
+```
+
+#### Classification evidence
+
+- type → Maintenance: chore
+- scope → Build &amp; Tooling: editor
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### d4ee23f05014359d28f7c8b126ea89c301a74c88
+
+[d4ee23f05014359d28f7c8b126ea89c301a74c88](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/d4ee23f05014359d28f7c8b126ea89c301a74c88)
+
+Date: 2026-11-25T14:01:07-03:00 · Classification: Maintenance (explicit) · Systems: UI
+
+Flags: secondary
+
+#### Original subject
+
+```text
+chore(ui): keep pre-baked glyphs in the TMP fallback font
+```
+
+#### Original body
+
+```text
+TMP clears every Dynamic font asset that has Clear Dynamic Data On Build
+enabled when the Editor quits, so LiberationSans SDF - Fallback lost its
+pre-baked character set on every close and was rebuilt on the next run.
+Disabling the flag keeps the 197 pre-baked glyphs, which builds need anyway.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
+Project Grimhold/ProjectSettings/ProjectAuditorSettings.asset
+```
+
+#### Classification evidence
+
+- type → Maintenance: chore
+- scope → UI: ui
+- message-term → UI: ui
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### aef8cca8b1ed405e05edd8c77a6f7c9cff15b9f8
+
+[aef8cca8b1ed405e05edd8c77a6f7c9cff15b9f8](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/aef8cca8b1ed405e05edd8c77a6f7c9cff15b9f8)
+
+Date: 2026-11-25T02:15:47-03:00 · Classification: Maintenance (explicit) · Systems: UI, World & Visibility
+
+Flags: secondary
+
+#### Original subject
+
+```text
+chore(minimap): regenerate stale Catacombs and Gameplay minimap layouts
+```
+
+#### Original body
+
+```text
+CatacombsMap.unity and Gameplay.unity changed without regenerating their
+layouts, so the stored SourceHash no longer matched the scenes and the
+MinimapLayoutGenerator bootstrap rewrote both assets on every domain reload.
+This commits the regenerated output so the hook becomes a no-op again.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset
+Project Grimhold/Assets/Data/Minimap/DungeonGrayboxMinimapLayout.asset
+```
+
+#### Classification evidence
+
+- type → Maintenance: chore
+- path → UI: Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset
+- path → UI: Project Grimhold/Assets/Data/Minimap/DungeonGrayboxMinimapLayout.asset
+- scope → UI: minimap
+- message-term → UI: minimap
+- path → World &amp; Visibility: Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset
+- path → World &amp; Visibility: Project Grimhold/Assets/Data/Minimap/DungeonGrayboxMinimapLayout.asset
+- message-term → World &amp; Visibility: Catacombs
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### c2ffc9578c7e2e6c356ab2147aa339bbeedd7af9
+
+[c2ffc9578c7e2e6c356ab2147aa339bbeedd7af9](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c2ffc9578c7e2e6c356ab2147aa339bbeedd7af9)
+
+Date: 2026-11-25T02:15:47-03:00 · Classification: Maintenance (explicit) · Systems: UI, Art & Animation, Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+chore(ui): stop TMP font assets from rewriting during play and tests
+```
+
+#### Original body
+
+```text
+Dynamic TMP font assets add glyphs on demand and the Editor saves them, so
+every Play Mode or test run produced font asset diffs.
+
+- alagard SDF is now Static with all printable ASCII baked; the source font
+  has no other glyphs, so accents and Spanish punctuation keep coming from
+  the fallback as before.
+- LiberationSans SDF - Fallback stays Dynamic for unexpected input but
+  pre-bakes ASCII, Latin-1 and common punctuation (197 characters).
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Art/Fonts/alagard/alagard SDF.asset
+Project Grimhold/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
+```
+
+#### Classification evidence
+
+- type → Maintenance: chore
+- scope → UI: ui
+- message-term → UI: ui
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Fonts/alagard/alagard SDF.asset
+- message-term → Tests: tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### d125e85495f50f6c3b546930bde9e371a3f21ded
+
+[d125e85495f50f6c3b546930bde9e371a3f21ded](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/d125e85495f50f6c3b546930bde9e371a3f21ded)
+
+Date: 2026-11-25T02:15:46-03:00 · Classification: Maintenance (explicit) · Systems: Combat, UI, Persistence & Backend, Art & Animation, Build & Tooling, Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+chore(git): pin LF line endings for Unity YAML assets
+```
+
+#### Original body
+
+```text
+Unity writes its serialized YAML with LF. With core.autocrlf=true and no
+.gitattributes, every asset the Editor rewrote (animations, ScriptableObjects,
+ProjectSettings) showed up as a line-ending-only change.
+
+- .gitattributes sets text eol=lf for Unity YAML extensions only; backend,
+  tools and C# files keep their current behavior.
+- Renormalizes 29 .meta files whose blobs were stored with CRLF (line endings
+  only, no content change).
+
+Branches that edit one of those 29 .meta files may need -X renormalize when
+merging.
+```
+
+#### Changed paths
+
+```text
+.gitattributes
+Project Grimhold/Assets/Art/UI/Hud/Modular.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/clamp.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/connector.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/crest.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/downed_fill.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/downed_inactive.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/health_fill.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/health_holder.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/mana_fill.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/mana_holder.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/orb_empty.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/outer_frame.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/revive_fill.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/revive_inactive.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/rivet.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/stamina_fill.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/stamina_inactive.png.meta
+Project Grimhold/Assets/Art/UI/Hud/Modular/support_frame.png.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularGameplayHudPrefabTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularHudFillTests.cs.meta
+Project Grimhold/Assets/Wwise/OpenXR/CHANGELOG.md.meta
+Project Grimhold/Assets/Wwise/OpenXR/LICENSE.md.meta
+Project Grimhold/Assets/Wwise/OpenXR/README.md.meta
+Project Grimhold/Assets/Wwise/OpenXR/Runtime.meta
+Project Grimhold/Assets/Wwise/OpenXR/Runtime/AK.Wwise.Unity.OpenXR.asmdef.meta
+Project Grimhold/Assets/Wwise/OpenXR/Runtime/AkWwiseOpenXRMotionBridge.cs.meta
+Project Grimhold/Assets/Wwise/OpenXR/Runtime/AkWwiseOpenXRMotionFeature.cs.meta
+Project Grimhold/Assets/Wwise/OpenXR/Runtime/AkWwiseOpenXRMotionOutput.cs.meta
+Project Grimhold/Assets/Wwise/OpenXR/package.json.meta
+```
+
+#### Classification evidence
+
+- type → Maintenance: chore
+- path → Combat: Project Grimhold/Assets/Art/UI/Hud/Modular/health\_fill.png.meta
+- path → Combat: Project Grimhold/Assets/Art/UI/Hud/Modular/health\_holder.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/clamp.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/connector.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/crest.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/downed\_fill.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/downed\_inactive.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/health\_fill.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/health\_holder.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/mana\_fill.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/mana\_holder.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/orb\_empty.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/outer\_frame.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/revive\_fill.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/revive\_inactive.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/rivet.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/stamina\_fill.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/stamina\_inactive.png.meta
+- path → UI: Project Grimhold/Assets/Art/UI/Hud/Modular/support\_frame.png.meta
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularGameplayHudPrefabTests.cs.meta
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularHudFillTests.cs.meta
+- message-term → Persistence &amp; Backend: backend
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/clamp.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/connector.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/crest.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/downed\_fill.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/downed\_inactive.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/health\_fill.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/health\_holder.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/mana\_fill.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/mana\_holder.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/orb\_empty.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/outer\_frame.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/revive\_fill.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/revive\_inactive.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/rivet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/stamina\_fill.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/stamina\_inactive.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/UI/Hud/Modular/support\_frame.png.meta
+- message-term → Art &amp; Animation: animations
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularGameplayHudPrefabTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularHudFillTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Wwise/OpenXR/CHANGELOG.md.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularGameplayHudPrefabTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularHudFillTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### e4b98eb2bf47c9dd6d8b5216711639f64851c2ec
 

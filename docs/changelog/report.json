@@ -1,72 +1,72 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1271,
-  "canonicalEntries": 1268,
+  "rawCommits": 1276,
+  "canonicalEntries": 1273,
   "before": {
+    "Architecture & Infrastructure": 30,
     "Features": 464,
     "Other Changes": 379,
     "Bug Fixes": 198,
     "Documentation": 138,
     "Tests": 50,
-    "Architecture & Infrastructure": 25,
     "Refactoring": 17
   },
   "after": {
+    "Maintenance": 28,
     "Features": 603,
     "Other Changes": 186,
     "Bug Fixes": 214,
     "Documentation": 154,
     "Tests": 55,
-    "Maintenance": 23,
     "Refactoring": 30,
     "Architecture & Infrastructure": 6
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Build & Tooling": 659,
+    "UI": 365,
+    "World & Visibility": 187,
+    "Art & Animation": 277,
+    "Tests": 810,
+    "Combat": 421,
+    "Persistence & Backend": 329,
     "Extraction": 181,
-    "Build & Tooling": 657,
     "Documentation": 456,
-    "Tests": 808,
-    "UI": 361,
     "Movement": 109,
-    "World & Visibility": 186,
-    "Persistence & Backend": 328,
     "Audio": 43,
     "Input": 33,
     "Inventory & Loot": 507,
     "Networking & Sessions": 367,
-    "Combat": 420,
     "Unassigned": 52,
-    "Art & Animation": 275,
     "Abilities": 146
   },
   "canonical": {
     "sections": {
+      "Maintenance": 28,
       "Features": 602,
       "Other Changes": 185,
       "Bug Fixes": 213,
       "Documentation": 154,
       "Tests": 55,
-      "Maintenance": 23,
       "Refactoring": 30,
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Build & Tooling": 657,
+      "UI": 364,
+      "World & Visibility": 185,
+      "Art & Animation": 274,
+      "Tests": 808,
+      "Combat": 419,
+      "Persistence & Backend": 329,
       "Extraction": 181,
-      "Build & Tooling": 655,
       "Documentation": 454,
-      "Tests": 806,
-      "UI": 360,
       "Movement": 109,
-      "World & Visibility": 184,
-      "Persistence & Backend": 328,
       "Audio": 43,
       "Input": 33,
       "Inventory & Loot": 507,
       "Networking & Sessions": 367,
-      "Combat": 418,
       "Unassigned": 52,
-      "Art & Animation": 272,
       "Abilities": 144
     }
   },
@@ -78601,8 +78601,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 394,
-      "canonicalEntries": 394
+      "originalCommits": 399,
+      "canonicalEntries": 399
     },
     {
       "key": "v0.5.0",
@@ -78646,6 +78646,501 @@
     }
   ],
   "commits": [
+    {
+      "sha": "1df5fda515160e88667f4515f6524b8d9b69c0ce",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/1df5fda515160e88667f4515f6524b8d9b69c0ce",
+      "subject": "chore(editor): stop tracking Project Auditor settings",
+      "body": "Project Auditor re-serializes ProjectAuditorSettings.asset on every Editor\nload, so it kept showing up as modified. It holds no custom rules, and the\npackage recreates it with defaults on each machine.\n",
+      "date": "2026-11-25T14:01:08-03:00",
+      "files": [
+        ".gitignore"
+      ],
+      "originalType": "chore",
+      "originalScope": "editor",
+      "originalSection": "Architecture & Infrastructure",
+      "breaking": false,
+      "reverts": null,
+      "section": "Maintenance",
+      "confidence": "explicit",
+      "systems": [
+        "Build & Tooling"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "chore",
+          "supports": "Maintenance"
+        },
+        {
+          "source": "scope",
+          "value": "editor",
+          "supports": "Build & Tooling"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "d4ee23f05014359d28f7c8b126ea89c301a74c88",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/d4ee23f05014359d28f7c8b126ea89c301a74c88",
+      "subject": "chore(ui): keep pre-baked glyphs in the TMP fallback font",
+      "body": "TMP clears every Dynamic font asset that has Clear Dynamic Data On Build\nenabled when the Editor quits, so LiberationSans SDF - Fallback lost its\npre-baked character set on every close and was rebuilt on the next run.\nDisabling the flag keeps the 197 pre-baked glyphs, which builds need anyway.\n",
+      "date": "2026-11-25T14:01:07-03:00",
+      "files": [
+        "Project Grimhold/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+        "Project Grimhold/ProjectSettings/ProjectAuditorSettings.asset"
+      ],
+      "originalType": "chore",
+      "originalScope": "ui",
+      "originalSection": "Architecture & Infrastructure",
+      "breaking": false,
+      "reverts": null,
+      "section": "Maintenance",
+      "confidence": "explicit",
+      "systems": [
+        "UI"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "chore",
+          "supports": "Maintenance"
+        },
+        {
+          "source": "scope",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "ui",
+          "supports": "UI"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "aef8cca8b1ed405e05edd8c77a6f7c9cff15b9f8",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/aef8cca8b1ed405e05edd8c77a6f7c9cff15b9f8",
+      "subject": "chore(minimap): regenerate stale Catacombs and Gameplay minimap layouts",
+      "body": "CatacombsMap.unity and Gameplay.unity changed without regenerating their\nlayouts, so the stored SourceHash no longer matched the scenes and the\nMinimapLayoutGenerator bootstrap rewrote both assets on every domain reload.\nThis commits the regenerated output so the hook becomes a no-op again.\n",
+      "date": "2026-11-25T02:15:47-03:00",
+      "files": [
+        "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset",
+        "Project Grimhold/Assets/Data/Minimap/DungeonGrayboxMinimapLayout.asset"
+      ],
+      "originalType": "chore",
+      "originalScope": "minimap",
+      "originalSection": "Architecture & Infrastructure",
+      "breaking": false,
+      "reverts": null,
+      "section": "Maintenance",
+      "confidence": "explicit",
+      "systems": [
+        "UI",
+        "World & Visibility"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "chore",
+          "supports": "Maintenance"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/DungeonGrayboxMinimapLayout.asset",
+          "supports": "UI"
+        },
+        {
+          "source": "scope",
+          "value": "minimap",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "minimap",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/DungeonGrayboxMinimapLayout.asset",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "Catacombs",
+          "supports": "World & Visibility"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "c2ffc9578c7e2e6c356ab2147aa339bbeedd7af9",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c2ffc9578c7e2e6c356ab2147aa339bbeedd7af9",
+      "subject": "chore(ui): stop TMP font assets from rewriting during play and tests",
+      "body": "Dynamic TMP font assets add glyphs on demand and the Editor saves them, so\nevery Play Mode or test run produced font asset diffs.\n\n- alagard SDF is now Static with all printable ASCII baked; the source font\n  has no other glyphs, so accents and Spanish punctuation keep coming from\n  the fallback as before.\n- LiberationSans SDF - Fallback stays Dynamic for unexpected input but\n  pre-bakes ASCII, Latin-1 and common punctuation (197 characters).\n",
+      "date": "2026-11-25T02:15:47-03:00",
+      "files": [
+        "Project Grimhold/Assets/Art/Fonts/alagard/alagard SDF.asset",
+        "Project Grimhold/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset"
+      ],
+      "originalType": "chore",
+      "originalScope": "ui",
+      "originalSection": "Architecture & Infrastructure",
+      "breaking": false,
+      "reverts": null,
+      "section": "Maintenance",
+      "confidence": "explicit",
+      "systems": [
+        "UI",
+        "Art & Animation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "chore",
+          "supports": "Maintenance"
+        },
+        {
+          "source": "scope",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/Fonts/alagard/alagard SDF.asset",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "d125e85495f50f6c3b546930bde9e371a3f21ded",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/d125e85495f50f6c3b546930bde9e371a3f21ded",
+      "subject": "chore(git): pin LF line endings for Unity YAML assets",
+      "body": "Unity writes its serialized YAML with LF. With core.autocrlf=true and no\n.gitattributes, every asset the Editor rewrote (animations, ScriptableObjects,\nProjectSettings) showed up as a line-ending-only change.\n\n- .gitattributes sets text eol=lf for Unity YAML extensions only; backend,\n  tools and C# files keep their current behavior.\n- Renormalizes 29 .meta files whose blobs were stored with CRLF (line endings\n  only, no content change).\n\nBranches that edit one of those 29 .meta files may need -X renormalize when\nmerging.\n",
+      "date": "2026-11-25T02:15:46-03:00",
+      "files": [
+        ".gitattributes",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/clamp.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/connector.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/crest.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/downed_fill.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/downed_inactive.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/health_fill.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/health_holder.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/mana_fill.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/mana_holder.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/orb_empty.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/outer_frame.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/revive_fill.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/revive_inactive.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/rivet.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/stamina_fill.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/stamina_inactive.png.meta",
+        "Project Grimhold/Assets/Art/UI/Hud/Modular/support_frame.png.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularGameplayHudPrefabTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularHudFillTests.cs.meta",
+        "Project Grimhold/Assets/Wwise/OpenXR/CHANGELOG.md.meta",
+        "Project Grimhold/Assets/Wwise/OpenXR/LICENSE.md.meta",
+        "Project Grimhold/Assets/Wwise/OpenXR/README.md.meta",
+        "Project Grimhold/Assets/Wwise/OpenXR/Runtime.meta",
+        "Project Grimhold/Assets/Wwise/OpenXR/Runtime/AK.Wwise.Unity.OpenXR.asmdef.meta",
+        "Project Grimhold/Assets/Wwise/OpenXR/Runtime/AkWwiseOpenXRMotionBridge.cs.meta",
+        "Project Grimhold/Assets/Wwise/OpenXR/Runtime/AkWwiseOpenXRMotionFeature.cs.meta",
+        "Project Grimhold/Assets/Wwise/OpenXR/Runtime/AkWwiseOpenXRMotionOutput.cs.meta",
+        "Project Grimhold/Assets/Wwise/OpenXR/package.json.meta"
+      ],
+      "originalType": "chore",
+      "originalScope": "git",
+      "originalSection": "Architecture & Infrastructure",
+      "breaking": false,
+      "reverts": null,
+      "section": "Maintenance",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "UI",
+        "Persistence & Backend",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "chore",
+          "supports": "Maintenance"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/health_fill.png.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/health_holder.png.meta",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/clamp.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/connector.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/crest.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/downed_fill.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/downed_inactive.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/health_fill.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/health_holder.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/mana_fill.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/mana_holder.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/orb_empty.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/outer_frame.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/revive_fill.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/revive_inactive.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/rivet.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/stamina_fill.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/stamina_inactive.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/support_frame.png.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularGameplayHudPrefabTests.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularHudFillTests.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/clamp.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/connector.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/crest.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/downed_fill.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/downed_inactive.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/health_fill.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/health_holder.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/mana_fill.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/mana_holder.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/orb_empty.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/outer_frame.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/revive_fill.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/revive_inactive.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/rivet.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/stamina_fill.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/stamina_inactive.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Art/UI/Hud/Modular/support_frame.png.meta",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "message-term",
+          "value": "animations",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularGameplayHudPrefabTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularHudFillTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Wwise/OpenXR/CHANGELOG.md.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularGameplayHudPrefabTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ModularHudFillTests.cs.meta",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
     {
       "sha": "e4b98eb2bf47c9dd6d8b5216711639f64851c2ec",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e4b98eb2bf47c9dd6d8b5216711639f64851c2ec",
