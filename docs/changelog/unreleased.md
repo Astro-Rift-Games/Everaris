@@ -4,11 +4,11 @@
 
 Release: Unreleased
 
-390 original commits; 390 canonical entries.
+391 original commits; 391 canonical entries.
 
 ## Canonical classification
 
-141 features; 119 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 12 maintenance; 23 other changes
+141 features; 119 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 12 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -25,11 +25,45 @@ Release: Unreleased
 | Networking & Sessions | 45 | 45 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 55 | 57 | 2 | 1 | 24 | 4 |
 | Tests | 128 | 109 | 4 | 1 | 38 | 4 |
-| UI | 46 | 23 | 2 | 0 | 14 | 5 |
+| UI | 46 | 23 | 2 | 0 | 14 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 28 | 2 |
 | World & Visibility | 37 | 20 | 1 | 0 | 4 | 13 |
 
 ## Original commit records
+
+### 7e7fc9a00b342de929cc93261d7f6938d654d5b6
+
+[7e7fc9a00b342de929cc93261d7f6938d654d5b6](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7e7fc9a00b342de929cc93261d7f6938d654d5b6)
+
+Date: 2026-11-25T01:31:21-03:00 · Classification: Other Changes (unknown) · Systems: UI
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+Update MainMenu.unity
+```
+
+#### Original body
+
+```text
+quedo algo sin guardar
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scenes/MainMenu.unity
+```
+
+#### Classification evidence
+
+- path → UI: Project Grimhold/Assets/Scenes/MainMenu.unity
+
+#### Diagnostics
+
+- **ambiguous-kind:** No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages.
 
 ### ca93057376739a46cd0b00ffefc2eada84aeb001
 

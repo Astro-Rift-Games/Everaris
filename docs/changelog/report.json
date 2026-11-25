@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1267,
-  "canonicalEntries": 1264,
+  "rawCommits": 1268,
+  "canonicalEntries": 1265,
   "before": {
-    "Other Changes": 378,
+    "Other Changes": 379,
     "Documentation": 138,
     "Features": 462,
     "Tests": 50,
@@ -12,7 +12,7 @@
     "Refactoring": 17
   },
   "after": {
-    "Other Changes": 185,
+    "Other Changes": 186,
     "Documentation": 154,
     "Features": 601,
     "Tests": 55,
@@ -23,8 +23,8 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "UI": 360,
     "Movement": 109,
-    "UI": 359,
     "World & Visibility": 185,
     "Persistence & Backend": 328,
     "Audio": 43,
@@ -42,7 +42,7 @@
   },
   "canonical": {
     "sections": {
-      "Other Changes": 184,
+      "Other Changes": 185,
       "Documentation": 154,
       "Features": 600,
       "Tests": 55,
@@ -52,8 +52,8 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "UI": 359,
       "Movement": 109,
-      "UI": 358,
       "World & Visibility": 183,
       "Persistence & Backend": 328,
       "Audio": 43,
@@ -71,6 +71,41 @@
     }
   },
   "unknownEntries": [
+    {
+      "sha": "7e7fc9a00b342de929cc93261d7f6938d654d5b6",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7e7fc9a00b342de929cc93261d7f6938d654d5b6",
+      "subject": "Update MainMenu.unity",
+      "body": "quedo algo sin guardar\n",
+      "date": "2026-11-25T01:31:21-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scenes/MainMenu.unity"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [
+        "UI"
+      ],
+      "evidence": [
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/MainMenu.unity",
+          "supports": "UI"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        }
+      ],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "ca93057376739a46cd0b00ffefc2eada84aeb001",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ca93057376739a46cd0b00ffefc2eada84aeb001",
@@ -78566,8 +78601,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 390,
-      "canonicalEntries": 390
+      "originalCommits": 391,
+      "canonicalEntries": 391
     },
     {
       "key": "v0.5.0",
@@ -78611,6 +78646,41 @@
     }
   ],
   "commits": [
+    {
+      "sha": "7e7fc9a00b342de929cc93261d7f6938d654d5b6",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7e7fc9a00b342de929cc93261d7f6938d654d5b6",
+      "subject": "Update MainMenu.unity",
+      "body": "quedo algo sin guardar\n",
+      "date": "2026-11-25T01:31:21-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scenes/MainMenu.unity"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Other Changes",
+      "confidence": "unknown",
+      "systems": [
+        "UI"
+      ],
+      "evidence": [
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scenes/MainMenu.unity",
+          "supports": "UI"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "ambiguous-kind",
+          "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
+        }
+      ],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "ca93057376739a46cd0b00ffefc2eada84aeb001",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ca93057376739a46cd0b00ffefc2eada84aeb001",
