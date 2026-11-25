@@ -12,7 +12,6 @@ using UnityEngine;
 public class ExtractionSanctuaryAssignmentService : MonoBehaviour
 {
     private readonly List<EntityId> _sanctuaryIds = new();
-    private readonly List<EntityId> _freeSanctuaryIds = new();
     private readonly HashSet<SanctuaryAssignmentFailureReason> _reportedConfigurationFailures = new();
 
     private NetworkRunner _runner;
@@ -119,6 +118,7 @@ public class ExtractionSanctuaryAssignmentService : MonoBehaviour
 
     /// <summary>
     /// Derives the unique sanctuary assigned to a team without requiring authority or mutating state.
+    /// Other teams may share that sanctuary; only a team assigned to two sanctuaries is a duplicate.
     /// </summary>
     public virtual SanctuaryAssignmentResult TryGetAssignment(RaidTeamId teamId)
     {
@@ -169,8 +169,8 @@ public class ExtractionSanctuaryAssignmentService : MonoBehaviour
     /// <summary>
     /// Selects and assigns one sanctuary during Host simulation after validating current team progress.
     /// An existing unique assignment is returned idempotently before selection is evaluated.
-    /// Selection considers only Sanctuaries not reserved by another team, because a Sanctuary is
-    /// reserved exclusively for its owning team (GD 06 section 10).
+    /// Selection considers every registered Sanctuary, including those already assigned to other
+    /// teams, because several teams may receive the same Sanctuary simultaneously (GD 10 section 8).
     /// </summary>
     public SanctuaryAssignmentResult TryAssign(RaidTeamId teamId)
     {
@@ -250,7 +250,6 @@ public class ExtractionSanctuaryAssignmentService : MonoBehaviour
                 SanctuaryAssignmentFailureReason.NoSanctuariesConfigured);
         }
 
-        _freeSanctuaryIds.Clear();
         for (int i = 0; i < _sanctuaryIds.Count; i++)
         {
             EntityId sanctuaryId = _sanctuaryIds[i];
@@ -262,25 +261,14 @@ public class ExtractionSanctuaryAssignmentService : MonoBehaviour
                     teamId,
                     SanctuaryAssignmentFailureReason.SanctuaryRegistryInconsistent);
             }
-
-            if (!sanctuary.IsReserved)
-            {
-                _freeSanctuaryIds.Add(sanctuaryId);
-            }
-        }
-
-        if (_freeSanctuaryIds.Count == 0)
-        {
-            ReportConfigurationFailureOnce(SanctuaryAssignmentFailureReason.NoFreeSanctuary);
-            return SanctuaryAssignmentResult.Rejected(teamId, SanctuaryAssignmentFailureReason.NoFreeSanctuary);
         }
 
         int selectedIndex = SanctuarySelectionPolicy.SelectIndex(
             _sessionSeed,
             _runner.Tick,
             teamId,
-            _freeSanctuaryIds.Count);
-        EntityId selectedId = _freeSanctuaryIds[selectedIndex];
+            _sanctuaryIds.Count);
+        EntityId selectedId = _sanctuaryIds[selectedIndex];
 
         if (!_registry.TryGetExtractionSanctuary(selectedId, out IExtractionSanctuary selected) ||
             selected == null || !selected.TryAssignTeam(teamId) || !selected.IsAssignedToTeam(teamId))
@@ -289,7 +277,7 @@ public class ExtractionSanctuaryAssignmentService : MonoBehaviour
             return SanctuaryAssignmentResult.Rejected(teamId, SanctuaryAssignmentFailureReason.ReservationConflict);
         }
 
-        Debug.Log($"[{nameof(ExtractionSanctuaryAssignmentService)}] Team {teamId.Value} successfully assigned to Sanctuary {selectedId.Value} (index {selectedIndex} of {_freeSanctuaryIds.Count} free)!");
+        Debug.Log($"[{nameof(ExtractionSanctuaryAssignmentService)}] Team {teamId.Value} successfully assigned to Sanctuary {selectedId.Value} (index {selectedIndex} of {_sanctuaryIds.Count})!");
         return SanctuaryAssignmentResult.Assigned(teamId, selectedId, false);
     }
 

@@ -5,8 +5,8 @@ using UnityEngine;
 
 /// <summary>
 /// Authoritative reservation and ritual endpoint for an extraction point.
-/// Reserves the Sanctuary exclusively for one owning team (GD 06 section 10) and runs its ritual
-/// under rules A-4 / D-5.
+/// Several teams may be assigned to the same Sanctuary simultaneously (GD 10 section 8); each
+/// assigned team owns one replicated slot and runs its own ritual under rules A-4 / D-5.
 /// The co-located ExtractionZone shares this NetworkObject identity while retaining its
 /// independent registry capability and geometry responsibility.
 /// </summary>
@@ -306,13 +306,7 @@ public sealed class ExtractionSanctuary : NetworkBehaviour, IExtractionSanctuary
             return true;
         }
 
-        // A Sanctuary is reserved exclusively for its owning team (GD 06 section 10).
-        if (IsReserved)
-        {
-            Debug.LogWarning($"[{nameof(ExtractionSanctuary)} {name}] TryAssignTeam for team {teamId.Value} rejected: reserved by another team.");
-            return false;
-        }
-
+        // Several teams may share this Sanctuary (GD 10 section 8): each one takes its own slot.
         int emptyIndex = FindEmptySlotIndex();
         if (emptyIndex < 0)
         {
@@ -504,20 +498,55 @@ public sealed class ExtractionSanctuary : NetworkBehaviour, IExtractionSanctuary
         return false;
     }
 
+    /// <summary>
+    /// Public aggregate of the shared Sanctuary, independent of slot order: the running ritual with the highest
+    /// progress, otherwise a completed ritual, otherwise the first assigned slot's snapshot. False when no team is assigned.
+    /// </summary>
     public bool TryGetRitualProgress(out ExtractionRitualSnapshot snapshot)
     {
+        bool hasRunning = false;
+        bool hasCompleted = false;
+        bool hasFirst = false;
+        ExtractionRitualSnapshot running = default;
+        ExtractionRitualSnapshot completed = default;
+        ExtractionRitualSnapshot first = default;
+
         int capacity = GetSlotCapacity();
         for (int i = 0; i < capacity; i++)
         {
             TeamSanctuarySlot slot = GetSlot(i);
-            if (slot.IsAssigned)
+            if (!slot.IsAssigned || !TryGetRitualProgress(slot.TeamId, out ExtractionRitualSnapshot candidate))
             {
-                return TryGetRitualProgress(slot.TeamId, out snapshot);
+                continue;
+            }
+
+            if (!hasFirst)
+            {
+                hasFirst = true;
+                first = candidate;
+            }
+
+            switch (candidate.State)
+            {
+                case ExtractionRitualState.InProgress:
+                    if (!hasRunning || candidate.Progress > running.Progress)
+                    {
+                        hasRunning = true;
+                        running = candidate;
+                    }
+                    break;
+                case ExtractionRitualState.Completed:
+                    if (!hasCompleted)
+                    {
+                        hasCompleted = true;
+                        completed = candidate;
+                    }
+                    break;
             }
         }
 
-        snapshot = default;
-        return false;
+        snapshot = hasRunning ? running : hasCompleted ? completed : first;
+        return hasRunning || hasCompleted || hasFirst;
     }
 
     public bool TryReserve(EntityId playerId)
@@ -544,7 +573,16 @@ public sealed class ExtractionSanctuary : NetworkBehaviour, IExtractionSanctuary
 
     public void CopyStateFrom(ExtractionSanctuary source)
     {
-        base.CopyStateFrom(source);
+#if UNITY_EDITOR
+        // Unspawned EditMode instances have no network state to copy: the slot loop below mirrors it.
+        bool unspawnedEditMode = source != null &&
+            (Object == null || !Object.IsValid) && (source.Object == null || !source.Object.IsValid);
+        if (!unspawnedEditMode)
+#endif
+        {
+            base.CopyStateFrom(source);
+        }
+
         if (source == null)
         {
             return;

@@ -158,7 +158,7 @@ namespace Tests.PlayMode.Extraction
 
         /// <summary>
         /// Any seed is a legitimate session. This one makes the selection policy pick the same
-        /// candidate index for both teams, so Sanctuary exclusivity is exercised on every run
+        /// candidate index for both teams, so Sanctuary sharing is exercised on every run
         /// instead of only when the random session seed happens to collide.
         /// </summary>
         private static void ForceCollidingSessionSeed(
@@ -303,7 +303,7 @@ namespace Tests.PlayMode.Extraction
         }
 
         [UnityTest]
-        public IEnumerator QuotaCompletion_AssignsDistinctSanctuariesAndRepeatedRequestIsIdempotent()
+        public IEnumerator QuotaCompletion_CollidingSelectionSharesTheSanctuaryAndRepeatedRequestIsIdempotent()
         {
             yield return ComposeTeamProgress(CreateTwoTeamLaunch());
             NetworkObject firstSanctuary = SpawnSanctuary(Vector3.left * 4f);
@@ -319,10 +319,18 @@ namespace Tests.PlayMode.Extraction
             Assert.That(firstTeam, Is.Not.EqualTo(secondTeam));
             ExtractionSanctuaryAssignmentService service =
                 _runner.GetComponent<ExtractionSanctuaryAssignmentService>();
+            EntityId firstSanctuaryId = firstSanctuary.GetComponent<ExtractionSanctuary>().Id;
+            EntityId secondSanctuaryId = secondSanctuary.GetComponent<ExtractionSanctuary>().Id;
+            EntityId[] ascendingIds = firstSanctuaryId.Value < secondSanctuaryId.Value
+                ? new[] { firstSanctuaryId, secondSanctuaryId }
+                : new[] { secondSanctuaryId, firstSanctuaryId };
+            int expectedIndex = -1;
 
             yield return Execute(runner =>
             {
                 ForceCollidingSessionSeed(service, runner.Tick, firstTeam, secondTeam, 2);
+                expectedIndex = SanctuarySelectionPolicy.SelectIndex(
+                    (ulong)SessionSeedField.GetValue(service), runner.Tick, firstTeam, 2);
                 Assert.That(firstProgress.TryApplyContribution(new ExtractionProgressContribution(
                     ExtractionProgressSourceType.Defeat,
                     new EntityId(7001),
@@ -339,10 +347,15 @@ namespace Tests.PlayMode.Extraction
             SanctuaryAssignmentResult second = service.TryGetAssignment(secondTeam);
             Assert.That(first.Success, Is.True);
             Assert.That(second.Success, Is.True);
-            Assert.That(first.SanctuaryId, Is.Not.EqualTo(second.SanctuaryId),
-                "A Sanctuary is reserved for its owning team; selection must choose among free ones (GD 06 section 10).");
-            Assert.That(new[] { firstSanctuary.GetComponent<ExtractionSanctuary>().Id,
-                secondSanctuary.GetComponent<ExtractionSanctuary>().Id }, Does.Contain(first.SanctuaryId));
+            Assert.That(first.SanctuaryId, Is.EqualTo(ascendingIds[expectedIndex]),
+                "Selection stays the deterministic policy over every registered Sanctuary in ascending identity order.");
+            Assert.That(second.SanctuaryId, Is.EqualTo(first.SanctuaryId),
+                "Several teams may receive the same Sanctuary simultaneously (GD 10 section 8).");
+            ExtractionSanctuary shared = first.SanctuaryId == firstSanctuaryId
+                ? firstSanctuary.GetComponent<ExtractionSanctuary>()
+                : secondSanctuary.GetComponent<ExtractionSanctuary>();
+            Assert.That(shared.IsAssignedToTeam(firstTeam), Is.True);
+            Assert.That(shared.IsAssignedToTeam(secondTeam), Is.True);
 
             SanctuaryAssignmentResult repeated = default;
             yield return Execute(runner =>
@@ -398,7 +411,7 @@ namespace Tests.PlayMode.Extraction
         }
 
         [UnityTest]
-        public IEnumerator QuotaCompletion_WithMoreTeamsThanSanctuariesRejectsTheLaterTeamWithoutSharing()
+        public IEnumerator QuotaCompletion_WithMoreTeamsThanSanctuariesAssignsEveryTeamToTheSharedSanctuary()
         {
             yield return ComposeTeamProgress(CreateTwoTeamLaunch());
             NetworkObject sanctuary = SpawnSanctuary(Vector3.left * 4f);
@@ -410,31 +423,27 @@ namespace Tests.PlayMode.Extraction
             Assert.That(secondProgress.TryGetTeamId(out RaidTeamId secondTeam), Is.True);
             ExtractionSanctuaryAssignmentService service =
                 _runner.GetComponent<ExtractionSanctuaryAssignmentService>();
-            SanctuaryAssignmentResult rejected = default;
+            SanctuaryAssignmentResult later = default;
 
-            LogAssert.Expect(UnityEngine.LogType.Error,
-                "ExtractionSanctuaryAssignmentService configuration failure: NoFreeSanctuary.");
             yield return Execute(runner =>
             {
                 Assert.That(firstProgress.TryApplyContribution(new ExtractionProgressContribution(
                     ExtractionProgressSourceType.Defeat, new EntityId(7201), long.MaxValue, runner.Tick)), Is.True);
                 Assert.That(secondProgress.TryApplyContribution(new ExtractionProgressContribution(
                     ExtractionProgressSourceType.Defeat, new EntityId(7202), long.MaxValue, runner.Tick)), Is.True);
-                rejected = service.TryAssign(secondTeam);
+                later = service.TryAssign(secondTeam);
             });
 
-            SanctuaryAssignmentResult owner = service.TryGetAssignment(firstTeam);
-            Assert.That(owner.Success, Is.True);
-            Assert.That(owner.SanctuaryId, Is.EqualTo(sanctuary.GetComponent<ExtractionSanctuary>().Id));
-            Assert.That(rejected.Success, Is.False);
-            Assert.That(rejected.FailureReason, Is.EqualTo(SanctuaryAssignmentFailureReason.NoFreeSanctuary));
-            Assert.That(service.TryGetAssignment(secondTeam).FailureReason,
-                Is.EqualTo(SanctuaryAssignmentFailureReason.AssignmentNotFound));
-            Assert.That((bool)secondProgress.AssignmentRequested, Is.True, "The later team keeps its pending request.");
-
-            yield return AssertAssignmentRetriesAreSilent(5);
-            Assert.That(service.TryGetAssignment(secondTeam).FailureReason,
-                Is.EqualTo(SanctuaryAssignmentFailureReason.AssignmentNotFound));
+            EntityId sanctuaryId = sanctuary.GetComponent<ExtractionSanctuary>().Id;
+            SanctuaryAssignmentResult first = service.TryGetAssignment(firstTeam);
+            Assert.That(first.Success, Is.True);
+            Assert.That(first.SanctuaryId, Is.EqualTo(sanctuaryId));
+            Assert.That(later.Success, Is.True,
+                "A Sanctuary already assigned to another team remains selectable (GD 10 section 8).");
+            Assert.That(later.SanctuaryId, Is.EqualTo(sanctuaryId));
+            Assert.That(service.TryGetAssignment(secondTeam).SanctuaryId, Is.EqualTo(sanctuaryId));
+            Assert.That(service.TryGetAssignment(firstTeam).SanctuaryId, Is.EqualTo(sanctuaryId),
+                "Sharing must not displace the first team's assignment.");
         }
 
         [UnityTest]
@@ -668,7 +677,7 @@ namespace Tests.PlayMode.Extraction
         [UnityTest]
         public IEnumerator Ritual_OwnerIsPredictiveCandidateAndCompletionPermanentlyEnablesOwnZone()
         {
-            // The rival belongs to another team, which cannot appropriate the owner's Sanctuary (GD 06).
+            // The rival belongs to another team that has not reached its quota, so it holds no slot on this Sanctuary.
             yield return ComposeTeamProgress(CreateTwoTeamLaunch());
             NetworkObject sanctuaryObject = SpawnRitualSanctuary(Vector3.zero, 0.05f);
             NetworkObject ownerObject = SpawnAffiliatedPlayer(FirstTeamProfile, Vector3.zero);
@@ -741,6 +750,143 @@ namespace Tests.PlayMode.Extraction
             yield return null;
             Assert.That(sanctuary.RitualState, Is.EqualTo(ExtractionRitualState.Completed));
             Assert.That(zone.IsAvailable, Is.True);
+        }
+
+        [UnityTest]
+        public IEnumerator SharedSanctuary_EachTeamRunsItsOwnRitualAndCountdownWithoutBlockingTheOther()
+        {
+            // A single registered Sanctuary: both teams necessarily receive it (GD 10 section 8).
+            yield return ComposeTeamProgress(CreateTwoTeamLaunch());
+            NetworkObject sanctuaryObject = SpawnRitualSanctuary(Vector3.zero, 0.05f);
+            NetworkObject firstObject = SpawnAffiliatedPlayer(FirstTeamProfile, Vector3.zero);
+            NetworkObject secondObject = SpawnAffiliatedPlayer(SecondTeamProfile, new Vector3(0.2f, 0f, 0f));
+            ExtractionSanctuary sanctuary = sanctuaryObject.GetComponent<ExtractionSanctuary>();
+            ExtractionZone zone = sanctuaryObject.GetComponent<ExtractionZone>();
+            PlayerExtractionController firstExtraction = firstObject.GetComponent<PlayerExtractionController>();
+            PlayerExtractionController secondExtraction = secondObject.GetComponent<PlayerExtractionController>();
+            EntityId firstId = firstObject.GetComponent<PlayerCharacter>().Id;
+            EntityId secondId = secondObject.GetComponent<PlayerCharacter>().Id;
+            PlayerExtractionProgressController firstProgress =
+                firstObject.GetComponent<PlayerExtractionProgressController>();
+            PlayerExtractionProgressController secondProgress =
+                secondObject.GetComponent<PlayerExtractionProgressController>();
+
+            yield return Execute(runner =>
+            {
+                Assert.That(firstProgress.TryApplyContribution(new ExtractionProgressContribution(
+                    ExtractionProgressSourceType.Defeat, new EntityId(8201), long.MaxValue, runner.Tick)), Is.True);
+                Assert.That(secondProgress.TryApplyContribution(new ExtractionProgressContribution(
+                    ExtractionProgressSourceType.Defeat, new EntityId(8202), long.MaxValue, runner.Tick)), Is.True);
+            });
+
+            Assert.That(sanctuary.IsOwnedBy(firstId), Is.True);
+            Assert.That(sanctuary.IsOwnedBy(secondId), Is.True, "Both teams are assigned to the same Sanctuary.");
+            Assert.That(zone.IsAvailable, Is.False);
+
+            // Team 1 runs its own ritual; team 2 is neither started nor blocked by it.
+            InteractionResult firstResult = default;
+            yield return Execute(runner => firstResult = sanctuary.Interact(
+                new InteractionRequest(firstId, sanctuary.Id, runner.Tick)));
+            Assert.That(firstResult.Success, Is.True);
+            Assert.That(sanctuary.CanInteract(new InteractionRequest(secondId, sanctuary.Id, _runner.Tick)), Is.True,
+                "The second team can start its own ritual while the first team's ritual runs.");
+
+            float deadline = Time.realtimeSinceStartup + 2f;
+            while (!sanctuary.CanUseExtraction(firstId) && Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+            }
+
+            Assert.That(sanctuary.CanUseExtraction(firstId), Is.True);
+            Assert.That(zone.IsAvailable, Is.True);
+            Assert.That(sanctuary.CanUseExtraction(secondId), Is.False,
+                "A team that has not completed its own ritual cannot extract because the other team did.");
+            yield return Execute(_ => { });
+            Assert.That(firstExtraction.State, Is.EqualTo(ExtractionState.InProgress));
+            Assert.That(secondExtraction.State, Is.EqualTo(ExtractionState.None));
+
+            // Team 2 completes its own ritual and starts its own countdown; team 1's keeps running.
+            InteractionResult secondResult = default;
+            yield return Execute(runner => secondResult = sanctuary.Interact(
+                new InteractionRequest(secondId, sanctuary.Id, runner.Tick)));
+            Assert.That(secondResult.Success, Is.True);
+            Assert.That(secondProgress.TryGetTeamId(out RaidTeamId secondTeam), Is.True);
+            Assert.That(sanctuary.TryGetRitualProgress(secondTeam, out ExtractionRitualSnapshot secondRitual), Is.True);
+            Assert.That(secondRitual.State, Is.Not.EqualTo(ExtractionRitualState.Cancelled));
+
+            deadline = Time.realtimeSinceStartup + 2f;
+            while (!sanctuary.CanUseExtraction(secondId) && Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+            }
+
+            Assert.That(sanctuary.CanUseExtraction(secondId), Is.True);
+            Assert.That(sanctuary.CanUseExtraction(firstId), Is.True, "Team 1's completed ritual is unaffected.");
+            yield return Execute(_ => { });
+            Assert.That(secondExtraction.State, Is.EqualTo(ExtractionState.InProgress));
+            Assert.That(firstExtraction.State, Is.EqualTo(ExtractionState.InProgress),
+                "The second team's ritual and countdown must not cancel the first team's countdown.");
+            Assert.That(zone.IsAvailable, Is.True);
+        }
+
+        [UnityTest]
+        public IEnumerator SharedSanctuary_PublicAggregateReportsTheRunningRitualWithHighestProgressWhateverTheSlotOrder()
+        {
+            yield return ComposeTeamProgress(CreateTwoTeamLaunch());
+            NetworkObject sanctuaryObject = SpawnRitualSanctuary(Vector3.zero, 30f);
+            NetworkObject firstObject = SpawnAffiliatedPlayer(FirstTeamProfile, Vector3.zero);
+            NetworkObject secondObject = SpawnAffiliatedPlayer(SecondTeamProfile, new Vector3(0.2f, 0f, 0f));
+            ExtractionSanctuary sanctuary = sanctuaryObject.GetComponent<ExtractionSanctuary>();
+            EntityId firstId = firstObject.GetComponent<PlayerCharacter>().Id;
+            EntityId secondId = secondObject.GetComponent<PlayerCharacter>().Id;
+            PlayerExtractionProgressController firstProgress =
+                firstObject.GetComponent<PlayerExtractionProgressController>();
+            PlayerExtractionProgressController secondProgress =
+                secondObject.GetComponent<PlayerExtractionProgressController>();
+
+            // The first team takes the lower slot; the second team takes the later one.
+            yield return Execute(runner =>
+            {
+                Assert.That(firstProgress.TryApplyContribution(new ExtractionProgressContribution(
+                    ExtractionProgressSourceType.Defeat, new EntityId(8301), long.MaxValue, runner.Tick)), Is.True);
+                Assert.That(secondProgress.TryApplyContribution(new ExtractionProgressContribution(
+                    ExtractionProgressSourceType.Defeat, new EntityId(8302), long.MaxValue, runner.Tick)), Is.True);
+            });
+            Assert.That(firstProgress.TryGetTeamId(out RaidTeamId firstTeam), Is.True);
+            Assert.That(secondProgress.TryGetTeamId(out RaidTeamId secondTeam), Is.True);
+            Assert.That(sanctuary.TryGetRitualProgress(out ExtractionRitualSnapshot idle), Is.True);
+            Assert.That(idle.State, Is.EqualTo(ExtractionRitualState.NotStarted));
+
+            // The later slot starts first, so it has the higher progress when the lower slot starts.
+            InteractionResult secondResult = default;
+            yield return Execute(runner => secondResult = sanctuary.Interact(
+                new InteractionRequest(secondId, sanctuary.Id, runner.Tick)));
+            Assert.That(secondResult.Success, Is.True);
+            Assert.That(sanctuary.TryGetRitualProgress(out ExtractionRitualSnapshot onlySecondRunning), Is.True);
+            Assert.That(onlySecondRunning.State, Is.EqualTo(ExtractionRitualState.InProgress),
+                "A running ritual in a later slot lights the aggregate while the lower slot is idle.");
+
+            float deadline = Time.realtimeSinceStartup + 0.3f;
+            while (Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+            }
+
+            InteractionResult firstResult = default;
+            yield return Execute(runner => firstResult = sanctuary.Interact(
+                new InteractionRequest(firstId, sanctuary.Id, runner.Tick)));
+            Assert.That(firstResult.Success, Is.True);
+
+            Assert.That(sanctuary.TryGetRitualProgress(firstTeam, out ExtractionRitualSnapshot first), Is.True);
+            Assert.That(sanctuary.TryGetRitualProgress(secondTeam, out ExtractionRitualSnapshot second), Is.True);
+            Assert.That(sanctuary.TryGetRitualProgress(out ExtractionRitualSnapshot aggregate), Is.True);
+            Assert.That(first.State, Is.EqualTo(ExtractionRitualState.InProgress));
+            Assert.That(second.State, Is.EqualTo(ExtractionRitualState.InProgress));
+            Assert.That(second.Progress, Is.GreaterThan(first.Progress),
+                "The team that started earlier has progressed further.");
+            Assert.That(aggregate.Progress, Is.EqualTo(second.Progress),
+                "The aggregate follows the running ritual with the highest progress, not the first slot.");
+            Assert.That(aggregate.Progress, Is.GreaterThan(first.Progress));
         }
 
         [UnityTest]
