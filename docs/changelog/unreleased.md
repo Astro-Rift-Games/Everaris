@@ -4,32 +4,215 @@
 
 Release: Unreleased
 
-391 original commits; 391 canonical entries.
+394 original commits; 394 canonical entries.
 
 ## Canonical classification
 
-141 features; 119 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 12 maintenance; 24 other changes
+143 features; 120 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 12 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 17 | 13 | 1 | 0 | 10 | 1 |
 | Art & Animation | 31 | 14 | 3 | 0 | 9 | 8 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 1 |
-| Build & Tooling | 96 | 78 | 4 | 1 | 28 | 7 |
+| Build & Tooling | 98 | 78 | 4 | 1 | 28 | 7 |
 | Combat | 56 | 26 | 2 | 0 | 18 | 2 |
-| Documentation | 41 | 45 | 0 | 0 | 22 | 2 |
-| Extraction | 20 | 22 | 2 | 0 | 10 | 5 |
+| Documentation | 43 | 46 | 0 | 0 | 22 | 2 |
+| Extraction | 22 | 23 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
-| Inventory & Loot | 87 | 64 | 4 | 1 | 29 | 5 |
+| Inventory & Loot | 87 | 65 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
 | Networking & Sessions | 45 | 45 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 55 | 57 | 2 | 1 | 24 | 4 |
-| Tests | 128 | 109 | 4 | 1 | 38 | 4 |
-| UI | 46 | 23 | 2 | 0 | 14 | 6 |
+| Tests | 130 | 110 | 4 | 1 | 38 | 4 |
+| UI | 46 | 24 | 2 | 0 | 14 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 28 | 2 |
-| World & Visibility | 37 | 20 | 1 | 0 | 4 | 13 |
+| World & Visibility | 37 | 21 | 1 | 0 | 4 | 13 |
 
 ## Original commit records
+
+### e4b98eb2bf47c9dd6d8b5216711639f64851c2ec
+
+[e4b98eb2bf47c9dd6d8b5216711639f64851c2ec](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e4b98eb2bf47c9dd6d8b5216711639f64851c2ec)
+
+Date: 2026-11-25T00:56:26-03:00 · Classification: Features (explicit) · Systems: Extraction, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(extraction): light shared Sanctuaries for any team's ritual
+```
+
+#### Original body
+
+```text
+On a shared Sanctuary the world glow and the ritual start/completion
+cues followed only the first assigned team, so a rival (or an idle
+assigned team) saw nothing while another team performed its ritual.
+Per the owner decision for TASK-334, any team's ritual now lights the
+world, while each assigned team keeps seeing only its own progress.
+
+- ExtractionSanctuary.TryGetRitualProgress(out) is a slot-order
+  independent aggregate: the running ritual with the highest progress,
+  otherwise a completed ritual, otherwise the first assigned slot; false
+  when no team is assigned. On a single-team Sanctuary it returns exactly
+  that team's snapshot, so the no-team HUD and minimap fallbacks that
+  read it behave as before.
+- ExtractionSanctuaryPresenter.ResolveWorldSnapshot drives the world
+  from the local team's own ritual while it is in progress or completed,
+  and from the aggregate otherwise. The cancellation, assigned and
+  reservation signals stay private to the own team and ritual.
+
+Tests:
+- TeamSanctuaryTests: six PublicAggregate_* cases, including
+  single-team equality in every ritual state.
+- TeamExtractionPresentationTests: cue resolution and world snapshot
+  source for idle, rival and running viewers.
+- ExtractionSanctuaryPrefabTests: reflection helper updated to the new
+  cue signature.
+- ExtractionProgressPlayModeTests: aggregate picks the most advanced
+  running ritual regardless of slot order.
+
+Docs: ExtractionArchitecture.md presentation section; tracker
+odd/tasks/task-334-shared-sanctuary.md.
+
+Refs: TASK-334
+Player-Improved: A shared Extraction Sanctuary now lights up and plays its ritual sounds whenever any team performs or completes a ritual there.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Core/IExtractionSanctuary.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuary.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryPresenter.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionPresentationTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamSanctuaryTests.cs
+Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+odd/tasks/task-334-shared-sanctuary.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuary.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryPresenter.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionPresentationTests.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs
+- path → Extraction: Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- scope → Extraction: extraction
+- message-term → Extraction: extraction
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionPresentationTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamSanctuaryTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionPresentationTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamSanctuaryTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 6f705867897b65295961db3c9be1c43433d6dd8e
+
+[6f705867897b65295961db3c9be1c43433d6dd8e](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6f705867897b65295961db3c9be1c43433d6dd8e)
+
+Date: 2026-11-25T00:55:02-03:00 · Classification: Features (explicit) · Systems: Extraction, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(extraction): allow several teams to share one Sanctuary
+```
+
+#### Original body
+
+```text
+Sanctuary assignment no longer excludes Sanctuaries already assigned to
+another team, as Doc 10 section 8 defines ("Varios equipos pueden recibir
+simultaneamente el mismo Santuario"). The owner decided on 2026-11-22
+that the newer Doc 10 governs over Doc 06 section 10, which still states
+exclusivity and is pending its Game Design fix.
+
+- ExtractionSanctuary.TryAssignTeam gives each new team its own
+  replicated slot instead of rejecting a reserved Sanctuary.
+- ExtractionSanctuaryAssignmentService.TryAssign selects over every
+  registered Sanctuary in ascending identity order with the unchanged
+  SanctuarySelectionPolicy; NoFreeSanctuary is no longer produced (the
+  enum member is kept).
+- Rituals, countdowns, cancellation and extraction stay per team; no
+  cross-team defect was found.
+- CopyStateFrom skips the Fusion base copy only for unspawned EditMode
+  instances (UNITY_EDITOR), matching TeamExtractionProgress; the spawned
+  and player-build path is unchanged.
+
+Tests:
+- TeamSanctuaryTests: several teams per Sanctuary, independent rituals,
+  Duo members share the assignment, shared slots restored by
+  CopyStateFrom.
+- SanctuaryAssignmentTests: shared Sanctuary resolves for each team.
+- TeamExtractionCoordinatorTests: four SharedSanctuary_* cases for
+  concurrent countdowns, completion, cancellation and gating.
+- ExtractionProgressPlayModeTests: colliding selection shares the
+  Sanctuary deterministically, more teams than Sanctuaries share it,
+  concurrent rituals on a real Sanctuary and zone.
+
+Docs: ExtractionArchitecture.md, IExtractionSanctuary, TeamSanctuarySlot
+and SanctuaryAssignmentFailureReason describe the shared rule.
+
+Refs: TASK-334
+Player-Improved: Several teams can now be sent to the same Extraction Sanctuary and each can complete its own ritual and extract there without interrupting the others.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Core/IExtractionSanctuary.cs
+Project Grimhold/Assets/Scripts/Core/SanctuaryAssignmentFailureReason.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuary.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryAssignmentService.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamSanctuarySlot.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/SanctuaryAssignmentTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamSanctuaryTests.cs
+Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuary.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryAssignmentService.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamSanctuarySlot.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs
+- path → Extraction: Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- scope → Extraction: extraction
+- message-term → Extraction: extraction
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/SanctuaryAssignmentTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamSanctuaryTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/SanctuaryAssignmentTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamSanctuaryTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 7e7fc9a00b342de929cc93261d7f6938d654d5b6
 
@@ -1773,6 +1956,90 @@ Project Grimhold/logRunSetup.txt
 #### Diagnostics
 
 - **ambiguous-kind:** No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages.
+
+### b3263b044ba122ef31a9ea034a0767bb63561ca2
+
+[b3263b044ba122ef31a9ea034a0767bb63561ca2](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/b3263b044ba122ef31a9ea034a0767bb63561ca2)
+
+Date: 2026-11-25T01:51:48-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Inventory & Loot, UI, World & Visibility, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(extraction): stop loot from granting Expedition Progress
+```
+
+#### Original body
+
+```text
+GD 06 section 6 defines only three Expedition Progress sources:
+creature defeat, first valid container open and definitive enemy
+player defeat. Picking up, transferring or owning loot (treasures
+included) no longer contributes progress, in world pickups and in
+withdrawals through the transfer controller.
+
+- NetworkLootPickup and PlayerLootTransferNetworkController drop the
+  progress contribution; loot provenance and first-acquisition
+  eligibility (used by contracts), the mission ledger and treasure
+  instability are unchanged.
+- PlayerLootTransferNetworkController no longer depends on
+  PlayerExtractionProgressController.
+- ExtractionProgressSourceType.LootFirstAcquisition (3) is retired
+  without renumbering; the enum is not serialized.
+- Quota values and the other sources are unchanged. The team progress
+  snapshot holds only the summed total, so Host Migration restores no
+  loot contribution.
+
+Tests:
+- Pickups_NaturalLootAndTreasureNeverContributeExpeditionProgress
+  replaces the pickup progress test.
+- ContainerWithdrawal_ThroughTransferControllerNeverContributes-
+  ExpeditionProgress covers the transfer controller path.
+- Test fillers moved from LootFirstAcquisition to valid sources.
+
+Docs: LootInteractionArchitecture.md no longer lists loot as a
+progress source.
+
+Refs: TASK-333
+Player-Fixed: Picking up loot or treasures no longer fills the extraction quota; only defeating enemies, opening chests and defeating rival players do.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Core/ExtractionProgressSourceType.cs
+Project Grimhold/Assets/Scripts/Gameplay/NetworkLootPickup.cs
+Project Grimhold/Assets/Scripts/Player/Interaction/PlayerLootTransferNetworkController.cs
+Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs
+Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapVisibilityPlayModeTests.cs
+Project Grimhold/Docs/Architecture/LootInteractionArchitecture.md
+odd/tasks/task-333-loot-no-expedition-progress.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Assets/Scripts/Core/ExtractionProgressSourceType.cs
+- path → Extraction: Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs
+- scope → Extraction: extraction
+- message-term → Extraction: extraction
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Gameplay/NetworkLootPickup.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Interaction/PlayerLootTransferNetworkController.cs
+- path → Inventory &amp; Loot: Project Grimhold/Docs/Architecture/LootInteractionArchitecture.md
+- path → Inventory &amp; Loot: odd/tasks/task-333-loot-no-expedition-progress.md
+- message-term → Inventory &amp; Loot: loot
+- path → UI: Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapVisibilityPlayModeTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapVisibilityPlayModeTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/LootInteractionArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapVisibilityPlayModeTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 16d4e85e4831724e39b75aaab7018e5099060b70
 

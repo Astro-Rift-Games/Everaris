@@ -1,72 +1,72 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1268,
-  "canonicalEntries": 1265,
+  "rawCommits": 1271,
+  "canonicalEntries": 1268,
   "before": {
+    "Features": 464,
     "Other Changes": 379,
+    "Bug Fixes": 198,
     "Documentation": 138,
-    "Features": 462,
     "Tests": 50,
     "Architecture & Infrastructure": 25,
-    "Bug Fixes": 197,
     "Refactoring": 17
   },
   "after": {
+    "Features": 603,
     "Other Changes": 186,
+    "Bug Fixes": 214,
     "Documentation": 154,
-    "Features": 601,
     "Tests": 55,
     "Maintenance": 23,
-    "Bug Fixes": 213,
     "Refactoring": 30,
     "Architecture & Infrastructure": 6
   },
   "systemCountsOverlap": true,
   "systems": {
-    "UI": 360,
+    "Extraction": 181,
+    "Build & Tooling": 657,
+    "Documentation": 456,
+    "Tests": 808,
+    "UI": 361,
     "Movement": 109,
-    "World & Visibility": 185,
+    "World & Visibility": 186,
     "Persistence & Backend": 328,
     "Audio": 43,
     "Input": 33,
-    "Build & Tooling": 655,
-    "Documentation": 453,
-    "Tests": 805,
+    "Inventory & Loot": 507,
     "Networking & Sessions": 367,
     "Combat": 420,
-    "Inventory & Loot": 506,
     "Unassigned": 52,
     "Art & Animation": 275,
-    "Extraction": 178,
     "Abilities": 146
   },
   "canonical": {
     "sections": {
+      "Features": 602,
       "Other Changes": 185,
+      "Bug Fixes": 213,
       "Documentation": 154,
-      "Features": 600,
       "Tests": 55,
       "Maintenance": 23,
-      "Bug Fixes": 212,
       "Refactoring": 30,
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "UI": 359,
+      "Extraction": 181,
+      "Build & Tooling": 655,
+      "Documentation": 454,
+      "Tests": 806,
+      "UI": 360,
       "Movement": 109,
-      "World & Visibility": 183,
+      "World & Visibility": 184,
       "Persistence & Backend": 328,
       "Audio": 43,
       "Input": 33,
-      "Build & Tooling": 653,
-      "Documentation": 451,
-      "Tests": 803,
+      "Inventory & Loot": 507,
       "Networking & Sessions": 367,
       "Combat": 418,
-      "Inventory & Loot": 506,
       "Unassigned": 52,
       "Art & Animation": 272,
-      "Extraction": 178,
       "Abilities": 144
     }
   },
@@ -78601,8 +78601,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 391,
-      "canonicalEntries": 391
+      "originalCommits": 394,
+      "canonicalEntries": 394
     },
     {
       "key": "v0.5.0",
@@ -78646,6 +78646,259 @@
     }
   ],
   "commits": [
+    {
+      "sha": "e4b98eb2bf47c9dd6d8b5216711639f64851c2ec",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/e4b98eb2bf47c9dd6d8b5216711639f64851c2ec",
+      "subject": "feat(extraction): light shared Sanctuaries for any team's ritual",
+      "body": "On a shared Sanctuary the world glow and the ritual start/completion\ncues followed only the first assigned team, so a rival (or an idle\nassigned team) saw nothing while another team performed its ritual.\nPer the owner decision for TASK-334, any team's ritual now lights the\nworld, while each assigned team keeps seeing only its own progress.\n\n- ExtractionSanctuary.TryGetRitualProgress(out) is a slot-order\n  independent aggregate: the running ritual with the highest progress,\n  otherwise a completed ritual, otherwise the first assigned slot; false\n  when no team is assigned. On a single-team Sanctuary it returns exactly\n  that team's snapshot, so the no-team HUD and minimap fallbacks that\n  read it behave as before.\n- ExtractionSanctuaryPresenter.ResolveWorldSnapshot drives the world\n  from the local team's own ritual while it is in progress or completed,\n  and from the aggregate otherwise. The cancellation, assigned and\n  reservation signals stay private to the own team and ritual.\n\nTests:\n- TeamSanctuaryTests: six PublicAggregate_* cases, including\n  single-team equality in every ritual state.\n- TeamExtractionPresentationTests: cue resolution and world snapshot\n  source for idle, rival and running viewers.\n- ExtractionSanctuaryPrefabTests: reflection helper updated to the new\n  cue signature.\n- ExtractionProgressPlayModeTests: aggregate picks the most advanced\n  running ritual regardless of slot order.\n\nDocs: ExtractionArchitecture.md presentation section; tracker\nodd/tasks/task-334-shared-sanctuary.md.\n\nRefs: TASK-334\nPlayer-Improved: A shared Extraction Sanctuary now lights up and plays its ritual sounds whenever any team performs or completes a ritual there.\n",
+      "date": "2026-11-25T00:56:26-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Core/IExtractionSanctuary.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuary.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryPresenter.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionPresentationTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamSanctuaryTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs",
+        "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+        "odd/tasks/task-334-shared-sanctuary.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "extraction",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuary.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryPresenter.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionPresentationTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Extraction"
+        },
+        {
+          "source": "scope",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionPresentationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamSanctuaryTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionPresentationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionSanctuaryPrefabTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamSanctuaryTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "6f705867897b65295961db3c9be1c43433d6dd8e",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6f705867897b65295961db3c9be1c43433d6dd8e",
+      "subject": "feat(extraction): allow several teams to share one Sanctuary",
+      "body": "Sanctuary assignment no longer excludes Sanctuaries already assigned to\nanother team, as Doc 10 section 8 defines (\"Varios equipos pueden recibir\nsimultaneamente el mismo Santuario\"). The owner decided on 2026-11-22\nthat the newer Doc 10 governs over Doc 06 section 10, which still states\nexclusivity and is pending its Game Design fix.\n\n- ExtractionSanctuary.TryAssignTeam gives each new team its own\n  replicated slot instead of rejecting a reserved Sanctuary.\n- ExtractionSanctuaryAssignmentService.TryAssign selects over every\n  registered Sanctuary in ascending identity order with the unchanged\n  SanctuarySelectionPolicy; NoFreeSanctuary is no longer produced (the\n  enum member is kept).\n- Rituals, countdowns, cancellation and extraction stay per team; no\n  cross-team defect was found.\n- CopyStateFrom skips the Fusion base copy only for unspawned EditMode\n  instances (UNITY_EDITOR), matching TeamExtractionProgress; the spawned\n  and player-build path is unchanged.\n\nTests:\n- TeamSanctuaryTests: several teams per Sanctuary, independent rituals,\n  Duo members share the assignment, shared slots restored by\n  CopyStateFrom.\n- SanctuaryAssignmentTests: shared Sanctuary resolves for each team.\n- TeamExtractionCoordinatorTests: four SharedSanctuary_* cases for\n  concurrent countdowns, completion, cancellation and gating.\n- ExtractionProgressPlayModeTests: colliding selection shares the\n  Sanctuary deterministically, more teams than Sanctuaries share it,\n  concurrent rituals on a real Sanctuary and zone.\n\nDocs: ExtractionArchitecture.md, IExtractionSanctuary, TeamSanctuarySlot\nand SanctuaryAssignmentFailureReason describe the shared rule.\n\nRefs: TASK-334\nPlayer-Improved: Several teams can now be sent to the same Extraction Sanctuary and each can complete its own ritual and extract there without interrupting the others.\n",
+      "date": "2026-11-25T00:55:02-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Core/IExtractionSanctuary.cs",
+        "Project Grimhold/Assets/Scripts/Core/SanctuaryAssignmentFailureReason.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuary.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryAssignmentService.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamSanctuarySlot.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/SanctuaryAssignmentTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamSanctuaryTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs",
+        "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "extraction",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuary.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionSanctuaryAssignmentService.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamSanctuarySlot.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Extraction"
+        },
+        {
+          "source": "scope",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/SanctuaryAssignmentTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamSanctuaryTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/SanctuaryAssignmentTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamSanctuaryTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "7e7fc9a00b342de929cc93261d7f6938d654d5b6",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7e7fc9a00b342de929cc93261d7f6938d654d5b6",
@@ -82519,6 +82772,122 @@
           "message": "No supported explicit type or anchored historical action. Inspect this commit diff; use an action and object or a Conventional Commit type in future messages."
         }
       ],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "b3263b044ba122ef31a9ea034a0767bb63561ca2",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/b3263b044ba122ef31a9ea034a0767bb63561ca2",
+      "subject": "fix(extraction): stop loot from granting Expedition Progress",
+      "body": "GD 06 section 6 defines only three Expedition Progress sources:\ncreature defeat, first valid container open and definitive enemy\nplayer defeat. Picking up, transferring or owning loot (treasures\nincluded) no longer contributes progress, in world pickups and in\nwithdrawals through the transfer controller.\n\n- NetworkLootPickup and PlayerLootTransferNetworkController drop the\n  progress contribution; loot provenance and first-acquisition\n  eligibility (used by contracts), the mission ledger and treasure\n  instability are unchanged.\n- PlayerLootTransferNetworkController no longer depends on\n  PlayerExtractionProgressController.\n- ExtractionProgressSourceType.LootFirstAcquisition (3) is retired\n  without renumbering; the enum is not serialized.\n- Quota values and the other sources are unchanged. The team progress\n  snapshot holds only the summed total, so Host Migration restores no\n  loot contribution.\n\nTests:\n- Pickups_NaturalLootAndTreasureNeverContributeExpeditionProgress\n  replaces the pickup progress test.\n- ContainerWithdrawal_ThroughTransferControllerNeverContributes-\n  ExpeditionProgress covers the transfer controller path.\n- Test fillers moved from LootFirstAcquisition to valid sources.\n\nDocs: LootInteractionArchitecture.md no longer lists loot as a\nprogress source.\n\nRefs: TASK-333\nPlayer-Fixed: Picking up loot or treasures no longer fills the extraction quota; only defeating enemies, opening chests and defeating rival players do.\n",
+      "date": "2026-11-25T01:51:48-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Core/ExtractionProgressSourceType.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/NetworkLootPickup.cs",
+        "Project Grimhold/Assets/Scripts/Player/Interaction/PlayerLootTransferNetworkController.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapVisibilityPlayModeTests.cs",
+        "Project Grimhold/Docs/Architecture/LootInteractionArchitecture.md",
+        "odd/tasks/task-333-loot-no-expedition-progress.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "extraction",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Inventory & Loot",
+        "UI",
+        "World & Visibility",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Core/ExtractionProgressSourceType.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "scope",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/NetworkLootPickup.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Interaction/PlayerLootTransferNetworkController.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/LootInteractionArchitecture.md",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/task-333-loot-no-expedition-progress.md",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "loot",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapVisibilityPlayModeTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapVisibilityPlayModeTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/LootInteractionArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/ExtractionProgressPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapVisibilityPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
       "generic": false,
       "secondary": false
     },

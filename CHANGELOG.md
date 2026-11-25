@@ -83,6 +83,8 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Enemy melee and ranged attacks now show clear anticipation cues before striking or firing.
 - Weekly merchant demand now prioritizes items that were not featured during the previous week.
 - Gold rewards from claiming guild contracts are now persisted authoritatively to your character.
+- Several teams can now be sent to the same Extraction Sanctuary and each can complete its own ritual and extract there without interrupting the others.
+- A shared Extraction Sanctuary now lights up and plays its ritual sounds whenever any team performs or completes a ritual there.
 
 ### Fixed
 
@@ -161,6 +163,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Enemies no longer see or attack through solid walls, get blocked in 1-tile corridors, or ignore closed doors.
 - The Catacombs Specter now navigates around walls during pursuit and reliably fades back to its home area instead of freezing after its first leash.
 - Enemies can no longer stop attacking permanently when their animations are interrupted or off-screen.
+- Picking up loot or treasures no longer fills the extraction quota; only defeating enemies, opening chests and defeating rival players do.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08
