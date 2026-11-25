@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1276,
-  "canonicalEntries": 1273,
+  "rawCommits": 1277,
+  "canonicalEntries": 1274,
   "before": {
+    "Features": 465,
     "Architecture & Infrastructure": 30,
-    "Features": 464,
     "Other Changes": 379,
     "Bug Fixes": 198,
     "Documentation": 138,
@@ -12,8 +12,8 @@
     "Refactoring": 17
   },
   "after": {
+    "Features": 604,
     "Maintenance": 28,
-    "Features": 603,
     "Other Changes": 186,
     "Bug Fixes": 214,
     "Documentation": 154,
@@ -23,27 +23,27 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Build & Tooling": 659,
+    "Abilities": 147,
+    "Extraction": 182,
+    "Inventory & Loot": 508,
+    "Build & Tooling": 660,
+    "Documentation": 457,
+    "Tests": 811,
     "UI": 365,
     "World & Visibility": 187,
     "Art & Animation": 277,
-    "Tests": 810,
     "Combat": 421,
     "Persistence & Backend": 329,
-    "Extraction": 181,
-    "Documentation": 456,
     "Movement": 109,
     "Audio": 43,
     "Input": 33,
-    "Inventory & Loot": 507,
     "Networking & Sessions": 367,
-    "Unassigned": 52,
-    "Abilities": 146
+    "Unassigned": 52
   },
   "canonical": {
     "sections": {
+      "Features": 603,
       "Maintenance": 28,
-      "Features": 602,
       "Other Changes": 185,
       "Bug Fixes": 213,
       "Documentation": 154,
@@ -52,22 +52,22 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Build & Tooling": 657,
+      "Abilities": 145,
+      "Extraction": 182,
+      "Inventory & Loot": 508,
+      "Build & Tooling": 658,
+      "Documentation": 455,
+      "Tests": 809,
       "UI": 364,
       "World & Visibility": 185,
       "Art & Animation": 274,
-      "Tests": 808,
       "Combat": 419,
       "Persistence & Backend": 329,
-      "Extraction": 181,
-      "Documentation": 454,
       "Movement": 109,
       "Audio": 43,
       "Input": 33,
-      "Inventory & Loot": 507,
       "Networking & Sessions": 367,
-      "Unassigned": 52,
-      "Abilities": 144
+      "Unassigned": 52
     }
   },
   "unknownEntries": [
@@ -78601,8 +78601,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 399,
-      "canonicalEntries": 399
+      "originalCommits": 400,
+      "canonicalEntries": 400
     },
     {
       "key": "v0.5.0",
@@ -78646,6 +78646,230 @@
     }
   ],
   "commits": [
+    {
+      "sha": "7584c9fa0d04ff44edae56909924ebf034457d6d",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7584c9fa0d04ff44edae56909924ebf034457d6d",
+      "subject": "feat(gameplay): make Chaos Coin chance and utility cooldowns tunable",
+      "body": "Keep the original 20% chance and 30s/20s cooldowns. Remove unused\nextraction policy flags and document the mandatory rules.\n\nCover configured loot odds and authoritative utility timers in tests.\n\nRefs: TASK-331\n",
+      "date": "2026-11-25T14:38:53-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scriptable Objects/ExtractionConfig.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/UTL_ARCANE_DETECTOR.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/UTL_RUNE_COMPASS.asset",
+        "Project Grimhold/Assets/Scriptable Objects/Loot/Tables/DefaultLootContainerContentTable.asset",
+        "Project Grimhold/Assets/Scripts/Gameplay/LootContainerContentRoller.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/LootContainerContentTable.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/LootContainerContentTableValidation.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/ValidatedLootContainerContentSnapshot.cs",
+        "Project Grimhold/Assets/Scripts/Loot/LootDefinition.cs",
+        "Project Grimhold/Assets/Scripts/Player/Interaction/PlayerConsumableNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionConfig.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ChaosCoinRollerTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionConfigTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Utilities/UtilityExpeditionRulesTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/UtilityExpeditionPlayModeTests.cs",
+        "Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md",
+        "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+        "odd/tasks/task-331-configurable-design-values.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "gameplay",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Abilities",
+        "Extraction",
+        "Inventory & Loot",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Utilities/UtilityExpeditionRulesTests.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/UtilityExpeditionPlayModeTests.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/ExtractionConfig.asset",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionConfig.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionConfigTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/UTL_ARCANE_DETECTOR.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/UTL_RUNE_COMPASS.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scriptable Objects/Loot/Tables/DefaultLootContainerContentTable.asset",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/LootContainerContentRoller.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/LootContainerContentTable.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/LootContainerContentTableValidation.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/ValidatedLootContainerContentSnapshot.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Loot/LootDefinition.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Interaction/PlayerConsumableNetworkController.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ChaosCoinRollerTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "loot",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ChaosCoinRollerTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionConfigTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Utilities/UtilityExpeditionRulesTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ChaosCoinRollerTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionConfigTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Utilities/UtilityExpeditionRulesTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/UtilityExpeditionPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "1df5fda515160e88667f4515f6524b8d9b69c0ce",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/1df5fda515160e88667f4515f6524b8d9b69c0ce",

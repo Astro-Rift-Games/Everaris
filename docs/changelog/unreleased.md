@@ -4,32 +4,124 @@
 
 Release: Unreleased
 
-399 original commits; 399 canonical entries.
+400 original commits; 400 canonical entries.
 
 ## Canonical classification
 
-143 features; 120 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 17 maintenance; 24 other changes
+144 features; 120 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 17 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Abilities | 17 | 13 | 1 | 0 | 10 | 1 |
+| Abilities | 18 | 13 | 1 | 0 | 10 | 1 |
 | Art & Animation | 31 | 14 | 3 | 0 | 11 | 8 |
 | Audio | 8 | 2 | 0 | 0 | 2 | 1 |
-| Build & Tooling | 98 | 78 | 4 | 1 | 30 | 7 |
+| Build & Tooling | 99 | 78 | 4 | 1 | 30 | 7 |
 | Combat | 56 | 26 | 2 | 0 | 19 | 2 |
-| Documentation | 43 | 46 | 0 | 0 | 22 | 2 |
-| Extraction | 22 | 23 | 2 | 0 | 10 | 5 |
+| Documentation | 44 | 46 | 0 | 0 | 22 | 2 |
+| Extraction | 23 | 23 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
-| Inventory & Loot | 87 | 65 | 4 | 1 | 29 | 5 |
+| Inventory & Loot | 88 | 65 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
 | Networking & Sessions | 45 | 45 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 55 | 57 | 2 | 1 | 25 | 4 |
-| Tests | 130 | 110 | 4 | 1 | 40 | 4 |
+| Tests | 131 | 110 | 4 | 1 | 40 | 4 |
 | UI | 46 | 24 | 2 | 0 | 18 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 28 | 2 |
 | World & Visibility | 37 | 21 | 1 | 0 | 5 | 13 |
 
 ## Original commit records
+
+### 7584c9fa0d04ff44edae56909924ebf034457d6d
+
+[7584c9fa0d04ff44edae56909924ebf034457d6d](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7584c9fa0d04ff44edae56909924ebf034457d6d)
+
+Date: 2026-11-25T14:38:53-03:00 · Classification: Features (explicit) · Systems: Abilities, Extraction, Inventory & Loot, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(gameplay): make Chaos Coin chance and utility cooldowns tunable
+```
+
+#### Original body
+
+```text
+Keep the original 20% chance and 30s/20s cooldowns. Remove unused
+extraction policy flags and document the mandatory rules.
+
+Cover configured loot odds and authoritative utility timers in tests.
+
+Refs: TASK-331
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scriptable Objects/ExtractionConfig.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/UTL_ARCANE_DETECTOR.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/UTL_RUNE_COMPASS.asset
+Project Grimhold/Assets/Scriptable Objects/Loot/Tables/DefaultLootContainerContentTable.asset
+Project Grimhold/Assets/Scripts/Gameplay/LootContainerContentRoller.cs
+Project Grimhold/Assets/Scripts/Gameplay/LootContainerContentTable.cs
+Project Grimhold/Assets/Scripts/Gameplay/LootContainerContentTableValidation.cs
+Project Grimhold/Assets/Scripts/Gameplay/ValidatedLootContainerContentSnapshot.cs
+Project Grimhold/Assets/Scripts/Loot/LootDefinition.cs
+Project Grimhold/Assets/Scripts/Player/Interaction/PlayerConsumableNetworkController.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionConfig.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ChaosCoinRollerTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionConfigTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Utilities/UtilityExpeditionRulesTests.cs
+Project Grimhold/Assets/Tests/PlayMode/UtilityExpeditionPlayModeTests.cs
+Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+odd/tasks/task-331-configurable-design-values.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Abilities: Project Grimhold/Assets/Tests/EditMode/Editor/Utilities/UtilityExpeditionRulesTests.cs
+- path → Abilities: Project Grimhold/Assets/Tests/PlayMode/UtilityExpeditionPlayModeTests.cs
+- path → Extraction: Project Grimhold/Assets/Scriptable Objects/ExtractionConfig.asset
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/ExtractionConfig.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionConfigTests.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- message-term → Extraction: extraction
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/UTL\_ARCANE\_DETECTOR.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Definitions/UTL\_RUNE\_COMPASS.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scriptable Objects/Loot/Tables/DefaultLootContainerContentTable.asset
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Gameplay/LootContainerContentRoller.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Gameplay/LootContainerContentTable.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Gameplay/LootContainerContentTableValidation.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Gameplay/ValidatedLootContainerContentSnapshot.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Loot/LootDefinition.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Interaction/PlayerConsumableNetworkController.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ChaosCoinRollerTests.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs
+- message-term → Inventory &amp; Loot: loot
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ChaosCoinRollerTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionConfigTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Utilities/UtilityExpeditionRulesTests.cs
+- path → Documentation: Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/ChaosCoinRollerTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Loot/LootDefinitionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/ExtractionConfigTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Utilities/UtilityExpeditionRulesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/UtilityExpeditionPlayModeTests.cs
+- message-term → Tests: tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 1df5fda515160e88667f4515f6524b8d9b69c0ce
 
