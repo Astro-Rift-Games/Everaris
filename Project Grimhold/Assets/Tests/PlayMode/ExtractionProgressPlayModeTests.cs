@@ -793,6 +793,66 @@ namespace Tests.PlayMode.Extraction
         }
 
         [UnityTest]
+        public IEnumerator SharedSanctuary_PublicAggregateReportsTheRunningRitualWithHighestProgressWhateverTheSlotOrder()
+        {
+            yield return ComposeTeamProgress(CreateTwoTeamLaunch());
+            NetworkObject sanctuaryObject = SpawnRitualSanctuary(Vector3.zero, 30f);
+            NetworkObject firstObject = SpawnAffiliatedPlayer(FirstTeamProfile, Vector3.zero);
+            NetworkObject secondObject = SpawnAffiliatedPlayer(SecondTeamProfile, new Vector3(0.2f, 0f, 0f));
+            ExtractionSanctuary sanctuary = sanctuaryObject.GetComponent<ExtractionSanctuary>();
+            EntityId firstId = firstObject.GetComponent<PlayerCharacter>().Id;
+            EntityId secondId = secondObject.GetComponent<PlayerCharacter>().Id;
+            PlayerExtractionProgressController firstProgress =
+                firstObject.GetComponent<PlayerExtractionProgressController>();
+            PlayerExtractionProgressController secondProgress =
+                secondObject.GetComponent<PlayerExtractionProgressController>();
+
+            // The first team takes the lower slot; the second team takes the later one.
+            yield return Execute(runner =>
+            {
+                Assert.That(firstProgress.TryApplyContribution(new ExtractionProgressContribution(
+                    ExtractionProgressSourceType.Defeat, new EntityId(8301), long.MaxValue, runner.Tick)), Is.True);
+                Assert.That(secondProgress.TryApplyContribution(new ExtractionProgressContribution(
+                    ExtractionProgressSourceType.Defeat, new EntityId(8302), long.MaxValue, runner.Tick)), Is.True);
+            });
+            Assert.That(firstProgress.TryGetTeamId(out RaidTeamId firstTeam), Is.True);
+            Assert.That(secondProgress.TryGetTeamId(out RaidTeamId secondTeam), Is.True);
+            Assert.That(sanctuary.TryGetRitualProgress(out ExtractionRitualSnapshot idle), Is.True);
+            Assert.That(idle.State, Is.EqualTo(ExtractionRitualState.NotStarted));
+
+            // The later slot starts first, so it has the higher progress when the lower slot starts.
+            InteractionResult secondResult = default;
+            yield return Execute(runner => secondResult = sanctuary.Interact(
+                new InteractionRequest(secondId, sanctuary.Id, runner.Tick)));
+            Assert.That(secondResult.Success, Is.True);
+            Assert.That(sanctuary.TryGetRitualProgress(out ExtractionRitualSnapshot onlySecondRunning), Is.True);
+            Assert.That(onlySecondRunning.State, Is.EqualTo(ExtractionRitualState.InProgress),
+                "A running ritual in a later slot lights the aggregate while the lower slot is idle.");
+
+            float deadline = Time.realtimeSinceStartup + 0.3f;
+            while (Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+            }
+
+            InteractionResult firstResult = default;
+            yield return Execute(runner => firstResult = sanctuary.Interact(
+                new InteractionRequest(firstId, sanctuary.Id, runner.Tick)));
+            Assert.That(firstResult.Success, Is.True);
+
+            Assert.That(sanctuary.TryGetRitualProgress(firstTeam, out ExtractionRitualSnapshot first), Is.True);
+            Assert.That(sanctuary.TryGetRitualProgress(secondTeam, out ExtractionRitualSnapshot second), Is.True);
+            Assert.That(sanctuary.TryGetRitualProgress(out ExtractionRitualSnapshot aggregate), Is.True);
+            Assert.That(first.State, Is.EqualTo(ExtractionRitualState.InProgress));
+            Assert.That(second.State, Is.EqualTo(ExtractionRitualState.InProgress));
+            Assert.That(second.Progress, Is.GreaterThan(first.Progress),
+                "The team that started earlier has progressed further.");
+            Assert.That(aggregate.Progress, Is.EqualTo(second.Progress),
+                "The aggregate follows the running ritual with the highest progress, not the first slot.");
+            Assert.That(aggregate.Progress, Is.GreaterThan(first.Progress));
+        }
+
+        [UnityTest]
         public IEnumerator Ritual_DefeatedOwnerCancelsTerminallyAndCannotRestart()
         {
             yield return ComposeTeamProgress(CreateTwoTeamLaunch());

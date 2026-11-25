@@ -338,6 +338,90 @@ namespace Tests.EditMode.Scenario
             }
         }
 
+        [Test]
+        public void PublicAggregate_IdleLowerSlotAndRunningLaterSlot_ReportsTheRunningRitual()
+        {
+            Assert.That(RaidTeamId.TryCreate(1, out RaidTeamId idleTeam), Is.True);
+            Assert.That(RaidTeamId.TryCreate(2, out RaidTeamId runningTeam), Is.True);
+            Assert.That(_sanctuary.TryAssignTeam(idleTeam), Is.True);
+            Assert.That(_sanctuary.TryAssignTeam(runningTeam), Is.True);
+            SetRitualState(_sanctuary, runningTeam, ExtractionRitualState.InProgress);
+
+            Assert.That(_sanctuary.TryGetRitualProgress(out ExtractionRitualSnapshot aggregate), Is.True);
+            Assert.That(aggregate.State, Is.EqualTo(ExtractionRitualState.InProgress),
+                "Any team in ritual lights the shared Sanctuary for everyone (L4), whatever its slot order.");
+        }
+
+        [Test]
+        public void PublicAggregate_CompletedLowerSlotAndRunningLaterSlot_PrefersTheRunningRitual()
+        {
+            Assert.That(RaidTeamId.TryCreate(1, out RaidTeamId completedTeam), Is.True);
+            Assert.That(RaidTeamId.TryCreate(2, out RaidTeamId runningTeam), Is.True);
+            Assert.That(_sanctuary.TryAssignTeam(completedTeam), Is.True);
+            Assert.That(_sanctuary.TryAssignTeam(runningTeam), Is.True);
+            SetRitualState(_sanctuary, completedTeam, ExtractionRitualState.Completed);
+            SetRitualState(_sanctuary, runningTeam, ExtractionRitualState.InProgress);
+
+            Assert.That(_sanctuary.TryGetRitualProgress(out ExtractionRitualSnapshot aggregate), Is.True);
+            Assert.That(aggregate.State, Is.EqualTo(ExtractionRitualState.InProgress));
+        }
+
+        [Test]
+        public void PublicAggregate_IdleLowerSlotAndCompletedLaterSlot_ReportsCompleted()
+        {
+            Assert.That(RaidTeamId.TryCreate(1, out RaidTeamId idleTeam), Is.True);
+            Assert.That(RaidTeamId.TryCreate(2, out RaidTeamId completedTeam), Is.True);
+            Assert.That(_sanctuary.TryAssignTeam(idleTeam), Is.True);
+            Assert.That(_sanctuary.TryAssignTeam(completedTeam), Is.True);
+            SetRitualState(_sanctuary, completedTeam, ExtractionRitualState.Completed);
+
+            Assert.That(_sanctuary.TryGetRitualProgress(out ExtractionRitualSnapshot aggregate), Is.True);
+            Assert.That(aggregate.State, Is.EqualTo(ExtractionRitualState.Completed));
+            Assert.That(aggregate.Progress, Is.EqualTo(1f));
+        }
+
+        [Test]
+        public void PublicAggregate_NoRunningOrCompletedRitual_FallsBackToTheFirstAssignedSlot()
+        {
+            Assert.That(RaidTeamId.TryCreate(1, out RaidTeamId cancelledTeam), Is.True);
+            Assert.That(RaidTeamId.TryCreate(2, out RaidTeamId idleTeam), Is.True);
+            Assert.That(_sanctuary.TryAssignTeam(cancelledTeam), Is.True);
+            Assert.That(_sanctuary.TryAssignTeam(idleTeam), Is.True);
+            SetRitualState(_sanctuary, cancelledTeam, ExtractionRitualState.Cancelled);
+
+            Assert.That(_sanctuary.TryGetRitualProgress(out ExtractionRitualSnapshot aggregate), Is.True);
+            Assert.That(aggregate.State, Is.EqualTo(ExtractionRitualState.Cancelled));
+        }
+
+        [Test]
+        public void PublicAggregate_WithoutAssignedTeam_IsUnavailable()
+        {
+            Assert.That(_sanctuary.TryGetRitualProgress(out ExtractionRitualSnapshot aggregate), Is.False);
+            Assert.That(aggregate, Is.EqualTo(default(ExtractionRitualSnapshot)));
+        }
+
+        [Test]
+        public void PublicAggregate_SingleTeam_EqualsThatTeamSnapshotInEveryState()
+        {
+            Assert.That(RaidTeamId.TryCreate(1, out RaidTeamId team), Is.True);
+            Assert.That(_sanctuary.TryAssignTeam(team), Is.True);
+
+            foreach (ExtractionRitualState state in new[]
+            {
+                ExtractionRitualState.NotStarted,
+                ExtractionRitualState.InProgress,
+                ExtractionRitualState.Cancelled,
+                ExtractionRitualState.Completed
+            })
+            {
+                SetRitualState(_sanctuary, team, state);
+
+                Assert.That(_sanctuary.TryGetRitualProgress(team, out ExtractionRitualSnapshot own), Is.True, state.ToString());
+                Assert.That(_sanctuary.TryGetRitualProgress(out ExtractionRitualSnapshot aggregate), Is.True, state.ToString());
+                Assert.That(aggregate, Is.EqualTo(own), $"A single-team Sanctuary behaves as before in {state}.");
+            }
+        }
+
         private static void SetRitualState(ExtractionSanctuary sanctuary, RaidTeamId teamId, ExtractionRitualState state)
         {
             TeamSanctuarySlot[] slots = ReadSlots(sanctuary);

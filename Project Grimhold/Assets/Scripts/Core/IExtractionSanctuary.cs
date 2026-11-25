@@ -41,7 +41,10 @@ public interface IExtractionSanctuary : IEntity
     /// <summary>Legacy helper: returns whether the player's team can extract.</summary>
     bool CanUseExtraction(EntityId playerId);
 
-    /// <summary>Legacy helper: builds snapshot of ritual progress for the local team or first active.</summary>
+    /// <summary>
+    /// Public aggregate of the shared Sanctuary, independent of slot order: the running ritual with the highest progress,
+    /// otherwise a completed ritual, otherwise the first assigned slot's snapshot. False when no team is assigned.
+    /// </summary>
     bool TryGetRitualProgress(out ExtractionRitualSnapshot snapshot);
 
     /// <summary>Legacy helper: reserves this sanctuary for the player's team.</summary>

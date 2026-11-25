@@ -317,11 +317,16 @@ namespace Tests.EditMode.Scenario
                 "ResolveObservedCues",
                 BindingFlags.Static | BindingFlags.NonPublic);
             Assert.That(resolver, Is.Not.Null);
+            // Single-team view: the local owner's own ritual is the world signal; other viewers own nothing.
+            ExtractionRitualState previousOwnState = isLocalOwner ? previousState : ExtractionRitualState.NotStarted;
+            ExtractionRitualState currentOwnState = isLocalOwner ? currentState : ExtractionRitualState.NotStarted;
             object result = resolver.Invoke(null, new object[]
             {
                 hasPreviousSnapshot,
                 previousState,
                 currentState,
+                previousOwnState,
+                currentOwnState,
                 previouslyReserved,
                 currentlyReserved,
                 isLocalOwner

@@ -498,20 +498,55 @@ public sealed class ExtractionSanctuary : NetworkBehaviour, IExtractionSanctuary
         return false;
     }
 
+    /// <summary>
+    /// Public aggregate of the shared Sanctuary, independent of slot order: the running ritual with the highest
+    /// progress, otherwise a completed ritual, otherwise the first assigned slot's snapshot. False when no team is assigned.
+    /// </summary>
     public bool TryGetRitualProgress(out ExtractionRitualSnapshot snapshot)
     {
+        bool hasRunning = false;
+        bool hasCompleted = false;
+        bool hasFirst = false;
+        ExtractionRitualSnapshot running = default;
+        ExtractionRitualSnapshot completed = default;
+        ExtractionRitualSnapshot first = default;
+
         int capacity = GetSlotCapacity();
         for (int i = 0; i < capacity; i++)
         {
             TeamSanctuarySlot slot = GetSlot(i);
-            if (slot.IsAssigned)
+            if (!slot.IsAssigned || !TryGetRitualProgress(slot.TeamId, out ExtractionRitualSnapshot candidate))
             {
-                return TryGetRitualProgress(slot.TeamId, out snapshot);
+                continue;
+            }
+
+            if (!hasFirst)
+            {
+                hasFirst = true;
+                first = candidate;
+            }
+
+            switch (candidate.State)
+            {
+                case ExtractionRitualState.InProgress:
+                    if (!hasRunning || candidate.Progress > running.Progress)
+                    {
+                        hasRunning = true;
+                        running = candidate;
+                    }
+                    break;
+                case ExtractionRitualState.Completed:
+                    if (!hasCompleted)
+                    {
+                        hasCompleted = true;
+                        completed = candidate;
+                    }
+                    break;
             }
         }
 
-        snapshot = default;
-        return false;
+        snapshot = hasRunning ? running : hasCompleted ? completed : first;
+        return hasRunning || hasCompleted || hasFirst;
     }
 
     public bool TryReserve(EntityId playerId)

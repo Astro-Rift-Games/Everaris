@@ -47,7 +47,8 @@ public sealed class ExtractionSanctuaryPresenter : MonoBehaviour
     private Color _originalOverlayColor;
     private bool _originalStateCaptured;
     private bool _hasObservedSnapshot;
-    private ExtractionRitualState _previousState;
+    private ExtractionRitualState _previousWorldState;
+    private ExtractionRitualState _previousOwnState;
     private bool _previouslyReserved;
 
     private void Awake()
@@ -146,39 +147,59 @@ public sealed class ExtractionSanctuaryPresenter : MonoBehaviour
             isLocalOwner = sanctuary.IsOwnedBy(localOwnerId);
         }
 
-        ExtractionRitualSnapshot snapshot;
-        bool isReserved;
+        sanctuary.TryGetRitualProgress(out ExtractionRitualSnapshot aggregate);
+        ExtractionRitualSnapshot ownSnapshot = default;
+        bool isReserved = false;
 
         if (isLocalOwner && localTeamId.IsValid)
         {
-            // Local assigned team observes private ritual progress and reservation
-            sanctuary.TryGetRitualProgress(localTeamId, out snapshot);
+            // Local assigned team keeps its private ritual state and reservation
+            sanctuary.TryGetRitualProgress(localTeamId, out ownSnapshot);
             isReserved = sanctuary.IsAssignedToTeam(localTeamId);
         }
-        else
-        {
-            // Rivals observe public aggregate ritual progress without private reservation
-            sanctuary.TryGetRitualProgress(out snapshot);
-            isReserved = false;
-        }
 
-        ObserveTransition(snapshot.State, isReserved, isLocalOwner);
-        PresentSnapshot(snapshot, isReserved, isLocalOwner);
+        // World signals follow the own ritual while it runs or is complete; otherwise any team's ritual lights the shared Sanctuary
+        ExtractionRitualSnapshot worldSnapshot = ResolveWorldSnapshot(ownSnapshot, aggregate, isLocalOwner);
+
+        ObserveTransition(worldSnapshot.State, ownSnapshot.State, isReserved, isLocalOwner);
+        PresentSnapshot(worldSnapshot, isReserved, isLocalOwner);
     }
 
-    private void ObserveTransition(ExtractionRitualState currentState, bool isReserved, bool isLocalOwner)
+    private static ExtractionRitualSnapshot ResolveWorldSnapshot(
+        ExtractionRitualSnapshot ownSnapshot,
+        ExtractionRitualSnapshot aggregateSnapshot,
+        bool isLocalOwner)
+    {
+        if (isLocalOwner &&
+            (ownSnapshot.State == ExtractionRitualState.InProgress ||
+             ownSnapshot.State == ExtractionRitualState.Completed))
+        {
+            return ownSnapshot;
+        }
+
+        return aggregateSnapshot;
+    }
+
+    private void ObserveTransition(
+        ExtractionRitualState currentWorldState,
+        ExtractionRitualState currentOwnState,
+        bool isReserved,
+        bool isLocalOwner)
     {
         ObservedCues cues = ResolveObservedCues(
             _hasObservedSnapshot,
-            _previousState,
-            currentState,
+            _previousWorldState,
+            currentWorldState,
+            _previousOwnState,
+            currentOwnState,
             _previouslyReserved,
             isReserved,
             isLocalOwner);
         if (!_hasObservedSnapshot)
         {
             _hasObservedSnapshot = true;
-            _previousState = currentState;
+            _previousWorldState = currentWorldState;
+            _previousOwnState = currentOwnState;
             _previouslyReserved = isReserved;
             return;
         }
@@ -200,14 +221,17 @@ public sealed class ExtractionSanctuaryPresenter : MonoBehaviour
             PlayCue(_assignedCue);
         }
 
-        _previousState = currentState;
+        _previousWorldState = currentWorldState;
+        _previousOwnState = currentOwnState;
         _previouslyReserved = isReserved;
     }
 
     private static ObservedCues ResolveObservedCues(
         bool hasPreviousSnapshot,
-        ExtractionRitualState previousState,
-        ExtractionRitualState currentState,
+        ExtractionRitualState previousWorldState,
+        ExtractionRitualState currentWorldState,
+        ExtractionRitualState previousOwnState,
+        ExtractionRitualState currentOwnState,
         bool previouslyReserved,
         bool currentlyReserved,
         bool isLocalOwner)
@@ -218,20 +242,25 @@ public sealed class ExtractionSanctuaryPresenter : MonoBehaviour
         }
 
         ObservedCues cues = ObservedCues.None;
-        if (previousState != currentState)
+        if (previousWorldState != currentWorldState)
         {
-            switch (currentState)
+            switch (currentWorldState)
             {
                 case ExtractionRitualState.InProgress:
                     cues |= ObservedCues.Started;
-                    break;
-                case ExtractionRitualState.Cancelled when isLocalOwner:
-                    cues |= ObservedCues.Cancelled;
                     break;
                 case ExtractionRitualState.Completed:
                     cues |= ObservedCues.Completed;
                     break;
             }
+        }
+
+        // Cancellation is private to the owner's own ritual, whichever source drives the world signal.
+        if (isLocalOwner &&
+            previousOwnState != currentOwnState &&
+            currentOwnState == ExtractionRitualState.Cancelled)
+        {
+            cues |= ObservedCues.Cancelled;
         }
 
         if (!previouslyReserved && currentlyReserved && isLocalOwner)

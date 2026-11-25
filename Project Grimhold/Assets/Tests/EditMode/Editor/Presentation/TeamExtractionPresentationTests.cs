@@ -109,21 +109,82 @@ namespace Tests.EditMode.Presentation
         [Test]
         public void ExtractionSanctuaryPresenter_ResolveObservedCues_AssignedAndCancelledArePrivateToAssignedTeam()
         {
-            // Assigned cue: only for local owner
-            AssertCue("Assigned", hasPreviousSnapshot: true, ExtractionRitualState.NotStarted, ExtractionRitualState.NotStarted, previouslyReserved: false, currentlyReserved: true, isLocalOwner: true);
-            AssertCue("None", hasPreviousSnapshot: true, ExtractionRitualState.NotStarted, ExtractionRitualState.NotStarted, previouslyReserved: false, currentlyReserved: true, isLocalOwner: false);
+            const ExtractionRitualState Idle = ExtractionRitualState.NotStarted;
+            const ExtractionRitualState Running = ExtractionRitualState.InProgress;
+            const ExtractionRitualState Cancelled = ExtractionRitualState.Cancelled;
+            const ExtractionRitualState Done = ExtractionRitualState.Completed;
 
-            // Cancelled cue: only for local owner
-            AssertCue("Cancelled", hasPreviousSnapshot: true, ExtractionRitualState.InProgress, ExtractionRitualState.Cancelled, previouslyReserved: true, currentlyReserved: true, isLocalOwner: true);
-            AssertCue("None", hasPreviousSnapshot: true, ExtractionRitualState.InProgress, ExtractionRitualState.Cancelled, previouslyReserved: true, currentlyReserved: true, isLocalOwner: false);
+            // Assigned cue: only for local owner
+            AssertCue("Assigned", true, Idle, Idle, Idle, Idle, previouslyReserved: false, currentlyReserved: true, isLocalOwner: true);
+            AssertCue("None", true, Idle, Idle, Idle, Idle, previouslyReserved: false, currentlyReserved: true, isLocalOwner: false);
+
+            // Cancelled cue: only for the local owner's own ritual (single team: world == own)
+            AssertCue("Cancelled", true, Running, Cancelled, Running, Cancelled, previouslyReserved: true, currentlyReserved: true, isLocalOwner: true);
+            AssertCue("None", true, Running, Cancelled, Idle, Idle, previouslyReserved: true, currentlyReserved: true, isLocalOwner: false);
 
             // Started cue: public (both local owner and rivals hear it)
-            AssertCue("Started", hasPreviousSnapshot: true, ExtractionRitualState.NotStarted, ExtractionRitualState.InProgress, previouslyReserved: true, currentlyReserved: true, isLocalOwner: true);
-            AssertCue("Started", hasPreviousSnapshot: true, ExtractionRitualState.NotStarted, ExtractionRitualState.InProgress, previouslyReserved: true, currentlyReserved: true, isLocalOwner: false);
+            AssertCue("Started", true, Idle, Running, Idle, Running, previouslyReserved: true, currentlyReserved: true, isLocalOwner: true);
+            AssertCue("Started", true, Idle, Running, Idle, Idle, previouslyReserved: true, currentlyReserved: true, isLocalOwner: false);
 
             // Completed cue: public (both hear it)
-            AssertCue("Completed", hasPreviousSnapshot: true, ExtractionRitualState.InProgress, ExtractionRitualState.Completed, previouslyReserved: true, currentlyReserved: true, isLocalOwner: true);
-            AssertCue("Completed", hasPreviousSnapshot: true, ExtractionRitualState.InProgress, ExtractionRitualState.Completed, previouslyReserved: true, currentlyReserved: true, isLocalOwner: false);
+            AssertCue("Completed", true, Running, Done, Running, Done, previouslyReserved: true, currentlyReserved: true, isLocalOwner: true);
+            AssertCue("Completed", true, Running, Done, Idle, Idle, previouslyReserved: true, currentlyReserved: true, isLocalOwner: false);
+        }
+
+        [Test]
+        public void ExtractionSanctuaryPresenter_ResolveObservedCues_AssignedTeamHearsAnotherTeamsRitualButNotItsCancellation()
+        {
+            const ExtractionRitualState Idle = ExtractionRitualState.NotStarted;
+            const ExtractionRitualState Running = ExtractionRitualState.InProgress;
+            const ExtractionRitualState Done = ExtractionRitualState.Completed;
+
+            // Another team starts on the shared Sanctuary while the assigned team is idle.
+            AssertCue("Started", true, Idle, Running, Idle, Idle, previouslyReserved: true, currentlyReserved: true, isLocalOwner: true);
+            // Another team completes while the assigned team is idle.
+            AssertCue("Completed", true, Running, Done, Idle, Idle, previouslyReserved: true, currentlyReserved: true, isLocalOwner: true);
+            // Another team's ritual ending as Cancelled in the world signal is never announced as the own cancellation.
+            AssertCue("None", true, Running, ExtractionRitualState.Cancelled, Idle, Idle, previouslyReserved: true, currentlyReserved: true, isLocalOwner: true);
+        }
+
+        [Test]
+        public void ExtractionSanctuaryPresenter_ResolveObservedCues_OwnCancellationIsKeptWhenWorldSignalSwitchesToTheAggregate()
+        {
+            const ExtractionRitualState Idle = ExtractionRitualState.NotStarted;
+            const ExtractionRitualState Running = ExtractionRitualState.InProgress;
+            const ExtractionRitualState Cancelled = ExtractionRitualState.Cancelled;
+
+            // Own ritual cancels; the world signal falls back to an idle aggregate (Running -> Idle).
+            AssertCue("Cancelled", true, Running, Idle, Running, Cancelled, previouslyReserved: true, currentlyReserved: true, isLocalOwner: true);
+            // Own ritual cancels while another team keeps running: the world stays lit, only the private cue plays.
+            AssertCue("Cancelled", true, Running, Running, Running, Cancelled, previouslyReserved: true, currentlyReserved: true, isLocalOwner: true);
+            // No repeat while the own state stays Cancelled.
+            AssertCue("None", true, Idle, Idle, Cancelled, Cancelled, previouslyReserved: true, currentlyReserved: true, isLocalOwner: true);
+        }
+
+        [Test]
+        public void ExtractionSanctuaryPresenter_ResolveWorldSnapshot_OwnRunningOrCompletedRitualDrivesTheLocalTeam()
+        {
+            ExtractionRitualSnapshot ownRunning = new ExtractionRitualSnapshot(ExtractionRitualState.InProgress, 10f, 7f, 0.3f);
+            ExtractionRitualSnapshot ownDone = new ExtractionRitualSnapshot(ExtractionRitualState.Completed, 10f, 0f, 1f);
+            ExtractionRitualSnapshot otherRunning = new ExtractionRitualSnapshot(ExtractionRitualState.InProgress, 10f, 2f, 0.8f);
+
+            Assert.That(ResolveWorldSnapshot(ownRunning, otherRunning, isLocalOwner: true), Is.EqualTo(ownRunning));
+            Assert.That(ResolveWorldSnapshot(ownDone, otherRunning, isLocalOwner: true), Is.EqualTo(ownDone));
+        }
+
+        [Test]
+        public void ExtractionSanctuaryPresenter_ResolveWorldSnapshot_OtherTeamsRitualLightsTheWorldForIdleOrRivalViewers()
+        {
+            ExtractionRitualSnapshot otherRunning = new ExtractionRitualSnapshot(ExtractionRitualState.InProgress, 10f, 2f, 0.8f);
+            ExtractionRitualSnapshot ownIdle = new ExtractionRitualSnapshot(ExtractionRitualState.NotStarted, 10f, 10f, 0f);
+            ExtractionRitualSnapshot ownCancelled = new ExtractionRitualSnapshot(ExtractionRitualState.Cancelled, 10f, 10f, 0f);
+
+            Assert.That(ResolveWorldSnapshot(ownIdle, otherRunning, isLocalOwner: true), Is.EqualTo(otherRunning));
+            Assert.That(ResolveWorldSnapshot(ownCancelled, otherRunning, isLocalOwner: true), Is.EqualTo(otherRunning));
+            Assert.That(ResolveWorldSnapshot(default, otherRunning, isLocalOwner: true), Is.EqualTo(otherRunning),
+                "An unavailable own snapshot never drives the world signal.");
+            Assert.That(ResolveWorldSnapshot(default, otherRunning, isLocalOwner: false), Is.EqualTo(otherRunning),
+                "Rivals keep observing the public aggregate.");
         }
 
         [Test]
@@ -171,11 +232,25 @@ namespace Tests.EditMode.Presentation
             method.Invoke(_presenter, new object[] { hasCountdown, countdown, hasSanctuary, ritual, presentCount, requiredCount });
         }
 
+        private static ExtractionRitualSnapshot ResolveWorldSnapshot(
+            ExtractionRitualSnapshot own,
+            ExtractionRitualSnapshot aggregate,
+            bool isLocalOwner)
+        {
+            MethodInfo resolver = typeof(ExtractionSanctuaryPresenter).GetMethod(
+                "ResolveWorldSnapshot",
+                BindingFlags.Static | BindingFlags.NonPublic);
+            Assert.That(resolver, Is.Not.Null);
+            return (ExtractionRitualSnapshot)resolver.Invoke(null, new object[] { own, aggregate, isLocalOwner });
+        }
+
         private static void AssertCue(
             string expected,
             bool hasPreviousSnapshot,
-            ExtractionRitualState previousState,
-            ExtractionRitualState currentState,
+            ExtractionRitualState previousWorldState,
+            ExtractionRitualState currentWorldState,
+            ExtractionRitualState previousOwnState,
+            ExtractionRitualState currentOwnState,
             bool previouslyReserved,
             bool currentlyReserved,
             bool isLocalOwner)
@@ -187,8 +262,10 @@ namespace Tests.EditMode.Presentation
             object result = resolver.Invoke(null, new object[]
             {
                 hasPreviousSnapshot,
-                previousState,
-                currentState,
+                previousWorldState,
+                currentWorldState,
+                previousOwnState,
+                currentOwnState,
                 previouslyReserved,
                 currentlyReserved,
                 isLocalOwner

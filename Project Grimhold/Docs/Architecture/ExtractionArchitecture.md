@@ -291,9 +291,20 @@ replaced runner/player context immediately falls back to the public visual state
 
 The Sanctuary presenter consumes `IExtractionSanctuary.TryGetRitualProgress` and rebuilds its
 visual from the confirmed snapshot. Rivals see only public ritual progress: an unreserved/base
-state, a global `InProgress` fade/pulse, or a permanent `Completed` state. Reservation and
-cancellation one-shot cues are private to the currently resolved local owner; they do not tint
-the world sprites. Ritual start
+state, a global `InProgress` fade/pulse, or a permanent `Completed` state. The public aggregate
+`TryGetRitualProgress(out snapshot)` is independent of slot order: the `InProgress` slot with the
+highest progress, otherwise a `Completed` slot, otherwise the first assigned slot's snapshot, and
+false when no team is assigned (a single-team Sanctuary reports exactly that team's snapshot).
+On a shared Sanctuary any team's ritual lights the world for everyone (owner decision L4 of
+TASK-334): the glow and the start/completion cues appear when any team ritualizes or finishes
+there, so a rival or an assigned team that is idle learns of it from world signals. The local
+assigned team drives its world signals from its own snapshot while its own ritual is `InProgress`
+or `Completed`, and from the public aggregate otherwise; each assigned team still sees only its
+own progress in the HUD and minimap, which stay team-scoped (their no-team legacy fallback reads
+the aggregate, equal to the own snapshot on a single-team Sanctuary). Reservation, the assigned
+cue and the cancellation one-shot cue are private to the currently resolved local owner and
+always about the owner's own team and ritual, whichever source drives the world signal; they do
+not tint the world sprites. Ritual start
 and completion cues are public world feedback. A first valid snapshot (including a late join or
 re-enable) establishes a baseline without replaying cues; only subsequently observed state or
 reservation transitions emit them. Missing or invalid snapshots reset that baseline. Progress
