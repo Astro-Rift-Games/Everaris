@@ -126,3 +126,6 @@ Project Grimhold/.vscode/settings.json
 Project Grimhold/Assets/.DS_Store
 Project Grimhold/.DS_Store
 Assets/.DS_Store
+
+# Project Auditor re-serializes its settings on every Editor load; keep them local.
+/Project Grimhold/ProjectSettings/ProjectAuditorSettings.asset
