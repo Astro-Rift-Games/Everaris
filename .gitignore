@@ -120,3 +120,6 @@ InitTestScene*.unity*
 credentials.json
 token.json
 client_secret*.json
+Project Grimhold/.vscode/extensions.json
+Project Grimhold/.vscode/launch.json
+Project Grimhold/.vscode/settings.json
