@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DungeonAmbientConfig
   _normal:
     _globalLightColor: {r: 0.85, g: 0.88, b: 0.92, a: 1}
-    _globalLightIntensity: 0.85
+    _globalLightIntensity: 0.1
     _globalTransitionDuration: 1
     _entryShakeIntensity: 0
     _entryShakeDuration: 0
@@ -37,7 +37,7 @@ MonoBehaviour:
     _vignetteTransitionDuration: 1
   _reinforcements:
     _globalLightColor: {r: 0.78, g: 0.74, b: 0.63, a: 1}
-    _globalLightIntensity: 0.75
+    _globalLightIntensity: 0.088
     _globalTransitionDuration: 2
     _entryShakeIntensity: 0.08
     _entryShakeDuration: 0.6
@@ -60,7 +60,7 @@ MonoBehaviour:
     _vignetteTransitionDuration: 2
   _criticalPressure:
     _globalLightColor: {r: 0.65, g: 0.4, b: 0.28, a: 1}
-    _globalLightIntensity: 0.65
+    _globalLightIntensity: 0.076
     _globalTransitionDuration: 2
     _entryShakeIntensity: 0.25
     _entryShakeDuration: 1.2
@@ -83,7 +83,7 @@ MonoBehaviour:
     _vignetteTransitionDuration: 2
   _collapse:
     _globalLightColor: {r: 0.49, g: 0.15, b: 0.15, a: 1}
-    _globalLightIntensity: 0.55
+    _globalLightIntensity: 0.065
     _globalTransitionDuration: 1.5
     _entryShakeIntensity: 0.75
     _entryShakeDuration: 2.5
