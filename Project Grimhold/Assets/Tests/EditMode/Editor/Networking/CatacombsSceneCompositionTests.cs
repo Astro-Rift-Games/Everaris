@@ -19,6 +19,7 @@ namespace Tests.EditMode.Networking
     {
         private const string ScenePath = "Assets/Scenes/CatacombsMap.unity";
         private const string SanctuaryPath = "Assets/Prefabs/ExtractionSanctuary.prefab";
+        private const string RaidAvatarPath = "Assets/Prefabs/NetworkPlayer.prefab";
         private Scene _scene;
         private Scene _reference;
 
@@ -160,6 +161,18 @@ namespace Tests.EditMode.Networking
             PlayerInputReader reader = One<PlayerInputReader>(_scene);
             Assert.That(Reference(reader, "_worldCamera"), Is.SameAs(camera));
             Assert.That(Reference(One<FusionInputProvider>(_scene), "_inputReader"), Is.SameAs(reader));
+        }
+
+        [Test]
+        public void RaidWithLocalAvatar_HasExactlyOneEventSystemOwnedByTheScene()
+        {
+            GameObject avatar = AssetDatabase.LoadAssetAtPath<GameObject>(RaidAvatarPath);
+            Assert.That(avatar, Is.Not.Null, RaidAvatarPath);
+            // Every raid avatar is spawned into the scene, and the local one activates its HUD,
+            // so any EventSystem it carries joins the scene's one (FIX-111).
+            Assert.That(avatar.GetComponentsInChildren<EventSystem>(true).Select(item => item.name), Is.Empty,
+                "The raid scene owns the only EventSystem; the spawned avatar and its HUD must not add another.");
+            One<EventSystem>(_scene);
         }
 
         [Test]
