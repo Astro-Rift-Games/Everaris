@@ -29,6 +29,7 @@ public sealed class EntityRegistry : MonoBehaviour
     private readonly Dictionary<EntityId, IExtractionSanctuary> _extractionSanctuaries = new();
     private readonly Dictionary<EntityId, ICombatContributionTracker> _combatContributionTrackers = new();
     private IDungeonInstabilitySink _dungeonInstabilitySink;
+    private ICollapseRiftActivationSink _collapseRiftActivationSink;
     private readonly Dictionary<Collider2D, EntityId> _colliders = new();
     private readonly Dictionary<EntityId, DamageColliderRegistration> _damageColliderRegistrations = new();
     private readonly Dictionary<Collider2D, EntityId> _damageColliders = new();
@@ -62,6 +63,7 @@ public sealed class EntityRegistry : MonoBehaviour
         _damageColliderRegistrations.Clear();
         _damageColliders.Clear();
         _dungeonInstabilitySink = null;
+        _collapseRiftActivationSink = null;
     }
 
     private readonly struct DamageColliderRegistration
@@ -1207,6 +1209,26 @@ public sealed class EntityRegistry : MonoBehaviour
     public bool TryGetDungeonInstabilitySink(out IDungeonInstabilitySink sink)
     {
         sink = _dungeonInstabilitySink;
+        return sink != null;
+    }
+
+    public bool TryRegisterCollapseRiftActivationSink(ICollapseRiftActivationSink sink)
+    {
+        if (sink == null) return false;
+        _collapseRiftActivationSink = sink;
+        return true;
+    }
+
+    public bool TryUnregisterCollapseRiftActivationSink(ICollapseRiftActivationSink expectedSink)
+    {
+        if (_collapseRiftActivationSink != expectedSink) return false;
+        _collapseRiftActivationSink = null;
+        return true;
+    }
+
+    public bool TryGetCollapseRiftActivationSink(out ICollapseRiftActivationSink sink)
+    {
+        sink = _collapseRiftActivationSink;
         return sink != null;
     }
 }

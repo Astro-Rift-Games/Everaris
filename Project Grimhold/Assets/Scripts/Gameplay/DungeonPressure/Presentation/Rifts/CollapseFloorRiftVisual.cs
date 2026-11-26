@@ -97,6 +97,26 @@ public sealed class CollapseFloorRiftVisual : MonoBehaviour
         ApplyVisualOutputs(isStateTransition: changed);
     }
 
+    /// <summary>
+    /// Mirrors authoritative state from <see cref="CollapseHazardDirector"/> (TASK-335).
+    /// Suppresses particle bursts during late-join / reconnect / Host Migration snaps.
+    /// </summary>
+    public void SyncFromAuthority(
+        CollapseRiftVisualState authoritativeState,
+        float stateElapsedSeconds,
+        bool isActivatable,
+        bool suppressTransitionEffects)
+    {
+        if (_stateMachine == null)
+        {
+            return;
+        }
+
+        CollapseRiftVisualState previous = _stateMachine.State;
+        _stateMachine.SyncFromAuthority(authoritativeState, stateElapsedSeconds, isActivatable);
+        ApplyVisualOutputs(isStateTransition: !suppressTransitionEffects && _stateMachine.State != previous);
+    }
+
     public void TickVisual(float deltaTime)
     {
         if (_stateMachine == null || _config == null || deltaTime <= 0f)
