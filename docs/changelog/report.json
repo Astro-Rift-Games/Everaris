@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1285,
-  "canonicalEntries": 1282,
+  "rawCommits": 1286,
+  "canonicalEntries": 1283,
   "before": {
+    "Architecture & Infrastructure": 31,
     "Documentation": 139,
     "Features": 472,
-    "Architecture & Infrastructure": 30,
     "Other Changes": 379,
     "Bug Fixes": 198,
     "Tests": 50,
     "Refactoring": 17
   },
   "after": {
+    "Maintenance": 29,
     "Documentation": 155,
     "Features": 611,
-    "Maintenance": 28,
     "Other Changes": 186,
     "Bug Fixes": 214,
     "Tests": 55,
@@ -23,8 +23,9 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "World & Visibility": 194,
-    "Tests": 818,
+    "UI": 366,
+    "World & Visibility": 195,
+    "Tests": 819,
     "Build & Tooling": 666,
     "Networking & Sessions": 369,
     "Art & Animation": 280,
@@ -34,7 +35,6 @@
     "Audio": 44,
     "Abilities": 148,
     "Extraction": 182,
-    "UI": 365,
     "Persistence & Backend": 329,
     "Movement": 109,
     "Input": 33,
@@ -42,9 +42,9 @@
   },
   "canonical": {
     "sections": {
+      "Maintenance": 29,
       "Documentation": 155,
       "Features": 610,
-      "Maintenance": 28,
       "Other Changes": 185,
       "Bug Fixes": 213,
       "Tests": 55,
@@ -52,8 +52,9 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "World & Visibility": 192,
-      "Tests": 816,
+      "UI": 365,
+      "World & Visibility": 193,
+      "Tests": 817,
       "Build & Tooling": 664,
       "Networking & Sessions": 369,
       "Art & Animation": 277,
@@ -63,7 +64,6 @@
       "Audio": 44,
       "Abilities": 146,
       "Extraction": 182,
-      "UI": 364,
       "Persistence & Backend": 329,
       "Movement": 109,
       "Input": 33,
@@ -78601,8 +78601,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 408,
-      "canonicalEntries": 408
+      "originalCommits": 409,
+      "canonicalEntries": 409
     },
     {
       "key": "v0.5.0",
@@ -78646,6 +78646,79 @@
     }
   ],
   "commits": [
+    {
+      "sha": "be541d21a3197e533fad3aaaf880ddfd663eb8c2",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/be541d21a3197e533fad3aaaf880ddfd663eb8c2",
+      "subject": "chore(minimap): regenerate layouts for the relit Catacombs scenes",
+      "body": "489f4d02 changed CatacombsMap.unity and Gameplay.unity, whose bytes feed\nthe layout SourceHash, but shipped without the regenerated layouts. The\nMinimapLayoutGenerator bootstrap would rewrite both assets on every\ndomain reload. Floor, Walls and Obstacles are unchanged; only the hash\nand the embedded atlas sub-asset IDs move. A second\nEnsureCurrentLayout run leaves the bytes unchanged.\n\nTests: RaidSceneMinimap 9/9, CatacombsMinimapScene 3/3,\nMinimapSceneSource 3/3, MinimapTileArt 11/11, RaidMinimapPrefab 6/6.\n\nRefs: TASK-306\n",
+      "date": "2026-11-26T16:44:15-03:00",
+      "files": [
+        "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset",
+        "Project Grimhold/Assets/Data/Minimap/DungeonGrayboxMinimapLayout.asset"
+      ],
+      "originalType": "chore",
+      "originalScope": "minimap",
+      "originalSection": "Architecture & Infrastructure",
+      "breaking": false,
+      "reverts": null,
+      "section": "Maintenance",
+      "confidence": "explicit",
+      "systems": [
+        "UI",
+        "World & Visibility",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "chore",
+          "supports": "Maintenance"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/DungeonGrayboxMinimapLayout.asset",
+          "supports": "UI"
+        },
+        {
+          "source": "scope",
+          "value": "minimap",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "minimap",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Data/Minimap/DungeonGrayboxMinimapLayout.asset",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "Catacombs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
     {
       "sha": "361da933420c78698a476457fd8b52b69b8b638f",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/361da933420c78698a476457fd8b52b69b8b638f",

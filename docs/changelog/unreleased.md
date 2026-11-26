@@ -4,11 +4,11 @@
 
 Release: Unreleased
 
-408 original commits; 408 canonical entries.
+409 original commits; 409 canonical entries.
 
 ## Canonical classification
 
-151 features; 120 bug fixes; 4 refactoring; 1 architecture & infrastructure; 65 documentation; 26 tests; 17 maintenance; 24 other changes
+151 features; 120 bug fixes; 4 refactoring; 1 architecture & infrastructure; 65 documentation; 26 tests; 18 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -24,12 +24,65 @@ Release: Unreleased
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
 | Networking & Sessions | 47 | 45 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 55 | 57 | 2 | 1 | 25 | 4 |
-| Tests | 137 | 110 | 4 | 1 | 41 | 4 |
-| UI | 46 | 24 | 2 | 0 | 18 | 6 |
+| Tests | 137 | 110 | 4 | 1 | 42 | 4 |
+| UI | 46 | 24 | 2 | 0 | 19 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 28 | 2 |
-| World & Visibility | 43 | 21 | 1 | 0 | 6 | 13 |
+| World & Visibility | 43 | 21 | 1 | 0 | 7 | 13 |
 
 ## Original commit records
+
+### be541d21a3197e533fad3aaaf880ddfd663eb8c2
+
+[be541d21a3197e533fad3aaaf880ddfd663eb8c2](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/be541d21a3197e533fad3aaaf880ddfd663eb8c2)
+
+Date: 2026-11-26T16:44:15-03:00 · Classification: Maintenance (explicit) · Systems: UI, World & Visibility, Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+chore(minimap): regenerate layouts for the relit Catacombs scenes
+```
+
+#### Original body
+
+```text
+489f4d02 changed CatacombsMap.unity and Gameplay.unity, whose bytes feed
+the layout SourceHash, but shipped without the regenerated layouts. The
+MinimapLayoutGenerator bootstrap would rewrite both assets on every
+domain reload. Floor, Walls and Obstacles are unchanged; only the hash
+and the embedded atlas sub-asset IDs move. A second
+EnsureCurrentLayout run leaves the bytes unchanged.
+
+Tests: RaidSceneMinimap 9/9, CatacombsMinimapScene 3/3,
+MinimapSceneSource 3/3, MinimapTileArt 11/11, RaidMinimapPrefab 6/6.
+
+Refs: TASK-306
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset
+Project Grimhold/Assets/Data/Minimap/DungeonGrayboxMinimapLayout.asset
+```
+
+#### Classification evidence
+
+- type → Maintenance: chore
+- path → UI: Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset
+- path → UI: Project Grimhold/Assets/Data/Minimap/DungeonGrayboxMinimapLayout.asset
+- scope → UI: minimap
+- message-term → UI: minimap
+- path → World &amp; Visibility: Project Grimhold/Assets/Data/Minimap/CatacombsMinimapLayout.asset
+- path → World &amp; Visibility: Project Grimhold/Assets/Data/Minimap/DungeonGrayboxMinimapLayout.asset
+- message-term → World &amp; Visibility: Catacombs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 361da933420c78698a476457fd8b52b69b8b638f
 
