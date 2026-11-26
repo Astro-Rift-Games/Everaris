@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1277,
-  "canonicalEntries": 1274,
+  "rawCommits": 1280,
+  "canonicalEntries": 1277,
   "before": {
-    "Features": 465,
+    "Features": 468,
     "Architecture & Infrastructure": 30,
     "Other Changes": 379,
     "Bug Fixes": 198,
@@ -12,7 +12,7 @@
     "Refactoring": 17
   },
   "after": {
-    "Features": 604,
+    "Features": 607,
     "Maintenance": 28,
     "Other Changes": 186,
     "Bug Fixes": 214,
@@ -23,26 +23,26 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Abilities": 147,
+    "Combat": 424,
+    "World & Visibility": 190,
+    "Build & Tooling": 663,
+    "Documentation": 458,
+    "Tests": 814,
+    "Networking & Sessions": 368,
+    "Audio": 44,
+    "Abilities": 148,
     "Extraction": 182,
     "Inventory & Loot": 508,
-    "Build & Tooling": 660,
-    "Documentation": 457,
-    "Tests": 811,
     "UI": 365,
-    "World & Visibility": 187,
     "Art & Animation": 277,
-    "Combat": 421,
     "Persistence & Backend": 329,
     "Movement": 109,
-    "Audio": 43,
     "Input": 33,
-    "Networking & Sessions": 367,
     "Unassigned": 52
   },
   "canonical": {
     "sections": {
-      "Features": 603,
+      "Features": 606,
       "Maintenance": 28,
       "Other Changes": 185,
       "Bug Fixes": 213,
@@ -52,21 +52,21 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Abilities": 145,
+      "Combat": 422,
+      "World & Visibility": 188,
+      "Build & Tooling": 661,
+      "Documentation": 456,
+      "Tests": 812,
+      "Networking & Sessions": 368,
+      "Audio": 44,
+      "Abilities": 146,
       "Extraction": 182,
       "Inventory & Loot": 508,
-      "Build & Tooling": 658,
-      "Documentation": 455,
-      "Tests": 809,
       "UI": 364,
-      "World & Visibility": 185,
       "Art & Animation": 274,
-      "Combat": 419,
       "Persistence & Backend": 329,
       "Movement": 109,
-      "Audio": 43,
       "Input": 33,
-      "Networking & Sessions": 367,
       "Unassigned": 52
     }
   },
@@ -78601,8 +78601,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 400,
-      "canonicalEntries": 400
+      "originalCommits": 403,
+      "canonicalEntries": 403
     },
     {
       "key": "v0.5.0",
@@ -78646,6 +78646,473 @@
     }
   ],
   "commits": [
+    {
+      "sha": "b6bb1b915c629a98067c23a7acf14a0190bfcfea",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/b6bb1b915c629a98067c23a7acf14a0190bfcfea",
+      "subject": "feat(collapse): handle absolute closure cutoff and add PlayMode suite",
+      "body": "Wire CollapseHazardDirector.HandleAbsoluteClosure() into\nDungeonPressureController at the exact absolute-closure tick so pending\nwaves and telegraphs cancel immediately while already-erupting rifts\ncomplete their functional effect once and transition directly to\nDisabled without affecting extracted participants (Doc 20 §11).\n\nTests:\n- CollapseAbsoluteClosureRulesTests.cs: telegraph cancellation and\n  in-flight eruption completion without cooldown.\n- CollapseHazardAuthorityPlayModeTests.cs: end-to-end Fusion PlayMode\n  tests for rift damage/knockback, environmental knockback protection,\n  Doc 19 indirect causality, global rupture wave sequencing, and\n  absolute closure behavior.\n\nDocs:\n- DungeonPressureArchitecture.md and EnvironmentalHazardsArchitecture.md\n  updated with CollapseHazardDirector contracts.\n\nRefs: TASK-339\n",
+      "date": "2026-11-26T11:37:42-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureController.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/CollapseHazardAuthorityPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/CollapseHazardAuthorityPlayModeTests.cs.meta",
+        "Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md",
+        "Project Grimhold/Docs/Architecture/EnvironmentalHazardsArchitecture.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "collapse",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "World & Visibility",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "message-term",
+          "value": "damage",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureController.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/EnvironmentalHazardsArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/CollapseHazardAuthorityPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/CollapseHazardAuthorityPlayModeTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "bb2dbbbdbd9600a22ba0ecf5c68559dd5c3fb89c",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bb2dbbbdbd9600a22ba0ecf5c68559dd5c3fb89c",
+      "subject": "feat(collapse): add authoritative director and phase-based rupture waves",
+      "body": "Add CollapseHazardDirector on NetworkMatchController.prefab to drive up\nto 256 floor rifts via a single delta-compressed Fusion NetworkArray\nusing query-only Physics2D.OverlapCircle (no colliders or navigation\nchanges), reporting Doc 19 causal presence and applying single-shot\nenvironmental damage and radial knockback to players and PvE enemies.\n\nAdd CollapseWaveScheduler for global rupture waves in CriticalPressure\nand Collapse with configurable phase intervals, overlap spacing limits,\nand global audiovisual warning cues in DungeonPressureAmbientPresenter\nand DungeonPressureAudioPresenter (skipping stale cues on late-join and\nHost Migration). Mirror replicated rift states in CollapseRiftPresenter\nand expose wave controls in DungeonPressureDebugOverlay (F9).\n\nTests:\n- CollapseWaveSchedulerTests.cs: phase gating, deterministic escalating\n  cadence, and eligible rift selection with overlap limits.\n\nPlayer-Added: Collapse floor rifts now erupt synchronously on global rupture waves, dealing environmental damage and knockback to players and monsters without blocking movement.\nRefs: TASK-335, TASK-336\n",
+      "date": "2026-11-26T11:37:42-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/NetworkMatchController.prefab",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Debug/DungeonPressureDebugOverlay.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureAudioPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardDirector.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardDirector.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseWaveScheduler.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseWaveScheduler.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/DungeonPressureAmbientPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPresenter.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "collapse",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Networking & Sessions",
+        "World & Visibility",
+        "Audio",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "message-term",
+          "value": "damage",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "Host Migration",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Debug/DungeonPressureDebugOverlay.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureAudioPresenter.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardDirector.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardDirector.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseWaveScheduler.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseWaveScheduler.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/DungeonPressureAmbientPresenter.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPresenter.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureAudioPresenter.cs",
+          "supports": "Audio"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "161b2da294a3bc6790c90e9f27e06971ea39e569",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/161b2da294a3bc6790c90e9f27e06971ea39e569",
+      "subject": "feat(collapse): add authoritative floor rift lifecycle and hazard config",
+      "body": "Implement the authoritative tick-driven floor rift lifecycle rules\n(Doc 20 §3 & §5), compact Fusion INetworkStruct state, per-target\nenvironmental knockback protection tracker, stable Doc 19 hazard IDs,\nand Inspector-configurable CollapseHazardConfig asset.\n\nAlso add deterministic exclusion-center sorting in\nCollapseRiftPlacementService, authority-mirroring hooks on\nCollapseRiftStateMachine and CollapseFloorRiftVisual, and the\nICollapseRiftActivationSink seam on EntityRegistry for compatible\nabilities.\n\nTests:\n- CollapseRiftLifecycleRulesTests.cs: Doc 20 §3 phase visibility and\n  activatability, full Dormant -> Telegraph -> Erupting -> Cooldown\n  cycle, occupied/harmless rejection, ongoing cycle preservation across\n  phase transitions, environmental knockback protection window, and\n  stable hazard IDs.\n\nRefs: TASK-335\n",
+      "date": "2026-11-26T11:37:42-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scriptable Objects/DefaultCollapseHazardConfig.asset",
+        "Project Grimhold/Assets/Scriptable Objects/DefaultCollapseHazardConfig.asset.meta",
+        "Project Grimhold/Assets/Scripts/Combat/EntityRegistry.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardConfig.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardConfig.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardIdUtility.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardIdUtility.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftAuthoritativeStage.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftAuthoritativeStage.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftLifecycleRules.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftLifecycleRules.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftNetState.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftNetState.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/EnvironmentalKnockbackProtectionTracker.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/EnvironmentalKnockbackProtectionTracker.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/ICollapseRiftActivationSink.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/ICollapseRiftActivationSink.cs.meta",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseFloorRiftVisual.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacementService.cs",
+        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftStateMachine.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs.meta"
+      ],
+      "originalType": "feat",
+      "originalScope": "collapse",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Abilities",
+        "World & Visibility",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Combat/EntityRegistry.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardIdUtility.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardIdUtility.cs.meta",
+          "supports": "Abilities"
+        },
+        {
+          "source": "message-term",
+          "value": "abilities",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardConfig.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardConfig.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardIdUtility.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardIdUtility.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftAuthoritativeStage.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftAuthoritativeStage.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftLifecycleRules.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftLifecycleRules.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftNetState.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftNetState.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/EnvironmentalKnockbackProtectionTracker.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/EnvironmentalKnockbackProtectionTracker.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/ICollapseRiftActivationSink.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/ICollapseRiftActivationSink.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseFloorRiftVisual.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacementService.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftStateMachine.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs.meta",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "message-term",
+          "value": "visibility",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "7584c9fa0d04ff44edae56909924ebf034457d6d",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7584c9fa0d04ff44edae56909924ebf034457d6d",

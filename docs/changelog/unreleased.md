@@ -4,32 +4,292 @@
 
 Release: Unreleased
 
-400 original commits; 400 canonical entries.
+403 original commits; 403 canonical entries.
 
 ## Canonical classification
 
-144 features; 120 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 17 maintenance; 24 other changes
+147 features; 120 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 17 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Abilities | 18 | 13 | 1 | 0 | 10 | 1 |
+| Abilities | 19 | 13 | 1 | 0 | 10 | 1 |
 | Art & Animation | 31 | 14 | 3 | 0 | 11 | 8 |
-| Audio | 8 | 2 | 0 | 0 | 2 | 1 |
-| Build & Tooling | 99 | 78 | 4 | 1 | 30 | 7 |
-| Combat | 56 | 26 | 2 | 0 | 19 | 2 |
-| Documentation | 44 | 46 | 0 | 0 | 22 | 2 |
+| Audio | 9 | 2 | 0 | 0 | 2 | 1 |
+| Build & Tooling | 102 | 78 | 4 | 1 | 30 | 7 |
+| Combat | 59 | 26 | 2 | 0 | 19 | 2 |
+| Documentation | 45 | 46 | 0 | 0 | 22 | 2 |
 | Extraction | 23 | 23 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
 | Inventory & Loot | 88 | 65 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
-| Networking & Sessions | 45 | 45 | 0 | 0 | 19 | 2 |
+| Networking & Sessions | 46 | 45 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 55 | 57 | 2 | 1 | 25 | 4 |
-| Tests | 131 | 110 | 4 | 1 | 40 | 4 |
+| Tests | 134 | 110 | 4 | 1 | 40 | 4 |
 | UI | 46 | 24 | 2 | 0 | 18 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 28 | 2 |
-| World & Visibility | 37 | 21 | 1 | 0 | 5 | 13 |
+| World & Visibility | 40 | 21 | 1 | 0 | 5 | 13 |
 
 ## Original commit records
+
+### b6bb1b915c629a98067c23a7acf14a0190bfcfea
+
+[b6bb1b915c629a98067c23a7acf14a0190bfcfea](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/b6bb1b915c629a98067c23a7acf14a0190bfcfea)
+
+Date: 2026-11-26T11:37:42-03:00 · Classification: Features (explicit) · Systems: Combat, World & Visibility, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(collapse): handle absolute closure cutoff and add PlayMode suite
+```
+
+#### Original body
+
+```text
+Wire CollapseHazardDirector.HandleAbsoluteClosure() into
+DungeonPressureController at the exact absolute-closure tick so pending
+waves and telegraphs cancel immediately while already-erupting rifts
+complete their functional effect once and transition directly to
+Disabled without affecting extracted participants (Doc 20 §11).
+
+Tests:
+- CollapseAbsoluteClosureRulesTests.cs: telegraph cancellation and
+  in-flight eruption completion without cooldown.
+- CollapseHazardAuthorityPlayModeTests.cs: end-to-end Fusion PlayMode
+  tests for rift damage/knockback, environmental knockback protection,
+  Doc 19 indirect causality, global rupture wave sequencing, and
+  absolute closure behavior.
+
+Docs:
+- DungeonPressureArchitecture.md and EnvironmentalHazardsArchitecture.md
+  updated with CollapseHazardDirector contracts.
+
+Refs: TASK-339
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureController.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs.meta
+Project Grimhold/Assets/Tests/PlayMode/CollapseHazardAuthorityPlayModeTests.cs
+Project Grimhold/Assets/Tests/PlayMode/CollapseHazardAuthorityPlayModeTests.cs.meta
+Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md
+Project Grimhold/Docs/Architecture/EnvironmentalHazardsArchitecture.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- message-term → Combat: damage
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureController.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/EnvironmentalHazardsArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseAbsoluteClosureRulesTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/CollapseHazardAuthorityPlayModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/CollapseHazardAuthorityPlayModeTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### bb2dbbbdbd9600a22ba0ecf5c68559dd5c3fb89c
+
+[bb2dbbbdbd9600a22ba0ecf5c68559dd5c3fb89c](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bb2dbbbdbd9600a22ba0ecf5c68559dd5c3fb89c)
+
+Date: 2026-11-26T11:37:42-03:00 · Classification: Features (explicit) · Systems: Combat, Networking & Sessions, World & Visibility, Audio, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(collapse): add authoritative director and phase-based rupture waves
+```
+
+#### Original body
+
+```text
+Add CollapseHazardDirector on NetworkMatchController.prefab to drive up
+to 256 floor rifts via a single delta-compressed Fusion NetworkArray
+using query-only Physics2D.OverlapCircle (no colliders or navigation
+changes), reporting Doc 19 causal presence and applying single-shot
+environmental damage and radial knockback to players and PvE enemies.
+
+Add CollapseWaveScheduler for global rupture waves in CriticalPressure
+and Collapse with configurable phase intervals, overlap spacing limits,
+and global audiovisual warning cues in DungeonPressureAmbientPresenter
+and DungeonPressureAudioPresenter (skipping stale cues on late-join and
+Host Migration). Mirror replicated rift states in CollapseRiftPresenter
+and expose wave controls in DungeonPressureDebugOverlay (F9).
+
+Tests:
+- CollapseWaveSchedulerTests.cs: phase gating, deterministic escalating
+  cadence, and eligible rift selection with overlap limits.
+
+Player-Added: Collapse floor rifts now erupt synchronously on global rupture waves, dealing environmental damage and knockback to players and monsters without blocking movement.
+Refs: TASK-335, TASK-336
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/NetworkMatchController.prefab
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Debug/DungeonPressureDebugOverlay.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureAudioPresenter.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardDirector.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardDirector.cs.meta
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseWaveScheduler.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseWaveScheduler.cs.meta
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/DungeonPressureAmbientPresenter.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPresenter.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- message-term → Combat: damage
+- message-term → Networking &amp; Sessions: Host Migration
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Debug/DungeonPressureDebugOverlay.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureAudioPresenter.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardDirector.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardDirector.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseWaveScheduler.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseWaveScheduler.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/DungeonPressureAmbientPresenter.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPresenter.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs.meta
+- path → Audio: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPressureAudioPresenter.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseWaveSchedulerTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 161b2da294a3bc6790c90e9f27e06971ea39e569
+
+[161b2da294a3bc6790c90e9f27e06971ea39e569](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/161b2da294a3bc6790c90e9f27e06971ea39e569)
+
+Date: 2026-11-26T11:37:42-03:00 · Classification: Features (explicit) · Systems: Combat, Abilities, World & Visibility, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(collapse): add authoritative floor rift lifecycle and hazard config
+```
+
+#### Original body
+
+```text
+Implement the authoritative tick-driven floor rift lifecycle rules
+(Doc 20 §3 & §5), compact Fusion INetworkStruct state, per-target
+environmental knockback protection tracker, stable Doc 19 hazard IDs,
+and Inspector-configurable CollapseHazardConfig asset.
+
+Also add deterministic exclusion-center sorting in
+CollapseRiftPlacementService, authority-mirroring hooks on
+CollapseRiftStateMachine and CollapseFloorRiftVisual, and the
+ICollapseRiftActivationSink seam on EntityRegistry for compatible
+abilities.
+
+Tests:
+- CollapseRiftLifecycleRulesTests.cs: Doc 20 §3 phase visibility and
+  activatability, full Dormant -> Telegraph -> Erupting -> Cooldown
+  cycle, occupied/harmless rejection, ongoing cycle preservation across
+  phase transitions, environmental knockback protection window, and
+  stable hazard IDs.
+
+Refs: TASK-335
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scriptable Objects/DefaultCollapseHazardConfig.asset
+Project Grimhold/Assets/Scriptable Objects/DefaultCollapseHazardConfig.asset.meta
+Project Grimhold/Assets/Scripts/Combat/EntityRegistry.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards.meta
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardConfig.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardConfig.cs.meta
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardIdUtility.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardIdUtility.cs.meta
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftAuthoritativeStage.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftAuthoritativeStage.cs.meta
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftLifecycleRules.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftLifecycleRules.cs.meta
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftNetState.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftNetState.cs.meta
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/EnvironmentalKnockbackProtectionTracker.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/EnvironmentalKnockbackProtectionTracker.cs.meta
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/ICollapseRiftActivationSink.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/ICollapseRiftActivationSink.cs.meta
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseFloorRiftVisual.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacementService.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftStateMachine.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Scripts/Combat/EntityRegistry.cs
+- path → Abilities: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardIdUtility.cs
+- path → Abilities: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardIdUtility.cs.meta
+- message-term → Abilities: abilities
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardConfig.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardConfig.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardIdUtility.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseHazardIdUtility.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftAuthoritativeStage.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftAuthoritativeStage.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftLifecycleRules.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftLifecycleRules.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftNetState.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/CollapseRiftNetState.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/EnvironmentalKnockbackProtectionTracker.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/EnvironmentalKnockbackProtectionTracker.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/ICollapseRiftActivationSink.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Hazards/ICollapseRiftActivationSink.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseFloorRiftVisual.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftPlacementService.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/Rifts/CollapseRiftStateMachine.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs.meta
+- message-term → World &amp; Visibility: visibility
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/DungeonPressure/CollapseRiftLifecycleRulesTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 7584c9fa0d04ff44edae56909924ebf034457d6d
 

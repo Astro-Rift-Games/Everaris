@@ -43,6 +43,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Catacombs raids now have coffins to loot and jars to break alongside chests and crates.
 - Catacombs doors can now be opened and closed; closed doors block movement, attacks and sight.
 - You can now add multiple buyback items to the same merchant cart and confirm them together.
+- Collapse floor rifts now erupt synchronously on global rupture waves, dealing environmental damage and knockback to players and monsters without blocking movement.
 
 ### Improved
 
