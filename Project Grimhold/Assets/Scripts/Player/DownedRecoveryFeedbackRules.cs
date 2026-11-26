@@ -9,6 +9,7 @@ public static class DownedRecoveryFeedbackRules
     public const string HandoffReceivedMessage = "Auto-reanimador recibido";
     public const string HandoffGivenMessage = "Auto-reanimador entregado";
     public const string HandoffRejectedMessage = "Entrega fallida: el aliado no puede recibirlo";
+    public const string AcceleratedResolutionMessage = "Sin vía de reanimación: Resolución Acelerada";
 
     private const string DownedLabel = "ABATIDO";
 
@@ -95,6 +96,19 @@ public static class DownedRecoveryFeedbackRules
     /// </summary>
     public static string DownedStateText(RecoveryKind activeSessionKind, bool carriesSelfReviver, bool selfReviveUsed)
     {
+        return DownedStateText(activeSessionKind, carriesSelfReviver, selfReviveUsed, false);
+    }
+
+    /// <summary>
+    /// Downed status line including Accelerated Resolution (GD 13 sections 9 and 14). A running
+    /// recovery form is still named first; otherwise an accelerated cycle says so.
+    /// </summary>
+    public static string DownedStateText(
+        RecoveryKind activeSessionKind,
+        bool carriesSelfReviver,
+        bool selfReviveUsed,
+        bool isResolutionAccelerated)
+    {
         switch (activeSessionKind)
         {
             case RecoveryKind.Assisted:
@@ -105,6 +119,11 @@ public static class DownedRecoveryFeedbackRules
                 return $"{DownedLabel} · Recibiendo Auto-reanimador";
         }
 
+        if (isResolutionAccelerated)
+        {
+            return $"{DownedLabel} · Resolución Acelerada";
+        }
+
         if (!carriesSelfReviver)
         {
             return DownedLabel;
@@ -113,6 +132,12 @@ public static class DownedRecoveryFeedbackRules
         return selfReviveUsed
             ? $"{DownedLabel} · Auto-reanimador ya usado"
             : $"{DownedLabel} · pulsa [{InteractionPromptText.KeyLabel}] para auto-reanimarte";
+    }
+
+    /// <summary>One-time notice when the own Downed cycle enters Accelerated Resolution; null otherwise.</summary>
+    public static string AcceleratedResolutionNotice(bool wasAccelerated, bool isAccelerated)
+    {
+        return isAccelerated && !wasAccelerated ? AcceleratedResolutionMessage : null;
     }
 
     /// <summary>Progress bar label for the running form, seen by the teammate or by the Downed player.</summary>

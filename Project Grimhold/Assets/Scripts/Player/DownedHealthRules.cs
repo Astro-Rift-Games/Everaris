@@ -32,6 +32,22 @@ internal static class DownedHealthRules
         return Mathf.Max(0f, sanitized - ratePerSecond * deltaTime);
     }
 
+    /// <summary>
+    /// Accelerated Resolution rate (GD 13 section 9): the rate that empties the remaining reserve in
+    /// <paramref name="resolutionSeconds"/>, never slower than the normal rate. The bar is not cut;
+    /// only the rate rises. Invalid inputs keep the normal rate.
+    /// </summary>
+    internal static float AcceleratedDrainRate(float normalRatePerSecond, float currentReserve, float resolutionSeconds)
+    {
+        if (!IsFinite(currentReserve) || currentReserve < 0f ||
+            !IsFinite(resolutionSeconds) || resolutionSeconds <= 0f)
+        {
+            return normalRatePerSecond;
+        }
+
+        return Mathf.Max(normalRatePerSecond, currentReserve / resolutionSeconds);
+    }
+
     /// <summary>Applies mitigated damage scaled by the multiplier. Excess is discarded.</summary>
     internal static float ApplyDamage(float current, float mitigatedDamage, float multiplier)
     {

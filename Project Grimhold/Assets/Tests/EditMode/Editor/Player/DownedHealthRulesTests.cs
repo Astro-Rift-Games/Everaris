@@ -84,6 +84,47 @@ namespace Tests.EditMode.Player
         }
 
         [Test]
+        public void AcceleratedDrainRate_EmptiesRemainingReserveInConfiguredSeconds()
+        {
+            Assert.That(DownedHealthRules.AcceleratedDrainRate(2.5f, 75f, 5f), Is.EqualTo(15f).Within(0.0001f));
+        }
+
+        [Test]
+        public void AcceleratedDrainRate_NeverDrainsSlowerThanTheNormalRate()
+        {
+            Assert.That(DownedHealthRules.AcceleratedDrainRate(2.5f, 5f, 5f), Is.EqualTo(2.5f));
+        }
+
+        [TestCase(2.5f, 75f, 0f)]
+        [TestCase(2.5f, 75f, -1f)]
+        [TestCase(2.5f, 75f, float.NaN)]
+        [TestCase(2.5f, 75f, float.PositiveInfinity)]
+        [TestCase(2.5f, float.NaN, 5f)]
+        [TestCase(2.5f, -3f, 5f)]
+        public void AcceleratedDrainRate_InvalidInputsKeepTheNormalRate(float baseRate, float reserve, float seconds)
+        {
+            Assert.That(DownedHealthRules.AcceleratedDrainRate(baseRate, reserve, seconds), Is.EqualTo(baseRate));
+        }
+
+        [Test]
+        public void AcceleratedDrainRate_DepletesAboutFiveSecondsAfterActivationWithoutCuttingTheBar()
+        {
+            const float tick = 1f / 60f;
+            float rate = DownedHealthRules.AcceleratedDrainRate(2.5f, 60f, 5f);
+            float reserve = DownedHealthRules.Drain(60f, rate, tick);
+            Assert.That(reserve, Is.EqualTo(60f - rate * tick).Within(0.0001f), "First tick only drains one step.");
+
+            int ticks = 1;
+            while (!DownedHealthRules.IsDepleted(reserve) && ticks < 1000)
+            {
+                reserve = DownedHealthRules.Drain(reserve, rate, tick);
+                ticks++;
+            }
+
+            Assert.That(ticks * tick, Is.EqualTo(5f).Within(2f * tick));
+        }
+
+        [Test]
         public void IsDepleted_TrueOnlyAtOrBelowZeroOrInvalid()
         {
             Assert.That(DownedHealthRules.IsDepleted(0f), Is.True);

@@ -214,6 +214,113 @@ namespace Tests.PlayMode.Loot
         }
 
         [UnityTest]
+        public IEnumerator AcceleratedResolution_DrainsRemainingReserveInConfiguredTimeAndResolvesNormalDefeat()
+        {
+            yield return StartRunnerAndLoadPlayer();
+            Spawn(out PlayerCharacter player, out PlayerDownedStateNetworkController downed,
+                out NetworkLootContainer container);
+            SetField(downed, "_downedDrainPerSecond", 0f);
+            SetField(downed, "_acceleratedResolutionSeconds", 0.5f);
+            yield return Hit(100000f);
+
+            bool requested = downed.RequestAcceleratedResolution();
+
+            Assert.That(requested, Is.True);
+            Assert.That(downed.IsResolutionAccelerated, Is.True);
+            Assert.That(downed.AcceleratedDrainPerSecond, Is.EqualTo(150f).Within(0.001f));
+            Assert.That(downed.DownedHealth, Is.EqualTo(75f).Within(0.001f), "The bar is not cut instantly.");
+            int startTick = _runner.Tick;
+            int frames = 600;
+            while (player.IsAlive && frames-- > 0)
+            {
+                yield return null;
+            }
+
+            float elapsed = (_runner.Tick - startTick) * _runner.DeltaTime;
+            Assert.That(player.IsAlive, Is.False);
+            Assert.That(elapsed, Is.EqualTo(0.5f).Within(3f * _runner.DeltaTime));
+            Assert.That((bool)downed.IsDowned, Is.False);
+            Assert.That((bool)container.IsAvailable, Is.True);
+            Assert.That(GetNetworkedValue<int>(downed, "DefeatCauserEntityId"), Is.EqualTo(0));
+            Assert.That(GetNetworkedValue<int>(downed, "DefeatedCycle"), Is.EqualTo(1));
+            Assert.That(downed.IsResolutionAccelerated, Is.False);
+        }
+
+        [UnityTest]
+        public IEnumerator AcceleratedResolution_LatchesForTheCycleAndIsClearedOnRecovery()
+        {
+            yield return StartRunnerAndLoadPlayer();
+            Spawn(out PlayerCharacter player, out PlayerDownedStateNetworkController downed,
+                out NetworkLootContainer container);
+            SetField(downed, "_downedDrainPerSecond", 0f);
+
+            Assert.That(downed.RequestAcceleratedResolution(), Is.False, "Not Downed: nothing to accelerate.");
+            Assert.That(downed.AcceleratedDrainPerSecond, Is.EqualTo(0f));
+
+            yield return Hit(100000f);
+            Assert.That(downed.RequestAcceleratedResolution(), Is.True);
+            float latchedRate = downed.AcceleratedDrainPerSecond;
+            Assert.That(latchedRate, Is.EqualTo(15f).Within(0.001f));
+            yield return WaitFrames(5);
+
+            Assert.That(downed.RequestAcceleratedResolution(), Is.False);
+            Assert.That(downed.AcceleratedDrainPerSecond, Is.EqualTo(latchedRate));
+
+            Assert.That(player.TryRestoreFromDowned(1f), Is.True);
+            Assert.That(downed.IsResolutionAccelerated, Is.False);
+
+            yield return Hit(100000f);
+            Assert.That((bool)downed.IsDowned, Is.True);
+            Assert.That(downed.IsResolutionAccelerated, Is.False, "A new Downed cycle starts with the normal drain.");
+        }
+
+        [UnityTest]
+        public IEnumerator AcceleratedResolution_DamageDuringWindowShortensItWithoutChangingRate()
+        {
+            yield return StartRunnerAndLoadPlayer();
+            Spawn(out PlayerCharacter player, out PlayerDownedStateNetworkController downed,
+                out NetworkLootContainer container);
+            SetField(downed, "_downedDrainPerSecond", 0f);
+            SetField(downed, "_acceleratedResolutionSeconds", 2f);
+            yield return Hit(100000f);
+            Assert.That(downed.RequestAcceleratedResolution(), Is.True);
+            float rate = downed.AcceleratedDrainPerSecond;
+
+            yield return Hit(50f);
+
+            Assert.That(downed.AcceleratedDrainPerSecond, Is.EqualTo(rate));
+            int startTick = _runner.Tick;
+            int frames = 600;
+            while (player.IsAlive && frames-- > 0)
+            {
+                yield return null;
+            }
+
+            Assert.That(player.IsAlive, Is.False);
+            Assert.That((_runner.Tick - startTick) * _runner.DeltaTime, Is.LessThan(1f));
+            Assert.That((bool)container.IsAvailable, Is.True);
+        }
+
+        [UnityTest]
+        public IEnumerator AcceleratedResolution_ClearedAfterDefeatAndRefusedWhileDefeated()
+        {
+            yield return StartRunnerAndLoadPlayer();
+            Spawn(out PlayerCharacter player, out PlayerDownedStateNetworkController downed,
+                out NetworkLootContainer container);
+            SetField(downed, "_downedDrainPerSecond", 0f);
+            yield return Hit(100000f);
+            Assert.That(downed.RequestAcceleratedResolution(), Is.True);
+
+            yield return Hit(100000f);
+
+            Assert.That(player.IsAlive, Is.False);
+            Assert.That((bool)downed.IsDowned, Is.False);
+            Assert.That(downed.IsResolutionAccelerated, Is.False);
+            Assert.That(downed.RequestAcceleratedResolution(), Is.False);
+            Assert.That(downed.AcceleratedDrainPerSecond, Is.EqualTo(0f));
+        }
+
+        [UnityTest]
         public IEnumerator HealingWhileDowned_IsRejected()
         {
             yield return StartRunnerAndLoadPlayer();

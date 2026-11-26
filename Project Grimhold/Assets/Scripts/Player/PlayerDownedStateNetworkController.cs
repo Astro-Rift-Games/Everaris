@@ -23,6 +23,10 @@ public sealed class PlayerDownedStateNetworkController : NetworkBehaviour
     [SerializeField, Range(0.01f, 1f)]
     private float _downedMovementSpeedMultiplier = 0.35f;
 
+    [Tooltip("Accelerated Resolution (GD 13 section 9): seconds from activation to definitive defeat.")]
+    [SerializeField, Min(0.01f)]
+    private float _acceleratedResolutionSeconds = 5f;
+
     [Header("Dependencies")]
     [SerializeField]
     private PlayerCharacter _playerCharacter;
@@ -50,6 +54,16 @@ public sealed class PlayerDownedStateNetworkController : NetworkBehaviour
 
     [Networked]
     public int DefeatedCycle { get; private set; }
+
+    /// <summary>
+    /// Drain rate latched when Accelerated Resolution starts for the current cycle; zero while the
+    /// normal drain applies. Networked so a restored avatar resumes with the same rate.
+    /// </summary>
+    [Networked]
+    public float AcceleratedDrainPerSecond { get; private set; }
+
+    /// <summary>True while the current Downed cycle resolves under Accelerated Resolution.</summary>
+    public bool IsResolutionAccelerated => AcceleratedDrainPerSecond > 0f;
 
     /// <summary>Full Downed reserve granted on entry; presentation uses it to normalize the bar.</summary>
     public float InitialDownedHealth => _initialDownedHealth;
@@ -79,6 +93,7 @@ public sealed class PlayerDownedStateNetworkController : NetworkBehaviour
             DownedCauserEntityId = 0;
             DefeatCauserEntityId = 0;
             DefeatedCycle = 0;
+            AcceleratedDrainPerSecond = 0f;
         }
     }
 
@@ -94,7 +109,8 @@ public sealed class PlayerDownedStateNetworkController : NetworkBehaviour
             return;
         }
 
-        DownedHealth = DownedHealthRules.Drain(DownedHealth, _downedDrainPerSecond, Runner.DeltaTime);
+        float rate = IsResolutionAccelerated ? AcceleratedDrainPerSecond : _downedDrainPerSecond;
+        DownedHealth = DownedHealthRules.Drain(DownedHealth, rate, Runner.DeltaTime);
         if (DownedHealthRules.IsDepleted(DownedHealth))
         {
             ClearDownedState();
@@ -103,6 +119,29 @@ public sealed class PlayerDownedStateNetworkController : NetworkBehaviour
                 _playerCharacter.ResolveDefinitiveDefeatFromDowned();
             }
         }
+    }
+
+    /// <summary>
+    /// Starts Accelerated Resolution for the current cycle (GD 13 section 9): the remaining reserve
+    /// drains in the configured time. Latches until the cycle ends; returns false when not Downed,
+    /// not authoritative or already accelerated.
+    /// </summary>
+    public bool RequestAcceleratedResolution()
+    {
+        if (!HasStateAuthority || !IsDowned || IsResolutionAccelerated)
+        {
+            return false;
+        }
+
+        float rate = DownedHealthRules.AcceleratedDrainRate(
+            _downedDrainPerSecond, DownedHealth, _acceleratedResolutionSeconds);
+        if (!(rate > 0f))
+        {
+            return false;
+        }
+
+        AcceleratedDrainPerSecond = rate;
+        return true;
     }
 
     /// <summary>Enters Downed with a full reserve. Refused unless authoritative and not already Downed.</summary>
@@ -128,6 +167,7 @@ public sealed class PlayerDownedStateNetworkController : NetworkBehaviour
         DefeatedCycle = 0;
         IsDowned = true;
         DownedHealth = reserve;
+        AcceleratedDrainPerSecond = 0f;
         DownedCycle++;
         _cycleObserver?.NotifyDownedEntered(DownedCycle, creditCauserId, Runner.Tick, empowerSourceId);
         return true;
@@ -184,6 +224,7 @@ public sealed class PlayerDownedStateNetworkController : NetworkBehaviour
 
         IsDowned = false;
         DownedHealth = 0f;
+        AcceleratedDrainPerSecond = 0f;
         if (wasDowned) _cycleObserver?.NotifyDownedCycleDefeated(DefeatedCycle);
     }
 
@@ -200,6 +241,7 @@ public sealed class PlayerDownedStateNetworkController : NetworkBehaviour
 
         IsDowned = false;
         DownedHealth = 0f;
+        AcceleratedDrainPerSecond = 0f;
         DefeatCauserEntityId = 0;
         DefeatedCycle = 0;
         _cycleObserver?.NotifyDownedCycleRecovered(DownedCycle);
@@ -225,6 +267,7 @@ public sealed class PlayerDownedStateNetworkController : NetworkBehaviour
             DownedHealthRules.TryCreateReserve(_initialDownedHealth, out _) &&
             IsFiniteNonNegative(_downedDrainPerSecond) &&
             IsFiniteNonNegative(_downedDamageMultiplier) &&
+            IsFiniteNonNegative(_acceleratedResolutionSeconds) && _acceleratedResolutionSeconds > 0f &&
             _downedMovementSpeedMultiplier > 0f && _downedMovementSpeedMultiplier <= 1f;
 
         if (!_isConfigurationValid && !_reportedInvalidConfiguration)

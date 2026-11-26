@@ -44,6 +44,7 @@ public sealed class RaidDownedHudPresenter : MonoBehaviour
     private PlayerDownedRecoveryNetworkController _allyRecovery;
     private bool _isBound;
     private bool _wasDowned;
+    private bool _wasAccelerated;
     private bool _hasDownedBaseline;
     private float _messageUntil;
 
@@ -117,6 +118,7 @@ public sealed class RaidDownedHudPresenter : MonoBehaviour
         if (HasValidSources())
         {
             _wasDowned = _character.IsDowned;
+            _wasAccelerated = _downedState.IsResolutionAccelerated;
             _hasDownedBaseline = true;
             _ownOutcome.Baseline(_ownRecovery.LastOutcomeSequence);
         }
@@ -125,6 +127,7 @@ public sealed class RaidDownedHudPresenter : MonoBehaviour
     private void ResetObserved()
     {
         _wasDowned = false;
+        _wasAccelerated = false;
         _hasDownedBaseline = false;
         _messageUntil = 0f;
         _ownOutcome.Reset();
@@ -149,9 +152,11 @@ public sealed class RaidDownedHudPresenter : MonoBehaviour
         }
 
         bool isDowned = _character.IsDowned;
+        bool isAccelerated = isDowned && _downedState.IsResolutionAccelerated;
         if (!_hasDownedBaseline)
         {
             _wasDowned = isDowned;
+            _wasAccelerated = isAccelerated;
             _hasDownedBaseline = true;
         }
         else if (isDowned && !_wasDowned)
@@ -161,6 +166,7 @@ public sealed class RaidDownedHudPresenter : MonoBehaviour
         }
 
         _wasDowned = isDowned;
+        AnnounceAcceleratedResolution(isAccelerated);
 
         RefreshDowned(isDowned);
         RefreshAlly(isDowned);
@@ -200,7 +206,22 @@ public sealed class RaidDownedHudPresenter : MonoBehaviour
             DownedRecoveryFeedbackRules.DownedStateText(
                 _ownRecovery.ActiveSessionKind,
                 _ownRecovery.CarriesSelfReviver,
-                _ownRecovery.SelfReviveUsed));
+                _ownRecovery.SelfReviveUsed,
+                _downedState.IsResolutionAccelerated));
+    }
+
+    // GD 13 section 14: the Downed player is told once when the cycle enters Accelerated Resolution.
+    private void AnnounceAcceleratedResolution(bool isAccelerated)
+    {
+        string notice = DownedRecoveryFeedbackRules.AcceleratedResolutionNotice(_wasAccelerated, isAccelerated);
+        _wasAccelerated = isAccelerated;
+        if (notice == null)
+        {
+            return;
+        }
+
+        _view.ShowMessage(notice, false);
+        _messageUntil = Time.unscaledTime + _messageDuration;
     }
 
     private void RefreshAlly(bool isDowned)
