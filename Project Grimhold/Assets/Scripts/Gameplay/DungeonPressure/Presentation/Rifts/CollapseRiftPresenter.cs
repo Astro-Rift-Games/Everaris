@@ -33,6 +33,7 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
 
     private Transform _riftsRoot;
     private ICollapseSurfaceGrid _customGrid;
+    private CollapseRiftAtlas _activeAtlas;
     private DungeonPressurePhase _lastPhase = DungeonPressurePhase.Normal;
     private bool _hasResolvedInitialPhase;
     private bool _hasGeneratedRifts;
@@ -49,6 +50,7 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
         : (_config != null ? _config.WallFrameIntervalSeconds : 0.15f);
     public IReadOnlyList<CollapseFloorRiftVisual> FloorRifts => _floorRifts;
     public IReadOnlyList<CollapseWallRiftVisual> WallRifts => _wallRifts;
+    public CollapseRiftAtlas ActiveAtlas => _activeAtlas;
 
     private void OnEnable()
     {
@@ -383,14 +385,35 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
         List<Vector2> floorExclusions = CollectFloorExclusionCenters();
         List<Vector2> wallExclusions = CollectWallExclusionCenters();
 
+        CollapseRiftPlacementSettings ps = _config.BuildPlacementSettings();
         CollapseRiftPlacementService.GeneratePlacements(
             grid,
-            _config.BuildPlacementSettings(),
+            ps,
             floorExclusions,
             wallExclusions,
             _activeSeed,
             _floorPlacementsBuffer,
             _wallPlacementsBuffer);
+
+        bool useProcedural = _config.RenderMode == CollapseRiftRenderMode.Procedural;
+        if (useProcedural)
+        {
+            CollapseRiftRuntimeKit floorKit = _config.ProceduralFloorKit != null
+                ? _config.ProceduralFloorKit.BuildRuntimeKit()
+                : CollapseRiftPlaceholderKitFactory.CreateFloorKit();
+            CollapseRiftRuntimeKit wallKit = _config.ProceduralWallKit != null
+                ? _config.ProceduralWallKit.BuildRuntimeKit()
+                : CollapseRiftPlaceholderKitFactory.CreateWallKit();
+            int maxWallHeightPx = ps.WallFaceHeightCells * wallKit.PixelsPerWorldCell;
+            _activeAtlas = CollapseRiftAtlas.Build(
+                _floorPlacementsBuffer,
+                _wallPlacementsBuffer,
+                floorKit,
+                wallKit,
+                _activeSeed,
+                _config.ProceduralCellPixelSize,
+                maxWallHeightPx);
+        }
 
         Vector2 cycleRange = _config.Stage3CycleIntervalRange;
         for (int i = 0; i < _floorPlacementsBuffer.Count; i++)
@@ -402,6 +425,10 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
                 Mathf.Max(cycleRange.x, cycleRange.y),
                 placement.PhaseOffsetSeconds % 1f);
             visual.Initialize(_config, placement.Batch, placement.PhaseOffsetSeconds, initialDelay);
+            if (useProcedural && _activeAtlas != null && i < _activeAtlas.FloorSprites.Count)
+            {
+                visual.SetProceduralVisual(_activeAtlas.FloorSprites[i], _config.ProceduralFloorMaterial);
+            }
             _floorRifts.Add(visual);
         }
 
@@ -411,6 +438,10 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
             CollapseRiftPlacement placement = _wallPlacementsBuffer[i];
             CollapseWallRiftVisual visual = CreateWallVisual(placement, i);
             visual.Initialize(_config, placement.PhaseOffsetSeconds, wallInterval);
+            if (useProcedural && _activeAtlas != null && i < _activeAtlas.WallSprites.Count)
+            {
+                visual.SetProceduralVisual(_activeAtlas.WallSprites[i], _config.ProceduralWallMaterial);
+            }
             _wallRifts.Add(visual);
         }
 
@@ -418,11 +449,10 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
 
         if (Application.isPlaying)
         {
-            CollapseRiftPlacementSettings ps = _config.BuildPlacementSettings();
             string sampleFloor = _floorPlacementsBuffer.Count > 0 ? _floorPlacementsBuffer[0].WorldPosition.ToString("F1") : "none";
             string sampleWall = _wallPlacementsBuffer.Count > 0 ? _wallPlacementsBuffer[0].WorldPosition.ToString("F1") : "none";
             Debug.Log(
-                $"[CollapseRiftPresenter] Generated collapse rifts for RaidId='{_activeRaidGenerationId}' (seed={_activeSeed}). " +
+                $"[CollapseRiftPresenter] Generated collapse rifts ({_config.RenderMode}) for RaidId='{_activeRaidGenerationId}' (seed={_activeSeed}). " +
                 $"GridBounds={grid.CellBounds}, Floor={_floorRifts.Count}/{ps.Stage2FloorCount + ps.Stage3FloorCount} (first={sampleFloor}), " +
                 $"Wall={_wallRifts.Count}/{ps.WallCount} (first={sampleWall}), Exclusions(floor={floorExclusions.Count}, wall={wallExclusions.Count}).",
                 this);
@@ -505,6 +535,12 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
     {
         _floorRifts.Clear();
         _wallRifts.Clear();
+
+        if (_activeAtlas != null)
+        {
+            _activeAtlas.Dispose();
+            _activeAtlas = null;
+        }
 
         if (_riftsRoot == null)
         {

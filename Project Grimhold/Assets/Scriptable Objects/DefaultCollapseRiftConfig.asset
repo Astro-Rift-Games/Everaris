@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c34b6c95b7615bc458262a9654284c28, type: 3}
   m_Name: DefaultCollapseRiftConfig
   m_EditorClassIdentifier: Assembly-CSharp::CollapseRiftConfig
+  _renderMode: 1
+  _proceduralFloorKit: {fileID: 11400000, guid: d5c89320f2774b140b5c0dd8b8992e8d, type: 2}
+  _proceduralWallKit: {fileID: 11400000, guid: 2eb2a4ee2e7f1fe44950072f51bf1cd3, type: 2}
+  _proceduralFloorMaterial: {fileID: 2100000, guid: a8a6f98d6daa5694bb35038011906a45, type: 2}
+  _proceduralWallMaterial: {fileID: 2100000, guid: 0c730ff3b8767fb408c33c4a68ce4a22, type: 2}
+  _proceduralCellPixelSize: 48
+  _spawnFrontEmissionStrength: 1.6
   _floorRiftPrefab: {fileID: 8630295271896825020, guid: 5bcbae83c2cf3464f895cc8eb006f663, type: 3}
   _wallRiftPrefab: {fileID: 6872449143185925695, guid: bb0d81fb5d593a34bbd1e733e2e02340, type: 3}
   _floorSpawnFrames:

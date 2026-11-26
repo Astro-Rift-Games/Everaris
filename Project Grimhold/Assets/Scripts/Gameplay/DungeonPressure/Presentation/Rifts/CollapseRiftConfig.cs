@@ -8,6 +8,16 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "CollapseRiftConfig", menuName = "Grimhold/Dungeon Pressure/Collapse Rift Config")]
 public sealed class CollapseRiftConfig : ScriptableObject
 {
+    [Header("Render Mode & Procedural Rift Kits (US-92 / TASK-341)")]
+    [Tooltip("Switch between legacy per-frame SpriteSheet rendering (fallback) and per-raid Procedural atlas rendering.")]
+    [SerializeField] private CollapseRiftRenderMode _renderMode = CollapseRiftRenderMode.SpriteSheet;
+    [SerializeField] private CollapseRiftKitAsset _proceduralFloorKit;
+    [SerializeField] private CollapseRiftKitAsset _proceduralWallKit;
+    [SerializeField] private Material _proceduralFloorMaterial;
+    [SerializeField] private Material _proceduralWallMaterial;
+    [Min(16)] [SerializeField] private int _proceduralCellPixelSize = 48;
+    [Min(0f)] [SerializeField] private float _spawnFrontEmissionStrength = 0.75f;
+
     [Header("Prefabs (Optional Overrides)")]
     [SerializeField] private CollapseFloorRiftVisual _floorRiftPrefab;
     [SerializeField] private CollapseWallRiftVisual _wallRiftPrefab;
@@ -78,6 +88,14 @@ public sealed class CollapseRiftConfig : ScriptableObject
     [SerializeField] private int _wallSortingOrder = 3;
     [SerializeField] private string _particleSortingLayerName = "VFX";
     [SerializeField] private int _particleSortingOrder = 2;
+
+    public CollapseRiftRenderMode RenderMode => _renderMode;
+    public CollapseRiftKitAsset ProceduralFloorKit => _proceduralFloorKit;
+    public CollapseRiftKitAsset ProceduralWallKit => _proceduralWallKit;
+    public Material ProceduralFloorMaterial => _proceduralFloorMaterial;
+    public Material ProceduralWallMaterial => _proceduralWallMaterial;
+    public int ProceduralCellPixelSize => Mathf.Clamp(_proceduralCellPixelSize, 16, 128);
+    public float SpawnFrontEmissionStrength => _spawnFrontEmissionStrength;
 
     public CollapseFloorRiftVisual FloorRiftPrefab => _floorRiftPrefab;
     public CollapseWallRiftVisual WallRiftPrefab => _wallRiftPrefab;
@@ -229,6 +247,22 @@ public sealed class CollapseRiftConfig : ScriptableObject
         _minFloorRiftSpacing = minFloorSpacing;
         _minWallRiftSpacing = minWallSpacing;
         _enableSubtleParticles = false;
+    }
+
+    public void ConfigureProceduralForTests(
+        CollapseRiftRenderMode mode,
+        Material proceduralFloorMaterial = null,
+        Material proceduralWallMaterial = null,
+        CollapseRiftKitAsset floorKit = null,
+        CollapseRiftKitAsset wallKit = null,
+        int cellPixelSize = 48)
+    {
+        _renderMode = mode;
+        _proceduralFloorMaterial = proceduralFloorMaterial;
+        _proceduralWallMaterial = proceduralWallMaterial;
+        _proceduralFloorKit = floorKit;
+        _proceduralWallKit = wallKit;
+        _proceduralCellPixelSize = Mathf.Clamp(cellPixelSize, 16, 128);
     }
 
     private static Sprite GetClampedSprite(Sprite[] sprites, int frameIndex)

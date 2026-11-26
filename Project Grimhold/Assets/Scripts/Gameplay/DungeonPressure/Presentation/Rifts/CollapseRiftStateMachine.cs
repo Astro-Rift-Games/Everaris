@@ -22,6 +22,23 @@ public sealed class CollapseRiftStateMachine
     public int CurrentFrameIndex => _currentFrameIndex;
     public float StateElapsedSeconds => _stateElapsedSeconds;
 
+    /// <summary>Continuous [0..1] progress inside the current visual stage for procedural shader parameters (TASK-341).</summary>
+    public float StageNormalizedProgress
+    {
+        get
+        {
+            return _state switch
+            {
+                CollapseRiftVisualState.Spawning => Mathf.Clamp01(_stateElapsedSeconds / Mathf.Max(0.01f, _timing.SpawnFrameCount / _timing.SpawnFps)),
+                CollapseRiftVisualState.Telegraph => Mathf.Clamp01(_stateElapsedSeconds / Mathf.Max(0.01f, _timing.TelegraphDurationSeconds)),
+                CollapseRiftVisualState.Erupting => Mathf.Clamp01(_stateElapsedSeconds / Mathf.Max(0.01f, _timing.EruptionFrameCount / _timing.EruptionFps)),
+                CollapseRiftVisualState.Cooldown => Mathf.Clamp01(_stateElapsedSeconds / Mathf.Max(0.01f, _timing.CooldownFrameCount / _timing.CooldownFps)),
+                CollapseRiftVisualState.Dormant => 1f,
+                _ => 0f
+            };
+        }
+    }
+
     public CollapseRiftStateMachine(CollapseRiftBatch batch, CollapseRiftTimingSettings timing)
     {
         _batch = batch;

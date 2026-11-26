@@ -21,8 +21,11 @@ public sealed class CollapseWallRiftVisual : MonoBehaviour
     private CollapseRiftConfig _config;
     private CollapseWallRiftStepper _stepper;
     private MaterialPropertyBlock _propertyBlock;
+    private bool _useProceduralShader;
+    private Sprite _proceduralSprite;
 
     public CollapseRiftVisualState VisualState => _stepper != null ? _stepper.CurrentStage : CollapseRiftVisualState.Hidden;
+    public bool UsesProceduralShader => _useProceduralShader;
     public int CurrentStageFrameIndex => _stepper != null ? _stepper.CurrentStageFrameIndex : 0;
     public float FrameIntervalSeconds => _stepper != null ? _stepper.FrameIntervalSeconds : 0f;
     public SpriteRenderer Renderer => _spriteRenderer;
@@ -49,6 +52,27 @@ public sealed class CollapseWallRiftVisual : MonoBehaviour
             frameIntervalSeconds: interval,
             phaseOffsetSeconds: phaseOffsetSeconds);
 
+        ApplyVisualOutputs();
+    }
+
+    /// <summary>
+    /// Binds a baked per-raid atlas sprite and shared procedural material once (TASK-341).
+    /// Clears any MaterialPropertyBlock so wall rifts batch cleanly via SpriteRenderer.color.
+    /// </summary>
+    public void SetProceduralVisual(Sprite bakedSprite, Material sharedProceduralMaterial)
+    {
+        EnsureComponents();
+        _useProceduralShader = bakedSprite != null;
+        _proceduralSprite = bakedSprite;
+        if (_useProceduralShader && _spriteRenderer != null)
+        {
+            _spriteRenderer.sprite = _proceduralSprite;
+            if (sharedProceduralMaterial != null)
+            {
+                _spriteRenderer.sharedMaterial = sharedProceduralMaterial;
+            }
+            _spriteRenderer.SetPropertyBlock(null);
+        }
         ApplyVisualOutputs();
     }
 
@@ -144,6 +168,10 @@ public sealed class CollapseWallRiftVisual : MonoBehaviour
 
         if (!visible)
         {
+            if (_useProceduralShader)
+            {
+                _spriteRenderer.color = Color.clear;
+            }
             if (_localLight != null)
             {
                 _localLight.enabled = false;
@@ -151,8 +179,6 @@ public sealed class CollapseWallRiftVisual : MonoBehaviour
             }
             return;
         }
-
-        _spriteRenderer.sprite = _config.GetWallSprite(stage, _stepper.CurrentStageFrameIndex);
 
         float emissionStrength = 0f;
         float lightIntensity = 0f;
@@ -174,10 +200,7 @@ public sealed class CollapseWallRiftVisual : MonoBehaviour
 
             case CollapseRiftVisualState.Cooldown:
             {
-                int frameCount = _config.WallStage4Frames != null && _config.WallStage4Frames.Length > 0
-                    ? _config.WallStage4Frames.Length
-                    : 8;
-                float remaining = 1f - Mathf.Clamp01((float)_stepper.CurrentStageFrameIndex / Mathf.Max(1, frameCount - 1));
+                float remaining = 1f - _stepper.CurrentStageNormalizedProgress;
                 emissionStrength = _config.CooldownEmissionStrength * remaining;
                 lightIntensity = _config.CooldownLightIntensity * remaining;
                 lightRadius = _config.CooldownLightRadius;
@@ -185,10 +208,34 @@ public sealed class CollapseWallRiftVisual : MonoBehaviour
             }
         }
 
-        _spriteRenderer.GetPropertyBlock(_propertyBlock);
-        _propertyBlock.SetFloat(EmissionStrengthId, emissionStrength);
-        _propertyBlock.SetColor(EmissionColorId, _config.EmissiveLightColor);
-        _spriteRenderer.SetPropertyBlock(_propertyBlock);
+        if (_useProceduralShader)
+        {
+            if (_spriteRenderer.sprite != _proceduralSprite)
+            {
+                _spriteRenderer.sprite = _proceduralSprite;
+            }
+
+            float pulse = stage == CollapseRiftVisualState.Telegraph
+                ? 0.72f + 0.28f * Mathf.Sin(_stepper.CurrentStageNormalizedProgress * Mathf.PI * 2f)
+                : 1f;
+
+            _spriteRenderer.color = CollapseRiftShaderParameterMapper.Evaluate(
+                stage,
+                _stepper.CurrentStageNormalizedProgress,
+                pulse,
+                _config.TelegraphEmissionStrength,
+                _config.EruptionEmissionStrength,
+                _config.CooldownEmissionStrength,
+                _config.SpawnFrontEmissionStrength);
+        }
+        else
+        {
+            _spriteRenderer.sprite = _config.GetWallSprite(stage, _stepper.CurrentStageFrameIndex);
+            _spriteRenderer.GetPropertyBlock(_propertyBlock);
+            _propertyBlock.SetFloat(EmissionStrengthId, emissionStrength);
+            _propertyBlock.SetColor(EmissionColorId, _config.EmissiveLightColor);
+            _spriteRenderer.SetPropertyBlock(_propertyBlock);
+        }
 
         if (_localLight != null)
         {

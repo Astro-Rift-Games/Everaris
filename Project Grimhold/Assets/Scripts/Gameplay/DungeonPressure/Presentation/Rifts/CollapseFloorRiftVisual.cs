@@ -25,8 +25,11 @@ public sealed class CollapseFloorRiftVisual : MonoBehaviour
     private float _autoCycleTimer;
     private float _autoCycleDuration;
     private float _phaseOffsetSeconds;
+    private bool _useProceduralShader;
+    private Sprite _proceduralSprite;
 
     public CollapseRiftVisualState VisualState => _stateMachine != null ? _stateMachine.State : CollapseRiftVisualState.Hidden;
+    public bool UsesProceduralShader => _useProceduralShader;
     public CollapseRiftBatch Batch => _stateMachine != null ? _stateMachine.Batch : CollapseRiftBatch.Stage2Initial;
     public bool IsActivatable => _stateMachine != null && _stateMachine.IsActivatable;
     public SpriteRenderer Renderer => _spriteRenderer;
@@ -47,6 +50,27 @@ public sealed class CollapseFloorRiftVisual : MonoBehaviour
 
         _stateMachine = new CollapseRiftStateMachine(batch, config.BuildFloorTimingSettings(_phaseOffsetSeconds));
         _lastAppliedState = CollapseRiftVisualState.Hidden;
+        ApplyVisualOutputs(isStateTransition: false);
+    }
+
+    /// <summary>
+    /// Binds a baked per-raid atlas sprite and shared procedural material once (TASK-341).
+    /// Clears any MaterialPropertyBlock so floor rifts batch cleanly via SpriteRenderer.color.
+    /// </summary>
+    public void SetProceduralVisual(Sprite bakedSprite, Material sharedProceduralMaterial)
+    {
+        EnsureComponents();
+        _useProceduralShader = bakedSprite != null;
+        _proceduralSprite = bakedSprite;
+        if (_useProceduralShader && _spriteRenderer != null)
+        {
+            _spriteRenderer.sprite = _proceduralSprite;
+            if (sharedProceduralMaterial != null)
+            {
+                _spriteRenderer.sharedMaterial = sharedProceduralMaterial;
+            }
+            _spriteRenderer.SetPropertyBlock(null);
+        }
         ApplyVisualOutputs(isStateTransition: false);
     }
 
@@ -260,6 +284,10 @@ public sealed class CollapseFloorRiftVisual : MonoBehaviour
 
         if (!visible)
         {
+            if (_useProceduralShader)
+            {
+                _spriteRenderer.color = Color.clear;
+            }
             if (_localLight != null)
             {
                 _localLight.enabled = false;
@@ -269,19 +297,18 @@ public sealed class CollapseFloorRiftVisual : MonoBehaviour
             return;
         }
 
-        _spriteRenderer.sprite = _config.GetFloorSprite(state, _stateMachine.CurrentFrameIndex);
-
         float emissionStrength = 0f;
         float lightIntensity = 0f;
         float lightRadius = _config.TelegraphLightRadius;
+        float telegraphPulse = 1f;
 
         switch (state)
         {
             case CollapseRiftVisualState.Telegraph:
             {
-                float pulse = 0.72f + 0.28f * Mathf.Sin((_stateMachine.StateElapsedSeconds + _phaseOffsetSeconds) * 6.5f);
-                emissionStrength = _config.TelegraphEmissionStrength * pulse;
-                lightIntensity = _config.TelegraphLightIntensity * pulse;
+                telegraphPulse = 0.72f + 0.28f * Mathf.Sin((_stateMachine.StateElapsedSeconds + _phaseOffsetSeconds) * 6.5f);
+                emissionStrength = _config.TelegraphEmissionStrength * telegraphPulse;
+                lightIntensity = _config.TelegraphLightIntensity * telegraphPulse;
                 lightRadius = _config.TelegraphLightRadius;
                 break;
             }
@@ -294,10 +321,7 @@ public sealed class CollapseFloorRiftVisual : MonoBehaviour
 
             case CollapseRiftVisualState.Cooldown:
             {
-                int frameCount = _config.FloorCooldownFrames != null && _config.FloorCooldownFrames.Length > 0
-                    ? _config.FloorCooldownFrames.Length
-                    : 8;
-                float remaining = 1f - Mathf.Clamp01((float)_stateMachine.CurrentFrameIndex / Mathf.Max(1, frameCount - 1));
+                float remaining = 1f - _stateMachine.StageNormalizedProgress;
                 emissionStrength = _config.CooldownEmissionStrength * remaining;
                 lightIntensity = _config.CooldownLightIntensity * remaining;
                 lightRadius = _config.CooldownLightRadius;
@@ -305,10 +329,31 @@ public sealed class CollapseFloorRiftVisual : MonoBehaviour
             }
         }
 
-        _spriteRenderer.GetPropertyBlock(_propertyBlock);
-        _propertyBlock.SetFloat(EmissionStrengthId, emissionStrength);
-        _propertyBlock.SetColor(EmissionColorId, _config.EmissiveLightColor);
-        _spriteRenderer.SetPropertyBlock(_propertyBlock);
+        if (_useProceduralShader)
+        {
+            if (_spriteRenderer.sprite != _proceduralSprite)
+            {
+                _spriteRenderer.sprite = _proceduralSprite;
+            }
+
+            // Vertex-color parameters only (no MaterialPropertyBlock -> preserves batching).
+            _spriteRenderer.color = CollapseRiftShaderParameterMapper.Evaluate(
+                state,
+                _stateMachine.StageNormalizedProgress,
+                telegraphPulse,
+                _config.TelegraphEmissionStrength,
+                _config.EruptionEmissionStrength,
+                _config.CooldownEmissionStrength,
+                _config.SpawnFrontEmissionStrength);
+        }
+        else
+        {
+            _spriteRenderer.sprite = _config.GetFloorSprite(state, _stateMachine.CurrentFrameIndex);
+            _spriteRenderer.GetPropertyBlock(_propertyBlock);
+            _propertyBlock.SetFloat(EmissionStrengthId, emissionStrength);
+            _propertyBlock.SetColor(EmissionColorId, _config.EmissiveLightColor);
+            _spriteRenderer.SetPropertyBlock(_propertyBlock);
+        }
 
         if (_localLight != null)
         {

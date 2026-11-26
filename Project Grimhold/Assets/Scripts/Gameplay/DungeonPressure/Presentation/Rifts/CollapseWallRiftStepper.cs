@@ -32,6 +32,24 @@ public sealed class CollapseWallRiftStepper
     public int CurrentStageFrameIndex => _currentStageFrameIndex;
     public float FrameIntervalSeconds => _frameIntervalSeconds;
 
+    /// <summary>Continuous [0..1] progress inside the current wall stage for procedural shader parameters (TASK-341).</summary>
+    public float CurrentStageNormalizedProgress
+    {
+        get
+        {
+            int count = _currentStage switch
+            {
+                CollapseRiftVisualState.Spawning => _spawnFrameCount,
+                CollapseRiftVisualState.Dormant => _stage1FrameCount,
+                CollapseRiftVisualState.Telegraph => _stage2FrameCount,
+                CollapseRiftVisualState.Erupting => _stage3FrameCount,
+                CollapseRiftVisualState.Cooldown => _stage4FrameCount,
+                _ => 1
+            };
+            return count <= 1 ? 1f : Mathf.Clamp01((float)_currentStageFrameIndex / (count - 1));
+        }
+    }
+
     public CollapseWallRiftStepper(
         int spawnFrameCount,
         int stage1FrameCount,
