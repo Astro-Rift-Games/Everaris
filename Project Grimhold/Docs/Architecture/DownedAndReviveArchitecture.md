@@ -45,7 +45,7 @@ Related documents: `PlayerCombatArchitecture.md` (damage pipeline, corpse),
 | `PlayerDownedGate` (Implemented) | Shared "is Downed" predicate for action choke points | State |
 | `PlayerDownedRecoveryNetworkController` (Implemented, TASK 452; Self-revive and handoff TASK-236) | The recovery session: kind, reviver, progress, cycle; interruption rules; Self-reviver consumption, handoff transfer and the per-expedition Self-revive quota | Reserve value, Health, interaction targeting |
 | `PlayerInteractionNetworkController` + `IInteractable` (Implemented) | Instant, press-edge interaction targeting | Held progress, recovery rules |
-| `DownedTeamResolutionCoordinator` (Planned, no task) | Host-side Accelerated Resolution evaluation | The reserve (it only requests a rate) |
+| `DownedTeamResolutionCoordinator` (Implemented, TASK-321) | Host-side Accelerated Resolution evaluation | The reserve (it only requests a rate) |
 | `PlayerStaminaNetworkController` (Implemented, extended) | Stamina value | Any Downed rule |
 | `NetworkRaidParticipant` (Implemented) | `Raiding -> Defeated` participant result | Downed state |
 | `PlayerCorpseGenerationController` (Implemented) | Corpse and Loot conversion, once | When it runs |
@@ -267,8 +267,8 @@ Both are reset in `Spawned` except on a Host Migration restore. Pure rules live 
   uses `DownedReviveInteractable.ResolvePromptText`.
 * **Quick Slot:** `CON_SELF_REVIVE` has `_quickSlotCompatible = 0`; stored bindings to it are
   dropped on load by the existing codec rule.
-* **Accelerated Resolution input:** `CanSelfRevive` (section 10) is now derivable as
-  `CarriesSelfReviver && !SelfReviveUsed` or a valid Self session; the coordinator itself stays planned.
+* **Accelerated Resolution input:** the coordinator (section 10) reads `CanBeginSelf()` and
+  `ActiveSessionKind` from this controller (TASK-321).
 
 ## 8. Relation with the interaction system
 
@@ -367,21 +367,28 @@ Presentation only; it never writes networked state and adds no replicated fields
 * **Architecture Decision (Polling vs Events, FIX-85).** `LocalPlayerDownedPostProcessPresenter` performs read-only polling in `Update` (`Tick`) of the avatar's replicated state (`IsDowned`, `ReserveFraction`, `TryGetReviveProgress`). This deliberate decision preserves the pure frame-based interpolation of `DownedPostProcessBlend` (easing reserve depletion, responsive revive color, and volume weight curves) without coupling the authoritative simulation to client UI event buses or introducing event subscription lifecycle overhead. Re-entering Downed mid-fade-out tracks cycle changes (`isDowned && !_wasDowned`) to reset reserve and revive values cleanly to the new cycle.
 * **Out of scope.** The Defeat overlay owns definitive Defeat presentation; this effect only fades out.
 
-## 10. Accelerated Resolution (Planned, no task)
+## 10. Accelerated Resolution (Implemented, TASK-321)
 
 GD 13 §9: when the team has no valid recovery route, every Downed member's drain accelerates so
 definitive Defeat arrives after a configurable time (about 5 s). The bar is not cut instantly.
 
 * **Owner:** `DownedTeamResolutionCoordinator`, a Host-only evaluator. It lives outside
-  `NetworkSpawnManager` (already very large) and reads team membership from the frozen
-  `RaidInitialAffiliationSnapshot` (`TryGetTeam`, `TryAreInitialTeammates`).
-* **Inputs per member:** Active, Downed or Defeated/other (participant `State` plus the avatar's
-  `IsDowned`), and `CanSelfRevive` (default `false` until Self-revive exists).
-* **Rule (pure, testable):** a team has a route if any member is Active (an assisted reviver) or
-  any Downed member can Self-revive or has a valid Self-revive session. Solo without Self-reviver
-  and Duo with both Downed and no Self-reviver have no route.
-* **Evaluation:** on State Authority, compare a compact per-member signature each tick (at most
-  two members) and recompute only when it changes. No C# event drives authoritative state.
+  `NetworkSpawnManager` (already very large) and reads team membership from the frozen launch
+  `RaidTeamRoster` (`NetworkSpawnManager.TryGetRaidTeamRoster`, `TryGetTeamMembers`).
+* **Inputs per member:** `DownedTeamMemberRouteSnapshot`, built each tick from the participant
+  `State`, the resolvable current avatar, `IsDowned`/`IsAlive`, `RaidParticipantConnectivity.IsDisconnected`
+  (missing component = connected), `PlayerDownedRecoveryNetworkController.CanBeginSelf()` and
+  `ActiveSessionKind`. Component lookups are cached per avatar; the tick allocates nothing.
+* **Rule (pure, testable, `DownedTeamRecoveryRouteRules`):** only a `Raiding` member with a resolvable
+  avatar counts. A route is an Active connected member (an assisted reviver), a connected Downed
+  member that `CanBeginSelf()`, or a Downed member with any valid recovery session in progress
+  (assisted, Self or handoff; a running session can still complete, and Self survives a disconnect).
+  Solo without Self-reviver and Duo with both Downed and no Self-reviver have no route. With no
+  route and at least one Downed `Raiding` member, every Downed `Raiding` member is accelerated.
+  Extracted, Defeated or Aborted members are neither a route nor accelerated.
+* **Evaluation:** on State Authority, every forward simulation tick, recompute the rule for each
+  team from cached per-member lookups (at most two members per team). No C# event drives
+  authoritative state.
 * **Effect:** on "no route" the coordinator calls `RequestAcceleratedResolution()` on each Downed
   member's controller, which stores `[Networked] float AcceleratedDrainPerSecond =
   max(base, currentReserve / _acceleratedResolutionSeconds)`. The drain rate used each tick is that
@@ -389,6 +396,22 @@ definitive Defeat arrives after a configurable time (about 5 s). The bar is not 
   normal bar, and damage during the window still shortens it.
 * **Restore-safe and deterministic:** the rate is a networked value, not a derived timer, so a
   restored avatar resumes with the same rate. A valid recovery session still pauses drain.
+* **Fail-safe (acceleration latches):** a member whose state is unknown blocks acceleration for
+  its team that tick: a participant not resolvable yet (neither the spawn manager nor a throttled
+  runner scan finds it) or a `Raiding` member without a resolvable avatar. Evaluation pauses while
+  `NetworkSpawnManager.IsHostMigrationRecoveryInProgress`. A participant seen before and now
+  despawned counts as finished. Accepted limit: after Host Migration, a teammate the new Host never
+  saw and that is already gone stays unknown, so the survivor keeps the normal drain (safe
+  direction; possible follow-up: query terminal profiles from the spawn manager).
+* **Feedback (GD 13 section 14):** `RaidDownedHudPresenter` reads the replicated
+  `IsResolutionAccelerated`: the status line reads "ABATIDO · Resolución Acelerada" when no session
+  runs, and a one-time notice (`DownedRecoveryFeedbackRules.AcceleratedResolutionNotice`) appears on
+  entry. Presentation only; it never feeds simulation.
+* **Configuration:** `_acceleratedResolutionSeconds` on `PlayerDownedStateNetworkController`, 5 s
+  (GD 13 sections 9 and 15). `DownedHealthRules.AcceleratedDrainRate` holds the pure rate.
+* **Placement:** the coordinator is a component of `Prefabs/NetworkMatchController.prefab`
+  (`[DefaultExecutionOrder(116)]`); it keeps no networked state and recomputes from restored
+  avatar and participant state after Host Migration.
 * **Open question (GD silent): route reappears.** Default chosen: the acceleration **latches**
   for the current Downed cycle and clears only on exit or Defeat. Rationale: the player already
   saw a short timer, and a route can only reappear through reconnect or a handoff, both deferred.
@@ -588,7 +611,10 @@ Recovery behavior (TASK 452, US-52; the Self-revive row remains planned):
 | Self-revive started, then disconnect | Not interrupted; may complete, consume the item and return Active without control (GD 13 §11; TASK-236) |
 
 The Accelerated Resolution evaluator treats a disconnected-but-retained Downed member as Downed
-(it still counts) and a disconnected reviver as not Active for route purposes.
+(it still counts and is accelerated) and a disconnected Active member as not a route (confirmed by
+the project owner for TASK-321). A disconnected Downed member without a running session is not a
+route either, even when it carries a Self-reviver, because nobody can act; a session already in
+progress still counts.
 
 ## 16. Host Migration
 
@@ -626,7 +652,7 @@ Host Migration is an MVP requirement (decision of 2026-11-01, FIX-US-08: the Rai
 | Q1 | Final Downed drain rate, damage multiplier, movement multiplier | Game Design / balance | 2.5/s, 1.0, 0.35 (provisional, serialized) |
 | Q2 | Does Accelerated Resolution revert if a route reappears? | Game Design | Latches until exit or Defeat |
 | Q3 | Self-revive restored Health per item variant; Self-revive and handoff durations | Game Design | Resolved (FIX-78 / TASK-236): 25 HP definitive, automatic self-revive initiation upon completed handoff, 5 s Self-revive, 1 s handoff, 0.3 s tap window, serialized on `PlayerDownedRecoveryNetworkController` |
-| Q4 | Revive range, hold duration, Accelerated Resolution seconds | Game Design / balance | Revive resolved: 4 s and 1.5 u, serialized on `PlayerDownedRecoveryNetworkController`. Acceleration (~5 s) still open |
+| Q4 | Revive range, hold duration, Accelerated Resolution seconds | Game Design / balance | Revive resolved: 4 s and 1.5 u, serialized on `PlayerDownedRecoveryNetworkController`. Acceleration resolved by GD 13 sections 9 and 15: ~5 s, configurable, serialized on `PlayerDownedStateNetworkController` (TASK-321) |
 | Q5 | Can a Downed player start the Sanctuary ritual, or only continue one in progress? | Game Design (GD 06 / 13) | Resolved by GD 06 §11 (only an Active member starts the ritual; becoming Downed does not cancel it) and GD 06 §13/§16 (the countdown starts by presence, so a connected Downed player in the area counts and can complete). The interaction gate already matches the start rule. Presence-based countdown acceptance of a Downed player is not yet verified by tests |
 | Q6 | Does Dungeon absolute close force Defeat or Abort for Downed players? | Game Design (GD 10) | Resolved by GD 10 §5.1 and GD 13 §13: absolute close gives definitive Defeat to everyone still inside, ignoring reserve and recovery. **Implementation gap:** closure currently aborts `Raiding` participants, Active ones included (pre-existing). Owner: TASK 453 or a Dungeon Session task; section 14 describes `ForceDefinitiveDefeat` |
 | Q7 | Do "both immobile" and "interrupted by movement" mean any movement, including the Downed's limited movement and knockback? | Game Design | Resolved: voluntary movement (`IsMoving`) of either avatar interrupts; knockback interrupts only when it breaks the range (checked by `PlayerDownedRecoveryNetworkController`, not a knockback signal). Doc 18 §6.4 / Doc 13 §5 reject new/replacement knockback on an already Downed avatar; previously authorized travel completes unless definitive Defeat cancels it on the next movement tick |
@@ -655,7 +681,7 @@ Host Migration is an MVP requirement (decision of 2026-11-01, FIX-US-08: the Rai
 | Extraction re-evaluation on Defeat | Pending | TASK 453 |
 | Forced definitive Defeat on absolute close (Q6 gap) | Planned | TASK 453 or a Dungeon Session task |
 | Self-revive item, consumption, handoff, Self session | Implemented; single-runner PlayMode verified, Host/Client pending | TASK-236, section 7.1 |
-| Accelerated Resolution coordinator | Planned | no task, needs a task |
+| Accelerated Resolution coordinator | Implemented; single-runner PlayMode verified, Host/Client pending | TASK-321, section 10 |
 | Mana runtime interaction | Planned | no task (no Mana runtime exists) |
 | Downed pose | Planned | no task |
 

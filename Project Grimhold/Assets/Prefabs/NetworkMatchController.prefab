@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 7184920473859102845}
   - component: {fileID: 8295031485960213756}
   - component: {fileID: 9123456789012345678}
+  - component: {fileID: 5914455034866369291}
   m_Layer: 0
   m_Name: NetworkMatchController
   m_TagString: Untagged
@@ -64,6 +65,7 @@ MonoBehaviour:
   - {fileID: 7184920473859102845}
   - {fileID: 8295031485960213756}
   - {fileID: 9123456789012345678}
+  - {fileID: 5914455034866369291}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &11400002
 MonoBehaviour:
@@ -201,3 +203,15 @@ MonoBehaviour:
   _config: {fileID: 11400000, guid: 9c4f2a71d8b34e65a1f09b2c8e7d6a54, type: 2}
   _pressureController: {fileID: 2361456078320602033}
   _matchController: {fileID: 11400002}
+--- !u!114 &5914455034866369291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ade719785a3b3d041b920668b30465cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DownedTeamResolutionCoordinator
