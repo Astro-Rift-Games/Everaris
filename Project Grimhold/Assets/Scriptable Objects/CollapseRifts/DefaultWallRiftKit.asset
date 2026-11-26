@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea681f668d9b62745b7278f77cce1ab2, type: 3}
+  m_Name: DefaultWallRiftKit
+  m_EditorClassIdentifier: Assembly-CSharp::CollapseRiftKitAsset
+  _surfaceType: 1
+  _coresOrBases:
+  - PieceSprite: {fileID: 21300000, guid: 953c1eb888920534b8f2a72deff77563, type: 3}
+    EntryPixel: {x: 9, y: 0}
+    ExitPixel: {x: 9, y: 6}
+  - PieceSprite: {fileID: 21300000, guid: 886d43d1438f3fa4dbac40db1ff43565, type: 3}
+    EntryPixel: {x: 7, y: 0}
+    ExitPixel: {x: 6, y: 4}
+  _trunks:
+  - PieceSprite: {fileID: 21300000, guid: 79517b7a46cb7ee4287ca66c3bd428c2, type: 3}
+    EntryPixel: {x: 2, y: 0}
+    ExitPixel: {x: 3, y: 7}
+  - PieceSprite: {fileID: 21300000, guid: 64322b6349869184c9bdc24fc749386a, type: 3}
+    EntryPixel: {x: 2, y: 0}
+    ExitPixel: {x: 6, y: 8}
+  - PieceSprite: {fileID: 21300000, guid: d04ec644158d77c4f9bc1f710073caf9, type: 3}
+    EntryPixel: {x: 2, y: 0}
+    ExitPixel: {x: 6, y: 9}
+  _branches:
+  - PieceSprite: {fileID: 21300000, guid: 7db73fd4367df1d429e5342211737438, type: 3}
+    EntryPixel: {x: 2, y: 0}
+    ExitPixel: {x: 3, y: 9}
+  - PieceSprite: {fileID: 21300000, guid: 1d20ed0538d8a6f41b0eee1e57412c68, type: 3}
+    EntryPixel: {x: 4, y: 0}
+    ExitPixel: {x: 8, y: 8}
+  - PieceSprite: {fileID: 21300000, guid: 9b3496794694e2848a77948d08bee9ca, type: 3}
+    EntryPixel: {x: 4, y: 0}
+    ExitPixel: {x: 8, y: 5}
+  _tips:
+  - PieceSprite: {fileID: 21300000, guid: 0832e7075da532844b2e8b47772e322c, type: 3}
+    EntryPixel: {x: 0, y: 0}
+    ExitPixel: {x: 2, y: 5}
+  - PieceSprite: {fileID: 21300000, guid: 963da6c0f3bf5f94cad35b9c75804e87, type: 3}
+    EntryPixel: {x: 2, y: 0}
+    ExitPixel: {x: 4, y: 5}
+  - PieceSprite: {fileID: 21300000, guid: 0bad2e070c5d25548870f7c89adf2dce, type: 3}
+    EntryPixel: {x: 4, y: 0}
+    ExitPixel: {x: 2, y: 4}
+  _minFloorBranches: 2
+  _maxFloorBranches: 3
+  _secondSegmentProbability: 0.65
+  _subBranchProbability: 0.25
+  _angleSpreadJitterDegrees: 22
+  _maxWallTrunkAngleDegrees: 25
+  _minWallTrunkSegments: 2
+  _maxWallTrunkSegments: 3
+  _wallBranchCountMin: 2
+  _wallBranchCountMax: 2
+  _pixelsPerWorldCell: 16
