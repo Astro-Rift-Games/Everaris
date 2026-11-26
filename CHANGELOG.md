@@ -86,6 +86,10 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Gold rewards from claiming guild contracts are now persisted authoritatively to your character.
 - Several teams can now be sent to the same Extraction Sanctuary and each can complete its own ritual and extract there without interrupting the others.
 - A shared Extraction Sanctuary now lights up and plays its ritual sounds whenever any team performs or completes a ritual there.
+- Torches, braziers and candles now clear the fog around them, and they and doors no longer show through walls.
+- Enemies fade out smoothly at the edge of your view instead of popping, and you see farther around your character.
+- Characters, enemies and props now pick up shading from nearby torchlight.
+- The Catacombs are darker and lit by many more torches, braziers and candles.
 
 ### Fixed
 

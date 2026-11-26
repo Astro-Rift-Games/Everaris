@@ -4,32 +4,6850 @@
 
 Release: Unreleased
 
-403 original commits; 403 canonical entries.
+408 original commits; 408 canonical entries.
 
 ## Canonical classification
 
-147 features; 120 bug fixes; 4 refactoring; 1 architecture & infrastructure; 64 documentation; 26 tests; 17 maintenance; 24 other changes
+151 features; 120 bug fixes; 4 refactoring; 1 architecture & infrastructure; 65 documentation; 26 tests; 17 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 19 | 13 | 1 | 0 | 10 | 1 |
-| Art & Animation | 31 | 14 | 3 | 0 | 11 | 8 |
+| Art & Animation | 34 | 14 | 3 | 0 | 11 | 8 |
 | Audio | 9 | 2 | 0 | 0 | 2 | 1 |
-| Build & Tooling | 102 | 78 | 4 | 1 | 30 | 7 |
-| Combat | 59 | 26 | 2 | 0 | 19 | 2 |
-| Documentation | 45 | 46 | 0 | 0 | 22 | 2 |
+| Build & Tooling | 105 | 78 | 4 | 1 | 30 | 7 |
+| Combat | 60 | 26 | 2 | 0 | 19 | 2 |
+| Documentation | 46 | 46 | 0 | 0 | 22 | 2 |
 | Extraction | 23 | 23 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
-| Inventory & Loot | 88 | 65 | 4 | 1 | 29 | 5 |
+| Inventory & Loot | 89 | 65 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
-| Networking & Sessions | 46 | 45 | 0 | 0 | 19 | 2 |
+| Networking & Sessions | 47 | 45 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 55 | 57 | 2 | 1 | 25 | 4 |
-| Tests | 134 | 110 | 4 | 1 | 40 | 4 |
+| Tests | 137 | 110 | 4 | 1 | 41 | 4 |
 | UI | 46 | 24 | 2 | 0 | 18 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 28 | 2 |
-| World & Visibility | 40 | 21 | 1 | 0 | 5 | 13 |
+| World & Visibility | 43 | 21 | 1 | 0 | 6 | 13 |
 
 ## Original commit records
+
+### 361da933420c78698a476457fd8b52b69b8b638f
+
+[361da933420c78698a476457fd8b52b69b8b638f](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/361da933420c78698a476457fd8b52b69b8b638f)
+
+Date: 2026-11-26T16:28:01-03:00 · Classification: Documentation (explicit) · Systems: World & Visibility, Tests
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): track the TASK-306 lighting pilot and vision game feel
+```
+
+#### Original body
+
+```text
+Adds the ODD trackers for the TASK-306 normal-map lighting pilot and
+the follow-up vision game-feel prototype: specs quoted from the
+HacknPlan item and the user's choices, per-task status and commits,
+test evidence, the rejected darkness fog and the open fog-look work.
+
+Refs: TASK-306
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fog-vision-game-feel.md
+odd/tasks/task-306-normal-maps.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → World &amp; Visibility: odd/tasks/fog-vision-game-feel.md
+- message-term → World &amp; Visibility: fog
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 489f4d02330a994f8b4330a255635d1a45d66738
+
+[489f4d02330a994f8b4330a255635d1a45d66738](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/489f4d02330a994f8b4330a255635d1a45d66738)
+
+Date: 2026-11-26T16:27:44-03:00 · Classification: Features (explicit) · Systems: World & Visibility, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(level): light the Catacombs with torches, braziers and candles
+```
+
+#### Original body
+
+```text
+Places 250 light props under LightProps in CatacombsMap: 159 Torches
+on north wall faces at least three rows tall, 77 Braziers on open
+floor away from doors, sanctuaries and spawn markers, and 14 Multiple
+Candles flanking the player sanctuaries. Placement is generated, not
+hand-authored, so rooms need an in-game review.
+
+The global light drops from 0.85 to 0.1 in CatacombsMap and Gameplay,
+which the composition test keeps equal. DefaultDungeonAmbientConfig
+drives that light at runtime, so every pressure phase scales by the
+same ratio (0.1, 0.088, 0.076, 0.065). The existing wall-mounted
+Multiple Candles sample visibility 1.5 units below their wall.
+
+Tests: LightPropVisibilityPointTests keeps every Catacombs light
+prop's visibility point out of solid tiles.
+
+Refs: TASK-306
+Player-Improved: The Catacombs are darker and lit by many more torches, braziers and candles.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scenes/CatacombsMap.unity
+Project Grimhold/Assets/Scenes/Gameplay.unity
+Project Grimhold/Assets/Scriptable Objects/DefaultDungeonAmbientConfig.asset
+Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/LightPropVisibilityPointTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/LightPropVisibilityPointTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → World &amp; Visibility: Project Grimhold/Assets/Scenes/CatacombsMap.unity
+- path → World &amp; Visibility: Project Grimhold/Assets/Scriptable Objects/DefaultDungeonAmbientConfig.asset
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/LightPropVisibilityPointTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/LightPropVisibilityPointTests.cs.meta
+- message-term → World &amp; Visibility: Catacombs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/LightPropVisibilityPointTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/LightPropVisibilityPointTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/LightPropVisibilityPointTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/LightPropVisibilityPointTests.cs.meta
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### ee6c2f04a2fc8d99c368c165dccf16b956e0607d
+
+[ee6c2f04a2fc8d99c368c165dccf16b956e0607d](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/ee6c2f04a2fc8d99c368c165dccf16b956e0607d)
+
+Date: 2026-11-26T16:27:44-03:00 · Classification: Features (explicit) · Systems: Networking & Sessions, World & Visibility, Art & Animation, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(visibility): let torchlight thin the fog and soften the cone
+```
+
+#### Original body
+
+```text
+Dungeon light props now read normal maps (Accurate) and take part in
+local vision:
+
+- Light props and dungeon doors carry an occlusion-only
+  EntityVisibilityPresenter, so they no longer show through walls.
+  Wall-mounted Torches sample visibility on the floor in front of
+  their wall. Hiding a prop hides its sprites only; its Light2D still
+  lights the world.
+- Lit light props the viewer can see thin the vision fog around them
+  (VisionFogLightRules: up to 16, nearest first; strength follows the
+  light's intensity and visibility). Hidden or extinguished lights do
+  not, and without a viewer nothing clears.
+- The viewer smooths its facing once per frame (VisionFacingSmoother),
+  shared by entity visibility and the fog; it snaps after a gap.
+- Dynamic entities fade over a 20 degree band inside the cone edge
+  (VisionConeRules.EdgeFactor) instead of popping, and the near radius
+  grows from 2 to 3.5.
+
+IVisibilityTarget gains EdgeFactor and EntityVisibilitySystem applies
+fade alpha times edge factor. FacingSharpness moves from
+VisionFogSettings to VisibilitySettings; VisionFogSettings adds the
+light-clearing values and its look values were retuned.
+
+Tests: VisionFogLightRulesTests, VisionFacingSmootherTests,
+VisionConeEdgeFactorTests, DungeonLightPropTests (Props,
+VisibilityAlpha), VisibilityPrefabCoverageTests (light props, doors).
+
+Docs: VisibilityArchitecture.md, GameFeelParticlesArchitecture.md.
+
+Refs: TASK-306
+Player-Improved: Torches, braziers and candles now clear the fog around them, and they and doors no longer show through walls.
+Player-Improved: Enemies fade out smoothly at the edge of your view instead of popping, and you see farther around your character.
+Player-Improved: Characters, enemies and props now pick up shading from nearby torchlight.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Art/Shaders/VisionFog.shader
+Project Grimhold/Assets/Prefabs/Doors/DungeonDoor.prefab
+Project Grimhold/Assets/Prefabs/Lighting Props/DungeonLightProp.prefab
+Project Grimhold/Assets/Prefabs/Lighting Props/Torch.prefab
+Project Grimhold/Assets/Scriptable Objects/VisibilitySettings.asset
+Project Grimhold/Assets/Scriptable Objects/VisionFogSettings.asset
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/DungeonLightProp.cs
+Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/DungeonLightPropRegistry.cs
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/EntityVisibilityPresenter.cs
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/EntityVisibilitySystem.cs
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/FogLightSource.cs
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/FogLightSource.cs.meta
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/IVisibilityTarget.cs
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisibilitySettings.cs
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionConeRules.cs
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionFacingSmoother.cs
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionFacingSmoother.cs.meta
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionFogLightRules.cs
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionFogLightRules.cs.meta
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionFogPresenter.cs
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionFogSettings.cs
+Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionQuery.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/LocalVisionSource.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonLightPropTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisibilityPrefabCoverageTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionConeEdgeFactorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionConeEdgeFactorTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFacingSmootherTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFacingSmootherTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFogLightRulesTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFogLightRulesTests.cs.meta
+Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md
+Project Grimhold/Docs/Architecture/VisibilityArchitecture.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonLightPropTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Shaders/VisionFog.shader
+- path → World &amp; Visibility: Project Grimhold/Assets/Prefabs/Doors/DungeonDoor.prefab
+- path → World &amp; Visibility: Project Grimhold/Assets/Prefabs/Lighting Props/DungeonLightProp.prefab
+- path → World &amp; Visibility: Project Grimhold/Assets/Scriptable Objects/VisibilitySettings.asset
+- path → World &amp; Visibility: Project Grimhold/Assets/Scriptable Objects/VisionFogSettings.asset
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/DungeonLightProp.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/Presentation/DungeonLightPropRegistry.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/EntityVisibilityPresenter.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/EntityVisibilitySystem.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/FogLightSource.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/FogLightSource.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/IVisibilityTarget.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisibilitySettings.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionConeRules.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionFacingSmoother.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionFacingSmoother.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionFogLightRules.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionFogLightRules.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionFogPresenter.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionFogSettings.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Scripts/Gameplay/Visibility/VisionQuery.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonLightPropTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisibilityPrefabCoverageTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionConeEdgeFactorTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionConeEdgeFactorTests.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFacingSmootherTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFacingSmootherTests.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFogLightRulesTests.cs
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFogLightRulesTests.cs.meta
+- path → World &amp; Visibility: Project Grimhold/Docs/Architecture/VisibilityArchitecture.md
+- scope → World &amp; Visibility: visibility
+- message-term → World &amp; Visibility: visibility
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Shaders/VisionFog.shader
+- message-term → Art &amp; Animation: sprites
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonLightPropTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisibilityPrefabCoverageTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionConeEdgeFactorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionConeEdgeFactorTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFacingSmootherTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFacingSmootherTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFogLightRulesTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFogLightRulesTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/GameFeelParticlesArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/VisibilityArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonLightPropTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisibilityPrefabCoverageTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionConeEdgeFactorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionConeEdgeFactorTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFacingSmootherTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFacingSmootherTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFogLightRulesTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Visibility/VisionFogLightRulesTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### c062c29ce0591e2e076564bea047b5d5c172b423
+
+[c062c29ce0591e2e076564bea047b5d5c172b423](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c062c29ce0591e2e076564bea047b5d5c172b423)
+
+Date: 2026-11-26T16:27:42-03:00 · Classification: Features (explicit) · Systems: Combat, Inventory & Loot, World & Visibility, Art & Animation
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(art): add normal maps to characters, enemies, weapons and props
+```
+
+#### Original body
+
+```text
+Links a `_NormalMap` secondary texture to 1043 world sprites: player
+body parts and the six armor sets, the ranged skeleton and the three
+slimes, weapons and shields, and every prop under Art/Props. Maps were
+generated per slice with SpriteFusion Sprite Normals (MIT, default
+settings, OpenGL) and linked with SpriteNormalImporter.Link; the
+Catacombs chest sheet uses a hand-shaped lid map instead.
+
+Each source meta only gains the `_NormalMap` entry, plus two default
+fields Unity writes on save. Maps import as NormalMap, Point, no
+mipmaps, uncompressed, at their source size. Tilesets, pickups,
+collapse rifts, flames and UI are not included.
+
+Refs: TASK-306
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-N.png.meta
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-NE.png.meta
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-NE_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-NE_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-NW.png.meta
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-NW_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-NW_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-N_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-N_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-S.png.meta
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-SE.png.meta
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-SE_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-SE_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-SW.png.meta
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-SW_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-SW_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-S_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-S_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-N.png.meta
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-NE.png.meta
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-NE_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-NE_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-NW.png.meta
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-NW_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-NW_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-N_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-N_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-S.png.meta
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-SE.png.meta
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-SE_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-SE_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-SW.png.meta
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-SW_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-SW_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-S_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-S_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-N.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-NE.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-NE_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-NE_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-NW.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-NW_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-NW_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-N_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-N_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-S.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-SE.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-SE_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-SE_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-SW.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-SW_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-SW_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-S_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-S_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-N.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-NE.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-NE_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-NE_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-NW.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-NW_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-NW_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-N_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-N_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-S.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-SE.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-SE_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-SE_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-SW.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-SW_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-SW_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-S_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-S_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Player-Shadow.png.meta
+Project Grimhold/Assets/Art/Character/Player-Shadow_NormalMap.png
+Project Grimhold/Assets/Art/Character/Player-Shadow_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-N.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-NE.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-NE_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-NE_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-NW.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-NW_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-NW_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-N_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-N_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-S.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-SE.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-SE_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-SE_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-SW.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-SW_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-SW_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-S_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-S_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Barrel-V1.png.meta
+Project Grimhold/Assets/Art/Props/Barrel-V1_NormalMap.png
+Project Grimhold/Assets/Art/Props/Barrel-V1_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Barrel-V2.png.meta
+Project Grimhold/Assets/Art/Props/Barrel-V2_NormalMap.png
+Project Grimhold/Assets/Art/Props/Barrel-V2_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Bone-Interactable.png.meta
+Project Grimhold/Assets/Art/Props/Bone-Interactable_NormalMap.png
+Project Grimhold/Assets/Art/Props/Bone-Interactable_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Bone.png.meta
+Project Grimhold/Assets/Art/Props/Bone_NormalMap.png
+Project Grimhold/Assets/Art/Props/Bone_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Brazier-Lit-Base.png.meta
+Project Grimhold/Assets/Art/Props/Brazier-Lit-Base_NormalMap.png
+Project Grimhold/Assets/Art/Props/Brazier-Lit-Base_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Brazier-Lit.png.meta
+Project Grimhold/Assets/Art/Props/Brazier-Lit_NormalMap.png
+Project Grimhold/Assets/Art/Props/Brazier-Lit_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Brazier-Unlit.png.meta
+Project Grimhold/Assets/Art/Props/Brazier-Unlit_NormalMap.png
+Project Grimhold/Assets/Art/Props/Brazier-Unlit_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Candle-Lit-Base.png.meta
+Project Grimhold/Assets/Art/Props/Candle-Lit-Base_NormalMap.png
+Project Grimhold/Assets/Art/Props/Candle-Lit-Base_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Candle-Lit.png.meta
+Project Grimhold/Assets/Art/Props/Candle-Lit_NormalMap.png
+Project Grimhold/Assets/Art/Props/Candle-Lit_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Candle-Unlit.png.meta
+Project Grimhold/Assets/Art/Props/Candle-Unlit_NormalMap.png
+Project Grimhold/Assets/Art/Props/Candle-Unlit_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Candles-Lit-Base.png.meta
+Project Grimhold/Assets/Art/Props/Candles-Lit-Base_NormalMap.png
+Project Grimhold/Assets/Art/Props/Candles-Lit-Base_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Candles-Lit.png.meta
+Project Grimhold/Assets/Art/Props/Candles-Lit_NormalMap.png
+Project Grimhold/Assets/Art/Props/Candles-Lit_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Candles-Unlit.png.meta
+Project Grimhold/Assets/Art/Props/Candles-Unlit_NormalMap.png
+Project Grimhold/Assets/Art/Props/Candles-Unlit_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Cart.png.meta
+Project Grimhold/Assets/Art/Props/Cart_NormalMap.png
+Project Grimhold/Assets/Art/Props/Cart_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Chest-Close.png.meta
+Project Grimhold/Assets/Art/Props/Chest-Close_NormalMap.png
+Project Grimhold/Assets/Art/Props/Chest-Close_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Chest-Open-Sheet.png.meta
+Project Grimhold/Assets/Art/Props/Chest-Open-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Props/Chest-Open-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Chest-Open.png.meta
+Project Grimhold/Assets/Art/Props/Chest-Open_NormalMap.png
+Project Grimhold/Assets/Art/Props/Chest-Open_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Coffin-Close.png.meta
+Project Grimhold/Assets/Art/Props/Coffin-Close_NormalMap.png
+Project Grimhold/Assets/Art/Props/Coffin-Close_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Coffin-Open.png.meta
+Project Grimhold/Assets/Art/Props/Coffin-Open_NormalMap.png
+Project Grimhold/Assets/Art/Props/Coffin-Open_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Coins-Interactable.png.meta
+Project Grimhold/Assets/Art/Props/Coins-Interactable_NormalMap.png
+Project Grimhold/Assets/Art/Props/Coins-Interactable_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Coins.png.meta
+Project Grimhold/Assets/Art/Props/Coins_NormalMap.png
+Project Grimhold/Assets/Art/Props/Coins_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta
+Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Doors/Door-Open-Sheet.png.meta
+Project Grimhold/Assets/Art/Props/Doors/Door-Open-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Props/Doors/Door-Open-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Doors/Door-Open-South-Sheet.png.meta
+Project Grimhold/Assets/Art/Props/Doors/Door-Open-South-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Props/Doors/Door-Open-South-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Doors/Door-Side.png.meta
+Project Grimhold/Assets/Art/Props/Doors/Door-Side_NormalMap.png
+Project Grimhold/Assets/Art/Props/Doors/Door-Side_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/HealthPotion-Interactable.png.meta
+Project Grimhold/Assets/Art/Props/HealthPotion-Interactable_NormalMap.png
+Project Grimhold/Assets/Art/Props/HealthPotion-Interactable_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/HealthPotion.png.meta
+Project Grimhold/Assets/Art/Props/HealthPotion_NormalMap.png
+Project Grimhold/Assets/Art/Props/HealthPotion_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/LockedChest-Open-Sheet.png.meta
+Project Grimhold/Assets/Art/Props/LockedChest-Open-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Props/LockedChest-Open-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/LockedChest.png.meta
+Project Grimhold/Assets/Art/Props/LockedChest_NormalMap.png
+Project Grimhold/Assets/Art/Props/LockedChest_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Pot-Close.png.meta
+Project Grimhold/Assets/Art/Props/Pot-Close_NormalMap.png
+Project Grimhold/Assets/Art/Props/Pot-Close_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Pot-Open.png.meta
+Project Grimhold/Assets/Art/Props/Pot-Open_NormalMap.png
+Project Grimhold/Assets/Art/Props/Pot-Open_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active_NormalMap.png
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive_NormalMap.png
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active_NormalMap.png
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive_NormalMap.png
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active_NormalMap.png
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive_NormalMap.png
+Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1_NormalMap.png
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2_NormalMap.png
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1_NormalMap.png
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2.png.meta
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2_NormalMap.png
+Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Stump.png.meta
+Project Grimhold/Assets/Art/Props/Stump_NormalMap.png
+Project Grimhold/Assets/Art/Props/Stump_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Torch-Lit-Base.png.meta
+Project Grimhold/Assets/Art/Props/Torch-Lit-Base_NormalMap.png
+Project Grimhold/Assets/Art/Props/Torch-Lit-Base_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Torch-Lit.png.meta
+Project Grimhold/Assets/Art/Props/Torch-Lit_NormalMap.png
+Project Grimhold/Assets/Art/Props/Torch-Lit_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Torch-Unlit.png.meta
+Project Grimhold/Assets/Art/Props/Torch-Unlit_NormalMap.png
+Project Grimhold/Assets/Art/Props/Torch-Unlit_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-01.png.meta
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-01_NormalMap.png
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-01_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-02.png.meta
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-02_NormalMap.png
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-02_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Active.png.meta
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Active_NormalMap.png
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Active_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Inactive.png.meta
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Inactive_NormalMap.png
+Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Inactive_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-01.png.meta
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-01_NormalMap.png
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-01_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-02.png.meta
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-02_NormalMap.png
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-02_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Active.png.meta
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Active_NormalMap.png
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Active_NormalMap.png.meta
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Inactive.png.meta
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Inactive_NormalMap.png
+Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Inactive_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Death/Skeleton-Ranged-Death-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Death/Skeleton-Ranged-Death-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Death/Skeleton-Ranged-Death-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Down-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Down-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Down-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownLeft-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownLeft-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownLeft-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownRight-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownRight-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownRight-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Up-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Up-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Up-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpLeft-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpLeft-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpLeft-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpRight-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpRight-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpRight-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-Down-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-Down-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-Down-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-DownLeft-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-DownLeft-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-DownLeft-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-DownRight-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-DownRight-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-DownRight-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-Up-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-Up-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-Up-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-UpLeft-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-UpLeft-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-UpLeft-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-UpRight-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-UpRight-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-UpRight-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-Down-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-Down-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-Down-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-DownLeft-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-DownLeft-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-DownLeft-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-DownRight-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-DownRight-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-DownRight-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-Up-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-Up-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-Up-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-UpLeft-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-UpLeft-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-UpLeft-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-UpRight-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-UpRight-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-UpRight-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-Down-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-Down-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-Down-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-DownLeft-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-DownLeft-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-DownLeft-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-DownRight-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-DownRight-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-DownRight-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-Up-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-Up-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-Up-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-UpLeft-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-UpLeft-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-UpLeft-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-UpRight-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-UpRight-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-UpRight-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-N-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-N-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-N-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-NE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-NE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-NE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-NW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-NW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-NW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-S-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-S-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-S-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-SE-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-SE-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-SE-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-SW-Sheet.png.meta
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-SW-Sheet_NormalMap.png
+Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-SW-Sheet_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-CompoundBow-Stringing.png.meta
+Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-CompoundBow-Stringing_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-CompoundBow-Stringing_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-LongBow-Stringing.png.meta
+Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-LongBow-Stringing_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-LongBow-Stringing_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/ArmingSword.png.meta
+Project Grimhold/Assets/Art/Weapons/ArmingSword_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/ArmingSword_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/GreatHammer.png.meta
+Project Grimhold/Assets/Art/Weapons/GreatHammer_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/GreatHammer_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/HeavyCrossbow.png.meta
+Project Grimhold/Assets/Art/Weapons/HeavyCrossbow_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/HeavyCrossbow_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/LightCrossbow.png.meta
+Project Grimhold/Assets/Art/Weapons/LightCrossbow_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/LightCrossbow_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/LongBow.png.meta
+Project Grimhold/Assets/Art/Weapons/LongBow_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/LongBow_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/LongSword.png.meta
+Project Grimhold/Assets/Art/Weapons/LongSword_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/LongSword_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/MagicCinquedea.png.meta
+Project Grimhold/Assets/Art/Weapons/MagicCinquedea_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/MagicCinquedea_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/MagicStaff.png.meta
+Project Grimhold/Assets/Art/Weapons/MagicStaff_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/MagicStaff_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/MagicSword.png.meta
+Project Grimhold/Assets/Art/Weapons/MagicSword_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/MagicSword_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/MagicWand.png.meta
+Project Grimhold/Assets/Art/Weapons/MagicWand_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/MagicWand_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/Rapier.png.meta
+Project Grimhold/Assets/Art/Weapons/Rapier_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/Rapier_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/RecurveBow.png.meta
+Project Grimhold/Assets/Art/Weapons/RecurveBow_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/RecurveBow_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/RondelDagger.png.meta
+Project Grimhold/Assets/Art/Weapons/RondelDagger_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/RondelDagger_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-N.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-NE.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-NE_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-NE_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-NW.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-NW_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-NW_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-N_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-N_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-S.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-SE.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-SE_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-SE_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-SW.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-SW_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-SW_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-S_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/Shield/Shield-S_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/Shield_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/Shield_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/Spellbook-Back.png.meta
+Project Grimhold/Assets/Art/Weapons/Spellbook-Back_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/Spellbook-Back_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/Spellbook-Front.png.meta
+Project Grimhold/Assets/Art/Weapons/Spellbook-Front_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/Spellbook-Front_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/TrainingDagger.png.meta
+Project Grimhold/Assets/Art/Weapons/TrainingDagger_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/TrainingDagger_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/TrainingSword.png.meta
+Project Grimhold/Assets/Art/Weapons/TrainingSword_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/TrainingSword_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/TrainingWand.png.meta
+Project Grimhold/Assets/Art/Weapons/TrainingWand_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/TrainingWand_NormalMap.png.meta
+Project Grimhold/Assets/Art/Weapons/Zweihander.png.meta
+Project Grimhold/Assets/Art/Weapons/Zweihander_NormalMap.png
+Project Grimhold/Assets/Art/Weapons/Zweihander_NormalMap.png.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Combat: Project Grimhold/Assets/Art/Props/HealthPotion-Interactable.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Props/HealthPotion-Interactable\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Props/HealthPotion-Interactable\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Props/HealthPotion.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Props/HealthPotion\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Props/HealthPotion\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-N-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-N-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-N-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NE-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NE-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NE-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NW-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NW-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NW-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-S-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-S-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-S-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SE-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SE-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SE-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SW-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SW-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SW-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-N-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-N-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-N-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NE-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NE-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NE-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NW-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NW-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NW-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-S-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-S-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-S-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SE-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SE-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SE-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SW-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SW-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SW-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Down-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Down-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Down-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownLeft-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownLeft-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownLeft-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownRight-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownRight-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownRight-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Up-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Up-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Up-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpLeft-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpLeft-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpLeft-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpRight-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpRight-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpRight-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-N-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-N-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-N-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NE-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NE-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NE-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NW-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NW-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NW-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-S-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-S-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-S-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SE-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SE-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SE-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SW-Sheet.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SW-Sheet\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SW-Sheet\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-CompoundBow-Stringing.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-CompoundBow-Stringing\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-CompoundBow-Stringing\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-LongBow-Stringing.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-LongBow-Stringing\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-LongBow-Stringing\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/ArmingSword.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/ArmingSword\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/ArmingSword\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/GreatHammer.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/GreatHammer\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/GreatHammer\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/HeavyCrossbow.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/HeavyCrossbow\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/HeavyCrossbow\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/LightCrossbow.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/LightCrossbow\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/LightCrossbow\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/LongBow.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/LongBow\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/LongBow\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/LongSword.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/LongSword\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/LongSword\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/MagicCinquedea.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/MagicCinquedea\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/MagicCinquedea\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/MagicStaff.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/MagicStaff\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/MagicStaff\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/MagicSword.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/MagicSword\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/MagicSword\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/MagicWand.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/MagicWand\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/MagicWand\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Rapier.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Rapier\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Rapier\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/RecurveBow.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/RecurveBow\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/RecurveBow\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/RondelDagger.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/RondelDagger\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/RondelDagger\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-N.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-NE.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-NE\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-NE\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-NW.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-NW\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-NW\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-N\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-N\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-S.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-SE.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-SE\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-SE\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-SW.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-SW\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-SW\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-S\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield/Shield-S\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Shield\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Spellbook-Back.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Spellbook-Back\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Spellbook-Back\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Spellbook-Front.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Spellbook-Front\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Spellbook-Front\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/TrainingDagger.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/TrainingDagger\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/TrainingDagger\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/TrainingSword.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/TrainingSword\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/TrainingSword\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/TrainingWand.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/TrainingWand\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/TrainingWand\_NormalMap.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Zweihander.png.meta
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Zweihander\_NormalMap.png
+- path → Combat: Project Grimhold/Assets/Art/Weapons/Zweihander\_NormalMap.png.meta
+- message-term → Combat: weapons
+- message-term → Inventory &amp; Loot: pickups
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet\_NormalMap.png
+- path → World &amp; Visibility: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet\_NormalMap.png.meta
+- message-term → World &amp; Visibility: Catacombs
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-N.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-NE.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-NE\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-NE\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-NW.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-NW\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-NW\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-N\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-N\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-S.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-SE.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-SE\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-SE\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-SW.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-SW\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-SW\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-S\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Directions/Player-Body-S\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Idle/Player-Body-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Knockback/Player-Body-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Sprint/Player-Body-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Body/Walk/Player-Body-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-N.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-NE.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-NE\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-NE\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-NW.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-NW\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-NW\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-N\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-N\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-S.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-SE.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-SE\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-SE\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-SW.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-SW\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-SW\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-S\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Directions/Player-Head-S\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Idle/Player-Head-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Knockback/Player-Head-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Sprint/Player-Head-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Head/Walk/Player-Head-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-N.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-NE.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-NE\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-NE\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-NW.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-NW\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-NW\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-N\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-N\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-S.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-SE.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-SE\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-SE\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-SW.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-SW\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-SW\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-S\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Directions/Player-LeftHand-S\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Idle/Player-LeftHand-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Knockback/Player-LeftHand-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Sprint/Player-LeftHand-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/LeftHand/Walk/Player-LeftHand-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-N.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-NE.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-NE\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-NE\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-NW.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-NW\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-NW\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-N\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-N\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-S.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-SE.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-SE\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-SE\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-SW.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-SW\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-SW\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-S\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Directions/Player-Legs-S\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Idle/Player-Legs-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Knockback/Player-Legs-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Sprint/Player-Legs-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Legs/Walk/Player-Legs-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Player-Shadow.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Player-Shadow\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Player-Shadow\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-N.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-NE.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-NE\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-NE\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-NW.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-NW\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-NW\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-N\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-N\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-S.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-SE.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-SE\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-SE\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-SW.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-SW\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-SW\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-S\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Directions/Player-RightHand-S\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Idle/Player-RightHand-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Knockback/Player-RightHand-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Sprint/Player-RightHand-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/RightHand/Walk/Player-RightHand-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Garb-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Hat-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-LeftGlove-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-RightGlove-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Idle/Set-ArcaneMage-Trousers-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Garb-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Hat-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-LeftGlove-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-RightGlove-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Knockback/Set-ArcaneMage-Trousers-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Garb-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Hat-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-LeftGlove-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-RightGlove-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Sprint/Set-ArcaneMage-Trousers-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Garb-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Hat-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-LeftGlove-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-RightGlove-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArcaneMage/Walk/Set-ArcaneMage-Trousers-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Armor-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Hat-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-LeftGlove-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-RightGlove-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Idle/Set-ArmyRanger-Trousers-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Armor-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Hat-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-LeftGlove-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-RightGlove-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Knockback/Set-ArmyRanger-Trousers-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Armor-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Hat-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-LeftGlove-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-RightGlove-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Sprint/Set-ArmyRanger-Trousers-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Armor-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Hat-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-LeftGlove-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-RightGlove-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ArmyRanger/Walk/Set-ArmyRanger-Trousers-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Garb-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Hood-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-LeftGlove-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-RightGlove-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Idle/Set-FireMage-Trousers-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Garb-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Hood-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-LeftGlove-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-RightGlove-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Knockback/Set-FireMage-Trousers-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Garb-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Hood-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-LeftGlove-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-RightGlove-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Sprint/Set-FireMage-Trousers-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Garb-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Hood-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-LeftGlove-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-RightGlove-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/FireMage/Walk/Set-FireMage-Trousers-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Hood-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeatherArmor-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-LeftGlove-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-RightGlove-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Idle/Set-ForestRanger-Trousers-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Hood-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeatherArmor-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-LeftGlove-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-RightGlove-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Knockback/Set-ForestRanger-Trousers-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Hood-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeatherArmor-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-LeftGlove-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-RightGlove-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Sprint/Set-ForestRanger-Trousers-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Hood-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeatherArmor-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-LeftGlove-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-RightGlove-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/ForestRanger/Walk/Set-ForestRanger-Trousers-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Breastplate-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-Helmet-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LeftGauntlet-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-LegPlate-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Idle/Set-HeavyArmor-RightGauntlet-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Breastplate-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-Helmet-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LeftGauntlet-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-LegPlate-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Knockback/Set-HeavyArmor-RightGauntlet-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Breastplate-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-Helmet-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LeftGauntlet-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-LegPlate-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Sprint/Set-HeavyArmor-RightGauntlet-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Breastplate-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-Helmet-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LeftGauntlet-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-LegPlate-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/HeavyArmor/Walk/Set-HeavyArmor-RightGauntlet-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailArmor-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-ChainMailTrousers-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-LeftGlove-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-OpenSallet-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Idle/Set-LightArmor-RightGlove-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailArmor-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-ChainMailTrousers-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-LeftGlove-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-OpenSallet-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Knockback/Set-LightArmor-RightGlove-Knockback-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailArmor-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-ChainMailTrousers-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-LeftGlove-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-OpenSallet-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Sprint/Set-LightArmor-RightGlove-Sprint-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailArmor-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-ChainMailTrousers-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-LeftGlove-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-OpenSallet-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Character/Sets/Sets/LightArmor/Walk/Set-LightArmor-RightGlove-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Barrel-V1.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Barrel-V1\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Barrel-V1\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Barrel-V2.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Barrel-V2\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Barrel-V2\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Bone-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Bone-Interactable\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Bone-Interactable\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Bone.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Bone\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Bone\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Lit-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Lit-Base\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Lit-Base\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Lit.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Lit\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Lit\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Unlit.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Unlit\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Brazier-Unlit\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Lit-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Lit-Base\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Lit-Base\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Lit.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Lit\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Lit\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Unlit.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Unlit\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candle-Unlit\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Lit-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Lit-Base\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Lit-Base\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Lit.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Lit\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Lit\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Unlit.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Unlit\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Candles-Unlit\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Cart.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Cart\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Cart\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Chest-Close.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Chest-Close\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Chest-Close\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Chest-Open-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Chest-Open-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Chest-Open-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Chest-Open.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Chest-Open\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Chest-Open\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coffin-Close.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coffin-Close\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coffin-Close\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coffin-Open.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coffin-Open\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coffin-Open\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coins-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coins-Interactable\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coins-Interactable\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coins.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coins\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Coins\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Catacombs-Door-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Door-Open-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Door-Open-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Door-Open-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Door-Open-South-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Door-Open-South-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Door-Open-South-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Door-Side.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Door-Side\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Doors/Door-Side\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/HealthPotion-Interactable.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/HealthPotion-Interactable\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/HealthPotion-Interactable\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/HealthPotion.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/HealthPotion\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/HealthPotion\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/LockedChest-Open-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/LockedChest-Open-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/LockedChest-Open-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/LockedChest.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/LockedChest\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/LockedChest\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Pot-Close.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Pot-Close\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Pot-Close\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Pot-Open.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Pot-Open\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Pot-Open\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Active\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Large-Inactive\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Active\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-2x-Inactive\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Active\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/New/Sanctuary-Small-Inactive\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V1\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-Off-V2\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V1\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Sanctuary/Sanctuary-On-V2\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Stump.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Stump\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Stump\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Torch-Lit-Base.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Torch-Lit-Base\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Torch-Lit-Base\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Torch-Lit.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Torch-Lit\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Torch-Lit\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Torch-Unlit.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Torch-Unlit\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Torch-Unlit\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-01.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-01\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-01\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-02.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-02\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-02\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Active.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Active\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Active\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Inactive.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Inactive\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/FloorTrap-03-Inactive\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-01.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-01\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-01\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-02.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-02\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-02\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Active.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Active\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Active\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Inactive.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Inactive\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Props/Traps/WallTrap-03-Inactive\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Attack/Skeleton-Ranged-Attack-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Death/Skeleton-Ranged-Death-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Death/Skeleton-Ranged-Death-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Death/Skeleton-Ranged-Death-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Idle/Skeleton-Ranged-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Skeletons/Ranged/Walk/Skeleton-Ranged-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Attack/BlueSlime-Attack-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Death/BlueSlime-Death-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Idle/BlueSlime-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/BlueSlime/Walk/BlueSlime-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Down-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Down-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Down-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownLeft-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownLeft-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownLeft-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownRight-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownRight-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-DownRight-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Up-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Up-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-Up-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpLeft-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpLeft-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpLeft-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpRight-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpRight-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Attack/Attack/Slime-Attack-UpRight-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-Down-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-Down-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-Down-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-DownLeft-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-DownLeft-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-DownLeft-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-DownRight-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-DownRight-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-DownRight-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-Up-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-Up-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-Up-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-UpLeft-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-UpLeft-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-UpLeft-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-UpRight-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-UpRight-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Death/Death/Slime-Death-UpRight-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-Down-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-Down-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-Down-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-DownLeft-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-DownLeft-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-DownLeft-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-DownRight-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-DownRight-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-DownRight-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-Up-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-Up-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-Up-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-UpLeft-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-UpLeft-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-UpLeft-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-UpRight-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-UpRight-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Idle/Idle/Slime-Idle-UpRight-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-Down-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-Down-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-Down-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-DownLeft-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-DownLeft-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-DownLeft-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-DownRight-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-DownRight-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-DownRight-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-Up-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-Up-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-Up-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-UpLeft-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-UpLeft-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-UpLeft-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-UpRight-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-UpRight-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/GreenSlime/Walk/Walk/Slime-Walk-UpRight-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Attack/RedSlime-Attack-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Death/RedSlime-Death-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Idle/RedSlime-Idle-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-N-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-N-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-N-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-NE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-NE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-NE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-NW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-NW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-NW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-S-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-S-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-S-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-SE-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-SE-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-SE-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-SW-Sheet.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-SW-Sheet\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Slime/RedSlime/Walk/RedSlime-Walk-SW-Sheet\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-CompoundBow-Stringing.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-CompoundBow-Stringing\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-CompoundBow-Stringing\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-LongBow-Stringing.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-LongBow-Stringing\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Animations Spritesheets/Weapon-LongBow-Stringing\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/ArmingSword.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/ArmingSword\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/ArmingSword\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/GreatHammer.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/GreatHammer\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/GreatHammer\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/HeavyCrossbow.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/HeavyCrossbow\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/HeavyCrossbow\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/LightCrossbow.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/LightCrossbow\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/LightCrossbow\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/LongBow.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/LongBow\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/LongBow\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/LongSword.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/LongSword\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/LongSword\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/MagicCinquedea.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/MagicCinquedea\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/MagicCinquedea\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/MagicStaff.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/MagicStaff\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/MagicStaff\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/MagicSword.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/MagicSword\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/MagicSword\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/MagicWand.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/MagicWand\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/MagicWand\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Rapier.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Rapier\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Rapier\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/RecurveBow.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/RecurveBow\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/RecurveBow\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/RondelDagger.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/RondelDagger\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/RondelDagger\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-N.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-NE.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-NE\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-NE\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-NW.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-NW\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-NW\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-N\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-N\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-S.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-SE.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-SE\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-SE\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-SW.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-SW\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-SW\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-S\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield/Shield-S\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Shield\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Spellbook-Back.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Spellbook-Back\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Spellbook-Back\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Spellbook-Front.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Spellbook-Front\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Spellbook-Front\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/TrainingDagger.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/TrainingDagger\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/TrainingDagger\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/TrainingSword.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/TrainingSword\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/TrainingSword\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/TrainingWand.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/TrainingWand\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/TrainingWand\_NormalMap.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Zweihander.png.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Zweihander\_NormalMap.png
+- path → Art &amp; Animation: Project Grimhold/Assets/Art/Weapons/Zweihander\_NormalMap.png.meta
+- scope → Art &amp; Animation: art
+- message-term → Art &amp; Animation: texture
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 0ec203b0d1c096b56a5d8d538a74c3f4075c2e03
+
+[0ec203b0d1c096b56a5d8d538a74c3f4075c2e03](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0ec203b0d1c096b56a5d8d538a74c3f4075c2e03)
+
+Date: 2026-11-26T16:27:36-03:00 · Classification: Features (explicit) · Systems: Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(art): add Editor sprite normal-map generator
+```
+
+#### Original body
+
+```text
+Adds Tools > Grimhold > Sprite Normal Map Generator for the TASK-306
+lighting pilot. It builds a tangent-space normal map per sprite slice
+from the alpha silhouette and luminance (OpenGL +Y), writes a new
+`<name>_NormalMap.png` beside the source and links it as the
+`_NormalMap` secondary texture, keeping slices, PPU and Point
+filtering. `SpriteNormalImporter.Link` links a map made outside Unity
+after checking it matches the source size.
+
+Slices are read in source pixels through the sprite data provider, so
+sheets downscaled by Max Texture Size stay aligned.
+
+Tests:
+- SpriteNormalFrameTests: the green channel follows +Y.
+- SpriteNormalImporterTests: single sprite, sheet, downscaled sheet,
+  external map of matching size, rejected size mismatch.
+
+Refs: TASK-306
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Editor/SpriteNormalFrame.cs
+Project Grimhold/Assets/Editor/SpriteNormalFrame.cs.meta
+Project Grimhold/Assets/Editor/SpriteNormalGeneratorWindow.cs
+Project Grimhold/Assets/Editor/SpriteNormalGeneratorWindow.cs.meta
+Project Grimhold/Assets/Editor/SpriteNormalImporter.cs
+Project Grimhold/Assets/Editor/SpriteNormalImporter.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalFrameTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalFrameTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalImporterTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalImporterTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Art &amp; Animation: Project Grimhold/Assets/Editor/SpriteNormalFrame.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Editor/SpriteNormalFrame.cs.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Editor/SpriteNormalGeneratorWindow.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Editor/SpriteNormalGeneratorWindow.cs.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Editor/SpriteNormalImporter.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Editor/SpriteNormalImporter.cs.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalFrameTests.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalFrameTests.cs.meta
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalImporterTests.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalImporterTests.cs.meta
+- scope → Art &amp; Animation: art
+- message-term → Art &amp; Animation: sprite
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/SpriteNormalFrame.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/SpriteNormalFrame.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/SpriteNormalGeneratorWindow.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/SpriteNormalGeneratorWindow.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/SpriteNormalImporter.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Editor/SpriteNormalImporter.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalFrameTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalFrameTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalImporterTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalImporterTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalFrameTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalFrameTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalImporterTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/SpriteNormalImporterTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### b6bb1b915c629a98067c23a7acf14a0190bfcfea
 
