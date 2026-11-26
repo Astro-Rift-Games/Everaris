@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 6306402160097955794}
   - component: {fileID: 7184920473859102845}
   - component: {fileID: 8295031485960213756}
+  - component: {fileID: 9123456789012345678}
   m_Layer: 0
   m_Name: NetworkMatchController
   m_TagString: Untagged
@@ -62,6 +63,7 @@ MonoBehaviour:
   - {fileID: 6306402160097955794}
   - {fileID: 7184920473859102845}
   - {fileID: 8295031485960213756}
+  - {fileID: 9123456789012345678}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &11400002
 MonoBehaviour:
@@ -129,6 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DungeonPressureAudioPresenter
   _pressureController: {fileID: 2361456078320602033}
+  _hazardDirector: {fileID: 9123456789012345678}
   _reinforcementsSfx:
     _clips:
     - {fileID: 8300000, guid: 070779cdcfbe3ff4688691fb33bc3e4e, type: 3}
@@ -183,3 +186,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamExtractionCoordinator
   _config: {fileID: 11400000, guid: 8f4d2742272b465690541c37b55a3120, type: 2}
+--- !u!114 &9123456789012345678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7a6be0b1ac756d4d846b853cb7fc79e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CollapseHazardDirector
+  _config: {fileID: 11400000, guid: 9c4f2a71d8b34e65a1f09b2c8e7d6a54, type: 2}
+  _pressureController: {fileID: 2361456078320602033}
+  _matchController: {fileID: 11400002}

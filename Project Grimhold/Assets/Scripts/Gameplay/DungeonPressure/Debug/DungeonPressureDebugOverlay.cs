@@ -5,6 +5,7 @@ public class DungeonPressureDebugOverlay : MonoBehaviour
 {
     private DungeonPressureController _controller;
     private EnemyReinforcementDirector _director;
+    private CollapseHazardDirector _hazardDirector;
     private NetworkSpawnManager _spawnManager;
     private NetworkMatchController _matchController;
 
@@ -32,10 +33,11 @@ public class DungeonPressureDebugOverlay : MonoBehaviour
             _searchTimer -= Time.deltaTime;
             if (_searchTimer <= 0f)
             {
-                _controller = FindObjectOfType<DungeonPressureController>();
+                _controller = FindAnyObjectByType<DungeonPressureController>();
                 if (_controller != null)
                 {
                     _director = _controller.GetComponent<EnemyReinforcementDirector>();
+                    _hazardDirector = _controller.GetComponent<CollapseHazardDirector>();
                     _matchController = _controller.GetComponent<NetworkMatchController>();
                     if (_controller.Runner != null)
                     {
@@ -49,6 +51,7 @@ public class DungeonPressureDebugOverlay : MonoBehaviour
         {
             _controller = null;
             _director = null;
+            _hazardDirector = null;
             _spawnManager = null;
             _matchController = null;
         }
@@ -67,7 +70,7 @@ public class DungeonPressureDebugOverlay : MonoBehaviour
         if (!_showOverlay) return;
 
         float width = 360f;
-        float height = 450f;
+        float height = 520f;
         float x = Mathf.Max(10f, Screen.width - width - 10f);
         float y = Mathf.Max(10f, Screen.height - height - 10f);
 
@@ -129,6 +132,16 @@ public class DungeonPressureDebugOverlay : MonoBehaviour
             if (GUILayout.Button("Force Spawn Attempt"))
             {
                 _director.ForceAttempt();
+            }
+
+            if (_hazardDirector != null && _hazardDirector.HasReadableState)
+            {
+                GUILayout.Space(6);
+                GUILayout.Label($"Collapse Rifts: {_hazardDirector.FloorRiftCount} | Wave #{_hazardDirector.WaveSequence} (Warn={_hazardDirector.WaveWarningActive}) | Closed={_hazardDirector.IsClosed}");
+                if (GUILayout.Button("Force Global Rupture Wave"))
+                {
+                    _hazardDirector.ForceTriggerGlobalWave();
+                }
             }
             
             GUILayout.Space(4);

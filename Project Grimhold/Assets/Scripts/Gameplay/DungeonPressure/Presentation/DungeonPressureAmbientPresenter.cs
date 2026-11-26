@@ -16,6 +16,7 @@ public sealed class DungeonPressureAmbientPresenter : MonoBehaviour
     [Header("Dependencies")]
     [Tooltip("The pressure controller to monitor. If null, automatically resolves from this GameObject or the active scene.")]
     [SerializeField] private DungeonPressureController _pressureController;
+    [SerializeField] private CollapseHazardDirector _hazardDirector;
 
     [Tooltip("The scene's global 2D light. If null, automatically located in the scene.")]
     [SerializeField] private Light2D _globalLight;
@@ -60,6 +61,7 @@ public sealed class DungeonPressureAmbientPresenter : MonoBehaviour
     private float _globalTransitionProgress = 1f;
     private float _periodicShakeTimer;
     private bool _hasResolvedInitialPhase;
+    private int _lastObservedWaveSequence = -1;
 
     // Post-Process Vignette (URP Volume)
     private Vignette _vignette;
@@ -184,8 +186,15 @@ public sealed class DungeonPressureAmbientPresenter : MonoBehaviour
             _pressureController = GetComponent<DungeonPressureController>();
             if (_pressureController == null)
             {
-                _pressureController = FindObjectOfType<DungeonPressureController>();
+                _pressureController = FindAnyObjectByType<DungeonPressureController>();
             }
+        }
+
+        if (_hazardDirector == null)
+        {
+            _hazardDirector = _pressureController != null
+                ? _pressureController.GetComponent<CollapseHazardDirector>()
+                : FindAnyObjectByType<CollapseHazardDirector>();
         }
 
         if (_globalLight == null)
@@ -808,11 +817,51 @@ public sealed class DungeonPressureAmbientPresenter : MonoBehaviour
             }
         }
 
+        UpdateGlobalWaveWarningCue();
         UpdatePeriodicShake(deltaTime);
         UpdateGlobalLightInterpolation(deltaTime);
         UpdateVignetteInterpolation(deltaTime);
         UpdateCameraParticlePosition();
         CullOccludedParticles(_dustParticles);
+    }
+
+    private void UpdateGlobalWaveWarningCue()
+    {
+        if (_hazardDirector == null && _pressureController != null)
+        {
+            _hazardDirector = _pressureController.GetComponent<CollapseHazardDirector>();
+        }
+
+        if (_hazardDirector == null || !_hazardDirector.TryGetWaveWarningState(out int waveSeq, out bool active, out int warningEndTick))
+        {
+            return;
+        }
+
+        if (_lastObservedWaveSequence < 0)
+        {
+            // Late-join / Host Migration baseline: never replay historical wave cues.
+            _lastObservedWaveSequence = waveSeq;
+            return;
+        }
+
+        if (waveSeq <= _lastObservedWaveSequence)
+        {
+            return;
+        }
+
+        _lastObservedWaveSequence = waveSeq;
+        int currentTick = _hazardDirector.Runner != null ? _hazardDirector.Runner.Tick.Raw : 0;
+        if (!active || (warningEndTick > 0 && currentTick >= warningEndTick))
+        {
+            return;
+        }
+
+        float intensity = _hazardDirector.Config != null ? _hazardDirector.Config.WaveWarningShakeIntensity : 0.35f;
+        float duration = _hazardDirector.Config != null ? _hazardDirector.Config.WaveWarningShakeDuration : 1.2f;
+        if (intensity > 0f && duration > 0f)
+        {
+            CameraShakeController.Instance?.RequestShake(intensity, duration);
+        }
     }
 
     private void OnPhaseChanged(DungeonPressurePhase newPhase)

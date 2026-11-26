@@ -15,6 +15,7 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private DungeonPressureController _pressureController;
     [SerializeField] private NetworkMatchController _matchController;
+    [SerializeField] private CollapseHazardDirector _hazardDirector;
     [SerializeField] private CollapseRiftConfig _config;
 
     [Header("Wall Animation Inspector Control")]
@@ -35,6 +36,7 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
     private DungeonPressurePhase _lastPhase = DungeonPressurePhase.Normal;
     private bool _hasResolvedInitialPhase;
     private bool _hasGeneratedRifts;
+    private bool _hasSyncedAuthoritativeRifts;
     private bool _loggedMissingConfig;
     private int _activeSeed;
     private string _activeRaidGenerationId = string.Empty;
@@ -189,7 +191,7 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
             return;
         }
 
-        if (_pressureController == null || _matchController == null)
+        if (_pressureController == null || _matchController == null || _hazardDirector == null)
         {
             ResolveDependencies();
         }
@@ -220,11 +222,18 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
 
         ApplyWallFrameIntervalToAll();
 
-        for (int i = 0; i < _floorRifts.Count; i++)
+        if (_hazardDirector != null && _hazardDirector.HasReadableState && _hazardDirector.FloorRiftCount > 0)
         {
-            if (_floorRifts[i] != null)
+            SyncFloorRiftsFromAuthority();
+        }
+        else
+        {
+            for (int i = 0; i < _floorRifts.Count; i++)
             {
-                _floorRifts[i].TickVisual(deltaTime);
+                if (_floorRifts[i] != null)
+                {
+                    _floorRifts[i].TickVisual(deltaTime);
+                }
             }
         }
 
@@ -237,11 +246,38 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
         }
     }
 
+    private void SyncFloorRiftsFromAuthority()
+    {
+        bool suppressBurst = !_hasSyncedAuthoritativeRifts;
+        int currentTick = _hazardDirector.Runner != null ? _hazardDirector.Runner.Tick.Raw : 0;
+        float dt = _hazardDirector.Runner != null ? _hazardDirector.Runner.DeltaTime : Time.fixedDeltaTime;
+        int count = Mathf.Min(_floorRifts.Count, _hazardDirector.FloorRiftCount);
+
+        for (int i = 0; i < count; i++)
+        {
+            CollapseFloorRiftVisual visual = _floorRifts[i];
+            if (visual == null)
+            {
+                continue;
+            }
+
+            if (_hazardDirector.TryGetFloorRiftState(i, out CollapseRiftNetState state))
+            {
+                CollapseRiftVisualState visualState = CollapseRiftLifecycleRules.ToVisualState(state.Stage);
+                float elapsed = Mathf.Max(0f, (currentTick - state.StateStartTick) * dt);
+                visual.SyncFromAuthority(visualState, elapsed, state.IsActivatable, suppressBurst);
+            }
+        }
+
+        _hasSyncedAuthoritativeRifts = true;
+    }
+
     public void ResetPresentation()
     {
         ClearSpawnedRifts();
         _hasGeneratedRifts = false;
         _hasResolvedInitialPhase = false;
+        _hasSyncedAuthoritativeRifts = false;
         _lastPhase = DungeonPressurePhase.Normal;
         _activeRaidGenerationId = string.Empty;
     }
@@ -259,6 +295,13 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
             _matchController = _pressureController != null
                 ? _pressureController.GetComponent<NetworkMatchController>()
                 : FindAnyObjectByType<NetworkMatchController>();
+        }
+
+        if (_hazardDirector == null)
+        {
+            _hazardDirector = _pressureController != null
+                ? _pressureController.GetComponent<CollapseHazardDirector>()
+                : FindAnyObjectByType<CollapseHazardDirector>();
         }
     }
 
@@ -523,6 +566,7 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
             }
         }
 
+        CollapseRiftPlacementService.SortExclusionCenters(centers);
         return centers;
     }
 
@@ -544,6 +588,7 @@ public sealed class CollapseRiftPresenter : MonoBehaviour
             }
         }
 
+        CollapseRiftPlacementService.SortExclusionCenters(centers);
         return centers;
     }
 
