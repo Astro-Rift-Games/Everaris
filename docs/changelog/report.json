@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1286,
-  "canonicalEntries": 1283,
+  "rawCommits": 1289,
+  "canonicalEntries": 1286,
   "before": {
+    "Documentation": 140,
+    "Features": 474,
     "Architecture & Infrastructure": 31,
-    "Documentation": 139,
-    "Features": 472,
     "Other Changes": 379,
     "Bug Fixes": 198,
     "Tests": 50,
     "Refactoring": 17
   },
   "after": {
+    "Documentation": 156,
+    "Features": 613,
     "Maintenance": 29,
-    "Documentation": 155,
-    "Features": 611,
     "Other Changes": 186,
     "Bug Fixes": 214,
     "Tests": 55,
@@ -23,28 +23,28 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "UI": 366,
+    "Unassigned": 53,
+    "Networking & Sessions": 370,
+    "Build & Tooling": 668,
+    "Documentation": 460,
+    "Tests": 821,
+    "Combat": 426,
+    "UI": 367,
     "World & Visibility": 195,
-    "Tests": 819,
-    "Build & Tooling": 666,
-    "Networking & Sessions": 369,
     "Art & Animation": 280,
-    "Documentation": 459,
-    "Combat": 425,
     "Inventory & Loot": 509,
     "Audio": 44,
     "Abilities": 148,
     "Extraction": 182,
     "Persistence & Backend": 329,
     "Movement": 109,
-    "Input": 33,
-    "Unassigned": 52
+    "Input": 33
   },
   "canonical": {
     "sections": {
+      "Documentation": 156,
+      "Features": 612,
       "Maintenance": 29,
-      "Documentation": 155,
-      "Features": 610,
       "Other Changes": 185,
       "Bug Fixes": 213,
       "Tests": 55,
@@ -52,22 +52,22 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "UI": 365,
+      "Unassigned": 53,
+      "Networking & Sessions": 370,
+      "Build & Tooling": 666,
+      "Documentation": 458,
+      "Tests": 819,
+      "Combat": 424,
+      "UI": 366,
       "World & Visibility": 193,
-      "Tests": 817,
-      "Build & Tooling": 664,
-      "Networking & Sessions": 369,
       "Art & Animation": 277,
-      "Documentation": 457,
-      "Combat": 423,
       "Inventory & Loot": 509,
       "Audio": 44,
       "Abilities": 146,
       "Extraction": 182,
       "Persistence & Backend": 329,
       "Movement": 109,
-      "Input": 33,
-      "Unassigned": 52
+      "Input": 33
     }
   },
   "unknownEntries": [
@@ -78601,8 +78601,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 409,
-      "canonicalEntries": 409
+      "originalCommits": 412,
+      "canonicalEntries": 412
     },
     {
       "key": "v0.5.0",
@@ -78646,6 +78646,233 @@
     }
   ],
   "commits": [
+    {
+      "sha": "a4defafc6e2687ac8e82bbf33871bb2c008e126f",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a4defafc6e2687ac8e82bbf33871bb2c008e126f",
+      "subject": "docs(odd): track TASK-321 Accelerated Resolution",
+      "body": "Execution tracker with specs quoted from HacknPlan and GD 13, task\nstatus, verification evidence and remaining follow-ups.\n\nRefs: TASK-321\n",
+      "date": "2026-11-26T19:18:35-03:00",
+      "files": [
+        "odd/tasks/task-321-accelerated-resolution.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "odd",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "unassigned-system",
+          "message": "No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system."
+        }
+      ],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "3dc576bf0c0e3eae4c60e78aa69eb58d6ed4c698",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3dc576bf0c0e3eae4c60e78aa69eb58d6ed4c698",
+      "subject": "feat(downed): resolve Downed teams without a recovery route on Host",
+      "body": "Complete TASK-321 (GD 13 section 9): when a team loses every valid\nrecovery route, all its Downed members enter Accelerated Resolution.\n\n- DownedTeamRecoveryRouteRules (pure, allocation-free): a route is an\n  Active connected member, a connected Downed member that can begin a\n  Self-revive, or any valid recovery session in progress (assisted,\n  Self or handoff). A disconnected Active member is not a route (owner\n  decision, DownedAndReviveArchitecture section 15). Extracted,\n  Defeated and Aborted members are neither a route nor accelerated.\n- Fail-safe, because the acceleration latches: an unknown member\n  (participant not resolvable yet, or Raiding without an avatar)\n  blocks acceleration for its team, and evaluation pauses while Host\n  Migration recovery is in progress.\n- DownedTeamResolutionCoordinator: Host-only NetworkBehaviour on\n  NetworkMatchController.prefab (execution order 116). It reads the\n  launch roster, caches participants, falls back to a throttled runner\n  scan for retained or unbound participants, and calls\n  RequestAcceleratedResolution() on every Downed Raiding member. No\n  per-tick allocations, logs or networked state.\n\nPrefab: only the coordinator component is added; existing fileIDs and\nGUIDs are unchanged.\n\nTests:\n- DownedTeamRecoveryRouteRulesTests: Solo/Duo cases, sessions,\n  disconnects, finished and unknown members.\n- DownedTeamResolutionPlayModeTests: real roster and match controller;\n  Solo with and without a Self-reviver, Active, disconnected-retained,\n  unresolvable, avatar-less, departed and defeated teammates.\n\nDocs: DownedAndReviveArchitecture section 10 implemented (rule,\nfail-safe, feedback, configuration, placement), sections 2, 7.1 and\n15, Q4 resolved and the status table.\n\nAccepted limit: after Host Migration, a teammate the new Host never saw\nand that is already gone stays unknown, so the survivor keeps the\nnormal drain.\n\nRefs: TASK-321\nPlayer-Added: A downed player with no way left to be revived now falls in about 5 seconds instead of waiting out the full downed timer, with an on-screen warning.\n",
+      "date": "2026-11-26T19:18:22-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/NetworkMatchController.prefab",
+        "Project Grimhold/Assets/Scripts/Player/DownedTeamMemberRouteSnapshot.cs",
+        "Project Grimhold/Assets/Scripts/Player/DownedTeamMemberRouteSnapshot.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/DownedTeamRecoveryRouteRules.cs",
+        "Project Grimhold/Assets/Scripts/Player/DownedTeamRecoveryRouteRules.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/DownedTeamResolutionCoordinator.cs",
+        "Project Grimhold/Assets/Scripts/Player/DownedTeamResolutionCoordinator.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedTeamRecoveryRouteRulesTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedTeamRecoveryRouteRulesTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/DownedTeamResolutionPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/DownedTeamResolutionPlayModeTests.cs.meta",
+        "Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "downed",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Networking & Sessions",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "message-term",
+          "value": "Host Migration",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedTeamRecoveryRouteRulesTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedTeamRecoveryRouteRulesTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/DownedAndReviveArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedTeamRecoveryRouteRulesTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedTeamRecoveryRouteRulesTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/DownedTeamResolutionPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/DownedTeamResolutionPlayModeTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "c874817afc6b7187d0fb536aec029fe41739f37d",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/c874817afc6b7187d0fb536aec029fe41739f37d",
+      "subject": "feat(downed): add Accelerated Resolution drain and HUD feedback",
+      "body": "Implement the Downed-side half of GD 13 section 9 (TASK-321): a Downed\ncycle can switch to an accelerated drain that empties the remaining\nreserve in a configurable time (about 5 s) without cutting the bar.\n\n- DownedHealthRules.AcceleratedDrainRate = max(normal, reserve / s);\n  invalid inputs keep the normal rate.\n- PlayerDownedStateNetworkController: serialized\n  _acceleratedResolutionSeconds (5 s), [Networked]\n  AcceleratedDrainPerSecond, IsResolutionAccelerated and\n  RequestAcceleratedResolution() (State Authority only, latched for the\n  cycle). The rate clears on entry, defeat, recovery and fresh spawn;\n  a restored avatar keeps it. Depletion uses the existing defeat path.\n- HUD (GD 13 section 14): DownedStateText gains an overload that shows\n  \"ABATIDO · Resolución Acelerada\" when no session runs, and\n  RaidDownedHudPresenter shows a one-time entry notice. The existing\n  3-argument overload is unchanged.\n\nNothing requests the acceleration yet; the Host coordinator follows.\n\nTests:\n- DownedHealthRulesTests: rate, floor at the normal rate, invalid\n  inputs, tick-by-tick depletion at about 5 s.\n- PlayerDownedPlayModeTests: configured window with normal defeat,\n  latch and clearing, damage during the window, refusal after defeat.\n- DownedAcceleratedResolutionFeedbackTests: status line and notice.\n\nRefs: TASK-321\n",
+      "date": "2026-11-26T19:18:06-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Player/DownedHealthRules.cs",
+        "Project Grimhold/Assets/Scripts/Player/DownedRecoveryFeedbackRules.cs",
+        "Project Grimhold/Assets/Scripts/Player/PlayerDownedStateNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/RaidDownedHudPresenter.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedAcceleratedResolutionFeedbackTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedAcceleratedResolutionFeedbackTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedHealthRulesTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/PlayerDownedPlayModeTests.cs"
+      ],
+      "originalType": "feat",
+      "originalScope": "downed",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "UI",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/DownedHealthRules.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedHealthRulesTests.cs",
+          "supports": "Combat"
+        },
+        {
+          "source": "message-term",
+          "value": "damage",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/RaidDownedHudPresenter.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "HUD",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedAcceleratedResolutionFeedbackTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedAcceleratedResolutionFeedbackTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedHealthRulesTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedAcceleratedResolutionFeedbackTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedAcceleratedResolutionFeedbackTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Player/DownedHealthRulesTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/PlayerDownedPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "be541d21a3197e533fad3aaaf880ddfd663eb8c2",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/be541d21a3197e533fad3aaaf880ddfd663eb8c2",

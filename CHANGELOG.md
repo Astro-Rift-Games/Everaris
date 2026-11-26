@@ -44,6 +44,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Catacombs doors can now be opened and closed; closed doors block movement, attacks and sight.
 - You can now add multiple buyback items to the same merchant cart and confirm them together.
 - Collapse floor rifts now erupt synchronously on global rupture waves, dealing environmental damage and knockback to players and monsters without blocking movement.
+- A downed player with no way left to be revived now falls in about 5 seconds instead of waiting out the full downed timer, with an on-screen warning.
 
 ### Improved
 
