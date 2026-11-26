@@ -19,9 +19,12 @@ This document defines the technical contracts and ownership boundaries for the s
 
 ## 2. Ownership and Boundaries
 
-- **State Authority:** Server/Host is the sole authority writing to `DungeonPressureController` and `EnemyReinforcementDirector`.
+- **State Authority:** Server/Host is the sole authority writing to `DungeonPressureController`, `EnemyReinforcementDirector`, and `CollapseHazardDirector`.
 - **DungeonPressureController:** Sole source of truth for the active pressure phase, remaining instance time, and state transitions. Replicated across all clients.
 - **EnemyReinforcementDirector:** Governs spawn evaluation intervals, budget calculations, and reinforcement requests to `NetworkSpawnManager`.
+- **CollapseHazardDirector (US-91 / TASK-335, TASK-336, TASK-339):** Authoritative `NetworkBehaviour` co-located on `NetworkMatchController.prefab`. Replicates up to 256 floor collapse rifts via a single delta-compressed `NetworkArray<CollapseRiftNetState>`, schedules phase-escalating global rupture waves (`CollapseWaveScheduler`), reports Doc 19 causal presence prior to single-shot eruption damage & radial knockback (with configurable consecutive environmental knockback protection), exposes `ICollapseRiftActivationSink` on `EntityRegistry` for compatible abilities (TASK-337 seam), and executes deterministic absolute-closure cutoffs (cancelling telegraphs/waves while allowing in-flight eruptions to complete once before transitioning directly to `Disabled`). Uses query-only `Physics2D.OverlapCircle` with zero colliders or navigation mutations (Doc 20 §4).
+- **CollapseHazardConfig:** Inspector-configurable `ScriptableObject` (`DefaultCollapseHazardConfig.asset`) storing rift damage, knockback, radius, cycle durations, environmental knockback protection window, wave cadence ranges, overlap limits, and global wave cue intensity.
+- **CollapseRiftPresenter:** Local presentation mirror of `CollapseHazardDirector` (retaining offline EditMode preview when no director is present). Mirrors replicated floor rift stages without running local activation timers and suppresses historical eruption particle bursts on late-join, reconnect, and Host Migration.
 - **PvePopulationTracker:** Owns active PvE population tracking and informs the director of current headroom.
 - **DungeonPressureAmbientPresenter:** Local client presentation component. Modulates global ambient lighting, camera trauma shake, post-process vignette, and falling ceiling debris particles without mutating simulation or networked state.
 - **DungeonLightProp:** Local client presentation component. Modulates local point lights (torches, braziers, candles) with organic flickering, unstable drafts, and extinction support.

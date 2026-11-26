@@ -38,6 +38,7 @@ public sealed class DungeonPressureController : NetworkBehaviour, IDungeonInstab
     private NetworkMatchController _matchController;
     private NetworkSpawnManager _spawnManager;
     private EntityRegistry _registry;
+    private CollapseHazardDirector _hazardDirector;
     private bool _isSpawned;
 
     public bool IsSpawned => _isSpawned;
@@ -84,6 +85,7 @@ public sealed class DungeonPressureController : NetworkBehaviour, IDungeonInstab
     {
         _isSpawned = true;
         _matchController = GetComponent<NetworkMatchController>();
+        _hazardDirector = GetComponent<CollapseHazardDirector>();
         _spawnManager = Runner.GetComponent<NetworkSpawnManager>();
         _registry = Runner.GetComponent<EntityRegistry>();
         _registry?.TryRegisterDungeonInstabilitySink(this);
@@ -292,7 +294,8 @@ public sealed class DungeonPressureController : NetworkBehaviour, IDungeonInstab
 
         if (shouldTriggerAbsoluteClosure)
         {
-            Debug.Log("[DungeonPressureController] Absolute collapse deadline reached. Defeating remaining raiding participants.");
+            Debug.Log("[DungeonPressureController] Absolute collapse deadline reached. Closing collapse hazards and defeating remaining raiding participants.");
+            _hazardDirector?.HandleAbsoluteClosure();
             _spawnManager.DefeatRemainingRaidingParticipantsForAbsoluteClosure();
         }
     }
@@ -359,6 +362,7 @@ public sealed class DungeonPressureController : NetworkBehaviour, IDungeonInstab
         {
             CollapseRemainingTicks = 0;
             State = DungeonPressureState.Stopped;
+            _hazardDirector?.HandleAbsoluteClosure();
             _spawnManager?.DefeatRemainingRaidingParticipantsForAbsoluteClosure();
             Debug.Log("[DungeonPressureController] Advanced phase past Collapse -> Absolute Closure executed.");
         }

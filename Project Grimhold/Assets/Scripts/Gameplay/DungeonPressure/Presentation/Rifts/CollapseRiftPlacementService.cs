@@ -12,6 +12,24 @@ public static class CollapseRiftPlacementService
     // (y=[16..46] in top-down PNG coordinates). Centering at cellBottomY + 1.5 aligns the bottom edge to the floor-wall seam.
     private const float WallSpriteHalfHeightWorld = 1.5f;
 
+    /// <summary>
+    /// Sorts exclusion centers deterministically by (x, y) so Host and Clients always produce identical
+    /// placement indices regardless of Unity's FindObjectsByType return order.
+    /// </summary>
+    public static void SortExclusionCenters(List<Vector2> centers)
+    {
+        if (centers == null || centers.Count <= 1)
+        {
+            return;
+        }
+
+        centers.Sort((a, b) =>
+        {
+            int cmpX = a.x.CompareTo(b.x);
+            return cmpX != 0 ? cmpX : a.y.CompareTo(b.y);
+        });
+    }
+
     public static void GeneratePlacements(
         ICollapseSurfaceGrid grid,
         CollapseRiftPlacementSettings settings,

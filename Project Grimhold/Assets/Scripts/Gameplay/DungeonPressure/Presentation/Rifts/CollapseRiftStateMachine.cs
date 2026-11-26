@@ -74,7 +74,45 @@ public sealed class CollapseRiftStateMachine
     }
 
     /// <summary>
-    /// Authoritative visual sync hook reserved for future NetworkFissure integration (TASK-255).
+    /// Authoritative visual sync hook for CollapseHazardDirector (TASK-335).
+    /// Mirrors the replicated stage, elapsed time, and activatability directly without local transitions.
+    /// </summary>
+    public void SyncFromAuthority(CollapseRiftVisualState authoritativeState, float stateElapsedSeconds, bool isActivatable)
+    {
+        _state = authoritativeState;
+        _isActivatable = isActivatable;
+        _stateElapsedSeconds = Mathf.Max(0f, stateElapsedSeconds);
+
+        switch (_state)
+        {
+            case CollapseRiftVisualState.Spawning:
+                _currentFrameIndex = Mathf.Clamp(Mathf.FloorToInt(_stateElapsedSeconds * _timing.SpawnFps), 0, _timing.SpawnFrameCount - 1);
+                break;
+
+            case CollapseRiftVisualState.Telegraph:
+            {
+                float offsetTime = _stateElapsedSeconds + _timing.PhaseOffsetSeconds;
+                int rawFrame = Mathf.FloorToInt(offsetTime * _timing.TelegraphFps);
+                _currentFrameIndex = ((rawFrame % _timing.TelegraphFrameCount) + _timing.TelegraphFrameCount) % _timing.TelegraphFrameCount;
+                break;
+            }
+
+            case CollapseRiftVisualState.Erupting:
+                _currentFrameIndex = Mathf.Clamp(Mathf.FloorToInt(_stateElapsedSeconds * _timing.EruptionFps), 0, _timing.EruptionFrameCount - 1);
+                break;
+
+            case CollapseRiftVisualState.Cooldown:
+                _currentFrameIndex = Mathf.Clamp(Mathf.FloorToInt(_stateElapsedSeconds * _timing.CooldownFps), 0, _timing.CooldownFrameCount - 1);
+                break;
+
+            default:
+                _currentFrameIndex = 0;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Authoritative visual sync hook reserved for Editor preview and tests.
     /// </summary>
     public void ForceVisualState(CollapseRiftVisualState state)
     {

@@ -62,6 +62,12 @@ Any current or future environmental threat (floor traps, projectile hazards, Col
 4. **Corridor / Trajectory Continuity**: For projectile-based hazards, the trajectory/corridor collider must remain enabled and queried during active firing phases so that victim exposure is continuously recognized while projectiles are in flight.
 5. **Neutrality Guarantee**: Damage inflicted without a preceding causal push must leave `CreditCauser` as `EntityId(0)`, ensuring that natural environmental deaths award no kill credit or assists to any participant.
 
+### 4. Collapse Floor Rifts (`CollapseHazardDirector` — US-91 / TASK-335, TASK-336, TASK-339)
+* **Authoritative Replication**: Managed by `CollapseHazardDirector` (`NetworkBehaviour` on `NetworkMatchController.prefab`) via `[Networked, Capacity(256)] NetworkArray<CollapseRiftNetState>` and deterministic placements (`CollapseRiftPlacementService.GeneratePlacements` with sorted exclusions). No solid or trigger `Collider2D`s are added to the scene (Doc 20 §4).
+* **Lifecycle**: `Hidden` → `Spawning` → `Dormant` → `Telegraph` → `Erupting` → `Cooldown` → `Dormant` (or `Disabled` on absolute closure). Occupied or harmless rifts ignore activations.
+* **Causal Exposure & Single-Shot Impact**: Every tick on State Authority, active rifts run non-allocating `Physics2D.OverlapCircle` queries and report players via `PlayerHazardExposureCausalityNetworkController.ReportHazardPresence(CollapseHazardIdUtility.ForFloorRift(Object.Id.Raw, index))`. Eruption damage (`AttackerId = EntityId(0)`, `EnvironmentalHazardId = hazardId`) and radial knockback apply once per cycle to players and PvE enemies, with a configurable per-target `EnvironmentalKnockbackProtectionTracker` window that suppresses chained environmental knockbacks while allowing damage to accumulate (Doc 20 §5).
+* **Global Rupture Waves & Absolute Closure**: `CollapseWaveScheduler` emits global warnings before activating eligible dormant rifts in `CriticalPressure` and `Collapse` (never damaging directly). On absolute closure (`HandleAbsoluteClosure`), pending waves and `Telegraph` rifts are cancelled immediately, while already-`Erupting` rifts finish their functional impact once and transition directly to `Disabled` without affecting extracted participants (Doc 20 §11).
+
 ## Data Contracts and Configuration (`TrapInfo`)
 
 Static configuration parameters are stored in `TrapInfo` ScriptableObjects:
