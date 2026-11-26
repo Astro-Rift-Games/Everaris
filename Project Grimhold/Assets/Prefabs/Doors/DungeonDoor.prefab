@@ -91,6 +91,7 @@ GameObject:
   - component: {fileID: 5067726723460234795}
   - component: {fileID: 6310312722924064176}
   - component: {fileID: 631504660809011633}
+  - component: {fileID: 2398678520277687532}
   m_Layer: 0
   m_Name: DungeonDoor
   m_TagString: Untagged
@@ -271,6 +272,24 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2398678520277687532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3112364316932389262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1034b07a347ea6f49b3e51df4b7f18d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectGrimhold.Gameplay.Visibility.EntityVisibilityPresenter
+  _renderers:
+  - {fileID: 301254826981526207}
+  _occlusionOnly: 1
+  _visibilityOffset: {x: 0, y: 0}
+  _visibilityCollider: {fileID: 0}
+  _useColliderBounds: 0
 --- !u!1 &3739918297921785363
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,7 +447,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -605295079
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 4230805508929742423, guid: d3dfd902744cafb41b2514ed1620e588, type: 3}
@@ -506,7 +525,7 @@ SortingGroup:
   m_GameObject: {fileID: 8174583109325263299}
   m_Enabled: 1
   m_SortingLayerID: -605295079
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_SortAtRoot: 0
   m_Sort3DAs2D: 0

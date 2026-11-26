@@ -25,6 +25,12 @@ namespace ProjectGrimhold.Gameplay.Visibility
         bool IsVisible(in VisionQuery query);
 
         /// <summary>
+        /// Opacity factor in [0, 1] from where this target sits against the cone edge, so dynamic
+        /// entities fade across the edge instead of popping. Static occlusion-only objects return 1.
+        /// </summary>
+        float EdgeFactor(in VisionQuery query);
+
+        /// <summary>
         /// Applies the entity's presentation opacity in [0, 1]; zero means not rendered at all.
         /// Implementations must only affect presentation (never gameplay, colliders or network state).
         /// </summary>

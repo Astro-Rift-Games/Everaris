@@ -65,6 +65,20 @@ namespace ProjectGrimhold.Gameplay.Visibility
         }
 
         /// <inheritdoc />
+        public float EdgeFactor(in VisionQuery query)
+        {
+            if (_occlusionOnly)
+            {
+                return 1f;
+            }
+
+            Vector2 point = _useColliderBounds && _visibilityCollider != null
+                ? (Vector2)_visibilityCollider.bounds.center
+                : VisibilityPoint;
+            return query.ConeEdgeFactor(point);
+        }
+
+        /// <inheritdoc />
         public void ApplyVisibility(float alpha)
         {
             if (_renderers == null)

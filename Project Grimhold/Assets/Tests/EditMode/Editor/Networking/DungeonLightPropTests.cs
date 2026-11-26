@@ -66,6 +66,49 @@ public sealed class DungeonLightPropTests
     }
 
     [Test]
+    public void Registry_Props_ListsOnlyLiveRegisteredProps()
+    {
+        var kept = new GameObject("Kept").AddComponent<DungeonLightProp>();
+        var destroyed = new GameObject("Destroyed").AddComponent<DungeonLightProp>();
+        try
+        {
+            Object.DestroyImmediate(destroyed.gameObject);
+
+            Assert.That(DungeonLightPropRegistry.Props, Is.EqualTo(new[] { kept }));
+        }
+        finally { Object.DestroyImmediate(kept.gameObject); }
+    }
+
+    [Test]
+    public void VisibilityAlpha_FollowsTheVisibilityPresenter_AndIsOneWithoutIt()
+    {
+        var plain = new GameObject("Plain").AddComponent<DungeonLightProp>();
+        var hidden = new GameObject("Hidden").AddComponent<DungeonLightProp>();
+        try
+        {
+            // Like the light prop prefabs: the presenter fades the prop's own sprite.
+            var sprite = hidden.gameObject.AddComponent<SpriteRenderer>();
+            var presenter = hidden.gameObject.AddComponent<ProjectGrimhold.Gameplay.Visibility.EntityVisibilityPresenter>();
+            using (var so = new UnityEditor.SerializedObject(presenter))
+            {
+                so.FindProperty("_renderers").arraySize = 1;
+                so.FindProperty("_renderers").GetArrayElementAtIndex(0).objectReferenceValue = sprite;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            presenter.ApplyVisibility(0.25f);
+
+            Assert.That(plain.VisibilityAlpha, Is.EqualTo(1f));
+            Assert.That(hidden.VisibilityAlpha, Is.EqualTo(0.25f).Within(1e-5f));
+        }
+        finally
+        {
+            Object.DestroyImmediate(plain.gameObject);
+            Object.DestroyImmediate(hidden.gameObject);
+        }
+    }
+
+    [Test]
     public void ExtinguishableProp_SwapsSpriteAndDisablesFlame()
     {
         var config = ScriptableObject.CreateInstance<DungeonLightPropConfig>();

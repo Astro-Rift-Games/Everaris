@@ -37,6 +37,13 @@ Shader "Grimhold/Visibility/VisionFog"
             TEXTURE2D(_VisionMask);
             SAMPLER(sampler_VisionMask);
 
+            // Must match VisionFogLightRules.MaxLights. (x, y, radius, strength) per visible lit light.
+            #define MAX_FOG_LIGHTS 16
+            float4 _FogLights[MAX_FOG_LIGHTS];
+            float _FogLightCount;
+            float _LightClearStrength;
+            float _LightInnerRatio;
+
             CBUFFER_START(UnityPerMaterial)
                 float4 _FogColor;
                 float4 _WindVelocity;
@@ -112,6 +119,18 @@ Shader "Grimhold/Visibility/VisionFog"
                 float clear = saturate((mask - threshold) / max(1.0 - threshold, 1e-4));
                 clear *= (1.0 - _FarFogDensity * smoothstep(_FarFogStart,
                     max(_FarFogEnd, _FarFogStart + 1e-4), distance(p, _VisionOrigin.xy))) * _VisionClearStrength;
+                // Lights the viewer can see thin the fog around them (shared torchlight).
+                float lit = 0.0;
+                int lightCount = (int)_FogLightCount;
+                for (int i = 0; i < MAX_FOG_LIGHTS; i++)
+                {
+                    if (i >= lightCount)
+                        break;
+                    float4 fogLight = _FogLights[i];
+                    float reach = 1.0 - smoothstep(fogLight.z * _LightInnerRatio, fogLight.z, distance(p, fogLight.xy));
+                    lit = max(lit, reach * fogLight.w);
+                }
+                clear = max(clear, lit * _LightClearStrength * _VisionClearStrength);
                 float alpha = _FogColor.a * lerp(1.0 - _NoiseStrength, 1.0, noise1)
                     * lerp(1.0, _InsideDensity, clear);
                 return half4(_FogColor.rgb, alpha);

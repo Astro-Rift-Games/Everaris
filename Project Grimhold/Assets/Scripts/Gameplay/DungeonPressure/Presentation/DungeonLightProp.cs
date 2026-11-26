@@ -49,6 +49,8 @@ public sealed class DungeonLightProp : MonoBehaviour
     private float _noiseSeedY;
     private bool _isInitialized;
     private bool _isExtinguished;
+    private ProjectGrimhold.Gameplay.Visibility.EntityVisibilityPresenter _visibility;
+    private bool _visibilityResolved;
 
     public Light2D LightComponent => _light;
     public DungeonLightPropConfig Config => _config;
@@ -60,6 +62,21 @@ public sealed class DungeonLightProp : MonoBehaviour
     public Sprite LitSprite => _litSprite;
     public Sprite ExtinguishedSprite => _extinguishedSprite;
     public GameObject FlameObject => _flameObject;
+
+    /// <summary>How visible this prop is to the local viewer (0..1); 1 when it has no visibility presenter.</summary>
+    public float VisibilityAlpha
+    {
+        get
+        {
+            if (!_visibilityResolved)
+            {
+                _visibility = GetComponent<ProjectGrimhold.Gameplay.Visibility.EntityVisibilityPresenter>();
+                _visibilityResolved = _visibility != null;
+            }
+
+            return _visibility != null ? _visibility.AppliedAlpha : 1f;
+        }
+    }
 
     private void Awake()
     {

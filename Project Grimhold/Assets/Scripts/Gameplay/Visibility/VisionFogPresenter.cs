@@ -33,11 +33,18 @@ namespace ProjectGrimhold.Gameplay.Visibility
         private static readonly int FarFogDensityId = Shader.PropertyToID("_FarFogDensity");
         private static readonly int VisionOriginId = Shader.PropertyToID("_VisionOrigin");
         private static readonly int VisionClearStrengthId = Shader.PropertyToID("_VisionClearStrength");
+        private static readonly int FogLightsId = Shader.PropertyToID("_FogLights");
+        private static readonly int FogLightCountId = Shader.PropertyToID("_FogLightCount");
+        private static readonly int LightClearStrengthId = Shader.PropertyToID("_LightClearStrength");
+        private static readonly int LightInnerRatioId = Shader.PropertyToID("_LightInnerRatio");
+
+        private readonly Vector4[] _fogLights = new Vector4[VisionFogLightRules.MaxLights];
+        private readonly System.Collections.Generic.List<FogLightSource> _lightSources = new();
+        private int _fogLightCount;
 
         private MaterialPropertyBlock _block;
         private Vector2 _origin;
         private Vector2 _facing = Vector2.up;
-        private bool _hasFacing;
         private VisionFogMask _mask;
         private float _clearStrength;
 
@@ -89,17 +96,14 @@ namespace ProjectGrimhold.Gameplay.Visibility
         private void LateUpdate()
         {
             bool hasViewer = _visibilitySystem.TryBuildActiveQuery(out VisionQuery query);
-            float previousClearStrength = _clearStrength;
             _clearStrength = VisionFogRules.StepClearStrength(
                 _clearStrength, hasViewer, _settings.ClearFadeSeconds, Time.deltaTime);
 
             if (hasViewer)
             {
                 _origin = query.Origin;
-                _facing = previousClearStrength <= 0f || !_hasFacing
-                    ? query.Facing
-                    : VisionFogRules.SmoothFacing(_facing, query.Facing, _settings.FacingSharpness, Time.deltaTime);
-                _hasFacing = true;
+                // The viewer already smooths facing once per frame for entities and fog alike.
+                _facing = query.Facing;
                 float coneAngleDegrees = 2f * Mathf.Acos(Mathf.Clamp(query.ConeHalfAngleCosine, -1f, 1f)) * Mathf.Rad2Deg;
                 Vector2 coverage = VisionFogRules.OrthographicCoverage(
                     _camera.orthographicSize, _camera.aspect, _settings.CoverageMargin);
@@ -109,6 +113,11 @@ namespace ProjectGrimhold.Gameplay.Visibility
                 int width = Mathf.Max(16, Mathf.RoundToInt(_camera.pixelWidth * _settings.MaskResolutionScale));
                 int height = Mathf.Max(16, Mathf.RoundToInt(_camera.pixelHeight * _settings.MaskResolutionScale));
                 _mask.Render(in query, _facing, coneAngleDegrees, worldRect, width, height, _settings);
+                _fogLightCount = SelectFogLights(worldRect, query.Origin);
+            }
+            else
+            {
+                _fogLightCount = 0;
             }
 
             float distanceMultiplier = hasViewer ? query.DistanceMultiplier : 1f;
@@ -129,7 +138,34 @@ namespace ProjectGrimhold.Gameplay.Visibility
             _block.SetFloat(FarFogDensityId, _settings.FarFogDensity);
             _block.SetVector(VisionOriginId, new Vector4(_origin.x, _origin.y, 0f, 0f));
             _block.SetFloat(VisionClearStrengthId, _clearStrength);
+            _block.SetVectorArray(FogLightsId, _fogLights);
+            _block.SetFloat(FogLightCountId, _fogLightCount);
+            _block.SetFloat(LightClearStrengthId, _settings.LightClearStrength);
+            _block.SetFloat(LightInnerRatioId, _settings.LightInnerRatio);
             _renderer.SetPropertyBlock(_block);
+        }
+
+        /// <summary>Gathers the lit dungeon lights whose source the viewer currently sees.</summary>
+        private int SelectFogLights(Rect worldRect, Vector2 origin)
+        {
+            _lightSources.Clear();
+            if (_settings.LightClearStrength > 0f)
+            {
+                var props = DungeonLightPropRegistry.Props;
+                for (int i = 0; i < props.Count; i++)
+                {
+                    var light = props[i].LightComponent;
+                    if (light == null || !light.isActiveAndEnabled)
+                    {
+                        continue;
+                    }
+
+                    _lightSources.Add(new FogLightSource(light.transform.position, light.pointLightOuterRadius,
+                        light.intensity, props[i].VisibilityAlpha));
+                }
+            }
+
+            return VisionFogLightRules.Select(_lightSources, worldRect, origin, _settings.LightReferenceIntensity, _fogLights);
         }
     }
 }

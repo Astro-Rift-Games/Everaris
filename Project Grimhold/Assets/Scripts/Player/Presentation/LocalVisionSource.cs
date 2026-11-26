@@ -48,6 +48,7 @@ public sealed class LocalVisionSource : MonoBehaviour, IVisionViewer
     [SerializeField, Min(1f)] private float _gizmoRayLength = 30f;
 
     private readonly RaycastHit2D[] _hitBuffer = new RaycastHit2D[HitBufferSize];
+    private readonly VisionFacingSmoother _facingSmoother = new VisionFacingSmoother();
     private CachedLight2DRadii[] _cachedAvatarLights;
     private float _lastAppliedLightMultiplier = 1f;
     private bool _hasLoggedMissingDependencies;
@@ -66,6 +67,7 @@ public sealed class LocalVisionSource : MonoBehaviour, IVisionViewer
     private void OnDisable()
     {
         ApplyAvatarLightMultiplier(1f);
+        _facingSmoother.Reset();
     }
 
     /// <summary>
@@ -85,14 +87,16 @@ public sealed class LocalVisionSource : MonoBehaviour, IVisionViewer
 
         query = new VisionQuery(
             ResolveOrigin(),
-            ResolveFacing(),
+            // Smoothed once per frame: entity visibility and the fog edge share this facing.
+            _facingSmoother.Step(ResolveFacing(), _settings.FacingSharpness, Time.deltaTime, Time.frameCount),
             _settings.NearRadius * visionMultiplier,
             VisionConeRules.CosineOfHalfAngle(_settings.ConeAngleDegrees),
             _settings.ObstacleLayer,
             _hitBuffer,
             ViewerRoot,
             _settings.FadeTimings,
-            visionMultiplier);
+            visionMultiplier,
+            _settings.ConeEdgeSoftDegrees);
         return true;
     }
 

@@ -18,6 +18,8 @@ namespace ProjectGrimhold.Gameplay.Visibility
         private readonly Transform _viewerRoot;
         private readonly VisibilityFadeTimings _fadeTimings;
         private readonly float _distanceMultiplier;
+        private readonly float _halfAngleDegrees;
+        private readonly float _edgeSoftDegrees;
 
         public VisionQuery(
             Vector2 origin,
@@ -28,7 +30,8 @@ namespace ProjectGrimhold.Gameplay.Visibility
             RaycastHit2D[] hitBuffer,
             Transform viewerRoot,
             VisibilityFadeTimings fadeTimings,
-            float distanceMultiplier = 1f)
+            float distanceMultiplier = 1f,
+            float edgeSoftDegrees = 0f)
         {
             _origin = origin;
             _facing = facing;
@@ -38,6 +41,8 @@ namespace ProjectGrimhold.Gameplay.Visibility
             _viewerRoot = viewerRoot;
             _fadeTimings = fadeTimings;
             _distanceMultiplier = distanceMultiplier > 0f ? distanceMultiplier : 1f;
+            _halfAngleDegrees = Mathf.Acos(Mathf.Clamp(coneHalfAngleCosine, -1f, 1f)) * Mathf.Rad2Deg;
+            _edgeSoftDegrees = Mathf.Max(0f, edgeSoftDegrees);
             _obstacleFilter = new ContactFilter2D
             {
                 useLayerMask = true,
@@ -59,6 +64,13 @@ namespace ProjectGrimhold.Gameplay.Visibility
         public VisibilityFadeTimings FadeTimings => _fadeTimings;
 
         public float DistanceMultiplier => _distanceMultiplier > 0f ? _distanceMultiplier : 1f;
+
+        /// <summary>Width in degrees of the band just inside the cone edge across which dynamic entities fade.</summary>
+        public float EdgeSoftDegrees => _edgeSoftDegrees;
+
+        /// <summary>Opacity factor (0..1) of a dynamic entity at <paramref name="point"/> from its position against the cone edge.</summary>
+        public float ConeEdgeFactor(Vector2 point) =>
+            VisionConeRules.EdgeFactor(_origin, _facing, point, _nearRadius, _halfAngleDegrees, _edgeSoftDegrees);
 
         /// <summary>
         /// Returns whether no obstacle collider outside <paramref name="targetRoot"/> or the viewer

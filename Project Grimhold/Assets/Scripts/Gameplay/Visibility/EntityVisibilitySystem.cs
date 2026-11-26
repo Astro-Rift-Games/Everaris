@@ -19,6 +19,8 @@ namespace ProjectGrimhold.Gameplay.Visibility
         private readonly List<IVisibilityTarget> _targets = new List<IVisibilityTarget>();
         private readonly Dictionary<IVisibilityTarget, VisibilityFadeState> _fadeStates =
             new Dictionary<IVisibilityTarget, VisibilityFadeState>();
+        private readonly Dictionary<IVisibilityTarget, float> _appliedAlphas =
+            new Dictionary<IVisibilityTarget, float>();
 
         /// <summary>
         /// Registers an entity fully hidden; it fades in once the viewer sees it.
@@ -33,6 +35,7 @@ namespace ProjectGrimhold.Gameplay.Visibility
             _targets.Add(target);
             target.ApplyVisibility(0f);
             _fadeStates[target] = VisibilityFadeState.Hidden;
+            _appliedAlphas[target] = 0f;
         }
 
         /// <summary>
@@ -44,6 +47,7 @@ namespace ProjectGrimhold.Gameplay.Visibility
             {
                 _targets.Remove(target);
                 _fadeStates.Remove(target);
+                _appliedAlphas.Remove(target);
             }
         }
 
@@ -103,6 +107,7 @@ namespace ProjectGrimhold.Gameplay.Visibility
                 if (target == null || (target is Object unityObject && unityObject == null))
                 {
                     _fadeStates.Remove(target);
+                    _appliedAlphas.Remove(target);
                     _targets.RemoveAt(i);
                     continue;
                 }
@@ -115,9 +120,12 @@ namespace ProjectGrimhold.Gameplay.Visibility
 
                 VisibilityFadeState next = VisibilityFadeRules.Step(previous, seen, deltaTime, timings);
                 _fadeStates[target] = next;
-                if (previous.Alpha != next.Alpha)
+                // Dynamic entities also fade across the cone edge instead of popping.
+                float alpha = hasQuery ? next.Alpha * EdgeFactorForViewer(target, in query) : next.Alpha;
+                if (!_appliedAlphas.TryGetValue(target, out float applied) || applied != alpha)
                 {
-                    target.ApplyVisibility(next.Alpha);
+                    _appliedAlphas[target] = alpha;
+                    target.ApplyVisibility(alpha);
                 }
             }
         }
@@ -146,6 +154,17 @@ namespace ProjectGrimhold.Gameplay.Visibility
             }
 
             return true;
+        }
+
+        private static float EdgeFactorForViewer(IVisibilityTarget target, in VisionQuery query)
+        {
+            Transform targetRoot = target.VisibilityRoot;
+            if (query.ViewerRoot != null && targetRoot != null && targetRoot.IsChildOf(query.ViewerRoot))
+            {
+                return 1f;
+            }
+
+            return target.EdgeFactor(in query);
         }
 
         private static bool IsVisibleToViewer(IVisibilityTarget target, in VisionQuery query)

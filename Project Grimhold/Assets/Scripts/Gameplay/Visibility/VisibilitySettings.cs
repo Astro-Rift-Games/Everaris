@@ -34,6 +34,14 @@ namespace ProjectGrimhold.Gameplay.Visibility
         [Min(0f)]
         public float FadeOutSeconds = 0.4f;
 
+        [Tooltip("Width in degrees of the band just inside the cone edge across which players and enemies fade out before reaching it; zero keeps a hard edge.")]
+        [Min(0f)]
+        public float ConeEdgeSoftDegrees = 20f;
+
+        [Tooltip("Facing smoothing shared by entity visibility and the fog edge; zero disables smoothing.")]
+        [Min(0f)]
+        public float FacingSharpness = 12f;
+
         public VisibilityFadeTimings FadeTimings => new VisibilityFadeTimings(GraceSeconds, FadeInSeconds, FadeOutSeconds);
 
         private void OnValidate()

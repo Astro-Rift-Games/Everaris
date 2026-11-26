@@ -15,15 +15,29 @@ public static class DungeonLightPropRegistry
     {
         get
         {
-            // Prune destroyed Unity objects
-            for (int i = s_Props.Count - 1; i >= 0; i--)
-            {
-                if (s_Props[i] == null)
-                {
-                    s_Props.RemoveAt(i);
-                }
-            }
+            PruneDestroyed();
             return s_Props.Count;
+        }
+    }
+
+    /// <summary>Live registered props, for presentation that reads every light (such as the vision fog).</summary>
+    public static IReadOnlyList<DungeonLightProp> Props
+    {
+        get
+        {
+            PruneDestroyed();
+            return s_Props;
+        }
+    }
+
+    private static void PruneDestroyed()
+    {
+        for (int i = s_Props.Count - 1; i >= 0; i--)
+        {
+            if (s_Props[i] == null)
+            {
+                s_Props.RemoveAt(i);
+            }
         }
     }
 

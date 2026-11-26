@@ -23,12 +23,28 @@ Entities follow one of two rules, chosen per prefab on its
      `ConeAngleDegrees` centered on the avatar's
      `PlayerMovementNetworkController.FacingDirection`. The cone has no range
      limit. During aim stance the facing already follows the aim through the
-     shared facing rule.
+     shared facing rule. `NearRadius` is 3.5 world units, so what is around the
+     avatar stays visible whichever way it faces; the cone is for distance.
   2. Nothing blocks the line of sight (see below).
+
+  Inside the cone, a dynamic entity's opacity is also scaled by its position
+  against the edge (`VisionConeRules.EdgeFactor`): full until
+  `ConeEdgeSoftDegrees` (20°) before the edge, then fading to zero on it, so an
+  entity turns transparent as it approaches the edge instead of popping, and
+  nothing outside the cone, and so outside the fog's clear shape, shows. Inside
+  the near radius, with a 360° cone, or for static objects the factor is 1; a
+  cone narrower than the band shrinks the band to its half angle.
 - **Static objects** (loot containers, ground loot, breakables, sanctuaries,
-  scene traps, player-placed traps) are marked `_occlusionOnly`. They ignore
-  facing and distance and are hidden only when the line of sight is blocked, so
-  turning around never makes a chest in the same room disappear.
+  scene traps, player-placed traps, dungeon light props and dungeon doors) are
+  marked `_occlusionOnly`. They ignore facing and distance and are hidden only
+  when the line of sight is blocked, so turning around never makes a chest in
+  the same room disappear, and a torch or door behind a wall never shows through
+  it. Hiding a light prop hides its sprites only; its `Light2D` keeps lighting
+  the world. Wall-mounted props sample visibility on the floor in front of their
+  wall (`_visibilityOffset`, e.g. the Torch variant at (0, -2)); a point inside
+  the wall would be occluded by that same wall.
+  `LightPropVisibilityPointTests` keeps every Catacombs light prop's point out
+  of solid tiles.
 
 The line of sight is blocked when a `Physics2D.Linecast` from the viewer to the
 point hits a non-trigger collider on `ObstacleLayer` (walls, doors, obstacles),
@@ -76,7 +92,8 @@ as the spectated viewer, so the spectator sees exactly what that teammate sees
 local viewer and is cleared when the target changes or spectating ends.
 
 `EntityVisibilitySystem` evaluates every registered `IVisibilityTarget` in
-`LateUpdate` and pushes its opacity:
+`LateUpdate` and pushes its opacity, the fade alpha times the target's edge
+factor (`IVisibilityTarget.EdgeFactor`), re-applied only when it changes:
 
 - The target owned by the viewer's own avatar is always seen.
 - Without any viewer (before spawn, during avatar replacement, or while
@@ -147,9 +164,13 @@ decides entity visibility, which stays owned by `EntityVisibilitySystem`.
 - **Fail-closed.** Without a viewer the clear shape fades out over
   `ClearFadeSeconds` and the fog covers everything, matching the hidden
   entities.
-- **Feel.** Facing is smoothed in presentation only (`FacingSharpness`), so
-  the clear cone turns smoothly while entity visibility keeps using the raw
-  facing. Edges are softened by the mask blur and broken up with noise,
+- **Feel.** The viewer smooths its facing once per frame
+  (`VisibilitySettings.FacingSharpness`, `VisionFacingSmoother` in
+  `LocalVisionSource`), and both entity visibility and the fog cone read that
+  same query facing, so an entity never appears or vanishes ahead of the fog
+  sweeping over it (improvement 8, implemented). The smoother snaps instead of
+  sweeping on its first step and after any frame without a query (spectator
+  switch, respawn). Edges are softened by the mask blur and broken up with noise,
   fog creeps back inside the cone with distance (`FarFog*`), and faint wisps
   remain inside the clear shape (`InsideDensity`). The noise is procedural, in
   world space, drifts with `WindVelocity` and is snapped to `PixelsPerUnit` to
@@ -181,7 +202,20 @@ decides entity visibility, which stays owned by `EntityVisibilitySystem`.
   not part of the character renderer group. The fog overlays the world layers.
   Dynamic entities are only visible inside
   the clear shape, and static occlusion-only objects outside it stay visible
-  under partial fog. Screen-space UI draws above it. The quad is
+  under partial fog.
+- **Lights thin the fog** (improvement 2, implemented). Each frame the
+  presenter reads `DungeonLightPropRegistry.Props` and passes up to
+  `VisionFogLightRules.MaxLights` (16) lights to the shader as
+  (position, outer radius, strength), nearest to the viewer first. A light
+  counts only while it is lit and its prop is visible to the viewer
+  (`DungeonLightProp.VisibilityAlpha`), so a torch behind a wall never reveals
+  the room beyond it. Strength is the light's current intensity over
+  `LightReferenceIntensity` (a lit torch, 1.2), times that visibility, so
+  flicker and extinguished phases carry into the fog. The clear inside a light
+  is full up to `LightInnerRatio` of its radius, fades out at the radius, and is
+  scaled by `LightClearStrength`; without a viewer it is zero (fail-closed).
+  This follows the Game Design rule that torch light is shared by every nearby
+  player and reveals that someone passed through. Screen-space UI draws above it. The quad is
   moved and scaled to cover the orthographic camera in
   `RenderPipelineManager.beginCameraRendering`, after camera followers move,
   so it never lags a frame. It is one full-screen transparent draw with no
@@ -203,10 +237,7 @@ deliberately once the team validates the look.
 
 1. **Smarter ray placement.** Cast extra rays toward obstacle corners
    (shadow-casting) so wall edges stay crisp at long range with fewer rays.
-2. **Lights thin the fog.** Pass a bounded list of active torches and braziers
-   (position, radius) to the shader so lit areas are clearer. This fits the
-   Game Design rule that torch light is shared by every nearby player and
-   reveals that someone passed through.
+2. **Lights thin the fog.** Implemented; see Vision fog above.
 3. **Explored memory.** Keep a persistent low-resolution texture per raid of
    the areas already seen and draw a lighter fog over them. This changes
    gameplay readability and needs a Game Design decision first.
@@ -221,9 +252,9 @@ deliberately once the team validates the look.
 7. **Gameplay-driven feel.** Short presentation responses such as a
    denser, closer fog while downed, a pulse on taking damage, or a widened
    clear area during specific abilities. Each one must stay presentation-only.
-8. **Fog over entity edges.** Fade entities in sync with the fog edge (or
-   derive the visibility fade from the same smoothed facing) so an entity never
-   pops in visibly sharper than the fog around it.
+8. **Fog over entity edges.** Implemented through the shared smoothed facing
+   (see Feel above) and the edge factor (see Vision rule). Non-sprite renderers
+   such as particle systems still switch on and off instead of fading.
 9. **Layered fog.** A second, slower and larger noise layer, or a separate
    fog below the walls, for parallax depth.
 10. **Retire the legacy visibility mesh.** `Assets/Art/Shaders/VisibilityMesh.shader`
@@ -251,6 +282,9 @@ requires Fusion interest management and is outside this contract.
 
 - EditMode `VisionConeRulesTests` cover the cone edge, the near radius behind
   the viewer, the unlimited cone range, and the facing fallback.
+- EditMode `VisionConeEdgeFactorTests` cover the fade band inside the cone edge,
+  the near radius, zero softness, 360° and narrow cones, and that a query never
+  sees past the edge.
 - EditMode `VisibilityFadeRulesTests` cover fade-in, grace, fade-out, frames
   crossing the end of grace, regaining sight mid-fade, and instant timings.
 - EditMode `VisionFogRulesTests` cover facing smoothing (snapping, shortest

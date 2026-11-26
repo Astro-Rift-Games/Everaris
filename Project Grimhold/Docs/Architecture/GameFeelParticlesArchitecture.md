@@ -111,7 +111,7 @@ Pendiente:
 - Estela: viaja con el proyectil; al desprenderse, `ProjectileTrailDetacher` detiene la emisión y la luz se apaga antes de destruirse la raíz.
 - Impacto, fizzle y ráfaga: destello breve mientras dura la emisión del burst.
 
-Las luces copian la configuración de `DungeonLightProp` (blend style, capas objetivo y sombras) y son visibles para todos los peers, igual que las partículas. La niebla de visión es un overlay sin iluminación (véase `VisibilityArchitecture.md`), así que estas luces no revelan zonas fuera de visión. Límite conocido: el tinte por tipo de daño se aplica a las partículas, no al color de la luz, que es el autorado en el prefab.
+Las luces copian la configuración de `DungeonLightProp` (blend style, capas objetivo y sombras) y son visibles para todos los peers, igual que las partículas. La niebla de visión es un overlay sin iluminación (véase `VisibilityArchitecture.md`). Solo las luces de `DungeonLightProp` (antorchas, braseros y velas) la aclaran, y únicamente cuando el jugador ve su fuente; estas luces de efectos no se registran ahí, así que no revelan zonas fuera de visión. Límite conocido: el tinte por tipo de daño se aplica a las partículas, no al color de la luz, que es el autorado en el prefab.
 
 ### Armas a distancia físicas
 

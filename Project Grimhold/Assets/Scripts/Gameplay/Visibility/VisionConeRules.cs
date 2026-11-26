@@ -55,5 +55,41 @@ namespace ProjectGrimhold.Gameplay.Visibility
             float cosine = Vector2.Dot(facing, offset) / Mathf.Sqrt(sqrDistance);
             return cosine >= coneHalfAngleCosine;
         }
+
+        /// <summary>
+        /// Opacity factor for a dynamic entity near the cone edge: 1 inside the near radius or before a
+        /// <paramref name="softDegrees"/> band just inside the edge, falling to 0 on the edge, so nothing
+        /// outside the cone shows. A full-circle cone never fades; a cone narrower than the band shrinks it.
+        /// Zero softness keeps the binary cone.
+        /// </summary>
+        public static float EdgeFactor(
+            Vector2 origin,
+            Vector2 facing,
+            Vector2 point,
+            float nearRadius,
+            float halfAngleDegrees,
+            float softDegrees)
+        {
+            Vector2 offset = point - origin;
+            float sqrDistance = offset.sqrMagnitude;
+            if (sqrDistance <= MinimumFacingSqrMagnitude || sqrDistance <= nearRadius * nearRadius)
+            {
+                return 1f;
+            }
+
+            if (halfAngleDegrees >= 180f)
+            {
+                return 1f;
+            }
+
+            float angle = Vector2.Angle(facing, offset);
+            float soft = Mathf.Min(softDegrees, halfAngleDegrees);
+            if (soft <= 0f)
+            {
+                return angle <= halfAngleDegrees ? 1f : 0f;
+            }
+
+            return Mathf.Clamp01((halfAngleDegrees - angle) / soft);
+        }
     }
 }

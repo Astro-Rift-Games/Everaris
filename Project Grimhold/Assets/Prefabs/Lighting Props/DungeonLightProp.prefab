@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2392237015794150619}
   - component: {fileID: 4346984600811452826}
   - component: {fileID: 7279298315968811504}
+  - component: {fileID: 1204675611516153161}
   m_Layer: 0
   m_Name: DungeonLightProp
   m_TagString: Untagged
@@ -68,7 +69,7 @@ MonoBehaviour:
   m_AlphaBlendOnOverlap: 0
   m_OverlapOperation: 0
   m_NormalMapDistance: 3
-  m_NormalMapQuality: 2
+  m_NormalMapQuality: 1
   m_UseNormalMap: 0
   m_ShadowsEnabled: 1
   m_ShadowIntensity: 0.75
@@ -238,6 +239,26 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.3306439, y: 0.84073067}
   m_EdgeRadius: 0
+--- !u!114 &1204675611516153161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2334772350597402012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1034b07a347ea6f49b3e51df4b7f18d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectGrimhold.Gameplay.Visibility.EntityVisibilityPresenter
+  _renderers:
+  - {fileID: 2392237015794150619}
+  - {fileID: 5182937015794150602}
+  - {fileID: 6182937015794150603}
+  _occlusionOnly: 1
+  _visibilityOffset: {x: 0, y: 0}
+  _visibilityCollider: {fileID: 0}
+  _useColliderBounds: 0
 --- !u!1 &5182937015794150600
 GameObject:
   m_ObjectHideFlags: 0

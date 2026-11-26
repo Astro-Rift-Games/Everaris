@@ -27,7 +27,14 @@ namespace Tests.EditMode.Visibility
             "Assets/Prefabs/PlaceholderProjectile.prefab",
             "Assets/Prefabs/Abilities/NetworkTrap.prefab",
             "Assets/Prefabs/Abilities/ProtectiveOrb.prefab",
-            "Assets/Prefabs/ExtractionSanctuary.prefab"
+            "Assets/Prefabs/ExtractionSanctuary.prefab",
+            "Assets/Prefabs/Lighting Props/DungeonLightProp.prefab",
+            "Assets/Prefabs/Lighting Props/Torch.prefab",
+            "Assets/Prefabs/Lighting Props/Candle.prefab",
+            "Assets/Prefabs/Lighting Props/Multiple Candles.prefab",
+            "Assets/Prefabs/Lighting Props/Brazier.prefab",
+            "Assets/Prefabs/Doors/DungeonDoor.prefab",
+            "Assets/Prefabs/Doors/CatacombsDoor.prefab"
         };
 
         private static readonly string[] OcclusionOnlyPrefabs =
@@ -41,7 +48,14 @@ namespace Tests.EditMode.Visibility
             "Assets/Prefabs/Traps/SpikesTrap.prefab",
             "Assets/Prefabs/Traps/DartTrap.prefab",
             "Assets/Prefabs/Abilities/NetworkTrap.prefab",
-            "Assets/Prefabs/ExtractionSanctuary.prefab"
+            "Assets/Prefabs/ExtractionSanctuary.prefab",
+            "Assets/Prefabs/Lighting Props/DungeonLightProp.prefab",
+            "Assets/Prefabs/Lighting Props/Torch.prefab",
+            "Assets/Prefabs/Lighting Props/Candle.prefab",
+            "Assets/Prefabs/Lighting Props/Multiple Candles.prefab",
+            "Assets/Prefabs/Lighting Props/Brazier.prefab",
+            "Assets/Prefabs/Doors/DungeonDoor.prefab",
+            "Assets/Prefabs/Doors/CatacombsDoor.prefab"
         };
 
         [TestCaseSource(nameof(HiddenEntityPrefabs))]

@@ -40,12 +40,18 @@ namespace ProjectGrimhold.Gameplay.Visibility
         [Range(0f, 1f)] public float FarFogDensity = 0.5f;
 
         [Header("Motion")]
-        [Tooltip("Facing smoothing sharpness; zero disables smoothing.")]
-        [Min(0f)] public float FacingSharpness = 12f;
         [Tooltip("Seconds to fade the clear shape in or out when viewer presence changes.")]
         [Min(0f)] public float ClearFadeSeconds = 0.25f;
         [Tooltip("Extra world-space coverage on each side of the camera.")]
         [Min(0f)] public float CoverageMargin = 1f;
+
+        [Header("Lights")]
+        [Tooltip("How much a visible lit area clears the fog, relative to the vision clear. Zero disables light clearing.")]
+        [Range(0f, 1f)] public float LightClearStrength = 0.7f;
+        [Tooltip("Fraction of a light's radius cleared at full strength before fading out.")]
+        [Range(0f, 1f)] public float LightInnerRatio = 0.35f;
+        [Tooltip("Light intensity that clears at full strength; a lit torch is 1.2.")]
+        [Min(0.01f)] public float LightReferenceIntensity = 1.2f;
 
         private void OnValidate()
         {
@@ -63,9 +69,11 @@ namespace ProjectGrimhold.Gameplay.Visibility
             FarFogStart = Mathf.Max(0f, FarFogStart);
             FarFogEnd = Mathf.Max(FarFogStart, FarFogEnd);
             FarFogDensity = Mathf.Clamp01(FarFogDensity);
-            FacingSharpness = Mathf.Max(0f, FacingSharpness);
             ClearFadeSeconds = Mathf.Max(0f, ClearFadeSeconds);
             CoverageMargin = Mathf.Max(0f, CoverageMargin);
+            LightClearStrength = Mathf.Clamp01(LightClearStrength);
+            LightInnerRatio = Mathf.Clamp01(LightInnerRatio);
+            LightReferenceIntensity = Mathf.Max(0.01f, LightReferenceIntensity);
         }
     }
 }
