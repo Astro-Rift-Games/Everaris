@@ -1,36 +1,36 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1289,
-  "canonicalEntries": 1286,
+  "rawCommits": 1290,
+  "canonicalEntries": 1287,
   "before": {
+    "Bug Fixes": 199,
     "Documentation": 140,
     "Features": 474,
     "Architecture & Infrastructure": 31,
     "Other Changes": 379,
-    "Bug Fixes": 198,
     "Tests": 50,
     "Refactoring": 17
   },
   "after": {
+    "Bug Fixes": 215,
     "Documentation": 156,
     "Features": 613,
     "Maintenance": 29,
     "Other Changes": 186,
-    "Bug Fixes": 214,
     "Tests": 55,
     "Refactoring": 30,
     "Architecture & Infrastructure": 6
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Networking & Sessions": 371,
+    "UI": 368,
+    "World & Visibility": 196,
+    "Build & Tooling": 669,
+    "Tests": 822,
     "Unassigned": 53,
-    "Networking & Sessions": 370,
-    "Build & Tooling": 668,
     "Documentation": 460,
-    "Tests": 821,
     "Combat": 426,
-    "UI": 367,
-    "World & Visibility": 195,
     "Art & Animation": 280,
     "Inventory & Loot": 509,
     "Audio": 44,
@@ -42,24 +42,24 @@
   },
   "canonical": {
     "sections": {
+      "Bug Fixes": 214,
       "Documentation": 156,
       "Features": 612,
       "Maintenance": 29,
       "Other Changes": 185,
-      "Bug Fixes": 213,
       "Tests": 55,
       "Refactoring": 30,
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Networking & Sessions": 371,
+      "UI": 367,
+      "World & Visibility": 194,
+      "Build & Tooling": 667,
+      "Tests": 820,
       "Unassigned": 53,
-      "Networking & Sessions": 370,
-      "Build & Tooling": 666,
       "Documentation": 458,
-      "Tests": 819,
       "Combat": 424,
-      "UI": 366,
-      "World & Visibility": 193,
       "Art & Animation": 277,
       "Inventory & Loot": 509,
       "Audio": 44,
@@ -78601,8 +78601,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 412,
-      "canonicalEntries": 412
+      "originalCommits": 413,
+      "canonicalEntries": 413
     },
     {
       "key": "v0.5.0",
@@ -78646,6 +78646,86 @@
     }
   ],
   "commits": [
+    {
+      "sha": "3fcaf28848499ac529923c3e3e72d40d0c4ebe64",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3fcaf28848499ac529923c3e3e72d40d0c4ebe64",
+      "subject": "fix(ui): keep a single EventSystem during the Raid",
+      "body": "Fix FIX-111: Unity logged \"There are 2 event systems in the scene\"\nevery frame during the Raid (about 0.2-0.3 ms and 1.8 KB allocated per\nframe). LocalGameplayHud, nested in NetworkPlayer.prefab, carried its\nown EventSystem and InputSystemUIInputModule; the local avatar\nactivates its HUD, adding a second EventSystem next to the\nCatacombsMap scene one. Both the direct development raid and the\nLobby-to-Raid flow load CatacombsMap, so both were affected.\n\nThe HUD EventSystem is removed; the raid scene owns the only one, with\nidentical module settings and Input Actions, so UI input is unchanged.\nPrefab: only that GameObject and its components are deleted; no other\nfileIDs or GUIDs change and no external overrides referenced them.\n\nTests:\n- CatacombsSceneCompositionTests\n  .RaidWithLocalAvatar_HasExactlyOneEventSystemOwnedByTheScene: the\n  raid avatar carries no EventSystem and the scene owns exactly one.\n\nRefs: FIX-111\nPlayer-Improved: Raids run a little smoother, without a hidden warning being logged every frame.\n",
+      "date": "2026-11-26T19:43:29-03:00",
+      "files": [
+        "Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs"
+      ],
+      "originalType": "fix",
+      "originalScope": "ui",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Networking & Sessions",
+        "UI",
+        "World & Visibility",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "message-term",
+          "value": "Lobby",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab",
+          "supports": "UI"
+        },
+        {
+          "source": "scope",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "World & Visibility"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "a4defafc6e2687ac8e82bbf33871bb2c008e126f",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/a4defafc6e2687ac8e82bbf33871bb2c008e126f",

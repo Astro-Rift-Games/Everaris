@@ -4,32 +4,95 @@
 
 Release: Unreleased
 
-412 original commits; 412 canonical entries.
+413 original commits; 413 canonical entries.
 
 ## Canonical classification
 
-153 features; 120 bug fixes; 4 refactoring; 1 architecture & infrastructure; 66 documentation; 26 tests; 18 maintenance; 24 other changes
+153 features; 121 bug fixes; 4 refactoring; 1 architecture & infrastructure; 66 documentation; 26 tests; 18 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 19 | 13 | 1 | 0 | 10 | 1 |
 | Art & Animation | 34 | 14 | 3 | 0 | 11 | 8 |
 | Audio | 9 | 2 | 0 | 0 | 2 | 1 |
-| Build & Tooling | 107 | 78 | 4 | 1 | 30 | 7 |
+| Build & Tooling | 107 | 79 | 4 | 1 | 30 | 7 |
 | Combat | 61 | 26 | 2 | 0 | 19 | 2 |
 | Documentation | 47 | 46 | 0 | 0 | 22 | 2 |
 | Extraction | 23 | 23 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
 | Inventory & Loot | 89 | 65 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
-| Networking & Sessions | 48 | 45 | 0 | 0 | 19 | 2 |
+| Networking & Sessions | 48 | 46 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 55 | 57 | 2 | 1 | 25 | 4 |
-| Tests | 139 | 110 | 4 | 1 | 42 | 4 |
-| UI | 47 | 24 | 2 | 0 | 19 | 6 |
+| Tests | 139 | 111 | 4 | 1 | 42 | 4 |
+| UI | 47 | 25 | 2 | 0 | 19 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 29 | 2 |
-| World & Visibility | 43 | 21 | 1 | 0 | 7 | 13 |
+| World & Visibility | 43 | 22 | 1 | 0 | 7 | 13 |
 
 ## Original commit records
+
+### 3fcaf28848499ac529923c3e3e72d40d0c4ebe64
+
+[3fcaf28848499ac529923c3e3e72d40d0c4ebe64](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3fcaf28848499ac529923c3e3e72d40d0c4ebe64)
+
+Date: 2026-11-26T19:43:29-03:00 · Classification: Bug Fixes (explicit) · Systems: Networking & Sessions, UI, World & Visibility, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(ui): keep a single EventSystem during the Raid
+```
+
+#### Original body
+
+```text
+Fix FIX-111: Unity logged "There are 2 event systems in the scene"
+every frame during the Raid (about 0.2-0.3 ms and 1.8 KB allocated per
+frame). LocalGameplayHud, nested in NetworkPlayer.prefab, carried its
+own EventSystem and InputSystemUIInputModule; the local avatar
+activates its HUD, adding a second EventSystem next to the
+CatacombsMap scene one. Both the direct development raid and the
+Lobby-to-Raid flow load CatacombsMap, so both were affected.
+
+The HUD EventSystem is removed; the raid scene owns the only one, with
+identical module settings and Input Actions, so UI input is unchanged.
+Prefab: only that GameObject and its components are deleted; no other
+fileIDs or GUIDs change and no external overrides referenced them.
+
+Tests:
+- CatacombsSceneCompositionTests
+  .RaidWithLocalAvatar_HasExactlyOneEventSystemOwnedByTheScene: the
+  raid avatar carries no EventSystem and the scene owns exactly one.
+
+Refs: FIX-111
+Player-Improved: Raids run a little smoother, without a hidden warning being logged every frame.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- message-term → Networking &amp; Sessions: Lobby
+- path → UI: Project Grimhold/Assets/Prefabs/UI/PlayerUI/LocalGameplayHud.prefab
+- scope → UI: ui
+- message-term → UI: ui
+- path → World &amp; Visibility: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/CatacombsSceneCompositionTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### a4defafc6e2687ac8e82bbf33871bb2c008e126f
 

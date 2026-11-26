@@ -91,6 +91,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - Enemies fade out smoothly at the edge of your view instead of popping, and you see farther around your character.
 - Characters, enemies and props now pick up shading from nearby torchlight.
 - The Catacombs are darker and lit by many more torches, braziers and candles.
+- Raids run a little smoother, without a hidden warning being logged every frame.
 
 ### Fixed
 
