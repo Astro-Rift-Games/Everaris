@@ -119,7 +119,12 @@ public static class ApplicationStashServiceBootstrapper
             _configuration.StashCapacity,
             _configuration.MissionGuildConfiguration,
             missionClock);
-        string usedReservationId = ResolveAdmissionMarkOnLogin(store, inventoryData);
+        Grimhold.Backend.ExtractionReceiptData pendingServerExtraction = default;
+        bool hasPendingServerExtraction = store.PendingExtractionCommit == null &&
+            HasPendingServerAuthoritativeExtraction(inventoryData, out pendingServerExtraction);
+        string usedReservationId = hasPendingServerExtraction
+            ? null
+            : ResolveAdmissionMarkOnLogin(store, inventoryData);
         bool? orphanRollback = null;
         string orphanReservationId = store.PendingReservation?.ReservationId;
         if (store.PendingDefeatCommit != null)
@@ -139,6 +144,15 @@ public static class ApplicationStashServiceBootstrapper
             }
             
             // Start the retry only after the application reconciliation service is initialized.
+        }
+        else if (hasPendingServerExtraction)
+        {
+            // FIX-09: The Host published an authoritative extraction result before the client
+            // disconnected prior to receiving the ACK RPC. Do NOT clear pendingReservation as a loss;
+            // consume and reconcile the authoritative result once services are initialized.
+            Debug.LogWarning(
+                $"[{nameof(ApplicationStashServiceBootstrapper)}] Unconsumed authoritative extraction detected on backend " +
+                $"(raidId={pendingServerExtraction.raidId}, seq={pendingServerExtraction.resultSequence}). Recovering instead of discarding reservation.");
         }
         else if (store.PendingReservation != null)
         {
@@ -195,6 +209,18 @@ public static class ApplicationStashServiceBootstrapper
             var backendConfig = BackendConfigurationProvider.Resolve();
             if (!string.IsNullOrEmpty(authToken) && backendConfig != null)
                 _ = RetryPendingExtractionAsync(store, backendConfig, authToken, reconciliationService);
+        }
+        else if (hasPendingServerExtraction)
+        {
+            var authToken = ApplicationAuthContext.Instance?.Token;
+            var backendConfig = BackendConfigurationProvider.Resolve();
+            if (!string.IsNullOrEmpty(authToken) && backendConfig != null)
+            {
+                _ = RecoverPendingAuthoritativeExtractionAsync(
+                    pendingServerExtraction,
+                    request => InventoryClient.CommitExtractionUnifiedAsync(backendConfig, authToken, request),
+                    () => reconciliationService.ReconcileAsync());
+            }
         }
 
         if (store.PendingDefeatCommit != null)
@@ -535,6 +561,76 @@ public static class ApplicationStashServiceBootstrapper
             return false;
         }
         return store.TryCompleteDefeatCommit(pending.Receipt, outcome.result) == StashOperationResult.Success;
+    }
+
+    internal static bool HasPendingServerAuthoritativeExtraction(
+        Grimhold.Backend.InventoryData? inventoryData,
+        out Grimhold.Backend.ExtractionReceiptData receipt)
+    {
+        receipt = default;
+        if (!inventoryData.HasValue)
+        {
+            return false;
+        }
+
+        Grimhold.Backend.ExtractionReceiptData candidate = inventoryData.Value.pendingAuthoritativeExtraction;
+        if (string.IsNullOrWhiteSpace(candidate.raidId) || candidate.resultSequence <= 0)
+        {
+            return false;
+        }
+
+        receipt = candidate;
+        return true;
+    }
+
+    /// <summary>
+    /// FIX-09: Recovers an unconsumed authoritative extraction published by the Host when the client
+    /// disconnected before receiving the extraction commit RPC. Consumes the authoritative result
+    /// idempotently on the backend and reconciles the local profile with the authoritative state.
+    /// </summary>
+    internal static async System.Threading.Tasks.Task<bool> RecoverPendingAuthoritativeExtractionAsync(
+        Grimhold.Backend.ExtractionReceiptData pendingReceipt,
+        System.Func<CommitExtractionUnifiedRequest, System.Threading.Tasks.Task<(bool success, CommitExtractionUnifiedResult result, BackendError error)>> commitAsync,
+        System.Func<System.Threading.Tasks.Task<bool>> reconcileAsync)
+    {
+        if (string.IsNullOrWhiteSpace(pendingReceipt.raidId) || pendingReceipt.resultSequence <= 0 || commitAsync == null)
+        {
+            return false;
+        }
+
+        var request = new CommitExtractionUnifiedRequest
+        {
+            raidId = pendingReceipt.raidId,
+            resultSequence = pendingReceipt.resultSequence,
+            items = System.Array.Empty<InventoryItemData>()
+        };
+
+        var (success, _, error) = await RemoteIdempotentRetryPolicy.ExecuteWithRetryAsync(
+            () => commitAsync(request),
+            retryRevisionConflict: true);
+
+        if (!success)
+        {
+            Debug.LogError(
+                $"[{nameof(ApplicationStashServiceBootstrapper)}] Failed to recover unconsumed authoritative extraction " +
+                $"(raidId={pendingReceipt.raidId}, seq={pendingReceipt.resultSequence}): {error.error} - {error.message}");
+            return false;
+        }
+
+        bool reconciled = reconcileAsync != null && await reconcileAsync();
+        if (reconciled)
+        {
+            Debug.Log(
+                $"[{nameof(ApplicationStashServiceBootstrapper)}] Recovered unconsumed authoritative extraction " +
+                $"(raidId={pendingReceipt.raidId}, seq={pendingReceipt.resultSequence}) and hydrated authoritative inventory.");
+        }
+        else
+        {
+            Debug.LogWarning(
+                $"[{nameof(ApplicationStashServiceBootstrapper)}] Authoritative extraction recovered on backend, but local reconciliation did not complete.");
+        }
+
+        return reconciled;
     }
 
     private static async System.Threading.Tasks.Task RetryPendingExtractionAsync(

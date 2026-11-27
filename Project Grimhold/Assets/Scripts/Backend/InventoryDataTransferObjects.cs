@@ -24,6 +24,8 @@ namespace Grimhold.Backend
         public PendingReservationData   pendingReservation;
         [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public ExtractionReceiptData    lastAppliedExtractionReceipt;
+        [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ExtractionReceiptData    pendingAuthoritativeExtraction;
         public int                      revision;
     }
 
