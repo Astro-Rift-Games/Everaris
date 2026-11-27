@@ -148,4 +148,87 @@ public sealed class EncounterReconcilerTests
         Assert.That(result.Log.Length, Is.LessThan(600));
         Assert.That(result.Log, Does.Contain("unrecorded deaths=32"));
     }
+
+
+    // Reactivation cycles (TASK-330 T5, S3/S5): the cycle travels in the member key, bodies of earlier cycles are not members.
+
+    private static EncounterNetworkSlot ActiveInCycle(int id, int cycle, uint aliveMask) => new EncounterNetworkSlot
+    {
+        EncounterId = id,
+        StateRaw = (byte)EncounterState.Active,
+        ReactivationCount = cycle,
+        MemberMask = aliveMask,
+        AliveMask = aliveMask,
+    };
+
+    private static uint Key(int cycle, uint index)
+    {
+        Assert.That(EncounterMemberKeyCodec.TryCompose(cycle, index, out uint key), Is.True);
+        return key;
+    }
+
+    [Test]
+    public void Compare_CurrentCycleKeys_MatchTheRegistryByMemberIndex()
+    {
+        EncounterReconcileResult result = Compare(
+            new[] { ActiveInCycle(4, 2, 0b11u) },
+            Alive(4, Key(2, 1u)), Alive(4, Key(2, 2u)));
+
+        Assert.That(result.IsConsistent, Is.True, result.Log);
+    }
+
+    [Test]
+    public void Compare_DeadBodiesOfEarlierCycles_AreIgnoredAndNeverRecordedAsDeaths()
+    {
+        // Cycle 1 is current: member 1 and 2 alive. The two bodies of cycle 0 carry the same indices and are dead.
+        EncounterReconcileResult result = Compare(
+            new[] { ActiveInCycle(4, 1, 0b11u) },
+            Dead(4, Key(0, 1u)), Dead(4, Key(0, 2u)), Alive(4, Key(1, 1u)), Alive(4, Key(1, 2u)));
+
+        Assert.That(result.IsConsistent, Is.True, result.Log);
+        Assert.That(result.UnrecordedDeaths, Is.Empty, "An old body is not the death of the current member with the same index.");
+        Assert.That(result.IgnoredOtherCycle, Is.EqualTo(2));
+        Assert.That(result.Log, Does.Contain("successful").And.Contain("2"));
+    }
+
+    [Test]
+    public void Compare_OldCycleBodyMustNotHideAMissingCurrentMember()
+    {
+        EncounterReconcileResult result = Compare(
+            new[] { ActiveInCycle(4, 1, 0b11u) },
+            Dead(4, Key(0, 1u)), Dead(4, Key(0, 2u)), Alive(4, Key(1, 1u)));
+
+        Assert.That(result.MissingMembers, Has.Count.EqualTo(1));
+        Assert.That(result.MissingMembers[0].MemberKey, Is.EqualTo(Key(1, 2u)), "Reported with the cycle-aware key.");
+    }
+
+    [Test]
+    public void Compare_CurrentMemberRestoredDead_IsAnUnrecordedDeathWithItsCycleAwareKey()
+    {
+        EncounterReconcileResult result = Compare(
+            new[] { ActiveInCycle(4, 1, 0b11u) },
+            Dead(4, Key(1, 1u)), Alive(4, Key(1, 2u)), Dead(4, Key(0, 2u)));
+
+        Assert.That(result.UnrecordedDeaths, Has.Count.EqualTo(1));
+        Assert.That(result.UnrecordedDeaths[0].MemberKey, Is.EqualTo(Key(1, 1u)));
+        Assert.That(result.IgnoredOtherCycle, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void Compare_LivingBodyOfAnEarlierCycle_IsIgnoredNotUnexpected()
+    {
+        EncounterReconcileResult result = Compare(new[] { ActiveInCycle(4, 1, 0b1u) }, Alive(4, Key(1, 1u)), Alive(4, Key(0, 1u)));
+
+        Assert.That(result.UnexpectedLiving, Is.Empty);
+        Assert.That(result.IgnoredOtherCycle, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void Compare_FirstCycle_KeepsTheLogOfTheFirstCycleUnchanged()
+    {
+        EncounterReconcileResult result = Compare(new[] { Active(1, 0b1u) }, Alive(1, 1u));
+
+        Assert.That(result.IgnoredOtherCycle, Is.EqualTo(0));
+        Assert.That(result.Log, Is.EqualTo("Host Migration encounter reconciliation successful. Encounters: 1, living members: 1."));
+    }
 }

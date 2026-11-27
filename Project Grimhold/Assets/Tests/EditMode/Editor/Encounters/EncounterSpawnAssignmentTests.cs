@@ -157,4 +157,45 @@ public sealed class EncounterSpawnAssignmentTests
         Assert.Throws<System.ArgumentException>(() =>
             EncounterBootstrapPlanner.Plan(Candidates, "catacombs", Spec(), 4, SessionSeed, 1, EncounterId.None, new List<EncounterSpawnAssignment<string>>()));
     }
+
+
+    // Reactivation cycles (TASK-330 T5, S3)
+
+    private static EncounterPlanResult PlanCycle(int cycle, out List<EncounterSpawnAssignment<string>> result)
+    {
+        result = new List<EncounterSpawnAssignment<string>>();
+        return EncounterBootstrapPlanner.Plan(Candidates, "catacombs", Spec(min: 3, max: 6), 8, SessionSeed, 1, new EncounterId(3), result, cycle);
+    }
+
+    private static string Signature(List<EncounterSpawnAssignment<string>> plan) =>
+        string.Join(",", plan.Select(a => a.Candidate.EnemyId + "@" + a.SpawnPointIndex));
+
+    [Test]
+    public void Plan_CycleZero_IsTheInitialPlanUnchanged()
+    {
+        Plan(Spec(min: 3, max: 6), 8, 3, 1, out var initial);
+        PlanCycle(0, out var cycleZero);
+        Assert.That(Signature(cycleZero), Is.EqualTo(Signature(initial)));
+    }
+
+    [Test]
+    public void Plan_SameCycle_IsReproducible()
+    {
+        PlanCycle(2, out var first);
+        PlanCycle(2, out var second);
+        Assert.That(Signature(second), Is.EqualTo(Signature(first)));
+    }
+
+    [Test]
+    public void Plan_EachCycleDrawsItsOwnComposition()
+    {
+        var signatures = new HashSet<string>();
+        for (int cycle = 0; cycle < 12; cycle++)
+        {
+            Assert.That(PlanCycle(cycle, out var plan), Is.EqualTo(EncounterPlanResult.Planned));
+            signatures.Add(Signature(plan));
+        }
+
+        Assert.That(signatures.Count, Is.GreaterThan(1), "Reactivations must not repeat the first composition forever.");
+    }
 }

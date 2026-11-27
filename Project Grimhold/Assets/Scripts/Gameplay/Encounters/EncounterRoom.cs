@@ -80,6 +80,11 @@ public sealed class EncounterRoom : MonoBehaviour
             return Fail($"has an invalid MaxReactivations ({_maxReactivations}); it must be zero or positive.", out failure);
         }
 
+        if (_maxReactivations > EncounterMemberKeyCodec.MaxCycle)
+        {
+            return Fail($"has a MaxReactivations ({_maxReactivations}) above what a member key can carry ({EncounterMemberKeyCodec.MaxCycle}).", out failure);
+        }
+
         if (_spawnPoints == null || _spawnPoints.Length == 0)
         {
             return Fail("has no spawn points.", out failure);

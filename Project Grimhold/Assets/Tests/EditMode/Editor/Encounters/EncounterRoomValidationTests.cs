@@ -161,4 +161,16 @@ public sealed class EncounterRoomValidationTests
         room.Validate(out string failure);
         Assert.That(failure, Does.Contain(room.name));
     }
+
+
+    [Test]
+    public void Validate_RejectsMaxReactivationsBeyondWhatAMemberKeyCanCarry()
+    {
+        EncounterRoom room = ValidRoom();
+        EncounterRoomFactory.Set(room, "_maxReactivations", EncounterMemberKeyCodec.MaxCycle);
+        Assert.That(room.Validate(out string failure), Is.True, failure);
+
+        EncounterRoomFactory.Set(room, "_maxReactivations", EncounterMemberKeyCodec.MaxCycle + 1);
+        AssertRejected(room, "MaxReactivations");
+    }
 }

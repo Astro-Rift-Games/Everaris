@@ -12,6 +12,9 @@ public sealed class EncounterReconcileResult
     /// <summary>A restored living enemy the registry does not expect alive (unknown room, inactive room or key not alive).</summary>
     public List<EncounterMemberObservation> UnexpectedLiving { get; } = new List<EncounterMemberObservation>();
 
+    /// <summary>Observations of another reactivation cycle of a known room (bodies of earlier cycles): not members, never compared, only counted.</summary>
+    public int IgnoredOtherCycle { get; set; }
+
     public bool IsConsistent => UnrecordedDeaths.Count == 0 && MissingMembers.Count == 0 && UnexpectedLiving.Count == 0;
 
     public string Log { get; set; } = string.Empty;

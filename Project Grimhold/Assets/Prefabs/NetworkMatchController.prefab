@@ -230,3 +230,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EncounterRegistry
   _ElapsedTicks: 0
+  _generationPhases: 15
+  _pressureConfig: {fileID: 11400000, guid: 8143ae40b1350374fb16d30fcbf233c2, type: 2}
+  _reactivationCheckSeconds: 1

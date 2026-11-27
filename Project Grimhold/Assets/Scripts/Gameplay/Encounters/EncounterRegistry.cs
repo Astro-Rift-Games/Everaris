@@ -19,6 +19,12 @@ using UnityEngine;
 /// <see cref="NetworkSpawnManager"/> supplies through <see cref="Configure"/> as soon as both the scene configuration and
 /// this registry exist, in either order.
 /// </para>
+/// <para>
+/// Reactivation (Doc 10 §9.2, TASK-330 T5): on State Authority, every <c>_reactivationCheckSeconds</c> (a bounded cadence, not
+/// every tick) each Reactivable room is offered to <see cref="NetworkSpawnManager.TryReactivateEncounterRoom"/>, which measures the
+/// world conditions (players in the generation zone, Spawn Population Budget), plans the new composition and spawns it. The Dungeon
+/// phase gate is configured here. Rooms that cannot reactivate for a structural reason are parked (<see cref="EncounterReactivationAttempts"/>).
+/// </para>
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class EncounterRegistry : NetworkBehaviour
@@ -30,9 +36,24 @@ public sealed class EncounterRegistry : NetworkBehaviour
     [Networked]
     public int ElapsedTicks { get; private set; }
 
+    [Header("Reactivation (Doc 10 §9.2)")]
+    [SerializeField, Tooltip("Dungeon pressure phases in which a resolved room may regenerate its Encounter. Non-GD default, pending Game Design: every phase. With the Dungeon pressure not running no phase allows generating.")]
+    private EncounterGenerationPhases _generationPhases = EncounterGenerationPhases.All;
+
+    [SerializeField, Tooltip("Dungeon pressure config: the source of MaxGlobalEnemies, the same asset EnemyReinforcementDirector uses for the Spawn Population Budget.")]
+    private DungeonPressureConfig _pressureConfig;
+
+    [SerializeField, Min(0.1f), Tooltip("Seconds between reactivation checks of the Reactivable rooms (State Authority). Not a per-tick cost. Non-GD value.")]
+    private float _reactivationCheckSeconds = 1f;
+
     private readonly List<int> _changedRooms = new List<int>();
     private readonly List<EncounterMemberObservation> _deferredEliminations = new List<EncounterMemberObservation>();
     private NetworkSpawnManager _spawnManager;
+    private DungeonPressureController _pressureController;
+    private EncounterReactivationAttempts _attempts;
+    private int _ticksUntilReactivationCheck;
+    private bool _reactivationDependenciesValid;
+    private static readonly EncounterReactivationContext NeutralContext = new EncounterReactivationContext(false, true, true);
     private EncounterRegistryModel _model;
     private bool _isSpawned;
     private bool _restorePending;
@@ -58,6 +79,7 @@ public sealed class EncounterRegistry : NetworkBehaviour
     public void Test_BeginRestoreAdoption()
     {
         _model = null;
+        _attempts = null;
         _deferredEliminations.Clear();
         _restorePending = HasStateAuthority;
     }
@@ -119,6 +141,7 @@ public sealed class EncounterRegistry : NetworkBehaviour
     {
         _isSpawned = true;
         _spawnManager = Runner.GetComponent<NetworkSpawnManager>();
+        _pressureController = GetComponent<DungeonPressureController>();
 
         // A fresh spawn starts empty (networked defaults) and needs no initialization. A restored spawn already carries
         // the copied state, which the first Configure adopts instead of resetting it.
@@ -142,7 +165,9 @@ public sealed class EncounterRegistry : NetworkBehaviour
         }
 
         _spawnManager = null;
+        _pressureController = null;
         _model = null;
+        _attempts = null;
     }
 
     private void OnDestroy()
@@ -176,6 +201,9 @@ public sealed class EncounterRegistry : NetworkBehaviour
         }
 
         _model = model;
+        _attempts = new EncounterReactivationAttempts(model.RoomCount);
+        _ticksUntilReactivationCheck = 0;
+        ValidateReactivationDependencies(model.RoomCount);
         if (_restorePending)
         {
             AdoptReplicatedState(model);
@@ -203,8 +231,31 @@ public sealed class EncounterRegistry : NetworkBehaviour
         return true;
     }
 
+    /// <summary>The first Doc 10 §9.2 condition blocking <paramref name="id"/>, or None. An unbound or unknown room is reported as NotResolved.</summary>
+    public EncounterReactivationBlock EvaluateReactivation(EncounterId id, in EncounterReactivationContext context) =>
+        HasStateAuthority && IsReadable && _model != null
+            ? _model.EvaluateReactivation(id, context)
+            : EncounterReactivationBlock.NotResolved;
+
     /// <summary>
-    /// Registers the death of an Encounter member on State Authority (a valid elimination). Idempotent. Only while a Host
+    /// Starts the next cycle of a Reactivable room with the member indices of its new composition when every Doc 10 §9.2 condition
+    /// holds in <paramref name="context"/>. The enemies themselves carry cycle-aware keys (<see cref="EncounterMemberKeyCodec"/>) for
+    /// cycle <c>ReactivationCount + 1</c>. Nothing changes, and no reactivation is consumed, when it returns false. State Authority only.
+    /// </summary>
+    public bool TryReactivate(EncounterId id, in EncounterReactivationContext context, IReadOnlyList<uint> memberKeys)
+    {
+        if (!HasStateAuthority || !IsReadable || _model == null || !_model.TryReactivate(id, context, memberKeys, out int roomIndex))
+        {
+            return false;
+        }
+
+        WriteRoom(roomIndex);
+        return true;
+    }
+
+    /// <summary>
+    /// Registers the death of an Encounter member on State Authority (a valid elimination). Idempotent. The key is the enemy's
+    /// cycle-aware key: a death of an earlier cycle's body (same EncounterId, colliding member index) changes nothing. Only while a Host
     /// Migration restore is pending (before its first <see cref="Configure"/>) is a death kept and applied by that
     /// Configure; with no bound rooms and no restore pending (raid closed, scene without rooms) it is dropped with a
     /// single warning, so it can never reach a later raid's rooms. Returns true when it changed the encounter.
@@ -314,7 +365,7 @@ public sealed class EncounterRegistry : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        if (!HasStateAuthority || _model == null || !_model.IsCooling)
+        if (!HasStateAuthority || _model == null)
         {
             return;
         }
@@ -324,13 +375,102 @@ public sealed class EncounterRegistry : NetworkBehaviour
             return;
         }
 
-        ElapsedTicks++;
-        _changedRooms.Clear();
-        _model.Advance(ElapsedTicks, _changedRooms);
-        for (int i = 0; i < _changedRooms.Count; i++)
+        if (_model.IsCooling)
         {
-            WriteRoom(_changedRooms[i]);
+            ElapsedTicks++;
+            _changedRooms.Clear();
+            _model.Advance(ElapsedTicks, _changedRooms);
+            for (int i = 0; i < _changedRooms.Count; i++)
+            {
+                WriteRoom(_changedRooms[i]);
+            }
         }
+
+        TickReactivation();
+    }
+
+    /// <summary>
+    /// Bounded-cadence reactivation pass (State Authority). Per tick it only counts down; every <c>_reactivationCheckSeconds</c> it
+    /// offers each Reactivable, unparked room to the spawn manager. Allocation free while no room is Reactivable.
+    /// </summary>
+    private void TickReactivation()
+    {
+        if (_spawnManager == null || _attempts == null || !_reactivationDependenciesValid || --_ticksUntilReactivationCheck > 0)
+        {
+            return;
+        }
+
+        _ticksUntilReactivationCheck = Mathf.Max(1, Mathf.CeilToInt(_reactivationCheckSeconds / Runner.DeltaTime));
+        bool passPrepared = false;
+        bool phaseAllowsGeneration = false;
+        for (int i = 0; i < _model.RoomCount; i++)
+        {
+            if (!_model.IsReactivable(i) || _attempts.IsParked(i))
+            {
+                continue;
+            }
+
+            // A room the lifecycle itself refuses (for example MaxReactivations reached) costs nothing: no measuring, no backoff.
+            if (_model.EvaluateReactivation(_model.IdOf(i), NeutralContext) != EncounterReactivationBlock.None || !_attempts.ShouldAttempt(i))
+            {
+                continue;
+            }
+
+            if (!passPrepared)
+            {
+                phaseAllowsGeneration = PhaseAllowsGeneration();
+                _spawnManager.RefreshEncounterPresence();
+                passPrepared = true;
+            }
+
+            EncounterReactivationOutcome outcome = _spawnManager.TryReactivateEncounterRoom(i, phaseAllowsGeneration, _pressureConfig.MaxGlobalEnemies, out string detail);
+            if (_model == null || _attempts == null)
+            {
+                return; // The scene was reset while the room spawned; nothing is left to record.
+            }
+
+            if (!_attempts.Record(i, outcome))
+            {
+                continue;
+            }
+
+            if (outcome == EncounterReactivationOutcome.Reactivated)
+            {
+                Debug.Log($"[{nameof(EncounterRegistry)}] {_model.IdOf(i)} reactivated. {detail}", this);
+            }
+            else
+            {
+                Debug.LogWarning($"[{nameof(EncounterRegistry)}] {_model.IdOf(i)} could not reactivate ({outcome}). {detail}", this);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Reports once (with the offending field) a missing pressure config or controller; reactivation then stays disabled rather
+    /// than blocking silently on a Spawn Population Budget of 0. Only meaningful when the scene has rooms.
+    /// </summary>
+    private void ValidateReactivationDependencies(int roomCount)
+    {
+        _reactivationDependenciesValid = true;
+        if (roomCount == 0 || EncounterReactivationDependencies.TryValidate(_pressureConfig, _pressureController != null, out string failure))
+        {
+            return;
+        }
+
+        _reactivationDependenciesValid = false;
+        Debug.LogError($"[{nameof(EncounterRegistry)}] Encounter reactivation is disabled: {failure}", this);
+    }
+
+    private bool PhaseAllowsGeneration()
+    {
+        if (_pressureController == null)
+        {
+            return false;
+        }
+
+        DungeonPressurePhase phase = DungeonPressurePhase.Normal;
+        bool running = _pressureController.IsRunning && _pressureController.TryGetPhase(out phase);
+        return EncounterGenerationPhaseGate.Allows(_generationPhases, running, phase);
     }
 
     private bool ApplyElimination(EncounterId id, uint memberKey)
@@ -401,6 +541,8 @@ public sealed class EncounterRegistry : NetworkBehaviour
     private void ClearState()
     {
         _model = null;
+        _attempts = null;
+        _reactivationDependenciesValid = false;
         _deferredEliminations.Clear();
         if (!HasStateAuthority || !IsReadable)
         {

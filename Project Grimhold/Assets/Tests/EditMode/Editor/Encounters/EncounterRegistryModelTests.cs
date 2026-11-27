@@ -328,4 +328,148 @@ public sealed class EncounterRegistryModelTests
         Assert.That(model.TryCapture(1, out _), Is.False);
         Assert.That(model.TryCapture(-1, out _), Is.False);
     }
+
+
+    // Reactivation (TASK-330 T5, S3)
+
+    private static EncounterReactivationContext Open => EncounterReactivationRules.BuildContext(false, 10, 2, true);
+
+    private static uint Key(int cycle, uint index)
+    {
+        Assert.That(EncounterMemberKeyCodec.TryCompose(cycle, index, out uint key), Is.True);
+        return key;
+    }
+
+    /// <summary>A room resolved and cooled down at tick 10 (cooldown 0), with its first cycle's members 1 and 2.</summary>
+    private static EncounterRegistryModel ReactivableRoom(int maxReactivations = 2)
+    {
+        EncounterRegistryModel model = Create(Room(1, cooldownSeconds: 0f, maxReactivations: maxReactivations));
+        Assert.That(model.TryActivate(new EncounterId(1), new uint[] { 1u, 2u }, out _), Is.True);
+        Assert.That(model.RegisterValidElimination(new EncounterId(1), 1u, 9, out _), Is.True);
+        Assert.That(model.RegisterValidElimination(new EncounterId(1), 2u, 10, out _), Is.True);
+        model.Advance(10, new List<int>());
+        Assert.That(model.IsReactivable(0), Is.True);
+        return model;
+    }
+
+    [Test]
+    public void IsReactivable_FollowsTheLifecycleState()
+    {
+        EncounterRegistryModel model = Create(Room(1, cooldownSeconds: 0f));
+        Assert.That(model.IsReactivable(0), Is.False);
+        Assert.That(model.StateOf(0), Is.EqualTo(EncounterState.NotActivated));
+        model.TryActivate(new EncounterId(1), new uint[] { 1u }, out _);
+        Assert.That(model.IsReactivable(0), Is.False);
+        model.RegisterValidElimination(new EncounterId(1), 1u, 4, out _);
+        Assert.That(model.IsReactivable(0), Is.False, "Resolved is not Reactivable until the cooldown elapsed.");
+        model.Advance(4, new List<int>());
+        Assert.That(model.IsReactivable(0), Is.True);
+        Assert.That(model.IsReactivable(5), Is.False, "Out of range.");
+    }
+
+    [Test]
+    public void EvaluateReactivation_ReportsTheFirstBlockedCondition()
+    {
+        EncounterRegistryModel model = ReactivableRoom();
+
+        Assert.That(model.EvaluateReactivation(new EncounterId(1), Open), Is.EqualTo(EncounterReactivationBlock.None));
+        Assert.That(model.EvaluateReactivation(new EncounterId(1), EncounterReactivationRules.BuildContext(true, 10, 2, true)), Is.EqualTo(EncounterReactivationBlock.PlayersInGenerationZone));
+        Assert.That(model.EvaluateReactivation(new EncounterId(1), EncounterReactivationRules.BuildContext(false, 1, 2, true)), Is.EqualTo(EncounterReactivationBlock.NoGlobalCapacity));
+        Assert.That(model.EvaluateReactivation(new EncounterId(1), EncounterReactivationRules.BuildContext(false, 10, 2, false)), Is.EqualTo(EncounterReactivationBlock.DungeonPhaseForbidsGeneration));
+        Assert.That(model.EvaluateReactivation(new EncounterId(99), Open), Is.EqualTo(EncounterReactivationBlock.NotResolved), "An unknown room is never reactivable.");
+    }
+
+    [Test]
+    public void TryReactivate_StartsTheNextCycleWithTheNewMembers()
+    {
+        EncounterRegistryModel model = ReactivableRoom();
+
+        Assert.That(model.TryReactivate(new EncounterId(1), Open, new uint[] { 1u, 2u, 3u }, out int index), Is.True);
+
+        Assert.That(index, Is.EqualTo(0));
+        EncounterNetworkSlot slot = Capture(model, 0);
+        Assert.That(slot.StateRaw, Is.EqualTo((byte)EncounterState.Active));
+        Assert.That(slot.ReactivationCount, Is.EqualTo(1));
+        Assert.That(slot.MemberMask, Is.EqualTo(0b111u));
+        Assert.That(slot.AliveMask, Is.EqualTo(0b111u));
+        Assert.That(model.IsCooling, Is.False);
+    }
+
+    [Test]
+    public void TryReactivate_BlockedContextOrBadKeys_ChangesNothingAndConsumesNoReactivation()
+    {
+        EncounterRegistryModel model = ReactivableRoom();
+        EncounterNetworkSlot before = Capture(model, 0);
+
+        Assert.That(model.TryReactivate(new EncounterId(1), EncounterReactivationRules.BuildContext(true, 10, 2, true), new uint[] { 1u }, out _), Is.False);
+        Assert.That(model.TryReactivate(new EncounterId(1), Open, new uint[] { 1u, 33u }, out _), Is.False, "A key the slot cannot replicate.");
+        Assert.That(model.TryReactivate(new EncounterId(1), Open, new uint[] { 0u }, out _), Is.False);
+        Assert.That(model.TryReactivate(new EncounterId(1), Open, new uint[0], out _), Is.False);
+        Assert.That(model.TryReactivate(new EncounterId(1), Open, null, out _), Is.False);
+        Assert.That(model.TryReactivate(new EncounterId(77), Open, new uint[] { 1u }, out _), Is.False, "Unknown room.");
+
+        Assert.That(Capture(model, 0), Is.EqualTo(before));
+    }
+
+    [Test]
+    public void TryReactivate_AfterMaxReactivations_IsRefused()
+    {
+        EncounterRegistryModel model = ReactivableRoom(maxReactivations: 1);
+        Assert.That(model.TryReactivate(new EncounterId(1), Open, new uint[] { 1u }, out _), Is.True);
+        model.RegisterValidElimination(new EncounterId(1), Key(1, 1u), 20, out _);
+        model.Advance(20, new List<int>());
+        Assert.That(model.IsReactivable(0), Is.True);
+
+        Assert.That(model.EvaluateReactivation(new EncounterId(1), Open), Is.EqualTo(EncounterReactivationBlock.MaxReactivationsReached));
+        Assert.That(model.TryReactivate(new EncounterId(1), Open, new uint[] { 1u }, out _), Is.False);
+        Assert.That(Capture(model, 0).ReactivationCount, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void TryReactivate_MaxReactivationsZero_NeverReactivates()
+    {
+        EncounterRegistryModel model = ReactivableRoom(maxReactivations: 0);
+        Assert.That(model.TryReactivate(new EncounterId(1), Open, new uint[] { 1u }, out _), Is.False);
+        Assert.That(StateOf(model, 0), Is.EqualTo(EncounterState.Reactivable));
+    }
+
+    [Test]
+    public void RegisterValidElimination_DeathOfAnEarlierCycleBody_DoesNotTouchTheCurrentCycle()
+    {
+        EncounterRegistryModel model = ReactivableRoom();
+        model.TryReactivate(new EncounterId(1), Open, new uint[] { 1u, 2u }, out _);
+        EncounterNetworkSlot before = Capture(model, 0);
+
+        // Member keys 1 and 2 of cycle 0 name bodies of the previous cycle, whose indices collide with the current members.
+        Assert.That(model.RegisterValidElimination(new EncounterId(1), Key(0, 1u), 30, out _), Is.False);
+        Assert.That(model.RegisterValidElimination(new EncounterId(1), Key(0, 2u), 30, out _), Is.False);
+
+        Assert.That(Capture(model, 0), Is.EqualTo(before));
+        Assert.That(StateOf(model, 0), Is.EqualTo(EncounterState.Active));
+    }
+
+    [Test]
+    public void RegisterValidElimination_CurrentCycleKeys_ResolveTheReactivatedRoom()
+    {
+        EncounterRegistryModel model = ReactivableRoom();
+        model.TryReactivate(new EncounterId(1), Open, new uint[] { 1u, 2u }, out _);
+
+        Assert.That(model.RegisterValidElimination(new EncounterId(1), Key(1, 1u), 30, out _), Is.True);
+        Assert.That(StateOf(model, 0), Is.EqualTo(EncounterState.Active));
+        Assert.That(model.RegisterValidElimination(new EncounterId(1), Key(1, 2u), 31, out _), Is.True);
+
+        Assert.That(StateOf(model, 0), Is.EqualTo(EncounterState.Resolved));
+        Assert.That(Capture(model, 0).CooldownStartTick, Is.EqualTo(31));
+    }
+
+    [Test]
+    public void RegisterValidElimination_KeyOfALaterCycleOrWithoutAMember_IsRejected()
+    {
+        EncounterRegistryModel model = ReactivableRoom();
+        model.TryReactivate(new EncounterId(1), Open, new uint[] { 1u }, out _);
+
+        Assert.That(model.RegisterValidElimination(new EncounterId(1), Key(2, 1u), 30, out _), Is.False, "A cycle that has not started.");
+        Assert.That(model.RegisterValidElimination(new EncounterId(1), 1u << EncounterMemberKeyCodec.IndexBits, 30, out _), Is.False, "No member index.");
+        Assert.That(StateOf(model, 0), Is.EqualTo(EncounterState.Active));
+    }
 }

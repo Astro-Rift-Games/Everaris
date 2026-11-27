@@ -6,6 +6,12 @@ using System.Text;
 /// is authoritative: it was snapshotted on the same tick as the enemies. The enemies are trusted only about their own
 /// death (a registry-alive member restored dead is an unrecorded elimination); every other mismatch is reported, never
 /// silently changed.
+/// <para>
+/// Enemy keys are cycle-aware (<see cref="EncounterMemberKeyCodec"/>): an observation is compared with the room only when it
+/// belongs to the room's current cycle (its ReactivationCount). Bodies of earlier cycles share EncounterId and member indices with
+/// the current members but are not members, so they are counted in <see cref="EncounterReconcileResult.IgnoredOtherCycle"/> and
+/// otherwise ignored.
+/// </para>
 /// </summary>
 public static class EncounterReconciler
 {
@@ -34,10 +40,19 @@ public static class EncounterReconciler
             for (int i = 0; i < observations.Count; i++)
             {
                 EncounterMemberObservation observation = observations[i];
-                observedKeys.Add(KeyOf(observation.EncounterId, observation.MemberKey));
-                bool recordedAlive = slotById.TryGetValue(observation.EncounterId, out EncounterNetworkSlot slot) &&
+                bool hasRoom = slotById.TryGetValue(observation.EncounterId, out EncounterNetworkSlot slot);
+                bool decoded = EncounterMemberKeyCodec.TryDecode(observation.MemberKey, out int cycle, out uint memberIndex);
+                if (hasRoom && decoded && cycle != slot.ReactivationCount)
+                {
+                    result.IgnoredOtherCycle++;
+                    continue;
+                }
+
+                uint comparedKey = decoded ? memberIndex : observation.MemberKey;
+                observedKeys.Add(KeyOf(observation.EncounterId, comparedKey));
+                bool recordedAlive = hasRoom &&
                                      slot.StateRaw == (byte)EncounterState.Active &&
-                                     EncounterSlotCodec.IsAliveMember(slot, observation.MemberKey);
+                                     EncounterSlotCodec.IsAliveMember(slot, comparedKey);
                 if (observation.IsAlive && !recordedAlive)
                 {
                     result.UnexpectedLiving.Add(observation);
@@ -64,15 +79,19 @@ public static class EncounterReconciler
                 {
                     if (EncounterSlotCodec.IsAliveMember(slot, key) && !observedKeys.Contains(KeyOf(slot.EncounterId, key)))
                     {
-                        result.MissingMembers.Add(new EncounterMemberObservation(slot.EncounterId, key, false));
+                        uint reportedKey = EncounterMemberKeyCodec.TryCompose(slot.ReactivationCount, key, out uint composed) ? composed : key;
+                        result.MissingMembers.Add(new EncounterMemberObservation(slot.EncounterId, reportedKey, false));
                     }
                 }
             }
         }
 
-        result.Log = BuildLog(result, slotById.Count, livingMembers);
+        result.Log = BuildLog(result, slotById.Count, livingMembers) + IgnoredNote(result.IgnoredOtherCycle);
         return result;
     }
+
+    private static string IgnoredNote(int ignored) =>
+        ignored > 0 ? $" Ignored {ignored} observations of earlier reactivation cycles." : string.Empty;
 
     private static long KeyOf(int encounterId, uint memberKey) => ((long)encounterId << 32) | memberKey;
 

@@ -134,9 +134,56 @@ public sealed class EncounterRegistryModel
         return _lifecycles[roomIndex].TryActivate(memberKeys);
     }
 
-    /// <summary>Registers a death on State Authority. Idempotent: false for an unknown room or member, a repeated death or an inactive room.</summary>
-    public bool RegisterValidElimination(EncounterId id, uint memberKey, int nowTick, out int roomIndex) =>
-        TryGetRoomIndex(id, out roomIndex) && _lifecycles[roomIndex].RegisterValidElimination(memberKey, nowTick * _tickSeconds);
+    public EncounterState StateOf(int roomIndex) => IsRoomIndex(roomIndex) ? _lifecycles[roomIndex].State : EncounterState.NotActivated;
+
+    /// <summary>True when the room finished its cooldown and waits for a reactivation (Doc 10 §9.2).</summary>
+    public bool IsReactivable(int roomIndex) => IsRoomIndex(roomIndex) && _lifecycles[roomIndex].State == EncounterState.Reactivable;
+
+    /// <summary>The first Doc 10 §9.2 condition that blocks the room. An unknown room is reported as NotResolved: it cannot reactivate.</summary>
+    public EncounterReactivationBlock EvaluateReactivation(EncounterId id, in EncounterReactivationContext context) =>
+        TryGetRoomIndex(id, out int roomIndex) ? _lifecycles[roomIndex].EvaluateReactivation(context) : EncounterReactivationBlock.NotResolved;
+
+    /// <summary>
+    /// Starts the next cycle of a Reactivable room when every Doc 10 §9.2 condition holds. <paramref name="memberKeys"/> are member
+    /// indices 1..<see cref="EncounterLimits.MaxMembersPerRoom"/> of the new cycle (the cycle itself is the room's ReactivationCount,
+    /// which this call increments). Nothing changes, and no reactivation is consumed, when it returns false.
+    /// </summary>
+    public bool TryReactivate(EncounterId id, in EncounterReactivationContext context, IReadOnlyList<uint> memberKeys, out int roomIndex)
+    {
+        if (!TryGetRoomIndex(id, out roomIndex) || memberKeys == null)
+        {
+            return false;
+        }
+
+        // A key that cannot be replicated must never reach the lifecycle: the registry could not publish it.
+        for (int i = 0; i < memberKeys.Count; i++)
+        {
+            if (!EncounterSlotCodec.TryKeyToBit(memberKeys[i], out _))
+            {
+                return false;
+            }
+        }
+
+        return _lifecycles[roomIndex].TryReactivate(context, memberKeys);
+    }
+
+    /// <summary>
+    /// Registers a death on State Authority. <paramref name="memberKey"/> is the enemy's cycle-aware key
+    /// (<see cref="EncounterMemberKeyCodec"/>): only a death of the room's current cycle counts, the body of an earlier cycle that
+    /// shares a member index with a current member is ignored. Idempotent: false for an unknown room or member, another cycle, a
+    /// repeated death or an inactive room.
+    /// </summary>
+    public bool RegisterValidElimination(EncounterId id, uint memberKey, int nowTick, out int roomIndex)
+    {
+        if (!TryGetRoomIndex(id, out roomIndex) ||
+            !EncounterMemberKeyCodec.TryDecode(memberKey, out int cycle, out uint memberIndex))
+        {
+            return false;
+        }
+
+        EncounterLifecycle lifecycle = _lifecycles[roomIndex];
+        return cycle == lifecycle.ReactivationCount && lifecycle.RegisterValidElimination(memberIndex, nowTick * _tickSeconds);
+    }
 
     /// <summary>Advances every room to <paramref name="nowTick"/> and appends the indices of the rooms whose state changed.</summary>
     public void Advance(int nowTick, List<int> changedRooms)

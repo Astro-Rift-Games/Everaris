@@ -184,6 +184,11 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
     private readonly HashSet<ProfileId> _hostMigrationRetainedProfiles = new();
     private readonly Dictionary<ProfileId, PlayerRef> _hostMigrationRecoveredProfiles = new();
     private readonly List<NetworkObject> _spawnedEnemies = new();
+
+    // Reused by every Encounter reactivation attempt (State Authority, cadence-bound), never allocated per attempt.
+    private readonly List<EncounterPlayerPresence> _encounterPresenceBuffer = new();
+    private readonly List<EncounterSpawnAssignment<NetworkPrefabRef>> _reactivationAssignments = new();
+    private readonly List<uint> _reactivationMemberIndices = new();
     private int _nextEnemyLootSpawnIndex;
     private readonly HashSet<Transform> _usedEnemySpawnPoints = new();
     private readonly List<NetworkObject> _cleanupBuffer = new();
@@ -343,6 +348,33 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
     internal void Test_RegisterParticipant(PlayerRef player, NetworkObject participantObject)
     {
         _spawnedPlayers[player] = participantObject;
+    }
+
+    /// <summary>Testing seam: tracks an artificially spawned player avatar as this runner's avatar of <paramref name="player"/>.</summary>
+    internal void Test_RegisterAvatar(PlayerRef player, NetworkObject avatarObject)
+    {
+        _spawnedAvatars[player] = avatarObject;
+    }
+
+    /// <summary>
+    /// Testing seam: while set (0 or more), an Encounter reactivation spawns at most this many enemies and counts the rest as failed
+    /// spawns, which a real run only gets from a broken loot configuration. -1 (default) is production behavior.
+    /// </summary>
+    internal int Test_ReactivationSpawnLimit = -1;
+
+    /// <summary>Testing seam: runs after a reactivation spawned its enemies and before the registry is asked to start the cycle.</summary>
+    internal Action Test_BeforeReactivationCommit;
+
+    /// <summary>Testing seam: puts the Host Migration recovery window in <paramref name="state"/> without a real migration.</summary>
+    internal void Test_SetHostMigrationRecoveryState(HostMigrationRecoveryWindowState state)
+    {
+        _hostMigrationRecoveryState = state;
+    }
+
+    /// <summary>Testing seam: maps an admitted profile to its player, as a real admission would, so the frozen cohort's Luck resolves.</summary>
+    internal void Test_AdmitProfile(ProfileId profileId, PlayerRef player)
+    {
+        _admittedProfiles[profileId.Value] = player;
     }
 
     /// <summary>
@@ -1022,6 +1054,175 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
 
         failure = null;
         return true;
+    }
+
+    /// <summary>
+    /// Runtime reactivation of one Reactivable room (Doc 10 §9.2, TASK-330 T5). State Authority only; called by
+    /// <see cref="EncounterRegistry"/> at its reactivation cadence with the room's index in the scene configuration.
+    /// Measures the conditions the lifecycle cannot know (players in the generation zone, Spawn Population Budget), plans a new
+    /// composition (seed = session seed + scene generation + EncounterId + cycle) and spawns it on distinct room markers through
+    /// the same spawn path as the initial activation, then asks the registry to start the cycle. Reactivated enemies keep
+    /// <see cref="Spawning.EnemyPopulationOrigin.Bootstrap"/>: they are room population, not pressure Reinforcements, so they use
+    /// the global capacity but not the Reinforcement budget. A partial spawn activates the room with the enemies that spawned.
+    /// <paramref name="detail"/> is only set when the outcome is worth logging.
+    /// </summary>
+    internal EncounterReactivationOutcome TryReactivateEncounterRoom(int roomIndex, bool phaseAllowsGeneration, int maxGlobalEnemies, out string detail)
+    {
+        detail = null;
+        IReadOnlyList<EncounterRoom> rooms = _sceneSpawnPointConfiguration != null ? _sceneSpawnPointConfiguration.EncounterRooms : null;
+        if (_runner == null || _encounterRegistry == null || !_encounterRegistry.IsConfigured || !_encounterRegistry.HasStateAuthority ||
+            rooms == null || roomIndex < 0 || roomIndex >= rooms.Count || rooms[roomIndex] == null)
+        {
+            return EncounterReactivationOutcome.Blocked;
+        }
+
+        EncounterRoom room = rooms[roomIndex];
+        EncounterId id = room.Id;
+        if (!_encounterRegistry.TryGetStatus(id, out EncounterStatus status) || status.State != EncounterState.Reactivable)
+        {
+            return EncounterReactivationOutcome.Blocked;
+        }
+
+        // Cheap conditions first: the planner only runs for a room that could take at least its smallest composition.
+        // Presence was measured once for the whole pass (RefreshEncounterPresence).
+        bool playersInZone = EncounterZoneOccupancy.HasPlayerInside(room.GenerationZone, _encounterPresenceBuffer);
+        int availableCapacity = PopulationTracker.GetAvailableGlobalCapacity(maxGlobalEnemies);
+        EncounterReactivationContext minimal = EncounterReactivationRules.BuildContext(playersInZone, availableCapacity, room.Composition.MinEnemies, phaseAllowsGeneration);
+        if (_encounterRegistry.EvaluateReactivation(id, minimal) != EncounterReactivationBlock.None)
+        {
+            return EncounterReactivationOutcome.Blocked;
+        }
+
+        if (!TryEnsureEnemyCandidates() || !EnsureLootSessionSeed(_runner))
+        {
+            detail = "Enemy prefabs or the authoritative session seed are unavailable.";
+            return EncounterReactivationOutcome.SpawnFailed;
+        }
+
+        int cycle = status.ReactivationCount + 1;
+        EncounterPlanResult plan = EncounterBootstrapPlanner.Plan(
+            _enemyCandidates,
+            DungeonEnvironment,
+            room.Composition,
+            room.SpawnPoints.Count,
+            _lootSessionSeed,
+            _currentSceneLoadGeneration,
+            id,
+            _reactivationAssignments,
+            cycle);
+
+        if (plan == EncounterPlanResult.NoEncounter)
+        {
+            detail = $"Cycle {cycle}: the initial weighted validation decided the room has no Encounter. It stays Reactivable and is not retried (the seed would decide the same).";
+            return EncounterReactivationOutcome.NoEncounter;
+        }
+
+        if (plan == EncounterPlanResult.Invalid)
+        {
+            detail = $"Cycle {cycle}: no valid composition for environment '{DungeonEnvironment}'. It stays Reactivable and is not retried.";
+            return EncounterReactivationOutcome.InvalidComposition;
+        }
+
+        // The whole planned composition has to fit the Spawn Population Budget.
+        EncounterReactivationContext planned = EncounterReactivationRules.BuildContext(playersInZone, availableCapacity, _reactivationAssignments.Count, phaseAllowsGeneration);
+        if (_encounterRegistry.EvaluateReactivation(id, planned) != EncounterReactivationBlock.None)
+        {
+            return EncounterReactivationOutcome.Blocked;
+        }
+
+        int firstSpawnedIndex = _spawnedEnemies.Count;
+        _reactivationMemberIndices.Clear();
+        foreach (EncounterSpawnAssignment<NetworkPrefabRef> assignment in _reactivationAssignments)
+        {
+            if (!EncounterMemberKeyCodec.TryCompose(cycle, assignment.MemberKey, out uint memberKey))
+            {
+                continue;
+            }
+
+            if ((Test_ReactivationSpawnLimit < 0 || _reactivationMemberIndices.Count < Test_ReactivationSpawnLimit) &&
+                SpawnSelectedEnemy(
+                    _runner,
+                    room.SpawnPoints[assignment.SpawnPointIndex],
+                    Spawning.EnemyPopulationOrigin.Bootstrap,
+                    disableLoot: false,
+                    assignment.Candidate,
+                    id.Value,
+                    memberKey,
+                    out _))
+            {
+                _reactivationMemberIndices.Add(assignment.MemberKey);
+            }
+        }
+
+        int spawned = _reactivationMemberIndices.Count;
+        int plannedCount = _reactivationAssignments.Count;
+        if (spawned == 0)
+        {
+            detail = $"Cycle {cycle}: none of the {plannedCount} planned enemies could be spawned. It stays Reactivable and is retried after a backoff.";
+            return EncounterReactivationOutcome.SpawnFailed;
+        }
+
+        // A composition below the room's MinEnemies is not an Encounter the room is authored for: no partial activation under it.
+        if (spawned < room.Composition.MinEnemies)
+        {
+            DespawnEnemiesFrom(firstSpawnedIndex);
+            detail = $"Cycle {cycle}: only {spawned} of {plannedCount} planned enemies could be spawned, below the room's MinEnemies ({room.Composition.MinEnemies}); " +
+                     "they were despawned. It stays Reactivable, no reactivation is consumed, and it is retried after a backoff.";
+            return EncounterReactivationOutcome.SpawnFailed;
+        }
+
+        Test_BeforeReactivationCommit?.Invoke();
+        if (!_encounterRegistry.TryReactivate(id, planned, _reactivationMemberIndices))
+        {
+            DespawnEnemiesFrom(firstSpawnedIndex);
+            detail = $"Cycle {cycle}: the {spawned} spawned enemies were despawned because the registry refused the reactivation. It stays Reactivable and is not retried.";
+            return EncounterReactivationOutcome.ActivationRejected;
+        }
+
+        detail = spawned == plannedCount
+            ? $"Cycle {cycle}: {spawned} enemies spawned."
+            : $"Cycle {cycle}: only {spawned} of {plannedCount} planned enemies could be spawned; the room is Active with those.";
+        return EncounterReactivationOutcome.Reactivated;
+    }
+
+    /// <summary>
+    /// Measures where the raiding players are, once, for a reactivation pass. Must be called before
+    /// <see cref="TryReactivateEncounterRoom"/> (the registry does it once per pass, only when a room is eligible).
+    /// </summary>
+    internal void RefreshEncounterPresence() => FillPlayerPresence(_encounterPresenceBuffer);
+
+    private void FillPlayerPresence(List<EncounterPlayerPresence> buffer)
+    {
+        buffer.Clear();
+        foreach (NetworkObject avatar in _spawnedAvatars.Values)
+        {
+            if (avatar == null || !avatar.IsValid)
+            {
+                continue;
+            }
+
+            // Dead avatars and participants that already left the Raid (Extracted, Defeated, Aborted: an extracted avatar is rebound
+            // after a Host Migration) are not players to protect. Without a resolvable participant the avatar counts.
+            bool isPresent = (!avatar.TryGetBehaviour(out CharacterBase character) || character.IsAlive) &&
+                             (!avatar.TryGetBehaviour(out RaidAvatarParticipantLink link) ||
+                              !link.TryResolveParticipant(out NetworkRaidParticipant participant) ||
+                              participant.State == RaidParticipantState.Raiding);
+            buffer.Add(new EncounterPlayerPresence(avatar.transform.position, isPresent));
+        }
+    }
+
+    /// <summary>Despawns the enemies this manager spawned from <paramref name="firstIndex"/> on and forgets them.</summary>
+    private void DespawnEnemiesFrom(int firstIndex)
+    {
+        for (int i = _spawnedEnemies.Count - 1; i >= firstIndex; i--)
+        {
+            NetworkObject enemy = _spawnedEnemies[i];
+            _spawnedEnemies.RemoveAt(i);
+            if (enemy != null && enemy.IsValid)
+            {
+                _runner.Despawn(enemy);
+            }
+        }
     }
 
     /// <summary>
