@@ -31,9 +31,23 @@ const authoritativeExtractionResultSchema = new mongoose.Schema({
   consumed: { type: Boolean, default: false, index: true },
   consumedAt: { type: Date, default: null },
   issuedAt: { type: Date, default: Date.now },
-  createdAt: { type: Date, default: Date.now, expires: 86400 } // TTL index: documents expire after 24 hours
+  createdAt: { type: Date, default: Date.now }
 });
 
-authoritativeExtractionResultSchema.index({ raidId: 1, accountId: 1 }, { unique: true });
+// FIX-21: Never expire unconsumed extraction results (loot must never be lost if a player
+// reconnects after >24h). Expire only consumed results 24 hours after consumption.
+const CONSUMED_RESULT_TTL_SECONDS = 86400;
 
-module.exports = mongoose.model('AuthoritativeExtractionResult', authoritativeExtractionResultSchema);
+authoritativeExtractionResultSchema.index({ raidId: 1, accountId: 1 }, { unique: true });
+authoritativeExtractionResultSchema.index(
+  { consumedAt: 1 },
+  {
+    expireAfterSeconds: CONSUMED_RESULT_TTL_SECONDS,
+    partialFilterExpression: { consumed: true }
+  }
+);
+
+const AuthoritativeExtractionResult = mongoose.model('AuthoritativeExtractionResult', authoritativeExtractionResultSchema);
+AuthoritativeExtractionResult.CONSUMED_RESULT_TTL_SECONDS = CONSUMED_RESULT_TTL_SECONDS;
+
+module.exports = AuthoritativeExtractionResult;

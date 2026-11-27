@@ -77,6 +77,7 @@ describe('FIX-22 result maintenance', () => {
     errors.length = 0;
     assert.equal(await checkAuthoritativeResultIndexes(Result, logger), true);
     assert.deepEqual(errors, []);
-    assert.ok((await Result.collection.indexes()).some(i => i.key.createdAt === 1 && i.expireAfterSeconds === 86400));
+    assert.ok((await Result.collection.indexes()).some(i =>
+      i.key.consumedAt === 1 && i.expireAfterSeconds === 86400 && i.partialFilterExpression?.consumed === true));
   });
 });
