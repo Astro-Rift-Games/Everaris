@@ -212,18 +212,32 @@ public sealed class TownRaidPreparationPresenter : NetworkBehaviour
         if (_directory != null)
         {
             _directory.StartResultReceived -= OnStartResultReceived;
+            _directory.ActionResultReceived -= OnActionResultReceived;
+            _directory.CancellationReceived -= OnCancellationReceived;
         }
 
         _directory = directory;
         if (_directory != null)
         {
             _directory.StartResultReceived += OnStartResultReceived;
+            _directory.ActionResultReceived += OnActionResultReceived;
+            _directory.CancellationReceived += OnCancellationReceived;
         }
     }
 
     private void OnStartResultReceived(TownRaidStartResult result)
     {
         _view?.ShowStartRejected(result);
+    }
+
+    private void OnActionResultReceived(TownRaidPreparationActionResult result)
+    {
+        _view?.ShowActionRejected(result);
+    }
+
+    private void OnCancellationReceived(TownRaidPreparationCancelReason reason)
+    {
+        _view?.ShowCancellationNotice(reason);
     }
 
     private void RefreshPreparationPresentation(bool force)
@@ -351,7 +365,10 @@ public sealed class TownRaidPreparationPresenter : NetworkBehaviour
             return;
         }
 
-        _directory?.RequestCreate();
+        if (_directory == null || !_directory.RequestCreate())
+        {
+            _view?.ShowActionRejected(TownRaidPreparationActionResult.DirectoryUnavailable);
+        }
     }
 
     private void JoinRaid(string code)
@@ -361,16 +378,43 @@ public sealed class TownRaidPreparationPresenter : NetworkBehaviour
             return;
         }
 
-        _directory?.RequestJoin(code);
+        if (!RaidCode.TryParse(code, out _))
+        {
+            _view?.ShowInvalidCode();
+            return;
+        }
+
+        if (_directory == null || !_directory.RequestJoin(code))
+        {
+            _view?.ShowActionRejected(TownRaidPreparationActionResult.DirectoryUnavailable);
+        }
     }
 
     private void LeaveRaid()
     {
-        _directory?.RequestLeave();
+        if (_directory == null || !_directory.RequestLeave())
+        {
+            _view?.ShowActionRejected(TownRaidPreparationActionResult.DirectoryUnavailable);
+        }
     }
-    private void SetReady(bool ready) => _directory?.RequestSetReady(ready);
+
+    private void SetReady(bool ready)
+    {
+        if (_directory == null || !_directory.RequestSetReady(ready))
+        {
+            _view?.ShowActionRejected(TownRaidPreparationActionResult.DirectoryUnavailable);
+        }
+    }
+
     private void SetFriendlyFire(bool enabled) => _directory?.RequestSetFriendlyFire(enabled);
-    private void StartRaid() => _directory?.RequestStart();
+
+    private void StartRaid()
+    {
+        if (_directory == null || !_directory.RequestStart())
+        {
+            _view?.ShowActionRejected(TownRaidPreparationActionResult.DirectoryUnavailable);
+        }
+    }
 
     private ProfileId GetLocalProfile()
     {

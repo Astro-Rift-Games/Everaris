@@ -15,20 +15,29 @@ public readonly struct TownRaidPreparationPresentation
         public string DisplayName { get; }
         public bool IsHost { get; }
         public bool IsReady { get; }
+        public bool LaunchAcknowledged { get; }
 
         public Member(string displayName, bool isHost, bool isReady)
-            : this(default, false, displayName, isHost, isReady, null)
+            : this(default, false, displayName, isHost, isReady, null, false)
         {
         }
 
         public Member(ProfileId profileId, bool isLocal, string displayName,
             bool isHost, bool isReady, IPreparedEquipmentReader equipmentReader)
+            : this(profileId, isLocal, displayName, isHost, isReady, equipmentReader, false)
+        {
+        }
+
+        public Member(ProfileId profileId, bool isLocal, string displayName,
+            bool isHost, bool isReady, IPreparedEquipmentReader equipmentReader,
+            bool launchAcknowledged)
         {
             ProfileId = profileId;
             IsLocal = isLocal;
             DisplayName = displayName;
             IsHost = isHost;
             IsReady = isReady;
+            LaunchAcknowledged = launchAcknowledged;
             HasEquipment = equipmentReader != null;
             EquipmentRevision = equipmentReader?.ObservedEquipmentRevision ?? 0;
             _equipment = null;
@@ -60,8 +69,24 @@ public readonly struct TownRaidPreparationPresentation
     public bool IsHost { get; }
     public bool LocalReady { get; }
     public bool CanStart { get; }
+    public bool IsLaunching => Snapshot.State == TownRaidPreparationState.Launching;
+    public bool CanLeave => Snapshot.State == TownRaidPreparationState.Waiting;
+    public bool CanSetReady => Snapshot.State == TownRaidPreparationState.Waiting;
     public bool CanToggleFriendlyFire => IsHost && Snapshot.State == TownRaidPreparationState.Waiting;
     public bool FriendlyFireEnabled => Snapshot.FriendlyFireEnabled;
+    public int AcknowledgedCount
+    {
+        get
+        {
+            if (Members == null) return 0;
+            int count = 0;
+            for (int index = 0; index < Members.Count; index++)
+            {
+                if (Members[index].LaunchAcknowledged) count++;
+            }
+            return count;
+        }
+    }
 
     private TownRaidPreparationPresentation(
         in TownRaidPreparationSnapshot snapshot,
@@ -132,7 +157,8 @@ public readonly struct TownRaidPreparationPresentation
                 displayName,
                 member.ProfileId == snapshot.HostProfileId,
                 member.IsReady,
-                equipmentReader);
+                equipmentReader,
+                member.LaunchAcknowledged);
 
             if (member.ProfileId != localProfileId)
             {
