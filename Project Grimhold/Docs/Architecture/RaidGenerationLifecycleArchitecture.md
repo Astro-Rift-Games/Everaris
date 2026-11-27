@@ -51,6 +51,9 @@ closes normally with `NaturalCompletion`.
 - `NetworkSpawnManager`: runner-scoped participant and connectivity queries, spawn
   blocking and one-shot cleanup of gameplay world objects while retaining participants,
   Results avatars, player routing and Controlled Return state.
+- `EncounterRegistry` (on the match controller prefab): replicated room Encounter state; Results
+  cleanup resets it so nothing carries to the next generation
+  (`EncounterLifecycleArchitecture.md#35-raid-closure-and-scene-reset`).
 - `NetworkRaidParticipant`: authoritative participant result and generation ID;
   no stash or loadout mutation during abort/cleanup.
 - `SessionConnectionCoordinator`: never translates `Finished` directly into Town.

@@ -320,6 +320,8 @@ EditMode tests only; its live multi-process run is still pending.
 
 *Note: For Dungeon Pressure (PvE timers, phases, and active population) recovery rules, see `DungeonPressureArchitecture.md`.*
 
+*Note: For room Encounter state recovery (restore adoption, deferred deaths, reconcile, cooldown freeze and the pending multi-process checklist), see [`EncounterLifecycleArchitecture.md`](EncounterLifecycleArchitecture.md#4-host-migration).*
+
 ## Validation boundary
 
 EditMode tests cover role routing, startup suppression, completion semantics,

@@ -27,6 +27,7 @@ Read the relevant current sections of `Docs/Architecture/` before changing a cov
 | Interaction and loot | `PlayerInteractionArchitecture.md`, `LootInteractionArchitecture.md` |
 | Host loss, restoration and recovery closure | `HostMigrationRecoveryArchitecture.md` |
 | Visibility and fog | `VisibilityArchitecture.md` |
+| Dungeon room Encounters (identity, lifecycle, reactivation, Host Migration state) | `EncounterLifecycleArchitecture.md` |
 
 - Prefer composition, narrow responsibilities and explicit ownership/dependencies. Use serialized references for Unity dependencies, constructors for pure C# dependencies and explicit initialization where appropriate.
 - Keep static configuration, persistent state, local runtime state, networked state and presentation state distinct. Keep Fusion at network integration boundaries and presentation separate from authoritative simulation.
