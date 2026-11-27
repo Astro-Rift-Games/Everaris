@@ -17,9 +17,13 @@ namespace Spawning
         [SerializeField]
         private SpawnGroupDefinition[] _spawnGroups;
 
+        [SerializeField, Tooltip("Authored Encounter rooms. Empty keeps the global spawn groups unchanged.")]
+        private EncounterRoom[] _encounterRooms = System.Array.Empty<EncounterRoom>();
+
         public SceneSpawnPointPolicy SpawnPointPolicy => _spawnPointPolicy;
         public IReadOnlyList<PlayerSpawnAreaDefinition> PlayerSpawnAreas => _playerSpawnAreas;
         public SpawnGroupDefinition[] SpawnGroups => _spawnGroups;
+        public IReadOnlyList<EncounterRoom> EncounterRooms => _encounterRooms;
 
         public bool Validate(out string error)
         {
@@ -32,6 +36,11 @@ namespace Spawning
                     (_spawnGroups != null && _spawnGroups.Length > 0))
                 {
                     error = "Spatial player areas and spawn groups are not allowed when SceneSpawnPointPolicy is NotRequired.";
+                    return false;
+                }
+                if (_encounterRooms != null && _encounterRooms.Length > 0)
+                {
+                    error = "Encounter rooms are not allowed when SceneSpawnPointPolicy is NotRequired.";
                     return false;
                 }
                 return true;
@@ -76,7 +85,8 @@ namespace Spawning
                     return false;
                 }
             }
-            return true;
+
+            return EncounterRoomSetValidation.Validate(_encounterRooms, out error);
         }
     }
 }

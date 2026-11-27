@@ -13,6 +13,17 @@ public class EnemyCharacter : CharacterBase, IAbilityEnemyTarget
     [Networked]
     public EnemyPopulationOrigin PopulationOrigin { get; set; }
 
+    /// <summary>Owning Encounter (EncounterId value), 0 when the enemy belongs to none. Set before spawn, stable across Host Migration.</summary>
+    [Networked]
+    public int EncounterIdValue { get; set; }
+
+    /// <summary>
+    /// Identity of this enemy inside its Encounter cycle (unique per cycle, 0 = none). Never derive it from
+    /// <c>Object.Id</c>: NetworkIds change on Host Migration.
+    /// </summary>
+    [Networked]
+    public uint EncounterMemberKey { get; set; }
+
     [Header("Creature Classification")]
     [SerializeField]
     private CreatureTier _creatureTier = CreatureTier.Ordinary;

@@ -961,6 +961,26 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             }
         }
 
+        if (config.EncounterRooms != null)
+        {
+            foreach (EncounterRoom room in config.EncounterRooms)
+            {
+                if (room == null)
+                {
+                    continue;
+                }
+
+                foreach (Transform sp in room.SpawnPoints)
+                {
+                    if (sp != null && sp.gameObject.scene != config.gameObject.scene)
+                    {
+                        Debug.LogError($"[NetworkSpawnManager] Encounter room '{room.name}' spawn point '{sp.name}' does not belong to scene '{config.gameObject.scene.name}'. Spawning aborted.", room);
+                        return;
+                    }
+                }
+            }
+        }
+
         _sceneSpawnPointConfiguration = config;
         _spawnPointLookup.Clear();
         _playerSpawnAreas = config.PlayerSpawnAreas;
@@ -976,7 +996,11 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
                 {
                     if (!_spawnPointLookup.ContainsKey(definition.Group))
                     {
-                        _spawnPointLookup.Add(definition.Group, definition.SpawnPoints);
+                        // Markers owned by an Encounter room are spawned only by that room (TASK-330 hybrid).
+                        Transform[] groupPoints = definition.Group == SpawnGroupType.Enemies
+                            ? EncounterMarkerOwnership.ExcludeOwned(definition.SpawnPoints, config.EncounterRooms)
+                            : definition.SpawnPoints;
+                        _spawnPointLookup.Add(definition.Group, groupPoints);
                     }
                     if (definition.Group == SpawnGroupType.Reinforcements)
                     {
@@ -1288,7 +1312,10 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
                 {
                     case InitialSpawnGroupPolicy.SpawnKind.Enemies:
                         int remainingBudget = group.ThreatBudget > 0 ? group.ThreatBudget : int.MaxValue;
-                        for (int index = 0; index < group.Amount; index++)
+                        int groupAmount = _spawnPointLookup.TryGetValue(group.Group, out Transform[] groupPoints) && group.SpawnPoints != null
+                            ? EncounterMarkerOwnership.EffectiveGroupAmount(group.Amount, group.SpawnPoints.Length, groupPoints.Length)
+                            : group.Amount;
+                        for (int index = 0; index < groupAmount; index++)
                         {
                             if (remainingBudget <= 0)
                             {
@@ -1335,6 +1362,12 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
                             this);
                         break;
                 }
+            }
+
+            if (!TrySpawnEncounterRooms(out failure))
+            {
+                _initialRaidBootstrapState = InitialRaidBootstrapState.Failed;
+                return false;
             }
 
             _initialRaidBootstrapState = InitialRaidBootstrapState.Completed;
@@ -4075,15 +4108,8 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
         return SpawnEnemyAtTransform(runner, spawnPoint, origin, disableLoot, int.MaxValue, out _);
     }
 
-    private bool SpawnEnemyAtTransform(
-        NetworkRunner runner,
-        Transform spawnPoint,
-        Spawning.EnemyPopulationOrigin origin,
-        bool disableLoot,
-        int remainingThreatBudget,
-        out int spawnedThreatCost)
+    private bool TryEnsureEnemyCandidates()
     {
-        spawnedThreatCost = 0;
         if (_enemyPrefabs == null || _enemyPrefabs.Length <= 0)
         {
             Debug.LogError("Cannot spawn enemy: Enemy prefab reference is missing.");
@@ -4093,6 +4119,23 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
         if (_enemyCandidates == null || _enemyCandidates.Length != _enemyPrefabs.Length)
         {
             RefreshEnemyCandidates();
+        }
+
+        return true;
+    }
+
+    private bool SpawnEnemyAtTransform(
+        NetworkRunner runner,
+        Transform spawnPoint,
+        Spawning.EnemyPopulationOrigin origin,
+        bool disableLoot,
+        int remainingThreatBudget,
+        out int spawnedThreatCost)
+    {
+        spawnedThreatCost = 0;
+        if (!TryEnsureEnemyCandidates())
+        {
+            return false;
         }
 
         if (!Spawning.WeightedEnemySelector.TrySelect(
@@ -4106,6 +4149,97 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             return false;
         }
 
+        return SpawnSelectedEnemy(runner, spawnPoint, origin, disableLoot, selectedCandidate, 0, 0u, out spawnedThreatCost);
+    }
+
+    /// <summary>
+    /// Initial Encounter spawn of every authored room: each room plans its own composition with a per-room
+    /// deterministic seed and spawns every planned enemy at a distinct room spawn point. NoEncounter spawns nothing;
+    /// an Invalid composition is reported and skipped without failing the raid.
+    /// </summary>
+    private bool TrySpawnEncounterRooms(out string failure)
+    {
+        failure = null;
+        IReadOnlyList<EncounterRoom> rooms = _sceneSpawnPointConfiguration != null ? _sceneSpawnPointConfiguration.EncounterRooms : null;
+        if (rooms == null || rooms.Count == 0)
+        {
+            return true;
+        }
+
+        if (!TryEnsureEnemyCandidates())
+        {
+            failure = "Encounter bootstrap requires enemy prefabs.";
+            return false;
+        }
+
+        if (!EnsureLootSessionSeed(_runner))
+        {
+            failure = "Encounter bootstrap requires the authoritative session seed.";
+            return false;
+        }
+
+        var assignments = new List<EncounterSpawnAssignment<NetworkPrefabRef>>();
+        foreach (EncounterRoom room in rooms)
+        {
+            if (room == null)
+            {
+                continue;
+            }
+
+            EncounterPlanResult plan = EncounterBootstrapPlanner.Plan(
+                _enemyCandidates,
+                DungeonEnvironment,
+                room.Composition,
+                room.SpawnPoints.Count,
+                _lootSessionSeed,
+                _currentSceneLoadGeneration,
+                room.Id,
+                assignments);
+
+            if (plan == EncounterPlanResult.Invalid)
+            {
+                Debug.LogWarning($"[NetworkSpawnManager] Encounter room '{room.name}' ({room.Id}) has no valid composition for environment '{DungeonEnvironment}'. It spawns nothing.", room);
+                continue;
+            }
+
+            if (plan == EncounterPlanResult.NoEncounter)
+            {
+                continue;
+            }
+
+            foreach (EncounterSpawnAssignment<NetworkPrefabRef> assignment in assignments)
+            {
+                Transform spawnPoint = room.SpawnPoints[assignment.SpawnPointIndex];
+                if (!SpawnSelectedEnemy(
+                        _runner,
+                        spawnPoint,
+                        Spawning.EnemyPopulationOrigin.Bootstrap,
+                        disableLoot: false,
+                        assignment.Candidate,
+                        room.Id.Value,
+                        assignment.MemberKey,
+                        out _))
+                {
+                    failure = $"Enemy bootstrap failed for encounter room '{room.name}' ({room.Id}).";
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private bool SpawnSelectedEnemy(
+        NetworkRunner runner,
+        Transform spawnPoint,
+        Spawning.EnemyPopulationOrigin origin,
+        bool disableLoot,
+        Spawning.EnemySpawnCandidate<NetworkPrefabRef> selectedCandidate,
+        int encounterId,
+        uint encounterMemberKey,
+        out int spawnedThreatCost)
+    {
+        spawnedThreatCost = 0;
         if (!EnsureLootSessionSeed(runner))
         {
             Debug.LogError(
@@ -4164,6 +4298,11 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
                     if (instance.TryGetBehaviour(out EnemyCharacter character))
                     {
                         character.PopulationOrigin = origin;
+                        if (encounterId > 0)
+                        {
+                            character.EncounterIdValue = encounterId;
+                            character.EncounterMemberKey = encounterMemberKey;
+                        }
                     }
 
                     if (instance.TryGetBehaviour(out NetworkLootContainer container))
