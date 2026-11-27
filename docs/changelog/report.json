@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1290,
-  "canonicalEntries": 1287,
+  "rawCommits": 1293,
+  "canonicalEntries": 1290,
   "before": {
-    "Bug Fixes": 199,
-    "Documentation": 140,
+    "Documentation": 142,
+    "Bug Fixes": 200,
     "Features": 474,
     "Architecture & Infrastructure": 31,
     "Other Changes": 379,
@@ -12,8 +12,8 @@
     "Refactoring": 17
   },
   "after": {
-    "Bug Fixes": 215,
-    "Documentation": 156,
+    "Documentation": 158,
+    "Bug Fixes": 216,
     "Features": 613,
     "Maintenance": 29,
     "Other Changes": 186,
@@ -23,27 +23,27 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Networking & Sessions": 371,
-    "UI": 368,
+    "Unassigned": 54,
+    "Extraction": 183,
+    "Networking & Sessions": 372,
+    "UI": 369,
+    "Build & Tooling": 671,
+    "Tests": 823,
     "World & Visibility": 196,
-    "Build & Tooling": 669,
-    "Tests": 822,
-    "Unassigned": 53,
     "Documentation": 460,
     "Combat": 426,
     "Art & Animation": 280,
     "Inventory & Loot": 509,
     "Audio": 44,
     "Abilities": 148,
-    "Extraction": 182,
     "Persistence & Backend": 329,
     "Movement": 109,
     "Input": 33
   },
   "canonical": {
     "sections": {
-      "Bug Fixes": 214,
-      "Documentation": 156,
+      "Documentation": 158,
+      "Bug Fixes": 215,
       "Features": 612,
       "Maintenance": 29,
       "Other Changes": 185,
@@ -52,19 +52,19 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Networking & Sessions": 371,
-      "UI": 367,
+      "Unassigned": 54,
+      "Extraction": 183,
+      "Networking & Sessions": 372,
+      "UI": 368,
+      "Build & Tooling": 669,
+      "Tests": 821,
       "World & Visibility": 194,
-      "Build & Tooling": 667,
-      "Tests": 820,
-      "Unassigned": 53,
       "Documentation": 458,
       "Combat": 424,
       "Art & Animation": 277,
       "Inventory & Loot": 509,
       "Audio": 44,
       "Abilities": 146,
-      "Extraction": 182,
       "Persistence & Backend": 329,
       "Movement": 109,
       "Input": 33
@@ -78601,8 +78601,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 413,
-      "canonicalEntries": 413
+      "originalCommits": 416,
+      "canonicalEntries": 416
     },
     {
       "key": "v0.5.0",
@@ -78646,6 +78646,192 @@
     }
   ],
   "commits": [
+    {
+      "sha": "6089237bc23eccf7ea4d855acd75f7d68c05ea86",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6089237bc23eccf7ea4d855acd75f7d68c05ea86",
+      "subject": "docs(odd): track FIX-110 presentation allocations",
+      "body": "Execution tracker for FIX-110 with the allocation diagnosis, RED/GREEN evidence, base-versus-change suite differentials and the Profiler before/after capture. The in-raid manual check is deferred to QA.\n",
+      "date": "2026-11-26T21:33:08-03:00",
+      "files": [
+        "odd/tasks/fix-110-presentation-allocations.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "odd",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "unassigned-system",
+          "message": "No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system."
+        }
+      ],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "7967ac717b05167c4cd5350eeed183a4039017dd",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7967ac717b05167c4cd5350eeed183a4039017dd",
+      "subject": "fix(extraction): stop per-frame allocations in raid presentation",
+      "body": "The Sanctuary, raid HUD and minimap presenters allocated managed memory\non every frame even with a stable state (8208, 1026 and 513 bytes per\nframe in a Host raid on CatacombsMap). Both sources were shared reads\nthe presenters call each frame:\n\n- NetworkSpawnManager.TryGetRaidInitialAffiliations rebuilt the\n  immutable RaidInitialAffiliationSnapshot (arrays and HashSets) on\n  every call. It now builds it once per bound RaidLaunchContext, keyed\n  by reference, and clears it with the launch context on reset. The 17\n  consumers only read the snapshot.\n- TeamExtractionCoordinator.TryGetTeamPresence allocated two Lists per\n  call. It now uses dedicated query buffers, separate from the\n  simulation buffers, and retains no controller references.\n\nProfiler after the change: 0 bytes per frame for the three presenters.\nPresenter code and extraction rules are unchanged.\n\nTests:\n- NetworkSpawnManagerAffiliationTests: same snapshot on repeated reads,\n  no GC allocation, launch teams preserved, no context fails closed.\n- TeamExtractionCoordinatorTests: presence counts, no GC allocation on\n  repeated queries, no stale members after a failed member build.\n\nRefs: FIX-110\n",
+      "date": "2026-11-26T21:32:58-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionCoordinator.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs"
+      ],
+      "originalType": "fix",
+      "originalScope": "extraction",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Networking & Sessions",
+        "UI",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionCoordinator.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "scope",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "message-term",
+          "value": "HUD",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "41162c616af26a2d4998332e9cec18b7678bd46b",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/41162c616af26a2d4998332e9cec18b7678bd46b",
+      "subject": "docs(agents): require a fetch or pull before every commit",
+      "body": "Before every commit, run git fetch (or git pull) for the whole repository and check the branch against its upstream; report and resolve any divergence before committing.\n",
+      "date": "2026-11-26T21:32:58-03:00",
+      "files": [
+        "AGENTS.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "agents",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "Build & Tooling"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "AGENTS.md",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "scope",
+          "value": "agents",
+          "supports": "Build & Tooling"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
     {
       "sha": "3fcaf28848499ac529923c3e3e72d40d0c4ebe64",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3fcaf28848499ac529923c3e3e72d40d0c4ebe64",

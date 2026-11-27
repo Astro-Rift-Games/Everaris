@@ -4,32 +4,178 @@
 
 Release: Unreleased
 
-413 original commits; 413 canonical entries.
+416 original commits; 416 canonical entries.
 
 ## Canonical classification
 
-153 features; 121 bug fixes; 4 refactoring; 1 architecture & infrastructure; 66 documentation; 26 tests; 18 maintenance; 24 other changes
+153 features; 122 bug fixes; 4 refactoring; 1 architecture & infrastructure; 68 documentation; 26 tests; 18 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 19 | 13 | 1 | 0 | 10 | 1 |
 | Art & Animation | 34 | 14 | 3 | 0 | 11 | 8 |
 | Audio | 9 | 2 | 0 | 0 | 2 | 1 |
-| Build & Tooling | 107 | 79 | 4 | 1 | 30 | 7 |
+| Build & Tooling | 107 | 80 | 4 | 1 | 31 | 7 |
 | Combat | 61 | 26 | 2 | 0 | 19 | 2 |
 | Documentation | 47 | 46 | 0 | 0 | 22 | 2 |
-| Extraction | 23 | 23 | 2 | 0 | 10 | 5 |
+| Extraction | 23 | 24 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
 | Inventory & Loot | 89 | 65 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
-| Networking & Sessions | 48 | 46 | 0 | 0 | 19 | 2 |
+| Networking & Sessions | 48 | 47 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 55 | 57 | 2 | 1 | 25 | 4 |
-| Tests | 139 | 111 | 4 | 1 | 42 | 4 |
-| UI | 47 | 25 | 2 | 0 | 19 | 6 |
-| Unassigned | 1 | 3 | 0 | 0 | 29 | 2 |
+| Tests | 139 | 112 | 4 | 1 | 42 | 4 |
+| UI | 47 | 26 | 2 | 0 | 19 | 6 |
+| Unassigned | 1 | 3 | 0 | 0 | 30 | 2 |
 | World & Visibility | 43 | 22 | 1 | 0 | 7 | 13 |
 
 ## Original commit records
+
+### 6089237bc23eccf7ea4d855acd75f7d68c05ea86
+
+[6089237bc23eccf7ea4d855acd75f7d68c05ea86](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6089237bc23eccf7ea4d855acd75f7d68c05ea86)
+
+Date: 2026-11-26T21:33:08-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): track FIX-110 presentation allocations
+```
+
+#### Original body
+
+```text
+Execution tracker for FIX-110 with the allocation diagnosis, RED/GREEN evidence, base-versus-change suite differentials and the Profiler before/after capture. The in-raid manual check is deferred to QA.
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-110-presentation-allocations.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### 7967ac717b05167c4cd5350eeed183a4039017dd
+
+[7967ac717b05167c4cd5350eeed183a4039017dd](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7967ac717b05167c4cd5350eeed183a4039017dd)
+
+Date: 2026-11-26T21:32:58-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Networking & Sessions, UI, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(extraction): stop per-frame allocations in raid presentation
+```
+
+#### Original body
+
+```text
+The Sanctuary, raid HUD and minimap presenters allocated managed memory
+on every frame even with a stable state (8208, 1026 and 513 bytes per
+frame in a Host raid on CatacombsMap). Both sources were shared reads
+the presenters call each frame:
+
+- NetworkSpawnManager.TryGetRaidInitialAffiliations rebuilt the
+  immutable RaidInitialAffiliationSnapshot (arrays and HashSets) on
+  every call. It now builds it once per bound RaidLaunchContext, keyed
+  by reference, and clears it with the launch context on reset. The 17
+  consumers only read the snapshot.
+- TeamExtractionCoordinator.TryGetTeamPresence allocated two Lists per
+  call. It now uses dedicated query buffers, separate from the
+  simulation buffers, and retains no controller references.
+
+Profiler after the change: 0 bytes per frame for the three presenters.
+Presenter code and extraction rules are unchanged.
+
+Tests:
+- NetworkSpawnManagerAffiliationTests: same snapshot on repeated reads,
+  no GC allocation, launch teams preserved, no context fails closed.
+- TeamExtractionCoordinatorTests: presence counts, no GC allocation on
+  repeated queries, no stale members after a failed member build.
+
+Refs: FIX-110
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionCoordinator.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionCoordinator.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs
+- scope → Extraction: extraction
+- message-term → Extraction: extraction
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs.meta
+- message-term → UI: HUD
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/NetworkSpawnManagerAffiliationTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionCoordinatorTests.cs
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 41162c616af26a2d4998332e9cec18b7678bd46b
+
+[41162c616af26a2d4998332e9cec18b7678bd46b](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/41162c616af26a2d4998332e9cec18b7678bd46b)
+
+Date: 2026-11-26T21:32:58-03:00 · Classification: Documentation (explicit) · Systems: Build & Tooling
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(agents): require a fetch or pull before every commit
+```
+
+#### Original body
+
+```text
+Before every commit, run git fetch (or git pull) for the whole repository and check the branch against its upstream; report and resolve any divergence before committing.
+```
+
+#### Changed paths
+
+```text
+AGENTS.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → Build &amp; Tooling: AGENTS.md
+- scope → Build &amp; Tooling: agents
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 3fcaf28848499ac529923c3e3e72d40d0c4ebe64
 
