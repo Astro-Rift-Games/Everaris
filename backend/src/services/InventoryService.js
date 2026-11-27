@@ -1438,41 +1438,49 @@ class InventoryService {
       return { alreadySecured: false, loadout: inventoryItems(updated, 'loadout') };
     }
 
-    // Restore prepared equipment exactly as it was when the raid started
-    if (character.inventory.pendingReservation) {
-      character.inventory.preparedEquipment = character.inventory.pendingReservation.preparedEquipment || {};
-      character.markModified('inventory.preparedEquipment');
-      
-      // Clear the pending reservation so the backend matches the client's confirmed state
-      character.inventory.pendingReservation = null;
-      character.markModified('inventory.pendingReservation');
-    }
-
-    // Add extracted items into the loadout.
-    // Items array may be empty (the player extracted but carried no loot).
-    // Duplicate protection against double-extraction is guaranteed by the
-    // (raidId, resultSequence) idempotency check above.
+    // FIX-33: Atomic revision-guarded write for v1 legacy extraction so concurrent
+    // shop operations cannot silently overwrite extracted loot between read and $set.
+    const nextLoadout = [];
     if (items && items.length > 0) {
       for (const item of items) {
-        const existing = character.inventory.loadout.find(i => i.lootId === item.lootId);
+        const existing = nextLoadout.find(i => i.lootId === item.lootId);
         if (existing) {
           existing.amount += item.amount;
         } else {
-          character.inventory.loadout.push({ lootId: item.lootId, amount: item.amount });
+          nextLoadout.push({ lootId: item.lootId, amount: item.amount });
         }
       }
     }
 
-    // Never prune durable replay barriers, including receipts from unified commits.
-    character.inventory.appliedExtractionReceipts.push({ raidId, resultSequence });
+    const setFields = { 'inventory.loadout': nextLoadout };
+    if (character.inventory.pendingReservation) {
+      setFields['inventory.preparedEquipment'] = character.inventory.pendingReservation.preparedEquipment || {};
+      setFields['inventory.pendingReservation'] = null;
+    }
 
-    character.markModified('inventory.loadout');
-    character.markModified('inventory.appliedExtractionReceipts');
-    await character.save();
+    const expectedRevision = character.revision ?? 0;
+    const updated = await Character.findOneAndUpdate(
+      {
+        accountId,
+        revision: expectedRevision,
+        'inventory.loadout': { $size: 0 },
+        'inventory.appliedExtractionReceipts': { $not: { $elemMatch: { raidId, resultSequence } } }
+      },
+      {
+        $set: setFields,
+        $inc: { revision: 1 },
+        $push: { 'inventory.appliedExtractionReceipts': { raidId, resultSequence } }
+      },
+      { returnDocument: 'after' }
+    );
+
+    if (!updated) {
+      throw { statusCode: 409, errorCode: 'REVISION_CONFLICT', message: 'Revision conflict during extraction commit.' };
+    }
 
     return {
       alreadySecured: false,
-      loadout: serializeItems(character.inventory.loadout)
+      loadout: serializeItems(updated.inventory.loadout)
     };
   }
 

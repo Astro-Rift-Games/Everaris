@@ -10,6 +10,7 @@ const InventoryService = require('../src/services/InventoryService');
 function makeCharacter(overrides = {}) {
   const doc = {
     accountId: 'acc123',
+    revision: 0,
     inventory: {
       stash:   [],
       loadout: [],
@@ -24,17 +25,39 @@ function makeCharacter(overrides = {}) {
   return doc;
 }
 
+function stubAtomicCharacter(mockChar) {
+  Character.findOne = async () => mockChar;
+  Character.findOneAndUpdate = async (filter, update) => {
+    if (!mockChar) return null;
+    if (filter.revision !== undefined && (mockChar.revision ?? 0) !== filter.revision) return null;
+    if (update.$set) {
+      if (Object.hasOwn(update.$set, 'inventory.loadout')) mockChar.inventory.loadout = update.$set['inventory.loadout'];
+      if (Object.hasOwn(update.$set, 'inventory.preparedEquipment')) mockChar.inventory.preparedEquipment = update.$set['inventory.preparedEquipment'];
+      if (Object.hasOwn(update.$set, 'inventory.pendingReservation')) mockChar.inventory.pendingReservation = update.$set['inventory.pendingReservation'];
+    }
+    if (update.$inc?.revision) mockChar.revision = (mockChar.revision ?? 0) + update.$inc.revision;
+    if (update.$push?.['inventory.appliedExtractionReceipts']) {
+      mockChar.inventory.appliedExtractionReceipts.push(update.$push['inventory.appliedExtractionReceipts']);
+    }
+    return mockChar;
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
 test('InventoryService.commitExtraction', async (t) => {
   const originalFindOne = Character.findOne;
-  t.afterEach(() => { Character.findOne = originalFindOne; });
+  const originalFindOneAndUpdate = Character.findOneAndUpdate;
+  t.afterEach(() => {
+    Character.findOne = originalFindOne;
+    Character.findOneAndUpdate = originalFindOneAndUpdate;
+  });
 
   await t.test('persists items to loadout on first commit', async () => {
     const mockChar = makeCharacter();
-    Character.findOne = async () => mockChar;
+    stubAtomicCharacter(mockChar);
 
     const result = await InventoryService.commitExtraction(
       'acc123', 'raid-001', 1,
@@ -57,7 +80,7 @@ test('InventoryService.commitExtraction', async (t) => {
       items: [{ lootId: 'bone', amount: 1 }],
       preparedEquipment: { weaponSlot1: 'sword_epic', weaponSlot2: '', helmet: '', armor: '', gloves: '', boots: '' }
     };
-    Character.findOne = async () => mockChar;
+    stubAtomicCharacter(mockChar);
 
     const result = await InventoryService.commitExtraction(
       'acc123', 'raid-002', 1,
@@ -74,7 +97,7 @@ test('InventoryService.commitExtraction', async (t) => {
     const mockChar = makeCharacter();
     mockChar.inventory.appliedExtractionReceipts = [{ raidId: 'raid-001', resultSequence: 1 }];
     mockChar.inventory.loadout = [{ lootId: 'sword', amount: 2 }];
-    Character.findOne = async () => mockChar;
+    stubAtomicCharacter(mockChar);
 
     const result = await InventoryService.commitExtraction(
       'acc123', 'raid-001', 1,
@@ -90,7 +113,7 @@ test('InventoryService.commitExtraction', async (t) => {
   await t.test('allows different resultSequence for same raidId', async () => {
     const mockChar = makeCharacter();
     mockChar.inventory.appliedExtractionReceipts = [{ raidId: 'raid-001', resultSequence: 1 }];
-    Character.findOne = async () => mockChar;
+    stubAtomicCharacter(mockChar);
 
     const result = await InventoryService.commitExtraction(
       'acc123', 'raid-001', 2,
@@ -105,7 +128,7 @@ test('InventoryService.commitExtraction', async (t) => {
     const mockChar = makeCharacter();
     // Player has items in loadout (because it wasn't cleared by savePendingReservation, which is an invalid state for commitExtraction)
     mockChar.inventory.loadout = [{ lootId: 'sword', amount: 2 }];
-    Character.findOne = async () => mockChar;
+    stubAtomicCharacter(mockChar);
 
     try {
       await InventoryService.commitExtraction(
@@ -121,7 +144,7 @@ test('InventoryService.commitExtraction', async (t) => {
 
   await t.test('accepts empty items array (zero-loot extraction)', async () => {
     const mockChar = makeCharacter();
-    Character.findOne = async () => mockChar;
+    stubAtomicCharacter(mockChar);
 
     const result = await InventoryService.commitExtraction('acc123', 'raid-003', 1, []);
 
@@ -147,7 +170,7 @@ test('InventoryService.commitExtraction', async (t) => {
     for (let i = 1; i <= 256; i++) {
       mockChar.inventory.appliedExtractionReceipts.push({ raidId: `raid-${i}`, resultSequence: i });
     }
-    Character.findOne = async () => mockChar;
+    stubAtomicCharacter(mockChar);
 
     await InventoryService.commitExtraction('acc123', 'raid-999', 1, []);
 
@@ -165,7 +188,7 @@ test('InventoryService.commitExtraction', async (t) => {
     // Loadout already has a potion from a previous (valid) state — but we need loadout empty.
     // So: test the merge logic within the extraction call when items list has the same lootId twice.
     // (In practice Unity sends distinct lootIds, but backend should be defensive.)
-    Character.findOne = async () => mockChar;
+    stubAtomicCharacter(mockChar);
 
     const result = await InventoryService.commitExtraction(
       'acc123', 'raid-004', 1,

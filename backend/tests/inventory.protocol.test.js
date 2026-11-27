@@ -211,10 +211,18 @@ test('inventory protocol B1', async t => {
 
   await t.test('legacy v1 extraction folds only the inbound aggregate, not stored stash', async () => {
     const before = JSON.stringify(character.inventory.stash);
+    Character.findOneAndUpdate = async (filter, update) => {
+      writes++;
+      assert.equal(filter.revision, character.revision);
+      assert.equal(update.$inc.revision, 1);
+      character.inventory.loadout = update.$set['inventory.loadout'];
+      character.revision += update.$inc.revision;
+      return character;
+    };
     const res = await Inventory.commitExtraction(accountId, 'raid', 1,
       [{ lootId: 'bone', amount: 2 }, { lootId: 'bone', amount: 3 }]);
     assert.deepEqual(res.loadout, [{ lootId: 'bone', amount: 5 }]);
-    assert.equal(JSON.stringify(character.inventory.stash), before); assert.equal(saves, 1);
+    assert.equal(JSON.stringify(character.inventory.stash), before); assert.equal(writes, 1);
   });
 
   await t.test('v2 reservation admission uses a path-scoped update and retains exact entries', async () => {
