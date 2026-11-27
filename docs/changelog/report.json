@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1311,
-  "canonicalEntries": 1308,
+  "rawCommits": 1315,
+  "canonicalEntries": 1312,
   "before": {
-    "Bug Fixes": 213,
+    "Bug Fixes": 217,
     "Other Changes": 380,
     "Documentation": 144,
     "Features": 476,
@@ -12,7 +12,7 @@
     "Refactoring": 17
   },
   "after": {
-    "Bug Fixes": 229,
+    "Bug Fixes": 233,
     "Documentation": 161,
     "Features": 615,
     "Maintenance": 29,
@@ -23,15 +23,15 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Networking & Sessions": 377,
-    "Build & Tooling": 679,
-    "Tests": 838,
+    "UI": 377,
+    "Build & Tooling": 683,
+    "Tests": 842,
+    "Extraction": 188,
+    "Networking & Sessions": 379,
+    "Documentation": 464,
+    "Inventory & Loot": 516,
+    "Persistence & Backend": 340,
     "Abilities": 150,
-    "Inventory & Loot": 515,
-    "UI": 375,
-    "Persistence & Backend": 339,
-    "Documentation": 463,
-    "Extraction": 186,
     "Combat": 429,
     "Art & Animation": 281,
     "Unassigned": 55,
@@ -42,7 +42,7 @@
   },
   "canonical": {
     "sections": {
-      "Bug Fixes": 228,
+      "Bug Fixes": 232,
       "Documentation": 161,
       "Features": 614,
       "Maintenance": 29,
@@ -52,15 +52,15 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Networking & Sessions": 377,
-      "Build & Tooling": 677,
-      "Tests": 836,
+      "UI": 376,
+      "Build & Tooling": 681,
+      "Tests": 840,
+      "Extraction": 188,
+      "Networking & Sessions": 379,
+      "Documentation": 462,
+      "Inventory & Loot": 516,
+      "Persistence & Backend": 340,
       "Abilities": 148,
-      "Inventory & Loot": 515,
-      "UI": 374,
-      "Persistence & Backend": 339,
-      "Documentation": 461,
-      "Extraction": 186,
       "Combat": 427,
       "Art & Animation": 278,
       "Unassigned": 55,
@@ -78505,8 +78505,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 434,
-      "canonicalEntries": 434
+      "originalCommits": 438,
+      "canonicalEntries": 438
     },
     {
       "key": "v0.5.0",
@@ -78550,6 +78550,519 @@
     }
   ],
   "commits": [
+    {
+      "sha": "f6077df8ba9565158b4b476c0afbef8579b75f05",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f6077df8ba9565158b4b476c0afbef8579b75f05",
+      "subject": "fix(ui): enforce single active EventSystem across scene transitions",
+      "body": "FIX-60: add ActiveEventSystemGuard to disable duplicate EventSystems on scene load/switch in favor of the active scene InputSystemUIInputModule EventSystem and clear stale UI selection from unloaded scenes.\n",
+      "date": "2026-11-27T17:06:40-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/UI/ActiveEventSystemGuard.cs",
+        "Project Grimhold/Assets/Scripts/UI/ActiveEventSystemGuard.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ActiveEventSystemGuardTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ActiveEventSystemGuardTests.cs.meta"
+      ],
+      "originalType": "fix",
+      "originalScope": "ui",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "UI",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/ActiveEventSystemGuard.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/ActiveEventSystemGuard.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "scope",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ActiveEventSystemGuardTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ActiveEventSystemGuardTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ActiveEventSystemGuardTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ActiveEventSystemGuardTests.cs.meta",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "0de18b429e4082e5eca7d4d2ed911f8444b4382a",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0de18b429e4082e5eca7d4d2ed911f8444b4382a",
+      "subject": "fix(extraction): include retained disconnected teammates in team extraction requirements",
+      "body": "FIX-47: search DisconnectedParticipantRegistry in NetworkSpawnManager.TryGetRaidParticipant so retained disconnected teammates remain required (decision 3A), block/cancel extraction with RequiredMemberDisconnected across all controllers, and allow solo extraction after Continuar sin compañero.\n",
+      "date": "2026-11-27T17:06:39-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Networking/DisconnectedParticipantRegistry.cs",
+        "Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionCoordinator.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs.meta",
+        "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md"
+      ],
+      "originalType": "fix",
+      "originalScope": "extraction",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Networking & Sessions",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionCoordinator.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs.meta",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Extraction"
+        },
+        {
+          "source": "scope",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/DisconnectedParticipantRegistry.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/ExtractionArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs.meta",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "7422d180677a37f3b338a4f247ed79d132388488",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7422d180677a37f3b338a4f247ed79d132388488",
+      "subject": "fix(extraction): retry authority publication and recover unconsumed extraction on login",
+      "body": "FIX-08: gate RPC_CommitExtractionOnInputAuthority on confirmed Host publication, retry transient publish failures with bounded backoff, and surface publish status to the client Results screen.\nFIX-09: expose pendingAuthoritativeExtraction on GET /character/me/inventory when an unconsumed authoritative result exists and recover/reconcile it idempotently on login instead of discarding the reservation as a loss.\n",
+      "date": "2026-11-27T17:06:39-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs",
+        "Project Grimhold/Assets/Scripts/Player/Extraction/ExtractionAuthorityPublishCoordinator.cs",
+        "Project Grimhold/Assets/Scripts/Player/Extraction/ExtractionAuthorityPublishCoordinator.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs",
+        "Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs.meta",
+        "backend/src/services/InventoryService.js",
+        "backend/tests/extraction.login.recovery.test.js"
+      ],
+      "originalType": "fix",
+      "originalScope": "extraction",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Extraction/ExtractionAuthorityPublishCoordinator.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Extraction/ExtractionAuthorityPublishCoordinator.cs.meta",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs.meta",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs.meta",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/extraction.login.recovery.test.js",
+          "supports": "Extraction"
+        },
+        {
+          "source": "scope",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/extraction.login.recovery.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/extraction.login.recovery.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "88957e3ecc961cb82447679d4d4236d499b745a9",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/88957e3ecc961cb82447679d4d4236d499b745a9",
+      "subject": "fix(party): add continuation backoff/expiry and handle Town disconnects",
+      "body": "FIX-07: prevent pending continuation ACKs from re-sending on every RTT by enforcing exponential backoff and a bounded wait expiration that transitions to a usable Solo Party.\nFIX-46: implement IPlayerLeft on TownPartyDirectory to remove disconnected Town members, convert Duo to Solo, cancel stale invitations, preserve teammates in active expeditions, and show '(en expedición)' in the Town Party HUD.\n",
+      "date": "2026-11-27T17:06:39-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownPartyContinuationRetryPolicy.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownPartyContinuationRetryPolicy.cs.meta",
+        "Project Grimhold/Assets/Scripts/Networking/TownPartyDirectory.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownPartyDisconnectPolicy.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownPartyDisconnectPolicy.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyHudPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyHudView.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyPresentation.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs.meta"
+      ],
+      "originalType": "fix",
+      "originalScope": "party",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Networking & Sessions",
+        "UI",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPartyContinuationRetryPolicy.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPartyContinuationRetryPolicy.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPartyDirectory.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPartyDisconnectPolicy.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPartyDisconnectPolicy.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyHudPresenter.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyHudView.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "HUD",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs.meta",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "96a133e9a1e2b207d2ff9035bf150b8ae5fc5d36",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/96a133e9a1e2b207d2ff9035bf150b8ae5fc5d36",

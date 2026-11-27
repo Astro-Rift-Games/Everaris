@@ -4,32 +4,270 @@
 
 Release: Unreleased
 
-434 original commits; 434 canonical entries.
+438 original commits; 438 canonical entries.
 
 ## Canonical classification
 
-155 features; 135 bug fixes; 4 refactoring; 1 architecture & infrastructure; 71 documentation; 26 tests; 18 maintenance; 24 other changes
+155 features; 139 bug fixes; 4 refactoring; 1 architecture & infrastructure; 71 documentation; 26 tests; 18 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 19 | 15 | 1 | 0 | 10 | 1 |
 | Art & Animation | 34 | 15 | 3 | 0 | 11 | 8 |
 | Audio | 9 | 2 | 0 | 0 | 2 | 1 |
-| Build & Tooling | 108 | 86 | 4 | 1 | 32 | 7 |
+| Build & Tooling | 108 | 90 | 4 | 1 | 32 | 7 |
 | Combat | 61 | 29 | 2 | 0 | 19 | 2 |
-| Documentation | 48 | 48 | 0 | 0 | 22 | 2 |
-| Extraction | 23 | 27 | 2 | 0 | 10 | 5 |
+| Documentation | 48 | 49 | 0 | 0 | 22 | 2 |
+| Extraction | 23 | 29 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
-| Inventory & Loot | 89 | 71 | 4 | 1 | 29 | 5 |
+| Inventory & Loot | 89 | 72 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
-| Networking & Sessions | 49 | 51 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 57 | 65 | 2 | 1 | 25 | 4 |
-| Tests | 141 | 125 | 4 | 1 | 42 | 4 |
-| UI | 47 | 31 | 2 | 0 | 20 | 6 |
+| Networking & Sessions | 49 | 53 | 0 | 0 | 19 | 2 |
+| Persistence & Backend | 57 | 66 | 2 | 1 | 25 | 4 |
+| Tests | 141 | 129 | 4 | 1 | 42 | 4 |
+| UI | 47 | 33 | 2 | 0 | 20 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 31 | 2 |
 | World & Visibility | 43 | 22 | 1 | 0 | 7 | 13 |
 
 ## Original commit records
+
+### f6077df8ba9565158b4b476c0afbef8579b75f05
+
+[f6077df8ba9565158b4b476c0afbef8579b75f05](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f6077df8ba9565158b4b476c0afbef8579b75f05)
+
+Date: 2026-11-27T17:06:40-03:00 · Classification: Bug Fixes (explicit) · Systems: UI, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(ui): enforce single active EventSystem across scene transitions
+```
+
+#### Original body
+
+```text
+FIX-60: add ActiveEventSystemGuard to disable duplicate EventSystems on scene load/switch in favor of the active scene InputSystemUIInputModule EventSystem and clear stale UI selection from unloaded scenes.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/UI/ActiveEventSystemGuard.cs
+Project Grimhold/Assets/Scripts/UI/ActiveEventSystemGuard.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ActiveEventSystemGuardTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ActiveEventSystemGuardTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → UI: Project Grimhold/Assets/Scripts/UI/ActiveEventSystemGuard.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/ActiveEventSystemGuard.cs.meta
+- scope → UI: ui
+- message-term → UI: ui
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ActiveEventSystemGuardTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ActiveEventSystemGuardTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ActiveEventSystemGuardTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/ActiveEventSystemGuardTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 0de18b429e4082e5eca7d4d2ed911f8444b4382a
+
+[0de18b429e4082e5eca7d4d2ed911f8444b4382a](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0de18b429e4082e5eca7d4d2ed911f8444b4382a)
+
+Date: 2026-11-27T17:06:39-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Networking & Sessions, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(extraction): include retained disconnected teammates in team extraction requirements
+```
+
+#### Original body
+
+```text
+FIX-47: search DisconnectedParticipantRegistry in NetworkSpawnManager.TryGetRaidParticipant so retained disconnected teammates remain required (decision 3A), block/cancel extraction with RequiredMemberDisconnected across all controllers, and allow solo extraction after Continuar sin compañero.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/DisconnectedParticipantRegistry.cs
+Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionCoordinator.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs.meta
+Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionCoordinator.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs.meta
+- path → Extraction: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- scope → Extraction: extraction
+- message-term → Extraction: extraction
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/DisconnectedParticipantRegistry.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/ExtractionArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Scenario/TeamExtractionDisconnectedMemberTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 7422d180677a37f3b338a4f247ed79d132388488
+
+[7422d180677a37f3b338a4f247ed79d132388488](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/7422d180677a37f3b338a4f247ed79d132388488)
+
+Date: 2026-11-27T17:06:39-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Inventory & Loot, Persistence & Backend, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(extraction): retry authority publication and recover unconsumed extraction on login
+```
+
+#### Original body
+
+```text
+FIX-08: gate RPC_CommitExtractionOnInputAuthority on confirmed Host publication, retry transient publish failures with bounded backoff, and surface publish status to the client Results screen.
+FIX-09: expose pendingAuthoritativeExtraction on GET /character/me/inventory when an unconsumed authoritative result exists and recover/reconcile it idempotently on login instead of discarding the reservation as a loss.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs
+Project Grimhold/Assets/Scripts/Player/Extraction/ExtractionAuthorityPublishCoordinator.cs
+Project Grimhold/Assets/Scripts/Player/Extraction/ExtractionAuthorityPublishCoordinator.cs.meta
+Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs
+Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs.meta
+backend/src/services/InventoryService.js
+backend/tests/extraction.login.recovery.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Assets/Scripts/Player/Extraction/ExtractionAuthorityPublishCoordinator.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Player/Extraction/ExtractionAuthorityPublishCoordinator.cs.meta
+- path → Extraction: Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs.meta
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs.meta
+- path → Extraction: backend/tests/extraction.login.recovery.test.js
+- scope → Extraction: extraction
+- message-term → Extraction: extraction
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Extraction/PlayerExtractionLootSaver.cs
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- message-term → Inventory &amp; Loot: inventory
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/InventoryDataTransferObjects.cs
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/tests/extraction.login.recovery.test.js
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/ExtractionAuthorityPublishCoordinatorTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Stash/PendingAuthoritativeExtractionRecoveryTests.cs.meta
+- path → Tests: backend/tests/extraction.login.recovery.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 88957e3ecc961cb82447679d4d4236d499b745a9
+
+[88957e3ecc961cb82447679d4d4236d499b745a9](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/88957e3ecc961cb82447679d4d4236d499b745a9)
+
+Date: 2026-11-27T17:06:39-03:00 · Classification: Bug Fixes (explicit) · Systems: Networking & Sessions, UI, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(party): add continuation backoff/expiry and handle Town disconnects
+```
+
+#### Original body
+
+```text
+FIX-07: prevent pending continuation ACKs from re-sending on every RTT by enforcing exponential backoff and a bounded wait expiration that transitions to a usable Solo Party.
+FIX-46: implement IPlayerLeft on TownPartyDirectory to remove disconnected Town members, convert Duo to Solo, cancel stale invitations, preserve teammates in active expeditions, and show '(en expedición)' in the Town Party HUD.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+Project Grimhold/Assets/Scripts/Networking/TownPartyContinuationRetryPolicy.cs
+Project Grimhold/Assets/Scripts/Networking/TownPartyContinuationRetryPolicy.cs.meta
+Project Grimhold/Assets/Scripts/Networking/TownPartyDirectory.cs
+Project Grimhold/Assets/Scripts/Networking/TownPartyDisconnectPolicy.cs
+Project Grimhold/Assets/Scripts/Networking/TownPartyDisconnectPolicy.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyHudPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyHudView.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyPresentation.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SessionConnectionCoordinator.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPartyContinuationRetryPolicy.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPartyContinuationRetryPolicy.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPartyDirectory.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPartyDisconnectPolicy.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPartyDisconnectPolicy.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs.meta
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyHudPresenter.cs
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyHudView.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs.meta
+- message-term → UI: HUD
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyContinuationRetryPolicyTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyDisconnectAndHudTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 96a133e9a1e2b207d2ff9035bf150b8ae5fc5d36
 
