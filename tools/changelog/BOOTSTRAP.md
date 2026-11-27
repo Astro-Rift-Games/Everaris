@@ -13,7 +13,7 @@ Status: local implementation, NOT activated. No official merge, push, tag, Relea
 
 ## Required runner and validation
 
-Provide a dedicated, preferably ephemeral self-hosted runner labeled `grimhold-release-unity`, with Node 22, Git, Bash (Git Bash on Windows), and an already licensed Unity Editor matching `ProjectSettings/ProjectVersion.txt` (currently 6000.5.1f1). Do not store unrelated credentials on it. The candidate is trusted development-branch code, not an untrusted fork pull request.
+Provide a dedicated, preferably ephemeral self-hosted runner labeled `grimhold-release-unity`, with Node 22, Git, Bash (Git Bash on Windows), and an already licensed Unity Editor matching `ProjectSettings/ProjectVersion.txt` (currently 6000.6.8f1 on both `main` and `New-Testing`). Do not store unrelated credentials on it. The candidate is trusted development-branch code, not an untrusted fork pull request.
 
 Set `UNITY_EDITOR_PATH` to the absolute executable path and `UNITY_RELEASE_RUNNER_READY=true` only after testing that runner. The program validates Editor version, runs the changelog suite, installs existing backend lockfile dependencies with lifecycle scripts disabled and runs its unit/concurrency/integration suites (including their required MongoDB test infrastructure), invokes `ReleaseValidation.Validate`, and runs EditMode and PlayMode suites. Missing executable, license, scene wiring, test XML, zero/failed tests, changed candidate bytes or process failures must block publication. There is no build/distribution step, and metadata validation never proves multiplayer gameplay or a playable executable.
 
@@ -74,7 +74,7 @@ Every remote write rechecks relevant observed heads. Final metadata and source s
 Observed locally: existing generator tests, SemVer tests, temporary Git merge/publication/recovery simulations, mocked HTTP permissions/upload/idempotence checks, structural source checks. No official branch writes, tags, Releases, Actions runs or game builds were executed. After restart, compilation, MainMenu structural validation and the four focused PlayMode tests passed. Complete EditMode (4177/4177 completed) and PlayMode (768/768 completed) suites each failed; terminal MCP omitted exact pass/fail/skip totals and capped diagnostics at 25 per suite. No baseline run establishes causality. General-suite investigation/corrections need a scope decision; do not weaken the gate. Visual/input acceptance, licensed-runner operational dry-run, branch protections and token write eligibility remain unverified. Do not activate while any mandatory validation is missing.
 
 Official scheduling reference: https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule
-Unity CLI reference: https://docs.unity.com/en-us/engine/6000.5/manual/unity-editor/command-line-arguments/editor
+Unity CLI reference: https://docs.unity.com/en-us/engine/6000.6/manual/unity-editor/command-line-arguments/editor
 ## Generated technical archives
 
 Development and publication metadata include `docs/changelog/` alongside the three root files. The summary is bounded; original subjects, bodies, SHA links, paths and classification evidence remain in generated monthly/release archives. Repeated subjects alone are not duplicate evidence. Public notes must pass strict validation before any preparation writes; an empty public release needs explicit reviewed trailers/overrides. This does not activate schedules or authorize a publication. See [generator policy](README.md#technical-history-and-evidence).
