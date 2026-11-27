@@ -4,32 +4,223 @@
 
 Release: Unreleased
 
-418 original commits; 418 canonical entries.
+421 original commits; 421 canonical entries.
 
 ## Canonical classification
 
-153 features; 123 bug fixes; 4 refactoring; 1 architecture & infrastructure; 69 documentation; 26 tests; 18 maintenance; 24 other changes
+155 features; 123 bug fixes; 4 refactoring; 1 architecture & infrastructure; 70 documentation; 26 tests; 18 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 19 | 13 | 1 | 0 | 10 | 1 |
 | Art & Animation | 34 | 14 | 3 | 0 | 11 | 8 |
 | Audio | 9 | 2 | 0 | 0 | 2 | 1 |
-| Build & Tooling | 107 | 81 | 4 | 1 | 31 | 7 |
+| Build & Tooling | 108 | 81 | 4 | 1 | 31 | 7 |
 | Combat | 61 | 27 | 2 | 0 | 19 | 2 |
-| Documentation | 47 | 46 | 0 | 0 | 22 | 2 |
+| Documentation | 48 | 46 | 0 | 0 | 22 | 2 |
 | Extraction | 23 | 24 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
 | Inventory & Loot | 89 | 65 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
-| Networking & Sessions | 48 | 47 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 55 | 57 | 2 | 1 | 25 | 4 |
-| Tests | 139 | 113 | 4 | 1 | 42 | 4 |
+| Networking & Sessions | 49 | 47 | 0 | 0 | 19 | 2 |
+| Persistence & Backend | 57 | 57 | 2 | 1 | 25 | 4 |
+| Tests | 141 | 113 | 4 | 1 | 42 | 4 |
 | UI | 47 | 27 | 2 | 0 | 20 | 6 |
-| Unassigned | 1 | 3 | 0 | 0 | 30 | 2 |
+| Unassigned | 1 | 3 | 0 | 0 | 31 | 2 |
 | World & Visibility | 43 | 22 | 1 | 0 | 7 | 13 |
 
 ## Original commit records
+
+### 605385c312e5013c159ec6192844d35647b5435b
+
+[605385c312e5013c159ec6192844d35647b5435b](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/605385c312e5013c159ec6192844d35647b5435b)
+
+Date: 2026-11-27T01:21:20-03:00 · Classification: Documentation (explicit) · Systems: Unassigned
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): track TASK-309 MaxTransportable block telemetry
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/task-309-max-transportable-block-telemetry.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+
+#### Diagnostics
+
+- **unassigned-system:** No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system.
+
+### bb5b570c6e9ca264528b28543a0ef62eb7325cd7
+
+[bb5b570c6e9ca264528b28543a0ef62eb7325cd7](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bb5b570c6e9ca264528b28543a0ef62eb7325cd7)
+
+Date: 2026-11-27T01:21:20-03:00 · Classification: Features (explicit) · Systems: Networking & Sessions, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(telemetry): report refused expedition starts from Unity
+```
+
+#### Original body
+
+```text
+The Raid host refuses an admission whose loadout exceeds
+MaxTransportable, but the refused client never learns the reason, so
+nothing could report the block (TASK-309, Doc 23 §8.2). The local
+client now classifies its own final admission with the host's
+TryProjectLoadout. When it matches the transport limit, it sends one
+fire-and-forget report to the backend. Launch behavior is unchanged.
+
+Contract to verify:
+- RaidAdmissionData.TransportLimitExceededError replaces the literal
+  message. TryProjectLoadout keeps its signature and check order.
+- Only that exact error counts. Capacity, stack-slot and invalid
+  admissions do not report.
+- FusionSessionLauncher reports right after a successful StartGame, on
+  the admission handed to the runner. That runs once per connected
+  attempt and never on the Client's wait-for-Host retries.
+- With no authenticated backend session the reporter does nothing.
+  Send failures are logged once and never escape.
+
+Tests:
+- RaidAdmissionTransportBlockDetectionTests (EditMode): restricted
+  utilities above and at their limit, other refusal reasons, send
+  once, throwing, faulted, rejected and pending sends, report body.
+
+Docs: EconomyTelemetryArchitecture.md documents the transport_block
+contract, its rejection codes, the volume bound and the Unity
+reporter.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Backend/TelemetryClient.cs
+Project Grimhold/Assets/Scripts/Backend/TelemetryClient.cs.meta
+Project Grimhold/Assets/Scripts/Networking/FusionSessionLauncher.cs
+Project Grimhold/Assets/Scripts/Networking/RaidAdmissionData.cs
+Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlock.cs
+Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlock.cs.meta
+Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlockReporter.cs
+Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlockReporter.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs.meta
+Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/FusionSessionLauncher.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidAdmissionData.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlock.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlock.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlockReporter.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlockReporter.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/TelemetryClient.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/TelemetryClient.cs.meta
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 6b6b9dd515005ee4bf8bdfc018704928b18ad9de
+
+[6b6b9dd515005ee4bf8bdfc018704928b18ad9de](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6b6b9dd515005ee4bf8bdfc018704928b18ad9de)
+
+Date: 2026-11-27T01:21:19-03:00 · Classification: Features (explicit) · Systems: Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+feat(telemetry): record client-reported MaxTransportable blocks
+```
+
+#### Original body
+
+```text
+MaxTransportable is enforced only in Unity, so the economy telemetry
+could not measure the "tasa de bloqueo por capacidad y MaxTransportable"
+(Doc 23 §12) beyond INVENTORY_FULL capacity blocks (TASK-309).
+
+POST /character/me/telemetry/transport-block records one
+transport_block event per accepted report, with details
+{ source: 'raid_admission', limit: 'max_transportable',
+reported: 'client' }. It is a separate operation from capacity_block,
+so the two block rates never mix. The report is analytics only: it
+never writes the character, and recording stays fire-and-forget.
+
+Contract to verify:
+- Bearer token required; the body must be exactly
+  { "source": "raid_admission" }. Unknown fields, a client-declared
+  limit or another source return 400 VALIDATION_FAILED with nothing
+  written.
+- At most 20 authenticated requests per account per 10 minutes,
+  rejected ones included (429 with Retry-After).
+- An account without a character returns 404 CHARACTER_NOT_FOUND.
+
+Tests:
+- economy.telemetry.transport-block.test.js: one event per report,
+  separate aggregation from capacity_block, malformed, __proto__ and
+  oversized (413) bodies, unauthenticated, characterless, per-account
+  rate bound and sink failure.
+```
+
+#### Changed paths
+
+```text
+backend/src/app.js
+backend/src/models/EconomyTelemetryEvent.js
+backend/src/routes/telemetry.routes.js
+backend/src/services/EconomyTelemetry.js
+backend/src/validators/telemetry.validators.js
+backend/tests/economy.telemetry.transport-block.test.js
+```
+
+#### Classification evidence
+
+- type → Features: feat
+- path → Persistence &amp; Backend: backend/src/app.js
+- path → Persistence &amp; Backend: backend/src/models/EconomyTelemetryEvent.js
+- path → Persistence &amp; Backend: backend/src/routes/telemetry.routes.js
+- path → Persistence &amp; Backend: backend/src/services/EconomyTelemetry.js
+- path → Persistence &amp; Backend: backend/src/validators/telemetry.validators.js
+- path → Persistence &amp; Backend: backend/tests/economy.telemetry.transport-block.test.js
+- path → Tests: backend/tests/economy.telemetry.transport-block.test.js
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### f25d250d66bd9ffc3dbb8007249bb7ec41ce6a57
 

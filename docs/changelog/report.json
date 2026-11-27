@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1295,
-  "canonicalEntries": 1292,
+  "rawCommits": 1298,
+  "canonicalEntries": 1295,
   "before": {
-    "Documentation": 143,
+    "Documentation": 144,
+    "Features": 476,
     "Bug Fixes": 201,
-    "Features": 474,
     "Architecture & Infrastructure": 31,
     "Other Changes": 379,
     "Tests": 50,
     "Refactoring": 17
   },
   "after": {
-    "Documentation": 159,
+    "Documentation": 160,
+    "Features": 615,
     "Bug Fixes": 217,
-    "Features": 613,
     "Maintenance": 29,
     "Other Changes": 186,
     "Tests": 55,
@@ -23,28 +23,28 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Unassigned": 55,
+    "Networking & Sessions": 373,
+    "Persistence & Backend": 331,
+    "Build & Tooling": 673,
+    "Documentation": 461,
+    "Tests": 826,
     "UI": 371,
     "Combat": 427,
-    "Build & Tooling": 672,
-    "Tests": 824,
-    "Unassigned": 54,
     "Extraction": 183,
-    "Networking & Sessions": 372,
     "World & Visibility": 196,
-    "Documentation": 460,
     "Art & Animation": 280,
     "Inventory & Loot": 509,
     "Audio": 44,
     "Abilities": 148,
-    "Persistence & Backend": 329,
     "Movement": 109,
     "Input": 33
   },
   "canonical": {
     "sections": {
-      "Documentation": 159,
+      "Documentation": 160,
+      "Features": 614,
       "Bug Fixes": 216,
-      "Features": 612,
       "Maintenance": 29,
       "Other Changes": 185,
       "Tests": 55,
@@ -52,20 +52,20 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Unassigned": 55,
+      "Networking & Sessions": 373,
+      "Persistence & Backend": 331,
+      "Build & Tooling": 671,
+      "Documentation": 459,
+      "Tests": 824,
       "UI": 370,
       "Combat": 425,
-      "Build & Tooling": 670,
-      "Tests": 822,
-      "Unassigned": 54,
       "Extraction": 183,
-      "Networking & Sessions": 372,
       "World & Visibility": 194,
-      "Documentation": 458,
       "Art & Animation": 277,
       "Inventory & Loot": 509,
       "Audio": 44,
       "Abilities": 146,
-      "Persistence & Backend": 329,
       "Movement": 109,
       "Input": 33
     }
@@ -78601,8 +78601,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 418,
-      "canonicalEntries": 418
+      "originalCommits": 421,
+      "canonicalEntries": 421
     },
     {
       "key": "v0.5.0",
@@ -78646,6 +78646,244 @@
     }
   ],
   "commits": [
+    {
+      "sha": "605385c312e5013c159ec6192844d35647b5435b",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/605385c312e5013c159ec6192844d35647b5435b",
+      "subject": "docs(odd): track TASK-309 MaxTransportable block telemetry",
+      "body": "",
+      "date": "2026-11-27T01:21:20-03:00",
+      "files": [
+        "odd/tasks/task-309-max-transportable-block-telemetry.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "odd",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "unassigned-system",
+          "message": "No recognized exact path/scope token or bounded system term. Inspect the listed paths before assigning a system."
+        }
+      ],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "bb5b570c6e9ca264528b28543a0ef62eb7325cd7",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/bb5b570c6e9ca264528b28543a0ef62eb7325cd7",
+      "subject": "feat(telemetry): report refused expedition starts from Unity",
+      "body": "The Raid host refuses an admission whose loadout exceeds\nMaxTransportable, but the refused client never learns the reason, so\nnothing could report the block (TASK-309, Doc 23 §8.2). The local\nclient now classifies its own final admission with the host's\nTryProjectLoadout. When it matches the transport limit, it sends one\nfire-and-forget report to the backend. Launch behavior is unchanged.\n\nContract to verify:\n- RaidAdmissionData.TransportLimitExceededError replaces the literal\n  message. TryProjectLoadout keeps its signature and check order.\n- Only that exact error counts. Capacity, stack-slot and invalid\n  admissions do not report.\n- FusionSessionLauncher reports right after a successful StartGame, on\n  the admission handed to the runner. That runs once per connected\n  attempt and never on the Client's wait-for-Host retries.\n- With no authenticated backend session the reporter does nothing.\n  Send failures are logged once and never escape.\n\nTests:\n- RaidAdmissionTransportBlockDetectionTests (EditMode): restricted\n  utilities above and at their limit, other refusal reasons, send\n  once, throwing, faulted, rejected and pending sends, report body.\n\nDocs: EconomyTelemetryArchitecture.md documents the transport_block\ncontract, its rejection codes, the volume bound and the Unity\nreporter.\n",
+      "date": "2026-11-27T01:21:20-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Backend/TelemetryClient.cs",
+        "Project Grimhold/Assets/Scripts/Backend/TelemetryClient.cs.meta",
+        "Project Grimhold/Assets/Scripts/Networking/FusionSessionLauncher.cs",
+        "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionData.cs",
+        "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlock.cs",
+        "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlock.cs.meta",
+        "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlockReporter.cs",
+        "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlockReporter.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs.meta",
+        "Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md"
+      ],
+      "originalType": "feat",
+      "originalScope": "telemetry",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Networking & Sessions",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/FusionSessionLauncher.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionData.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlock.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlock.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlockReporter.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/RaidAdmissionTransportBlockReporter.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/TelemetryClient.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/TelemetryClient.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/RaidAdmissionTransportBlockDetectionTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "6b6b9dd515005ee4bf8bdfc018704928b18ad9de",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6b6b9dd515005ee4bf8bdfc018704928b18ad9de",
+      "subject": "feat(telemetry): record client-reported MaxTransportable blocks",
+      "body": "MaxTransportable is enforced only in Unity, so the economy telemetry\ncould not measure the \"tasa de bloqueo por capacidad y MaxTransportable\"\n(Doc 23 §12) beyond INVENTORY_FULL capacity blocks (TASK-309).\n\nPOST /character/me/telemetry/transport-block records one\ntransport_block event per accepted report, with details\n{ source: 'raid_admission', limit: 'max_transportable',\nreported: 'client' }. It is a separate operation from capacity_block,\nso the two block rates never mix. The report is analytics only: it\nnever writes the character, and recording stays fire-and-forget.\n\nContract to verify:\n- Bearer token required; the body must be exactly\n  { \"source\": \"raid_admission\" }. Unknown fields, a client-declared\n  limit or another source return 400 VALIDATION_FAILED with nothing\n  written.\n- At most 20 authenticated requests per account per 10 minutes,\n  rejected ones included (429 with Retry-After).\n- An account without a character returns 404 CHARACTER_NOT_FOUND.\n\nTests:\n- economy.telemetry.transport-block.test.js: one event per report,\n  separate aggregation from capacity_block, malformed, __proto__ and\n  oversized (413) bodies, unauthenticated, characterless, per-account\n  rate bound and sink failure.\n",
+      "date": "2026-11-27T01:21:19-03:00",
+      "files": [
+        "backend/src/app.js",
+        "backend/src/models/EconomyTelemetryEvent.js",
+        "backend/src/routes/telemetry.routes.js",
+        "backend/src/services/EconomyTelemetry.js",
+        "backend/src/validators/telemetry.validators.js",
+        "backend/tests/economy.telemetry.transport-block.test.js"
+      ],
+      "originalType": "feat",
+      "originalScope": "telemetry",
+      "originalSection": "Features",
+      "breaking": false,
+      "reverts": null,
+      "section": "Features",
+      "confidence": "explicit",
+      "systems": [
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "feat",
+          "supports": "Features"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/app.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/EconomyTelemetryEvent.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/routes/telemetry.routes.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/EconomyTelemetry.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/validators/telemetry.validators.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/economy.telemetry.transport-block.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/economy.telemetry.transport-block.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "f25d250d66bd9ffc3dbb8007249bb7ec41ce6a57",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f25d250d66bd9ffc3dbb8007249bb7ec41ce6a57",
