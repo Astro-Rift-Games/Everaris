@@ -14,6 +14,8 @@ public sealed class TownPartyHudPresenter : NetworkBehaviour
     private int _presentedRevision = -1;
     private string _presentedLocalName;
     private string _presentedCompanionName;
+    private bool _presentedCompanionInExpedition;
+    private bool _presentedAwaitingContinuation;
     private bool _bound;
 
     private void Awake() => CacheDependencies();
@@ -35,26 +37,58 @@ public sealed class TownPartyHudPresenter : NetworkBehaviour
         if (!HasInputAuthority || _identity == null || _view == null) return;
         EnsureDirectory();
         ProfileId local = new(_identity.ProfileId.ToString());
-        if (_directory == null || !_directory.TryGetParty(local, out TownPartySnapshot party))
+        if (_directory != null && _directory.TryGetParty(local, out TownPartySnapshot party))
         {
-            ClearPresentedParty();
+            _directory.TryGetDisplayName(local, out string localName);
+            string companionName = null;
+            bool companionInExpedition = false;
+            if (party.Members.Count == TownPartyRules.MaxMembers)
+            {
+                ProfileId companion = party.Members[0] == local ? party.Members[1] : party.Members[0];
+                _directory.TryGetDisplayName(companion, out companionName);
+                companionInExpedition = !_directory.TryResolvePlayer(companion, out _) &&
+                                        _directory.IsProfileInLaunchingPreparation(companion);
+            }
+            if (!_presentedAwaitingContinuation &&
+                _presentedPartyId == party.PartyId && _presentedRevision == party.Revision &&
+                _presentedLocalName == localName && _presentedCompanionName == companionName &&
+                _presentedCompanionInExpedition == companionInExpedition) return;
+            if (!TownPartyPresentation.TryCreate(party, local, localName, companionName, companionInExpedition, out TownPartyPresentation presentation)) return;
+            _view.Present(presentation);
+            _presentedPartyId = party.PartyId;
+            _presentedRevision = party.Revision;
+            _presentedLocalName = localName;
+            _presentedCompanionName = companionName;
+            _presentedCompanionInExpedition = companionInExpedition;
+            _presentedAwaitingContinuation = false;
             return;
         }
-        _directory.TryGetDisplayName(local, out string localName);
-        string companionName = null;
-        if (party.Members.Count == TownPartyRules.MaxMembers)
+
+        // FIX-46: When the local player returned to Town while their Duo partner is still in Dungeon,
+        // keep showing the Party HUD with the partner marked "en expedición" until restored or expired.
+        SessionConnectionCoordinator coordinator = SessionConnectionCoordinator.Instance;
+        if (coordinator != null && coordinator.TryGetPendingPartyContinuation(out TownPartyContinuationContext pending) &&
+            pending.Members.Count == TownPartyRules.MaxMembers)
         {
-            ProfileId companion = party.Members[0] == local ? party.Members[1] : party.Members[0];
-            _directory.TryGetDisplayName(companion, out companionName);
+            string localName = null;
+            string companionName = null;
+            ProfileId companion = pending.Members[0] == local ? pending.Members[1] : pending.Members[0];
+            _directory?.TryGetDisplayName(local, out localName);
+            _directory?.TryGetDisplayName(companion, out companionName);
+            if (string.IsNullOrWhiteSpace(localName)) localName = _identity.DisplayName.ToString();
+            if (_presentedAwaitingContinuation && _presentedLocalName == localName && _presentedCompanionName == companionName) return;
+            if (!TownPartyPresentation.TryCreateAwaitingExpedition(pending, local, localName, companionName, out TownPartyPresentation presentation)) return;
+            _view.Present(presentation);
+            _presentedPartyId = -1;
+            _presentedRevision = -1;
+            _presentedLocalName = localName;
+            _presentedCompanionName = companionName;
+            _presentedCompanionInExpedition = true;
+            _presentedAwaitingContinuation = true;
+            return;
         }
-        if (_presentedPartyId == party.PartyId && _presentedRevision == party.Revision &&
-            _presentedLocalName == localName && _presentedCompanionName == companionName) return;
-        if (!TownPartyPresentation.TryCreate(party, local, localName, companionName, out TownPartyPresentation presentation)) return;
-        _view.Present(presentation);
-        _presentedPartyId = party.PartyId;
-        _presentedRevision = party.Revision;
-        _presentedLocalName = localName;
-        _presentedCompanionName = companionName;
+
+        ClearPresentedParty();
     }
 
     public override void Despawned(NetworkRunner runner, bool hasState) => Unbind();
@@ -87,16 +121,20 @@ public sealed class TownPartyHudPresenter : NetworkBehaviour
         _presentedRevision = -1;
         _presentedLocalName = null;
         _presentedCompanionName = null;
+        _presentedCompanionInExpedition = false;
+        _presentedAwaitingContinuation = false;
     }
 
     private void ClearPresentedParty()
     {
-        if (_presentedPartyId == 0) return;
+        if (_presentedPartyId == 0 && !_presentedAwaitingContinuation) return;
         _view.ClearParty();
         _presentedPartyId = 0;
         _presentedRevision = -1;
         _presentedLocalName = null;
         _presentedCompanionName = null;
+        _presentedCompanionInExpedition = false;
+        _presentedAwaitingContinuation = false;
     }
 
     private void EnsureDirectory()

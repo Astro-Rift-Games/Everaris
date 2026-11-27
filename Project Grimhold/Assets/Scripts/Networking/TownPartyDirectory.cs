@@ -6,7 +6,7 @@ using UnityEngine;
 /// <summary>Authoritative Town source of truth for Solo/Duo Parties, invitations and restoration.</summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(NetworkObject))]
-public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChanged
+public sealed class TownPartyDirectory : NetworkBehaviour, IPlayerLeft, IStateAuthorityChanged
 {
     private const float InvitationTimeoutSeconds = 20f;
     private const float InvitationCooldownSeconds = 5f;
@@ -21,10 +21,13 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
     [Networked, Capacity(RaidSessionRules.MaxParticipants)] private NetworkArray<TownPartyInvitationCooldownEntry> InvitationCooldowns => default;
 
     private readonly Dictionary<PlayerRef, ProfileId> _profileByPlayer = new();
+    private readonly Dictionary<ProfileId, string> _knownDisplayNames = new();
+    private readonly TownPreparationDisconnectResolver _disconnectResolver = new();
     private readonly Queue<TownPartyInvitationResultEvent> _resultEvents = new();
     private readonly Queue<TownPartyLeaveResult> _leaveResults = new();
     private readonly Queue<string> _identityErrors = new();
     private readonly TownPartyContinuationClaimRegistry _continuationClaims = new();
+    private readonly TownPartyContinuationRetryPolicy _continuationRetryPolicy = new();
     private readonly TownPendingRpcQueue _pendingRpcs = new();
     private int _observedEpoch = -1;
     private bool _localRequestPending;
@@ -55,6 +58,7 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
             _observedEpoch = StateEpoch;
             _localRequestPending = true;
             _nextLocalEnsureRetryTime = 0f;
+            _continuationRetryPolicy.OnAuthorityEpochChanged();
         }
         ObserveLocalParty();
         // Dequeue first: `?.` skips argument evaluation when nothing is subscribed.
@@ -80,6 +84,7 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
     public override void FixedUpdateNetwork()
     {
         if (!HasStateAuthority) return;
+        ObserveActivePlayers();
         _pendingRpcs.Drain(Time.unscaledTime, TryResolveSenderWithStatus);
         for (int index = 0; index < RaidSessionRules.MaxParticipants; index++)
         {
@@ -96,10 +101,13 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
         runner.GetComponent<TownPartyDirectoryContext>()?.Unregister(this);
         runner.GetComponent<TownSenderIdentityContext>()?.UnregisterAuthorityObject(Object);
         _profileByPlayer.Clear();
+        _knownDisplayNames.Clear();
+        _disconnectResolver.ClearAll();
         _resultEvents.Clear();
         _leaveResults.Clear();
         _identityErrors.Clear();
         _continuationClaims.Clear();
+        _continuationRetryPolicy.Reset();
         _pendingRpcs.Clear();
         _localRequestPending = false;
         _nextLocalEnsureRetryTime = 0f;
@@ -112,11 +120,63 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
     {
         Runner?.GetComponent<TownSenderIdentityContext>()?.NotifyAuthorityChanged();
         _profileByPlayer.Clear();
+        _disconnectResolver.ClearVerified();
         _pendingRpcs.Clear();
         _localEnsureStoppedByTerminalError = false;
         if (!HasStateAuthority) return;
+        ObserveActivePlayers();
         _continuationClaims.Clear();
         AdvanceEpoch();
+    }
+
+    /// <summary>
+    /// FIX-46: Removes a disconnected player from their Town Party and cancels their pending invitations,
+    /// leaving a Duo partner in a valid Solo Party on the next authoritative tick — unless the player is
+    /// leaving for an active launching expedition of that Party, in which case the Party preserves them.
+    /// </summary>
+    public void PlayerLeft(PlayerRef player)
+    {
+        _pendingRpcs.RemoveSender(player);
+        _profileByPlayer.Remove(player);
+        if (!HasStateAuthority) return;
+
+        bool resolved = _disconnectResolver.TryResolveDisconnectedProfile(
+            player,
+            Runner != null ? Runner.ActivePlayers : null,
+            TryResolveVerifiedProfileOrDefault,
+            TryReadDeclaredProfileOrDefault,
+            out ProfileId disconnectedProfile);
+        if (!resolved) return;
+
+        bool isInLaunchingExpedition = IsProfileInLaunchingPreparation(disconnectedProfile);
+        TownPartyDisconnectPolicy.DisconnectDisposition disposition =
+            TownPartyDisconnectPolicy.Evaluate(disconnectedProfile, isInLaunchingExpedition);
+        if (disposition != TownPartyDisconnectPolicy.DisconnectDisposition.LeavePartyAndCancelInvitations)
+        {
+            return;
+        }
+
+        CancelOtherInvitations(disconnectedProfile, default, 0);
+
+        if (!TryGetPartyEntry(disconnectedProfile, out int partyIndex, out TownPartyNetworkEntry party))
+        {
+            return;
+        }
+
+        TownPartySnapshot snapshot = ToSnapshot(party);
+        if (TownPartyDisconnectPolicy.TryResolveRemainingSoloMember(snapshot, disconnectedProfile, out ProfileId remaining))
+        {
+            party.HostProfileId = remaining.Value;
+            party.FirstMemberProfileId = remaining.Value;
+            party.SecondMemberProfileId = default;
+            party.MemberCount = 1;
+            party.Revision++;
+            Parties.Set(partyIndex, party);
+        }
+        else
+        {
+            Parties.Set(partyIndex, default);
+        }
     }
 
     public bool RequestInvite(ProfileId recipient) { if (!CanSend || !recipient.IsValid) return false; RPC_RequestInvite(recipient.Value); return true; }
@@ -159,11 +219,38 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
     public bool TryGetDisplayName(ProfileId profileId, out string displayName)
     {
         displayName = null;
-        if (!TryResolvePlayer(profileId, out PlayerRef player)) return false;
-        NetworkObject playerObject = Runner.GetPlayerObject(player);
-        if (playerObject == null || !playerObject.TryGetBehaviour(out SocialPlayerIdentity identity)) return false;
-        displayName = identity.DisplayName.ToString();
-        return !string.IsNullOrWhiteSpace(displayName);
+        if (TryResolvePlayer(profileId, out PlayerRef player))
+        {
+            NetworkObject playerObject = Runner.GetPlayerObject(player);
+            if (playerObject != null && playerObject.TryGetBehaviour(out SocialPlayerIdentity identity))
+            {
+                displayName = identity.DisplayName.ToString();
+                if (!string.IsNullOrWhiteSpace(displayName))
+                {
+                    _knownDisplayNames[profileId] = displayName;
+                    return true;
+                }
+            }
+        }
+
+        if (profileId.IsValid && _knownDisplayNames.TryGetValue(profileId, out string cached) && !string.IsNullOrWhiteSpace(cached))
+        {
+            displayName = cached;
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>True when <paramref name="profileId"/> is currently part of a Launching preparation (FIX-46).</summary>
+    public bool IsProfileInLaunchingPreparation(ProfileId profileId)
+    {
+        if (!profileId.IsValid || Runner == null) return false;
+        TownRaidPreparationDirectory prepDir = Runner.GetComponent<TownRaidPreparationDirectoryContext>()?.Directory;
+        return prepDir != null &&
+               prepDir.TryGetPreparation(profileId, out TownRaidPreparationNetworkController preparation) &&
+               preparation != null &&
+               preparation.State == TownRaidPreparationState.Launching;
     }
 
     public bool TryGetPreparedEquipment(ProfileId profileId, out IPreparedEquipmentReader reader)
@@ -489,8 +576,16 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
         if (coordinator != null && coordinator.TryGetPendingPartyContinuation(out TownPartyContinuationContext pending) &&
             TryDecodeContext(host, count, first, second, out TownPartyContinuationContext received) && pending.Equals(received) &&
             TryGetParty(LocalProfileProvider.GetOrCreateLocalProfile(), out TownPartySnapshot party) && pending.Matches(party))
+        {
             coordinator.ConfirmPartyContinuationRestored(party);
-        _localRequestPending = true;
+            _continuationRetryPolicy.Reset();
+            _localRequestPending = false;
+            return;
+        }
+
+        // FIX-07: Do NOT set _localRequestPending = true on a still-pending ACK; enforce backoff so
+        // the returning player sends at most one restore request per configured backoff interval.
+        _continuationRetryPolicy.OnAcknowledgedPending(Time.unscaledTime);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
@@ -500,7 +595,9 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
         if (coordinator != null && coordinator.TryGetPendingPartyContinuation(out TownPartyContinuationContext pending) &&
             TryDecodeContext(host, count, first, second, out TownPartyContinuationContext received) && pending.Equals(received))
             coordinator.AbandonPartyContinuation(pending);
+        _continuationRetryPolicy.Reset();
         _localRequestPending = true;
+        _nextLocalEnsureRetryTime = 0f;
     }
 
     private void ObserveLocalParty()
@@ -550,15 +647,33 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
             {
                 if (context.Matches(existing)) coordinator.ConfirmPartyContinuationRestored(existing);
                 else coordinator.AbandonPartyContinuation(context);
+                _continuationRetryPolicy.Reset();
                 _localRequestPending = true;
                 return;
             }
-            if (!_localRequestPending && Time.unscaledTime < _nextLocalEnsureRetryTime) return;
-            _localRequestPending = false;
-            _nextLocalEnsureRetryTime = Time.unscaledTime + LocalEnsurePartyRetryIntervalSeconds;
-            RPC_RequestRestoreContinuation(context.HostProfileId.Value, context.Members.Count, context.Members[0].Value,
-                context.Members.Count > 1 ? context.Members[1].Value : string.Empty);
-            return;
+
+            TownPartyContinuationRetryPolicy.PollAction action = _continuationRetryPolicy.Evaluate(context, Time.unscaledTime);
+            if (action == TownPartyContinuationRetryPolicy.PollAction.Wait)
+            {
+                return;
+            }
+
+            if (action == TownPartyContinuationRetryPolicy.PollAction.Expired)
+            {
+                coordinator.ExpirePartyContinuation(context);
+                _localRequestPending = true;
+                _nextLocalEnsureRetryTime = 0f;
+            }
+            else
+            {
+                RPC_RequestRestoreContinuation(context.HostProfileId.Value, context.Members.Count, context.Members[0].Value,
+                    context.Members.Count > 1 ? context.Members[1].Value : string.Empty);
+                return;
+            }
+        }
+        else
+        {
+            _continuationRetryPolicy.Reset();
         }
         if (TryGetParty(local, out _)) { _localRequestPending = false; return; }
         if (!_localRequestPending && Time.unscaledTime < _nextLocalEnsureRetryTime) return;
@@ -613,6 +728,37 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
     }
 
     public ITownSessionTicketVerifier TicketVerifier { get; set; }
+
+    private void ObserveActivePlayers()
+    {
+        if (Runner == null) return;
+        _disconnectResolver.ObserveActiveDeclaredProfiles(Runner.ActivePlayers, TryReadDeclaredProfileOrDefault);
+        foreach (PlayerRef active in Runner.ActivePlayers)
+        {
+            if (!_disconnectResolver.TryGetVerifiedProfile(active, out _) && TryResolveSender(active, out ProfileId verified))
+            {
+                _disconnectResolver.RecordVerified(active, verified);
+                _profileByPlayer[active] = verified;
+            }
+
+            NetworkObject playerObject = Runner.GetPlayerObject(active);
+            if (playerObject != null && playerObject.TryGetBehaviour(out SocialPlayerIdentity identity))
+            {
+                string profStr = identity.ProfileId.ToString();
+                string nameStr = identity.DisplayName.ToString();
+                if (!string.IsNullOrWhiteSpace(profStr) && !string.IsNullOrWhiteSpace(nameStr))
+                {
+                    _knownDisplayNames[new ProfileId(profStr)] = nameStr;
+                }
+            }
+        }
+    }
+
+    private ProfileId TryResolveVerifiedProfileOrDefault(PlayerRef player) =>
+        TryResolveSender(player, out ProfileId profile) ? profile : default;
+
+    private ProfileId TryReadDeclaredProfileOrDefault(PlayerRef player) =>
+        TownSenderIdentityValidator.TryResolveDeclaredProfile(Runner, player, out ProfileId profile) ? profile : default;
 
     private bool TryResolveSender(PlayerRef player, out ProfileId profile)
     {

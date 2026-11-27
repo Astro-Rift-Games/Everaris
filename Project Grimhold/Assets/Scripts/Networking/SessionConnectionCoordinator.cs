@@ -126,6 +126,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
         }
     }
     public TownPartyContinuationContext PendingPartyContinuation => _pendingPartyContinuation;
+    public TownPartyContinuationContext LastExpiredPartyContinuation { get; private set; }
     public bool HasPendingPartyContinuation => _pendingPartyContinuation != null;
 
     /// <summary>Whether a Duo partner is still in the active expedition, which blocks a new one from Town.</summary>
@@ -187,6 +188,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
         if (_pendingPartyContinuation == null)
         {
             _pendingPartyContinuation = continuation;
+            LastExpiredPartyContinuation = null;
             return true;
         }
 
@@ -202,6 +204,7 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
         }
 
         _pendingPartyContinuation = null;
+        LastExpiredPartyContinuation = null;
         return true;
     }
 
@@ -214,6 +217,25 @@ public sealed class SessionConnectionCoordinator : MonoBehaviour
         }
 
         _pendingPartyContinuation = null;
+        return true;
+    }
+
+    /// <summary>
+    /// Expires an unresolved Town Party continuation after the bounded wait window (FIX-07),
+    /// unblocking Solo Party creation while retaining the descriptor in <see cref="LastExpiredPartyContinuation"/>
+    /// for diagnostics or optional later re-linking in Town.
+    /// </summary>
+    public bool ExpirePartyContinuation(TownPartyContinuationContext expectedContext)
+    {
+        if (_pendingPartyContinuation == null || expectedContext == null ||
+            !_pendingPartyContinuation.Equals(expectedContext))
+        {
+            return false;
+        }
+
+        LastExpiredPartyContinuation = _pendingPartyContinuation;
+        _pendingPartyContinuation = null;
+        Debug.Log($"[{nameof(SessionConnectionCoordinator)}] Party continuation expired after wait window; transitioning to Solo Party.");
         return true;
     }
 
