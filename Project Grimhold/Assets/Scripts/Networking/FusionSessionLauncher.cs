@@ -280,6 +280,7 @@ public sealed class FusionSessionLauncher : MonoBehaviour, ISessionRunnerOwner
         byte[] token;
         RaidAdmissionData admissionData = default;
         RaidAdmissionData localAdmissionData = default;
+        LootDefinitionCatalog lootCatalog = null;
         AuthoritativeRaidAdmissionTicket authoritativeAdmissionTicket = default;
         if (launchContext != null)
         {
@@ -332,6 +333,7 @@ public sealed class FusionSessionLauncher : MonoBehaviour, ISessionRunnerOwner
             }
 
             localAdmissionData = admissionData;
+            lootCatalog = profileContext.Store.LootCatalog;
             ApplicationAuthContext authContext = ApplicationAuthContext.Instance;
             if (RaidLaunchBackend.RequiresConfirmation(authContext))
             {
@@ -526,6 +528,12 @@ public sealed class FusionSessionLauncher : MonoBehaviour, ISessionRunnerOwner
             }
 
             LastStartShutdownReason = ShutdownReason.Ok;
+
+            // TASK-309: analytics only. The coordinator re-runs this method while a Client waits for its Host
+            // session, so the report sits after a successful StartGame (once per connected attempt), on the final
+            // admission handed to the runner, before the Host bootstrap/admission can refuse it. Fire-and-forget.
+            RaidAdmissionTransportBlockReporter.ForSession(ApplicationAuthContext.Instance)
+                .ReportIfBlocked(in admissionData, lootCatalog);
 
             if (initialSceneBuildIndex >= 0 &&
                 !await _shutdownListener.WaitForInitialSceneAsync(cancellationToken))

@@ -7,6 +7,12 @@ using System.Collections.Generic;
 /// </summary>
 public readonly struct RaidAdmissionData
 {
+    /// <summary>
+    /// Error returned by <see cref="TryProjectLoadout"/> when a reserved item exceeds its
+    /// MaxTransportable. Distinct from every other projection failure.
+    /// </summary>
+    public const string TransportLimitExceededError = "Loadout exceeds item transport limits.";
+
     public RaidCode RaidCode { get; }
     public ProfileId ProfileId { get; }
     public string ReservationId { get; }
@@ -268,7 +274,7 @@ public readonly struct RaidAdmissionData
             transported[entry.LootId] = total;
             if (definition.MaxTransportable > 0 && total > definition.MaxTransportable)
             {
-                error = "Loadout exceeds item transport limits.";
+                error = TransportLimitExceededError;
                 return false;
             }
             if (prepared > 0)
