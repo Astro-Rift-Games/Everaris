@@ -77,7 +77,12 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
     /// Gets the local commit state observed by the result presenter.
     /// </summary>
     public ExtractionLootSaveStatus LocalSaveStatus { get; private set; }
+    /// <summary>Authoritative Host publication status for the active extraction (FIX-08).</summary>
+    public AuthorityPublishStatus AuthorityPublishStatus => _authorityPublisher.Status;
     public BackendCommitFeedback BackendSaveFeedback { get; } = new BackendCommitFeedback(supportsLoginRecovery: true);
+
+    private readonly ExtractionAuthorityPublishCoordinator _authorityPublisher = new ExtractionAuthorityPublishCoordinator();
+    private int _backendCommitStartedSequence;
 
     private void Awake()
     {
@@ -450,10 +455,11 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
             return;
         }
 
-        if (_authorityResultPublishedSequence != _pendingResultSequence &&
-            ShouldPublishAuthoritativeResultBeforeRpc(out RemoteInventoryService remoteInventoryService))
+        if (ShouldPublishAuthoritativeResultBeforeRpc(out RemoteInventoryService remoteInventoryService) &&
+            !_authorityPublisher.ShouldDispatchCommitRpc(_pendingResultSequence))
         {
-            if (!_authorityPublishInFlight)
+            if (!_authorityPublishInFlight &&
+                _authorityPublisher.CanStartAttempt(_pendingResultSequence, Time.unscaledTime))
             {
                 _ = PublishPendingTransactionOnAuthorityAsync(remoteInventoryService);
             }
@@ -509,6 +515,8 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
             out _);
 
         _authorityPublishInFlight = true;
+        _authorityPublisher.MarkAttemptStarted(resultSequence);
+        RPC_NotifyAuthorityPublishStatus(resultSequence, (byte)_authorityPublisher.Status);
         try
         {
             var (pubSuccess, pubError) = await remoteInventoryService.PublishExtractionResultAsync(
@@ -519,13 +527,27 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
 
             if (!pubSuccess)
             {
+                bool isRetryable = BackendErrorUtility.IsTransportFailure(pubError.error) ||
+                                   BackendErrorClassifier.Classify(pubError.error) == BackendErrorClass.Retryable;
+                AuthorityPublishStatus nextStatus = _authorityPublisher.MarkAttemptFailed(
+                    resultSequence, Time.unscaledTime, isRetryable);
                 Debug.LogError(
                     $"{nameof(PlayerExtractionLootSaver)}: Failed to publish authoritative extraction result for profile '{targetProfileId.Value}'. " +
-                    $"Error={pubError.error}: {pubError.message}.");
+                    $"Error={pubError.error}: {pubError.message}. Status={nextStatus}.");
+                if (this != null && Object != null && HasStateAuthority)
+                {
+                    RPC_NotifyAuthorityPublishStatus(resultSequence, (byte)nextStatus);
+                }
+                // FIX-08: Never dispatch RPC_CommitExtractionOnInputAuthority before publication succeeds;
+                // FixedUpdateNetwork retries while Retrying, or stops cleanly with Failed feedback.
+                return;
             }
-            else
+
+            _authorityResultPublishedSequence = resultSequence;
+            _authorityPublisher.MarkAttemptSucceeded(resultSequence);
+            if (this != null && Object != null && HasStateAuthority)
             {
-                _authorityResultPublishedSequence = resultSequence;
+                RPC_NotifyAuthorityPublishStatus(resultSequence, (byte)AuthorityPublishStatus.Published);
             }
         }
         finally
@@ -540,6 +562,42 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
         }
 
         DispatchCommitExtractionRpc();
+    }
+
+    /// <summary>
+    /// Exposes the Host's in-flight authoritative publication state to the extracting client's
+    /// Results UI so transient retries and terminal publish failures are always visible (FIX-08).
+    /// </summary>
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+    private void RPC_NotifyAuthorityPublishStatus(int resultSequence, byte rawStatus)
+    {
+        if (resultSequence <= 0 || LocalSaveStatus == ExtractionLootSaveStatus.Committed)
+        {
+            return;
+        }
+
+        var status = (AuthorityPublishStatus)rawStatus;
+        switch (status)
+        {
+            case AuthorityPublishStatus.Publishing:
+                BackendSaveFeedback.Begin();
+                break;
+            case AuthorityPublishStatus.Retrying:
+                BackendSaveFeedback.Retrying(new BackendError
+                {
+                    error = "NETWORK_ERROR",
+                    message = "Retrying authoritative extraction publication."
+                });
+                break;
+            case AuthorityPublishStatus.Failed:
+                LocalSaveStatus = ExtractionLootSaveStatus.PersistenceFailed;
+                BackendSaveFeedback.Complete(false, new BackendError
+                {
+                    error = "NO_AUTHORITATIVE_RESULT",
+                    message = "Authoritative extraction publication failed."
+                });
+                break;
+        }
     }
 
     private void DispatchCommitExtractionRpc()
@@ -726,7 +784,8 @@ public sealed class PlayerExtractionLootSaver : NetworkBehaviour
         LocalProfileStore store)
     {
         // RPC retransmission must not open another retry budget for the same extraction.
-        if (BackendSaveFeedback.Status != BackendCommitStatus.None) return;
+        if (_backendCommitStartedSequence == receipt.ResultSequence) return;
+        _backendCommitStartedSequence = receipt.ResultSequence;
         BackendSaveFeedback.Begin();
         ApplicationStashContext context = FindAnyObjectByType<ApplicationStashContext>();
         if (context == null)

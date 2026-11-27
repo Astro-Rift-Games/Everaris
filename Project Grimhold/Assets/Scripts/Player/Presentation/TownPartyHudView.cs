@@ -35,7 +35,7 @@ public sealed class TownPartyHudView : MonoBehaviour
             _companionNameText.text = presentation.CompanionDisplayName;
             _companionNameText.gameObject.SetActive(presentation.HasCompanion);
         }
-        if (_leaveButton != null) _leaveButton.gameObject.SetActive(presentation.HasCompanion);
+        if (_leaveButton != null) _leaveButton.gameObject.SetActive(presentation.CanLeave);
         _partyActive = presentation.HasCompanion;
         RefreshVisibility();
     }

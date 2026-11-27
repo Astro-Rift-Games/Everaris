@@ -556,6 +556,12 @@ public sealed class TeamExtractionCoordinator : NetworkBehaviour, ITeamExtractio
         {
             _roster.TryGetTeamMembers(teamId, out members);
         }
+#if UNITY_EDITOR
+        else if (TeamMembersProviderForTest != null)
+        {
+            members = TeamMembersProviderForTest(teamId);
+        }
+#endif
 
         if (members == null || members.Count == 0)
         {
@@ -566,12 +572,23 @@ public sealed class TeamExtractionCoordinator : NetworkBehaviour, ITeamExtractio
         {
             RaidParticipantId participantId = members[i];
             NetworkRaidParticipant participant = null;
+            NetworkObject participantObj = null;
             if (_spawnManager != null)
             {
-                _spawnManager.TryGetRaidParticipant(participantId, out participant);
+#if UNITY_EDITOR
+                if (ParticipantIdReaderForTest != null)
+                {
+                    _spawnManager.TryGetRaidParticipantCore(participantId, ParticipantIdReaderForTest, out participantObj, out participant);
+                }
+                else
+#endif
+                {
+                    _spawnManager.TryGetRaidParticipant(participantId, out participant);
+                    participantObj = participant != null ? participant.Object : null;
+                }
             }
 
-            if (participant == null)
+            if (participant == null && participantObj == null)
             {
                 // Fail-closed: unresolvable participant is not connected
                 snapshots.Add(new TeamMemberExtractionSnapshot(
@@ -583,22 +600,41 @@ public sealed class TeamExtractionCoordinator : NetworkBehaviour, ITeamExtractio
                 continue;
             }
 
-            RaidParticipantState state = participant.State;
-
-            // Fail-closed connectivity evaluation
-            bool isConnected = participant.TryGetComponent(out RaidParticipantConnectivity connectivity) &&
-                               !connectivity.IsDisconnected;
-
+            RaidParticipantState state;
+            bool isConnected;
             bool isInsideExact = false;
             bool isInsideTolerant = false;
             PlayerExtractionController controller = null;
 
-            if (participant.TryResolveCurrentAvatar(out NetworkObject avatar) && avatar != null)
+#if UNITY_EDITOR
+            if (ParticipantStateReaderForTest != null)
             {
-                Vector2 pos = avatar.transform.position;
-                isInsideExact = zone.ContainsExact(pos);
-                isInsideTolerant = zone.ContainsWithTolerance(pos, _config.BoundaryTolerance);
-                controller = avatar.GetComponent<PlayerExtractionController>();
+                var testState = ParticipantStateReaderForTest(participantObj);
+                state = testState.state;
+                isConnected = testState.isConnected;
+                controller = testState.controller;
+                if (testState.avatarPosition.HasValue)
+                {
+                    isInsideExact = zone.ContainsExact(testState.avatarPosition.Value);
+                    isInsideTolerant = zone.ContainsWithTolerance(testState.avatarPosition.Value, _config.BoundaryTolerance);
+                }
+            }
+            else
+#endif
+            {
+                state = participant.State;
+
+                // Fail-closed connectivity evaluation
+                isConnected = participant.TryGetComponent(out RaidParticipantConnectivity connectivity) &&
+                              !connectivity.IsDisconnected;
+
+                if (participant.TryResolveCurrentAvatar(out NetworkObject avatar) && avatar != null)
+                {
+                    Vector2 pos = avatar.transform.position;
+                    isInsideExact = zone.ContainsExact(pos);
+                    isInsideTolerant = zone.ContainsWithTolerance(pos, _config.BoundaryTolerance);
+                    controller = avatar.GetComponent<PlayerExtractionController>();
+                }
             }
 
             if (state == RaidParticipantState.Raiding && controller != null)
@@ -913,6 +949,9 @@ public sealed class TeamExtractionCoordinator : NetworkBehaviour, ITeamExtractio
     internal void SetSlotForTest(int index, TeamExtractionSlot slot) => SetSlot(index, slot);
     internal TeamExtractionSlot GetSlotForTest(int index) => GetSlot(index);
     internal Func<RaidTeamId, IExtractionZone, List<TeamMemberExtractionSnapshot>, List<PlayerExtractionController>, bool> MemberSnapshotsProviderForTest { get; set; }
+    internal Func<RaidTeamId, IReadOnlyList<RaidParticipantId>> TeamMembersProviderForTest { get; set; }
+    internal Func<NetworkObject, RaidParticipantId> ParticipantIdReaderForTest { get; set; }
+    internal Func<NetworkObject, (RaidParticipantState state, bool isConnected, Vector2? avatarPosition, PlayerExtractionController controller)> ParticipantStateReaderForTest { get; set; }
     internal Func<RaidTeamId, bool> TimerExpiredOverrideForTest { get; set; }
     internal Func<RaidTeamId, (int present, int required)?> TeamPresenceOverrideForTest { get; set; }
     internal Func<RaidTeamId, TeamExtractionStatusSnapshot?> TeamExtractionStatusOverrideForTest { get; set; }

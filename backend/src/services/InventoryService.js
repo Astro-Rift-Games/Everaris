@@ -662,6 +662,25 @@ class InventoryService {
         }
       : null;
 
+    // FIX-09: Expose an unconsumed loot-bearing authoritative extraction result so a client
+    // that disconnected before receiving the extraction ACK RPC can recover and commit it on login
+    // instead of discarding the reservation as a loss.
+    let pendingAuthoritativeExtraction = null;
+    if (character.inventory?.pendingReservation?.reservationId &&
+        AuthoritativeExtractionResult.db?.readyState === 1) {
+      const pendingAuth = await AuthoritativeExtractionResult.findOne({
+        accountId,
+        consumed: { $ne: true },
+        ...pendingLootResultFilter()
+      });
+      if (pendingAuth && pendingAuth.raidId) {
+        pendingAuthoritativeExtraction = {
+          raidId: pendingAuth.raidId,
+          resultSequence: pendingAuth.resultSequence || 1
+        };
+      }
+    }
+
     return {
       inventorySchemaVersion: version,
       currency:           character.inventory.currency || 0,
@@ -671,6 +690,7 @@ class InventoryService {
       pendingReservation: serializePendingReservation(character.inventory.pendingReservation, sorted, version),
       buyback: serializeBuyback(character.inventory),
       lastAppliedExtractionReceipt: lastExtraction,
+      ...(pendingAuthoritativeExtraction ? { pendingAuthoritativeExtraction } : {}),
       revision: character.revision || 0
     };
   }

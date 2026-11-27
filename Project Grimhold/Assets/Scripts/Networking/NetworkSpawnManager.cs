@@ -343,19 +343,40 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
     /// </summary>
     public bool TryGetRaidParticipant(RaidParticipantId participantId, out NetworkRaidParticipant participant)
     {
+        return TryGetRaidParticipantCore(
+            participantId,
+            ReadNetworkedRaidParticipantId,
+            out _,
+            out participant);
+    }
+
+    /// <summary>
+    /// Authoritative participant lookup across connected players (<c>_spawnedPlayers</c>,
+    /// <c>_runner.ActivePlayers</c>) AND retained disconnected participants
+    /// (<c>_disconnectedRegistry</c>, FIX-47).
+    /// </summary>
+    internal bool TryGetRaidParticipantCore(
+        RaidParticipantId participantId,
+        System.Func<NetworkObject, RaidParticipantId> idReader,
+        out NetworkObject participantObject,
+        out NetworkRaidParticipant participant)
+    {
+        participantObject = null;
         participant = null;
-        if (!participantId.IsValid)
+        if (!participantId.IsValid || idReader == null)
         {
             return false;
         }
 
-        foreach (NetworkObject participantObject in _spawnedPlayers.Values)
+        foreach (NetworkObject candidateObj in _spawnedPlayers.Values)
         {
-            if (participantObject != null &&
-                participantObject.TryGetBehaviour(out NetworkRaidParticipant p) &&
-                p.RaidParticipantId == participantId)
+            if (candidateObj != null && idReader(candidateObj) == participantId)
             {
-                participant = p;
+                participantObject = candidateObj;
+                if (!candidateObj.TryGetBehaviour(out participant))
+                {
+                    candidateObj.TryGetComponent(out participant);
+                }
                 return true;
             }
         }
@@ -365,17 +386,46 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             foreach (PlayerRef player in _runner.ActivePlayers)
             {
                 NetworkObject playerObject = _runner.GetPlayerObject(player);
-                if (playerObject != null &&
-                    playerObject.TryGetBehaviour(out NetworkRaidParticipant p) &&
-                    p.RaidParticipantId == participantId)
+                if (playerObject != null && idReader(playerObject) == participantId)
                 {
-                    participant = p;
+                    participantObject = playerObject;
+                    if (!playerObject.TryGetBehaviour(out participant))
+                    {
+                        playerObject.TryGetComponent(out participant);
+                    }
                     return true;
                 }
             }
         }
 
+        // FIX-47: Retained disconnected teammates remain part of the active Raid cohort until they
+        // reconnect or are definitively defeated via the absence protocol.
+        IReadOnlyList<NetworkObject> retained = _disconnectedRegistry.RetainedParticipants;
+        for (int index = 0; index < retained.Count; index++)
+        {
+            NetworkObject retainedObj = retained[index];
+            if (retainedObj != null && idReader(retainedObj) == participantId)
+            {
+                participantObject = retainedObj;
+                if (!retainedObj.TryGetBehaviour(out participant))
+                {
+                    retainedObj.TryGetComponent(out participant);
+                }
+                return true;
+            }
+        }
+
         return false;
+    }
+
+    private static RaidParticipantId ReadNetworkedRaidParticipantId(NetworkObject obj)
+    {
+        if (obj != null && obj.IsValid && obj.TryGetBehaviour(out NetworkRaidParticipant participant))
+        {
+            return participant.RaidParticipantId;
+        }
+
+        return default;
     }
 
     /// <summary>
