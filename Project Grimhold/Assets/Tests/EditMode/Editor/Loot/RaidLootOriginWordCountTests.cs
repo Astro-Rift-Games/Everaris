@@ -14,9 +14,11 @@ namespace Tests.EditMode.Loot
         // modifiers (receiver array, hand words, 34 container weapon units, pickup word).
         // FIX-39: Container and player origin buffers expand from 30 to 38 stacks to accommodate
         // full corpse loot capacity (30 inventory + 8 equipped), adding 183 words to ContainerRaidLootOriginState.
+        // TASK-330: enemy re-measured at 1490 = 1488 from enemy networked state added after the 1474 pin
+        // + 2 words for the Encounter identity (EncounterIdValue, EncounterMemberKey).
         [TestCase("Assets/Prefabs/NetworkPlayer.prefab", 1289, null, 2048)]
         [TestCase("Assets/Prefabs/LootContainer.prefab", 820, 1413, 1413)]
-        [TestCase("Assets/Prefabs/Enemies/NetworkEnemy.prefab", 844, 1474, 1474)]
+        [TestCase("Assets/Prefabs/Enemies/NetworkEnemy.prefab", 844, 1490, 1490)]
         [TestCase("Assets/Prefabs/LootPickup.prefab", 6, 24, 192)]
         public void ProductivePrefab_UsesMeasuredCompactBudget(
             string prefabPath,
