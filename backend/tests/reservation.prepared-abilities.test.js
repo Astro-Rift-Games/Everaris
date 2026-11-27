@@ -38,7 +38,7 @@ describe('Prepared ability validation (FIX-32)', () => {
       inventory: {
         stash: [],
         loadout: [],
-        preparedEquipment: { weaponSlot1: 'sword_iron' },
+        preparedEquipment: { weaponSlot1: 'arming_sword' },
         pendingReservation
       }
     });
@@ -144,7 +144,7 @@ describe('Prepared ability validation (FIX-32)', () => {
     const reservation = abilities => ({
       reservationId: 'res-stored',
       items: [],
-      preparedEquipment: { weaponSlot1: 'sword_iron' },
+      preparedEquipment: { weaponSlot1: 'arming_sword' },
       preparedAbilities: abilities
     });
 

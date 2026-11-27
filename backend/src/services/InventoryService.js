@@ -27,6 +27,11 @@ const { inventoryVersion, copyEntry, serializeItems, requireMigratedInventory,
 
 const { TRAINING_WEAPONS, isTrainingWeapon } = require('./TrainingWeapons');
 const { validatePreparedAbilities } = require('./PreparedAbilityValidation');
+const {
+  assertSlotCompatible,
+  assertPreparedEquipmentCategories,
+  requirePreparedWeapon
+} = require('./PreparedEquipmentValidation');
 const { receiptPush, watermarkUpdate, assertWithinRetention } = require('./ShopReceiptRetention');
 const EconomyTelemetry = require('./EconomyTelemetry');
 const { pendingLootResultFilter } = require('./ResultReservationBinding');
@@ -206,6 +211,7 @@ async function updateInstanceEquipment(character, requested, expectedRevision) {
     if (intent == null || intent === '') { equipment[slot] = null; continue; }
     if (typeof intent !== 'object' || typeof intent.lootId !== 'string' || !INSTANCE_ID.test(intent.instanceId || '') ||
         Object.keys(intent).some(key => !['lootId', 'instanceId'].includes(key)) || selected.has(intent.instanceId)) invalidInventory();
+    assertSlotCompatible(slot, intent.lootId);
     let item = available.get(intent.instanceId);
     if (!item) {
       const list = [loadout, stash].find(list => list.some(entry => entry.instance?.instanceId === intent.instanceId));
@@ -227,13 +233,6 @@ async function updateInstanceEquipment(character, requested, expectedRevision) {
   }
   const snapshot = await writeSlotLists(character, expectedRevision, { stash, loadout, preparedEquipment: equipment }, true);
   return { preparedEquipment: equipment, ...snapshot };
-}
-
-function requirePreparedWeapon(equipment) {
-  if (!equipment?.weaponSlot1 && !equipment?.weaponSlot2) {
-    throw { statusCode: 409, errorCode: 'PREPARED_WEAPON_REQUIRED',
-      message: 'Equip a weapon in a Weapon Set or ask the Trainer before preparing an expedition.' };
-  }
 }
 
 // Plan a sale on an in-memory candidate. No persisted state changes until the caller commits.
@@ -928,6 +927,7 @@ class InventoryService {
     rejectPendingReservation(character, 'Cannot change equipment while a reservation is pending.');
     if (version === 3) return updateInstanceEquipment(character, slots, expectedRevision);
     normalizePreparedEquipment(slots);
+    assertPreparedEquipmentCategories(slots);
 
     const slotNames = EQUIPMENT_SLOTS;
 

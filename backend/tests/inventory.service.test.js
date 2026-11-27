@@ -247,7 +247,7 @@ test('InventoryService', async (t) => {
     setupMocks(mockChar);
 
     try {
-      await InventoryService.updatePreparedEquipment('acc123', { weaponSlot1: 'legendary_axe' }, 0);
+      await InventoryService.updatePreparedEquipment('acc123', { weaponSlot1: 'great_hammer' }, 0);
       assert.fail('Should have thrown');
     } catch (err) {
       assert.strictEqual(err.statusCode, 422);
@@ -257,14 +257,14 @@ test('InventoryService', async (t) => {
 
   await t.test('updatePreparedEquipment() - throws 422 when same item used in more slots than owned', async () => {
     const mockChar = makeCharacter();
-    mockChar.inventory.loadout = [makeItem('potion', 1)];
+    mockChar.inventory.loadout = [makeItem('arming_sword', 1)];
     setupMocks(mockChar);
 
     try {
       // Trying to assign the same item to two weapon slots but only 1 owned
       await InventoryService.updatePreparedEquipment('acc123', {
-        weaponSlot1: 'potion',
-        weaponSlot2: 'potion'
+        weaponSlot1: 'arming_sword',
+        weaponSlot2: 'arming_sword'
       }, 0);
       assert.fail('Should have thrown');
     } catch (err) {

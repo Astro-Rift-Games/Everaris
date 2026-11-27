@@ -6,6 +6,7 @@ const { EQUIPMENT_SLOTS } = require('../config/equipmentSlots');
 const { normalizeItems, normalizeLootId } = require('./InventoryLootIdNormalizer');
 const { inventoryVersion, requireMigratedInventory, serializeItems, copyEntry } = require('./InventoryEntries');
 const { validatePreparedAbilities } = require('./PreparedAbilityValidation');
+const { requirePreparedWeapon } = require('./PreparedEquipmentValidation');
 
 const TOWN_TICKET_TTL_SECONDS = 1800; // 30 minutes
 const RAID_TICKET_TTL_SECONDS = 600;  // 10 minutes
@@ -162,10 +163,7 @@ class SessionTicketService {
       };
     }
 
-    if (!reservation.preparedEquipment?.weaponSlot1 && !reservation.preparedEquipment?.weaponSlot2) {
-      throw { statusCode: 409, errorCode: 'PREPARED_WEAPON_REQUIRED',
-        message: 'Equip a weapon in a Weapon Set or ask the Trainer before preparing an expedition.' };
-    }
+    requirePreparedWeapon(reservation.preparedEquipment);
 
     const now = Math.floor(Date.now() / 1000);
     const expiresAt = now + RAID_TICKET_TTL_SECONDS;
