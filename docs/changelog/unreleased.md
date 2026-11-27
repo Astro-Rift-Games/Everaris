@@ -4,32 +4,282 @@
 
 Release: Unreleased
 
-431 original commits; 431 canonical entries.
+434 original commits; 434 canonical entries.
 
 ## Canonical classification
 
-155 features; 132 bug fixes; 4 refactoring; 1 architecture & infrastructure; 71 documentation; 26 tests; 18 maintenance; 24 other changes
+155 features; 135 bug fixes; 4 refactoring; 1 architecture & infrastructure; 71 documentation; 26 tests; 18 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Abilities | 19 | 14 | 1 | 0 | 10 | 1 |
+| Abilities | 19 | 15 | 1 | 0 | 10 | 1 |
 | Art & Animation | 34 | 15 | 3 | 0 | 11 | 8 |
 | Audio | 9 | 2 | 0 | 0 | 2 | 1 |
-| Build & Tooling | 108 | 84 | 4 | 1 | 32 | 7 |
+| Build & Tooling | 108 | 86 | 4 | 1 | 32 | 7 |
 | Combat | 61 | 29 | 2 | 0 | 19 | 2 |
-| Documentation | 48 | 47 | 0 | 0 | 22 | 2 |
+| Documentation | 48 | 48 | 0 | 0 | 22 | 2 |
 | Extraction | 23 | 27 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
-| Inventory & Loot | 89 | 70 | 4 | 1 | 29 | 5 |
+| Inventory & Loot | 89 | 71 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
-| Networking & Sessions | 49 | 50 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 57 | 63 | 2 | 1 | 25 | 4 |
-| Tests | 141 | 122 | 4 | 1 | 42 | 4 |
-| UI | 47 | 30 | 2 | 0 | 20 | 6 |
+| Networking & Sessions | 49 | 51 | 0 | 0 | 19 | 2 |
+| Persistence & Backend | 57 | 65 | 2 | 1 | 25 | 4 |
+| Tests | 141 | 125 | 4 | 1 | 42 | 4 |
+| UI | 47 | 31 | 2 | 0 | 20 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 31 | 2 |
 | World & Visibility | 43 | 22 | 1 | 0 | 7 | 13 |
 
 ## Original commit records
+
+### 96a133e9a1e2b207d2ff9035bf150b8ae5fc5d36
+
+[96a133e9a1e2b207d2ff9035bf150b8ae5fc5d36](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/96a133e9a1e2b207d2ff9035bf150b8ae5fc5d36)
+
+Date: 2026-11-27T15:51:27-03:00 · Classification: Bug Fixes (explicit) · Systems: Networking & Sessions, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(town): harden sender authority lifecycle, pending verification and launch routing
+```
+
+#### Original body
+
+```text
+FIX-94: discard residual Town sender bindings on authority loss/regain and retry rejected/unconfirmed client ticket registrations with bounded backoff.
+FIX-59: queue Town RPCs while ticket verification is in flight, surface explicit user feedback on failure or missing ticket, and suppress per-tick security warning spam.
+FIX-92: clean up disconnected preparation members after authority migration only when no other active player holds or declares that ProfileId.
+FIX-93: resolve coordinated launch release and cancellation recipients strictly from verified identities owned by the sending authority.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/SocialPlayerIdentity.cs
+Project Grimhold/Assets/Scripts/Networking/TownLaunchRecipientResolver.cs
+Project Grimhold/Assets/Scripts/Networking/TownLaunchRecipientResolver.cs.meta
+Project Grimhold/Assets/Scripts/Networking/TownMerchantNetworkController.cs
+Project Grimhold/Assets/Scripts/Networking/TownPartyDirectory.cs
+Project Grimhold/Assets/Scripts/Networking/TownPendingRpcQueue.cs
+Project Grimhold/Assets/Scripts/Networking/TownPendingRpcQueue.cs.meta
+Project Grimhold/Assets/Scripts/Networking/TownPreparationDisconnectResolver.cs
+Project Grimhold/Assets/Scripts/Networking/TownPreparationDisconnectResolver.cs.meta
+Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs
+Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationNetworkController.cs
+Project Grimhold/Assets/Scripts/Networking/TownSenderIdentityContext.cs
+Project Grimhold/Assets/Scripts/Networking/TownSenderIdentityRegistry.cs
+Project Grimhold/Assets/Scripts/Networking/TownSenderIdentityValidator.cs
+Project Grimhold/Assets/Scripts/Networking/TownSenderRegistrationResult.cs
+Project Grimhold/Assets/Scripts/Networking/TownTicketDeliveryTracker.cs
+Project Grimhold/Assets/Scripts/Networking/TownTicketDeliveryTracker.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyInvitationPresenter.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/SocialPlayerIdentity.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownLaunchRecipientResolver.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownLaunchRecipientResolver.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownMerchantNetworkController.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPartyDirectory.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPendingRpcQueue.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPendingRpcQueue.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPreparationDisconnectResolver.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPreparationDisconnectResolver.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationNetworkController.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownSenderIdentityContext.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownSenderIdentityRegistry.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownSenderIdentityValidator.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownSenderRegistrationResult.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownTicketDeliveryTracker.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownTicketDeliveryTracker.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs.meta
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 6bdba9610a6984b0e5e3b0c0eb293c2b463c161f
+
+[6bdba9610a6984b0e5e3b0c0eb293c2b463c161f](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6bdba9610a6984b0e5e3b0c0eb293c2b463c161f)
+
+Date: 2026-11-27T15:51:26-03:00 · Classification: Bug Fixes (explicit) · Systems: Abilities, Inventory & Loot, UI, Persistence & Backend, Build & Tooling, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(client): add idempotent attribute spend reconciliation and unified backend config
+```
+
+#### Original body
+
+```text
+FIX-36: persist optional attribute_spend transactionId receipts on the backend and retry transient/lost-response attribute commits with the same transactionId in Unity without double spending.
+FIX-58: centralize BackendConfiguration resolution in BackendConfigurationProvider with an Editor menu toggle and GRIMHOLD_USE_LOCAL_BACKEND dev override so no service loads BackendConfiguration by name.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Abilities/Vendor/RemoteAbilityPurchaseService.cs
+Project Grimhold/Assets/Scripts/Backend/BackendConfigurationProvider.cs
+Project Grimhold/Assets/Scripts/Backend/BackendConfigurationProvider.cs.meta
+Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs
+Project Grimhold/Assets/Scripts/Backend/ProfileDebugUtility.cs
+Project Grimhold/Assets/Scripts/Backend/ProgressionDataTransferObjects.cs
+Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs
+Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs.meta
+Project Grimhold/Assets/Scripts/MainMenuController.cs
+Project Grimhold/Assets/Scripts/Missions/Engine/RemoteMissionClaimService.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs
+Project Grimhold/Assets/Scripts/Progression/AttributeCommitRetryCoordinator.cs
+Project Grimhold/Assets/Scripts/Progression/AttributeCommitRetryCoordinator.cs.meta
+Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs
+Project Grimhold/Assets/Scripts/Stash/ProfileReconciliationService.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+Project Grimhold/Assets/Scripts/Stash/RemoteShopTransactionService.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeCommitRetryCoordinatorTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeCommitRetryCoordinatorTests.cs.meta
+Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+backend/src/models/Character.js
+backend/src/services/ProgressionService.js
+backend/src/validators/progression.validators.js
+backend/tests/progression.idempotency.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Abilities: Project Grimhold/Assets/Scripts/Abilities/Vendor/RemoteAbilityPurchaseService.cs
+- path → Abilities: Project Grimhold/Assets/Scripts/Backend/ProfileDebugUtility.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs
+- path → Inventory &amp; Loot: Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs
+- path → UI: Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs
+- path → UI: Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs.meta
+- path → UI: Project Grimhold/Assets/Scripts/MainMenuController.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendConfigurationProvider.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/BackendConfigurationProvider.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/ProfileDebugUtility.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Backend/ProgressionDataTransferObjects.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Scripts/Stash/ProfileReconciliationService.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs
+- path → Persistence &amp; Backend: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs.meta
+- path → Persistence &amp; Backend: Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+- path → Persistence &amp; Backend: backend/src/models/Character.js
+- path → Persistence &amp; Backend: backend/src/services/ProgressionService.js
+- path → Persistence &amp; Backend: backend/src/validators/progression.validators.js
+- path → Persistence &amp; Backend: backend/tests/progression.idempotency.test.js
+- message-term → Persistence &amp; Backend: backend
+- path → Build &amp; Tooling: Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeCommitRetryCoordinatorTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeCommitRetryCoordinatorTests.cs.meta
+- path → Documentation: Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeCommitRetryCoordinatorTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeCommitRetryCoordinatorTests.cs.meta
+- path → Tests: backend/tests/progression.idempotency.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 3b5776e9d56ebceffb8575d80a66571d2e09ab03
+
+[3b5776e9d56ebceffb8575d80a66571d2e09ab03](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3b5776e9d56ebceffb8575d80a66571d2e09ab03)
+
+Date: 2026-11-27T15:51:26-03:00 · Classification: Bug Fixes (explicit) · Systems: Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend): harden staging defaults, trust proxy and per-ip login lockout
+```
+
+#### Original body
+
+```text
+FIX-35: treat staging as production-like for JWT secret enforcement and disable debug request logging in staging.
+FIX-37: key failed-login lockout by (username, ip) so one attacker IP cannot lock out another IP, and default TRUST_PROXY to 1 in staging/production when unset.
+```
+
+#### Changed paths
+
+```text
+backend/.env.example
+backend/src/app.js
+backend/src/config/env.js
+backend/src/middleware/rateLimiter.js
+backend/src/routes/auth.routes.js
+backend/tests/auth.ratelimit.proxy.test.js
+backend/tests/env.hardening.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Persistence &amp; Backend: backend/.env.example
+- path → Persistence &amp; Backend: backend/src/app.js
+- path → Persistence &amp; Backend: backend/src/config/env.js
+- path → Persistence &amp; Backend: backend/src/middleware/rateLimiter.js
+- path → Persistence &amp; Backend: backend/src/routes/auth.routes.js
+- path → Persistence &amp; Backend: backend/tests/auth.ratelimit.proxy.test.js
+- path → Persistence &amp; Backend: backend/tests/env.hardening.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/auth.ratelimit.proxy.test.js
+- path → Tests: backend/tests/env.hardening.test.js
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 78eee503f1bb1d37b160b9b8f996ba049e10b10a
 

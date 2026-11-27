@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1308,
-  "canonicalEntries": 1305,
+  "rawCommits": 1311,
+  "canonicalEntries": 1308,
   "before": {
-    "Bug Fixes": 210,
+    "Bug Fixes": 213,
     "Other Changes": 380,
     "Documentation": 144,
     "Features": 476,
@@ -12,7 +12,7 @@
     "Refactoring": 17
   },
   "after": {
-    "Bug Fixes": 226,
+    "Bug Fixes": 229,
     "Documentation": 161,
     "Features": 615,
     "Maintenance": 29,
@@ -23,17 +23,17 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Networking & Sessions": 376,
-    "UI": 374,
-    "Build & Tooling": 677,
-    "Tests": 835,
+    "Networking & Sessions": 377,
+    "Build & Tooling": 679,
+    "Tests": 838,
+    "Abilities": 150,
+    "Inventory & Loot": 515,
+    "UI": 375,
+    "Persistence & Backend": 339,
+    "Documentation": 463,
     "Extraction": 186,
     "Combat": 429,
     "Art & Animation": 281,
-    "Abilities": 149,
-    "Inventory & Loot": 514,
-    "Persistence & Backend": 337,
-    "Documentation": 462,
     "Unassigned": 55,
     "World & Visibility": 196,
     "Audio": 44,
@@ -42,7 +42,7 @@
   },
   "canonical": {
     "sections": {
-      "Bug Fixes": 225,
+      "Bug Fixes": 228,
       "Documentation": 161,
       "Features": 614,
       "Maintenance": 29,
@@ -52,17 +52,17 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Networking & Sessions": 376,
-      "UI": 373,
-      "Build & Tooling": 675,
-      "Tests": 833,
+      "Networking & Sessions": 377,
+      "Build & Tooling": 677,
+      "Tests": 836,
+      "Abilities": 148,
+      "Inventory & Loot": 515,
+      "UI": 374,
+      "Persistence & Backend": 339,
+      "Documentation": 461,
       "Extraction": 186,
       "Combat": 427,
       "Art & Animation": 278,
-      "Abilities": 147,
-      "Inventory & Loot": 514,
-      "Persistence & Backend": 337,
-      "Documentation": 460,
       "Unassigned": 55,
       "World & Visibility": 194,
       "Audio": 44,
@@ -78505,8 +78505,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 431,
-      "canonicalEntries": 431
+      "originalCommits": 434,
+      "canonicalEntries": 434
     },
     {
       "key": "v0.5.0",
@@ -78550,6 +78550,596 @@
     }
   ],
   "commits": [
+    {
+      "sha": "96a133e9a1e2b207d2ff9035bf150b8ae5fc5d36",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/96a133e9a1e2b207d2ff9035bf150b8ae5fc5d36",
+      "subject": "fix(town): harden sender authority lifecycle, pending verification and launch routing",
+      "body": "FIX-94: discard residual Town sender bindings on authority loss/regain and retry rejected/unconfirmed client ticket registrations with bounded backoff.\nFIX-59: queue Town RPCs while ticket verification is in flight, surface explicit user feedback on failure or missing ticket, and suppress per-tick security warning spam.\nFIX-92: clean up disconnected preparation members after authority migration only when no other active player holds or declares that ProfileId.\nFIX-93: resolve coordinated launch release and cancellation recipients strictly from verified identities owned by the sending authority.\n",
+      "date": "2026-11-27T15:51:27-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Networking/SocialPlayerIdentity.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownLaunchRecipientResolver.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownLaunchRecipientResolver.cs.meta",
+        "Project Grimhold/Assets/Scripts/Networking/TownMerchantNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownPartyDirectory.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownPendingRpcQueue.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownPendingRpcQueue.cs.meta",
+        "Project Grimhold/Assets/Scripts/Networking/TownPreparationDisconnectResolver.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownPreparationDisconnectResolver.cs.meta",
+        "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownSenderIdentityContext.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownSenderIdentityRegistry.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownSenderIdentityValidator.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownSenderRegistrationResult.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownTicketDeliveryTracker.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownTicketDeliveryTracker.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyInvitationPresenter.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs.meta"
+      ],
+      "originalType": "fix",
+      "originalScope": "town",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Networking & Sessions",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/SocialPlayerIdentity.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownLaunchRecipientResolver.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownLaunchRecipientResolver.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownMerchantNetworkController.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPartyDirectory.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPendingRpcQueue.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPendingRpcQueue.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPreparationDisconnectResolver.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPreparationDisconnectResolver.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationNetworkController.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownSenderIdentityContext.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownSenderIdentityRegistry.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownSenderIdentityValidator.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownSenderRegistrationResult.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownTicketDeliveryTracker.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownTicketDeliveryTracker.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownLaunchRecipientResolverTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPendingVerificationAndWarningTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPreparationDisconnectResolverTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownSenderAuthorityHardeningTests.cs.meta",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "6bdba9610a6984b0e5e3b0c0eb293c2b463c161f",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6bdba9610a6984b0e5e3b0c0eb293c2b463c161f",
+      "subject": "fix(client): add idempotent attribute spend reconciliation and unified backend config",
+      "body": "FIX-36: persist optional attribute_spend transactionId receipts on the backend and retry transient/lost-response attribute commits with the same transactionId in Unity without double spending.\nFIX-58: centralize BackendConfiguration resolution in BackendConfigurationProvider with an Editor menu toggle and GRIMHOLD_USE_LOCAL_BACKEND dev override so no service loads BackendConfiguration by name.\n",
+      "date": "2026-11-27T15:51:26-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Abilities/Vendor/RemoteAbilityPurchaseService.cs",
+        "Project Grimhold/Assets/Scripts/Backend/BackendConfigurationProvider.cs",
+        "Project Grimhold/Assets/Scripts/Backend/BackendConfigurationProvider.cs.meta",
+        "Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs",
+        "Project Grimhold/Assets/Scripts/Backend/ProfileDebugUtility.cs",
+        "Project Grimhold/Assets/Scripts/Backend/ProgressionDataTransferObjects.cs",
+        "Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs",
+        "Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs.meta",
+        "Project Grimhold/Assets/Scripts/MainMenuController.cs",
+        "Project Grimhold/Assets/Scripts/Missions/Engine/RemoteMissionClaimService.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs",
+        "Project Grimhold/Assets/Scripts/Progression/AttributeCommitRetryCoordinator.cs",
+        "Project Grimhold/Assets/Scripts/Progression/AttributeCommitRetryCoordinator.cs.meta",
+        "Project Grimhold/Assets/Scripts/Stash/ApplicationStashServiceBootstrapper.cs",
+        "Project Grimhold/Assets/Scripts/Stash/ProfileReconciliationService.cs",
+        "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs",
+        "Project Grimhold/Assets/Scripts/Stash/RemoteShopTransactionService.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeCommitRetryCoordinatorTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeCommitRetryCoordinatorTests.cs.meta",
+        "Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md",
+        "backend/src/models/Character.js",
+        "backend/src/services/ProgressionService.js",
+        "backend/src/validators/progression.validators.js",
+        "backend/tests/progression.idempotency.test.js"
+      ],
+      "originalType": "fix",
+      "originalScope": "client",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Abilities",
+        "Inventory & Loot",
+        "UI",
+        "Persistence & Backend",
+        "Build & Tooling",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Abilities/Vendor/RemoteAbilityPurchaseService.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/ProfileDebugUtility.cs",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownInventoryBinder.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/RemoteInventoryService.cs",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/MainMenuController.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/BackendConfigurationProvider.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/BackendConfigurationProvider.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/LoginFlowController.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/ProfileDebugUtility.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Backend/ProgressionDataTransferObjects.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Stash/ProfileReconciliationService.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs.meta",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/Character.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/ProgressionService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/validators/progression.validators.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/progression.idempotency.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Editor/BackendEnvironmentMenu.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeCommitRetryCoordinatorTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeCommitRetryCoordinatorTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/RemoteIdentityAndAuthArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Backend/BackendConfigurationProviderTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeCommitRetryCoordinatorTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Progression/AttributeCommitRetryCoordinatorTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/progression.idempotency.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "3b5776e9d56ebceffb8575d80a66571d2e09ab03",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3b5776e9d56ebceffb8575d80a66571d2e09ab03",
+      "subject": "fix(backend): harden staging defaults, trust proxy and per-ip login lockout",
+      "body": "FIX-35: treat staging as production-like for JWT secret enforcement and disable debug request logging in staging.\nFIX-37: key failed-login lockout by (username, ip) so one attacker IP cannot lock out another IP, and default TRUST_PROXY to 1 in staging/production when unset.\n",
+      "date": "2026-11-27T15:51:26-03:00",
+      "files": [
+        "backend/.env.example",
+        "backend/src/app.js",
+        "backend/src/config/env.js",
+        "backend/src/middleware/rateLimiter.js",
+        "backend/src/routes/auth.routes.js",
+        "backend/tests/auth.ratelimit.proxy.test.js",
+        "backend/tests/env.hardening.test.js"
+      ],
+      "originalType": "fix",
+      "originalScope": "backend",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "backend/.env.example",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/app.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/env.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/middleware/rateLimiter.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/routes/auth.routes.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/auth.ratelimit.proxy.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/env.hardening.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/auth.ratelimit.proxy.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/env.hardening.test.js",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "78eee503f1bb1d37b160b9b8f996ba049e10b10a",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/78eee503f1bb1d37b160b9b8f996ba049e10b10a",
