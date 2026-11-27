@@ -34,14 +34,15 @@ router.userLoginLimiter = userLoginLimiter;
 // POST /auth/login
 router.post('/login', ipRateLimiter.middleware(), userLoginLimiter.preCheck(), loginValidator, async (req, res, next) => {
   const username = req.body && req.body.username;
+  const clientIp = req.ip || '';
   try {
     const { password } = req.body;
     const result = await AuthService.login(username, password);
-    userLoginLimiter.clearFailures(username);
+    userLoginLimiter.clearFailures(username, clientIp);
     res.json(result);
   } catch (err) {
     if (err && err.statusCode === 401) {
-      userLoginLimiter.recordFailure(username);
+      userLoginLimiter.recordFailure(username, clientIp);
     }
     next(err);
   }

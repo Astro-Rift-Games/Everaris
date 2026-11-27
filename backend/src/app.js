@@ -21,9 +21,9 @@ if (env.trustProxy) {
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Global request logging for debugging (disabled in production)
+// Global request logging for debugging (disabled in staging and production; FIX-35)
 app.use((req, res, next) => {
-  if (env.nodeEnv !== 'production') {
+  if (env.nodeEnv === 'development' || env.nodeEnv === 'test') {
     console.log(`[Express] Received ${req.method} request to: ${req.originalUrl}`);
   }
   next();

@@ -73,34 +73,42 @@ class MemoryRateLimiter {
   }
 }
 
-// User-specific failed attempt limiter (records only on failure, clears on success)
+// User+IP failed attempt limiter (FIX-37: prevents third-party lockout of a known username from another IP)
 class UserFailedLoginLimiter {
   constructor(options = {}) {
     this.windowMs = options.windowMs || 15 * 60 * 1000;
     this.max = options.max || 5;
     this.message = options.message || 'Too many failed login attempts for this account. Please try again later.';
     this.nowProvider = options.nowProvider || (() => Date.now());
-    this.failures = new Map(); // username -> [timestamp1, ...]
+    this.failures = new Map(); // "username::ip" -> [timestamp1, ...]
   }
 
-  _cleanOldFailures(username, now) {
+  _buildKey(username, ip = '') {
+    if (!username || typeof username !== 'string') return '';
+    const normUser = username.toLowerCase().trim();
+    if (!normUser) return '';
+    const normIp = typeof ip === 'string' ? ip.trim() : '';
+    return normIp ? `${normUser}::${normIp}` : normUser;
+  }
+
+  _cleanOldFailures(key, now) {
     const cutoff = now - this.windowMs;
-    const timestamps = this.failures.get(username);
+    const timestamps = this.failures.get(key);
     if (!timestamps) return [];
     const valid = timestamps.filter((t) => t > cutoff);
     if (valid.length === 0) {
-      this.failures.delete(username);
+      this.failures.delete(key);
       return [];
     }
-    this.failures.set(username, valid);
+    this.failures.set(key, valid);
     return valid;
   }
 
-  isBlocked(username) {
-    if (!username) return { blocked: false };
-    const norm = username.toLowerCase().trim();
+  isBlocked(username, ip = '') {
+    const key = this._buildKey(username, ip);
+    if (!key) return { blocked: false };
     const now = this.nowProvider();
-    const valid = this._cleanOldFailures(norm, now);
+    const valid = this._cleanOldFailures(key, now);
     if (valid.length >= this.max) {
       const oldest = valid[0];
       const resetTime = oldest + this.windowMs;
@@ -110,30 +118,31 @@ class UserFailedLoginLimiter {
     return { blocked: false };
   }
 
-  recordFailure(username) {
-    if (!username) return;
-    const norm = username.toLowerCase().trim();
+  recordFailure(username, ip = '') {
+    const key = this._buildKey(username, ip);
+    if (!key) return;
     const now = this.nowProvider();
-    const valid = this._cleanOldFailures(norm, now);
+    const valid = this._cleanOldFailures(key, now);
     valid.push(now);
-    this.failures.set(norm, valid);
+    this.failures.set(key, valid);
   }
 
-  clearFailures(username) {
-    if (!username) return;
-    const norm = username.toLowerCase().trim();
-    this.failures.delete(norm);
+  clearFailures(username, ip = '') {
+    const key = this._buildKey(username, ip);
+    if (!key) return;
+    this.failures.delete(key);
   }
 
   reset() {
     this.failures.clear();
   }
 
-  // Pre-check middleware: verifies if username is currently locked out
+  // Pre-check middleware: verifies if (username, ip) is currently locked out
   preCheck() {
     return (req, res, next) => {
       const username = req.body && req.body.username;
-      const status = this.isBlocked(username);
+      const ip = req.ip || '';
+      const status = this.isBlocked(username, ip);
       if (status.blocked) {
         res.setHeader('Retry-After', status.retryAfterSeconds);
         return res.status(429).json({

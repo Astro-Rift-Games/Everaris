@@ -389,4 +389,23 @@ describe('FIX-23 non-production hardening: staging/dev secrets and debug/legacy 
     assert.equal(parsed.enableDebugRoutes, true);
     assert.equal(parsed.enableLegacyExtraction, true);
   });
+
+  test('FIX-35: NODE_ENV=staging enforces production secret rules (rejects JWT_SECRET=secret and sets isProductionLike)', () => {
+    const weakSecret = loadEnv({
+      NODE_ENV: 'staging',
+      JWT_SECRET: 'secret',
+      WEBHOOK_SECRET: STRONG_WEBHOOK
+    });
+    assert.notEqual(weakSecret.status, 0, 'staging must reject JWT_SECRET=secret');
+    assert.match(weakSecret.stderr, /JWT_SECRET/);
+
+    const okStaging = loadEnv({
+      NODE_ENV: 'staging',
+      JWT_SECRET: STRONG_JWT,
+      WEBHOOK_SECRET: STRONG_WEBHOOK
+    });
+    assert.equal(okStaging.status, 0);
+    const parsed = JSON.parse(okStaging.stdout.trim().split('\n').at(-1));
+    assert.equal(parsed.isProductionLike, true);
+  });
 });
