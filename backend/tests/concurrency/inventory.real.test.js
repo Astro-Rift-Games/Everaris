@@ -102,7 +102,7 @@ test('InventoryService - Concurrency and Revision', async (t) => {
     const loadout = Array.from({ length: 29 }, (_, slot) => ({ slot: slot + 1, lootId: `item_${slot}`, amount: 1 }));
     await Character.create({ accountId, name: 'LastSlot', inventory: { inventorySchemaVersion: 2, loadout, currency: 100 } });
     const results = await Promise.allSettled([
-      InventoryService.shopBuy(accountId, 'bone', 1, 0, 0, 'buy-bone'),
+      InventoryService.shopBuy(accountId, 'CON_MANA_FRAGMENT', 1, 0, 0, 'buy-mana-frag'),
       InventoryService.shopBuy(accountId, 'healthpotion', 1, 0, 0, 'buy-potion')
     ]);
     assert.strictEqual(results.filter(r => r.status === 'fulfilled').length, 1);
@@ -111,7 +111,7 @@ test('InventoryService - Concurrency and Revision', async (t) => {
     assert.strictEqual(after.revision, 1); assert.strictEqual(after.loadout.length, 30);
     const bought = after.loadout[0];
     assert.strictEqual(bought.slot, 0); assert.strictEqual(bought.amount, 1);
-    assert.strictEqual(after.currency, bought.lootId === 'bone' ? 95 : 60);
+    assert.strictEqual(after.currency, bought.lootId === 'CON_MANA_FRAGMENT' ? 84 : 60);
     assert.deepStrictEqual(after.loadout.slice(1), loadout);
   });
 

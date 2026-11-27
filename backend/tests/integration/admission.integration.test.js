@@ -75,7 +75,7 @@ test('E2E Town Identity and Raid Admission Integration (US-59 / SEC-59.1)', asyn
           { lootId: 'health_potion', amount: 2 }
         ],
         'inventory.preparedEquipment': {
-          weaponSlot1: 'iron_shield'
+          weaponSlot1: 'arming_sword'
         }
       }
     );
@@ -96,7 +96,7 @@ test('E2E Town Identity and Raid Admission Integration (US-59 / SEC-59.1)', asyn
     assert.ok(issueRes.body.ticket);
     assert.strictEqual(issueRes.body.characterId, characterId);
     assert.strictEqual(issueRes.body.snapshot.items.length, 2);
-    assert.strictEqual(issueRes.body.snapshot.preparedEquipment.weaponSlot1, 'iron_shield');
+    assert.strictEqual(issueRes.body.snapshot.preparedEquipment.weaponSlot1, 'arming_sword');
     raidTicket = issueRes.body.ticket;
 
     const verifyRes = await request(app)

@@ -47,19 +47,19 @@ describe('SessionTicketService (US-59 / SEC-59.1)', () => {
         stash: [],
         loadout: [],
         preparedEquipment: {
-          weaponSlot1: 'sword_iron',
-          helmet: 'helm_iron'
+          weaponSlot1: 'arming_sword',
+          helmet: 'heavy_armor_helmet'
         },
         pendingReservation: {
           reservationId: 'res_test_12345',
           items: [
             { lootId: 'potion_healing', amount: 3 },
-            { lootId: 'sword_iron', amount: 1 },
-            { lootId: 'helm_iron', amount: 1 }
+            { lootId: 'arming_sword', amount: 1 },
+            { lootId: 'heavy_armor_helmet', amount: 1 }
           ],
           preparedEquipment: {
-            weaponSlot1: 'sword_iron',
-            helmet: 'helm_iron'
+            weaponSlot1: 'arming_sword',
+            helmet: 'heavy_armor_helmet'
           }
         }
       }
@@ -173,7 +173,7 @@ describe('SessionTicketService (US-59 / SEC-59.1)', () => {
       assert.equal(result.snapshot.characterAttributes.strength, 20);
       assert.equal(result.snapshot.characterAttributes.vitality, 15);
       assert.equal(result.snapshot.items.length, 3);
-      assert.equal(result.snapshot.preparedEquipment.weaponSlot1, 'sword_iron');
+      assert.equal(result.snapshot.preparedEquipment.weaponSlot1, 'arming_sword');
       assert.equal(result.snapshot.preparedAbilities.slot1, 'charge');
       assert.equal(result.snapshot.preparedAbilities.slot2, 'seismic_strike');
 

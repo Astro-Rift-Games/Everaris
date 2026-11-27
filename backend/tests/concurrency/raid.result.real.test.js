@@ -234,10 +234,11 @@ describe('FIX-22 concurrent authoritative publication', () => {
     assert.deepEqual(await Character.findOne({ accountId }).lean(), before);
   });
 
-  test('unique indexes coexist with the unchanged 24-hour TTL index', async () => {
+  test('unique indexes coexist with the consumed-only 24-hour TTL index (FIX-21)', async () => {
     const indexes = await Result.collection.indexes();
     assert.ok(indexes.some(i => i.unique && JSON.stringify(i.key) === JSON.stringify({ resultId: 1 })));
     assert.ok(indexes.some(i => i.unique && JSON.stringify(i.key) === JSON.stringify({ raidId: 1, accountId: 1 })));
-    assert.ok(indexes.some(i => i.key.createdAt === 1 && i.expireAfterSeconds === 86400));
+    assert.ok(!indexes.some(i => i.key.createdAt === 1 && typeof i.expireAfterSeconds === 'number'));
+    assert.ok(indexes.some(i => i.key.consumedAt === 1 && i.expireAfterSeconds === 86400 && i.partialFilterExpression?.consumed === true));
   });
 });

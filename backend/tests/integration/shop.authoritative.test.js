@@ -40,21 +40,21 @@ test('E2E Shop Authoritative Validation (US-57 / SEC-57.4)', async (t) => {
     await t.test(`${operation}: reservation blocks new transaction but permits receipt replay`, async () => {
       await Character.findOneAndUpdate({ accountId }, { $set: {
         'inventory.currency': 500,
-        'inventory.loadout': [{ lootId: 'bone', amount: 2 }],
-        'inventory.pendingReservation': { raidId: 'raid-shop', items: [{ lootId: 'bone', amount: 3 }] },
-        appliedShopReceipts: [{ transactionId: `replay-${operation}`, type: operation, lootId: 'bone', amount: 1, totalAmount: 5 }],
+        'inventory.loadout': [{ lootId: 'CON_MANA_FRAGMENT', amount: 2 }],
+        'inventory.pendingReservation': { raidId: 'raid-shop', items: [{ lootId: 'CON_MANA_FRAGMENT', amount: 3 }] },
+        appliedShopReceipts: [{ transactionId: `replay-${operation}`, type: operation, lootId: 'CON_MANA_FRAGMENT', amount: 1, totalAmount: operation === 'buy' ? 16 : 8 }],
         revision: 0
       } });
       try {
         const before = await Character.findOne({ accountId }).lean();
         const replay = await request(app).post(`/character/me/inventory/shop/${operation}`)
           .set('Authorization', `Bearer ${token}`)
-          .send({ transactionId: `replay-${operation}`, lootId: 'bone', amount: 1, expectedRevision: 99 });
+          .send({ transactionId: `replay-${operation}`, lootId: 'CON_MANA_FRAGMENT', amount: 1, expectedRevision: 99 });
         assert.strictEqual(replay.status, 200);
         assert.strictEqual(replay.body.alreadySecured, true);
         const res = await request(app).post(`/character/me/inventory/shop/${operation}`)
           .set('Authorization', `Bearer ${token}`)
-          .send({ transactionId: `blocked-${operation}`, lootId: 'bone', amount: 1, expectedRevision: 0 });
+          .send({ transactionId: `blocked-${operation}`, lootId: 'CON_MANA_FRAGMENT', amount: 1, expectedRevision: 0 });
         assert.strictEqual(res.status, 409);
         assert.strictEqual(res.body.error, 'RESERVATION_PENDING');
         const after = await Character.findOne({ accountId }).lean();
@@ -71,14 +71,14 @@ test('E2E Shop Authoritative Validation (US-57 / SEC-57.4)', async (t) => {
   for (const operation of ['buy', 'sell']) {
     await t.test(`${operation}: reservation created between read and atomic write blocks trade`, async () => {
       await Character.findOneAndUpdate({ accountId }, { $set: {
-        'inventory.currency': 500, 'inventory.loadout': [{ lootId: 'bone', amount: 2 }], revision: 0
+        'inventory.currency': 500, 'inventory.loadout': [{ lootId: 'CON_MANA_FRAGMENT', amount: 2 }], revision: 0
       } });
       const originalUpdate = Character.findOneAndUpdate;
       let reservedState;
       Character.findOneAndUpdate = async function (filter, update, options) {
         // Keep revision unchanged to prove the reservation predicate itself protects the write.
         await originalUpdate.call(this, { accountId }, { $set: {
-          'inventory.pendingReservation': { raidId: 'race-raid', items: [{ lootId: 'bone', amount: 3 }] }
+          'inventory.pendingReservation': { raidId: 'race-raid', items: [{ lootId: 'CON_MANA_FRAGMENT', amount: 3 }] }
         } });
         reservedState = await Character.findOne({ accountId }).lean();
         return originalUpdate.call(this, filter, update, options);
@@ -86,7 +86,7 @@ test('E2E Shop Authoritative Validation (US-57 / SEC-57.4)', async (t) => {
       try {
         const res = await request(app).post(`/character/me/inventory/shop/${operation}`)
           .set('Authorization', `Bearer ${token}`)
-          .send({ transactionId: `race-${operation}`, lootId: 'bone', amount: 1, expectedRevision: 0 });
+          .send({ transactionId: `race-${operation}`, lootId: 'CON_MANA_FRAGMENT', amount: 1, expectedRevision: 0 });
         assert.strictEqual(res.status, 409);
         assert.strictEqual(res.body.error, 'RESERVATION_PENDING');
         assert.deepStrictEqual(await Character.findOne({ accountId }).lean(), reservedState);
@@ -101,42 +101,42 @@ test('E2E Shop Authoritative Validation (US-57 / SEC-57.4)', async (t) => {
   }
 
   await t.test('2. Legitimate Purchase: Deducts authoritative cost from currency and credits loadout', async () => {
-    // Buy 2 bones. Server unit buy price is 5 gold -> Total cost: 10 gold.
+    // Buy 2 CON_MANA_FRAGMENT. Server unit buy price is 16 gold -> Total cost: 32 gold.
     const res = await request(app).post('/character/me/inventory/shop/buy')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        transactionId: 'tx-buy-bones-1',
-        lootId: 'bone',
+        transactionId: 'tx-buy-mana-frag-1',
+        lootId: 'CON_MANA_FRAGMENT',
         amount: 2,
         expectedRevision: currentRevision
       });
 
     assert.strictEqual(res.status, 200);
-    assert.strictEqual(res.body.currency, 490, '500 - (2 * 5) = 490');
+    assert.strictEqual(res.body.currency, 468, '500 - (2 * 16) = 468');
     assert.strictEqual(res.body.revision, 1);
-    const boneItem = res.body.loadout.find(i => i.lootId === 'bone');
-    assert.ok(boneItem);
-    assert.strictEqual(boneItem.amount, 2);
+    const fragItem = res.body.loadout.find(i => i.lootId === 'CON_MANA_FRAGMENT');
+    assert.ok(fragItem);
+    assert.strictEqual(fragItem.amount, 2);
 
     currentRevision = res.body.revision;
   });
 
   await t.test('3. Legitimate Sale: Removes item from loadout and credits authoritative value', async () => {
-    // Sell 1 bone. Server unit sell value is 5 gold -> Total revenue: 5 gold.
+    // Sell 1 CON_MANA_FRAGMENT. Server unit sell value is 8 gold -> Total revenue: 8 gold.
     const res = await request(app).post('/character/me/inventory/shop/sell')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        transactionId: 'tx-sell-bone-1',
-        lootId: 'bone',
+        transactionId: 'tx-sell-mana-frag-1',
+        lootId: 'CON_MANA_FRAGMENT',
         amount: 1,
         expectedRevision: currentRevision
       });
 
     assert.strictEqual(res.status, 200);
-    assert.strictEqual(res.body.currency, 495, '490 + 5 = 495');
+    assert.strictEqual(res.body.currency, 476, '468 + 8 = 476');
     assert.strictEqual(res.body.revision, 2);
-    const boneItem = res.body.loadout.find(i => i.lootId === 'bone');
-    assert.strictEqual(boneItem.amount, 1);
+    const fragItem = res.body.loadout.find(i => i.lootId === 'CON_MANA_FRAGMENT');
+    assert.strictEqual(fragItem.amount, 1);
 
     currentRevision = res.body.revision;
   });
@@ -156,7 +156,7 @@ test('E2E Shop Authoritative Validation (US-57 / SEC-57.4)', async (t) => {
 
     assert.strictEqual(res.status, 200);
     // Server must deduct 200 gold, NOT 0 gold!
-    assert.strictEqual(res.body.currency, 295, '495 - 200 = 295');
+    assert.strictEqual(res.body.currency, 276, '476 - 200 = 276');
     assert.strictEqual(res.body.revision, 3);
     const potionItem = res.body.loadout.find(i => i.lootId === 'CON_HEALTH_POTION');
     assert.strictEqual(potionItem.amount, 5);
@@ -179,7 +179,7 @@ test('E2E Shop Authoritative Validation (US-57 / SEC-57.4)', async (t) => {
 
     assert.strictEqual(res.status, 200);
     // Server must credit 20 gold, NOT 1 billion!
-    assert.strictEqual(res.body.currency, 315, '295 + 20 = 315');
+    assert.strictEqual(res.body.currency, 296, '276 + 20 = 296');
     assert.strictEqual(res.body.revision, 4);
 
     currentRevision = res.body.revision;
@@ -255,7 +255,7 @@ test('E2E Shop Authoritative Validation (US-57 / SEC-57.4)', async (t) => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         transactionId: 'tx-overflow-amount',
-        lootId: 'bone',
+        lootId: 'CON_MANA_FRAGMENT',
         amount: 1000,
         expectedRevision: currentRevision
       });
@@ -265,12 +265,12 @@ test('E2E Shop Authoritative Validation (US-57 / SEC-57.4)', async (t) => {
   });
 
   await t.test('10. Idempotency: Exact retry returns alreadySecured without duplicate charge', async () => {
-    // Give enough currency for 1 bone (5 gold)
+    // Give enough currency for 1 CON_MANA_FRAGMENT (16 gold)
     await Character.findOneAndUpdate({ accountId }, { 'inventory.currency': 100 });
 
     const reqData = {
       transactionId: 'tx-idempotent-repeat',
-      lootId: 'bone',
+      lootId: 'CON_MANA_FRAGMENT',
       amount: 1,
       expectedRevision: currentRevision
     };
@@ -280,7 +280,7 @@ test('E2E Shop Authoritative Validation (US-57 / SEC-57.4)', async (t) => {
       .set('Authorization', `Bearer ${token}`)
       .send(reqData);
     assert.strictEqual(firstRes.status, 200);
-    assert.strictEqual(firstRes.body.currency, 95);
+    assert.strictEqual(firstRes.body.currency, 84);
     currentRevision = firstRes.body.revision;
 
     // Retry with identical transactionId and payload
@@ -290,11 +290,11 @@ test('E2E Shop Authoritative Validation (US-57 / SEC-57.4)', async (t) => {
 
     assert.strictEqual(retryRes.status, 200);
     assert.strictEqual(retryRes.body.alreadySecured, true);
-    assert.strictEqual(retryRes.body.currency, 95, 'Must not charge twice');
+    assert.strictEqual(retryRes.body.currency, 84, 'Must not charge twice');
   });
 
   await t.test('11. Idempotency: Reusing transactionId with different payload is rejected', async () => {
-    // Attempt to reuse tx-idempotent-repeat to buy healthpotion instead of bone
+    // Attempt to reuse tx-idempotent-repeat to buy healthpotion instead of CON_MANA_FRAGMENT
     const reuseRes = await request(app).post('/character/me/inventory/shop/buy')
       .set('Authorization', `Bearer ${token}`)
       .send({
@@ -341,7 +341,7 @@ test('E2E Shop Authoritative Validation (US-57 / SEC-57.4)', async (t) => {
   });
 
   await t.test('FIX-31: an evicted timestamped id is rejected with a typed 409 and changes nothing', async () => {
-    const stamped = n => ({ transactionId: `${1_700_000_000_000 + n}_${n.toString(16).padStart(32, '0')}`, type: 'buy', lootId: 'bone', amount: 1, totalAmount: 5 });
+    const stamped = n => ({ transactionId: `${1_700_000_000_000 + n}_${n.toString(16).padStart(32, '0')}`, type: 'buy', lootId: 'CON_MANA_FRAGMENT', amount: 1, totalAmount: 16 });
     await Character.findOneAndUpdate({ accountId }, { $set: {
       'inventory.currency': 500, 'inventory.pendingReservation': null, revision: 10, shopReceiptWatermark: 0,
       appliedShopReceipts: Array.from({ length: 64 }, (_, n) => stamped(n))
@@ -349,12 +349,12 @@ test('E2E Shop Authoritative Validation (US-57 / SEC-57.4)', async (t) => {
     // The 65th purchase evicts receipt 0 and advances the watermark in the same atomic update.
     const fresh = stamped(1000);
     const bought = await request(app).post('/character/me/inventory/shop/buy').set('Authorization', `Bearer ${token}`)
-      .send({ transactionId: fresh.transactionId, lootId: 'bone', amount: 1, expectedRevision: 10 });
+      .send({ transactionId: fresh.transactionId, lootId: 'CON_MANA_FRAGMENT', amount: 1, expectedRevision: 10 });
     assert.strictEqual(bought.status, 200, JSON.stringify(bought.body));
     const before = await Character.findOne({ accountId }).lean();
     assert.strictEqual(before.shopReceiptWatermark, 1_700_000_000_000);
     const replay = await request(app).post('/character/me/inventory/shop/buy').set('Authorization', `Bearer ${token}`)
-      .send({ transactionId: stamped(0).transactionId, lootId: 'bone', amount: 1, expectedRevision: before.revision });
+      .send({ transactionId: stamped(0).transactionId, lootId: 'CON_MANA_FRAGMENT', amount: 1, expectedRevision: before.revision });
     assert.strictEqual(replay.status, 409, JSON.stringify(replay.body));
     assert.strictEqual(replay.body.error, 'TRANSACTION_RETENTION_EXCEEDED');
     assert.deepStrictEqual(await Character.findOne({ accountId }).lean(), before);

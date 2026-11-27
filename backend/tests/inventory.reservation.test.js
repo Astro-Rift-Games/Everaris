@@ -210,7 +210,7 @@ test('InventoryService - savePendingReservation', async (t) => {
       reservationId: 'res-idempotent',
       items: [makeItem('shield', 1)],
       preparedEquipment: {
-        weaponSlot1: '', weaponSlot2: 'shield', helmet: '', armor: '', gloves: '', boots: ''
+        weaponSlot1: '', weaponSlot2: 'arming_sword', helmet: '', armor: '', gloves: '', boots: ''
       }
     };
     // The loadout/equipment are already empty from the first call

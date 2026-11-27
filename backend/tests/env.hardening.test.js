@@ -280,3 +280,113 @@ test('startup rejects a negative or non-numeric JWT_REFRESH_REUSE_GRACE_SECONDS'
     assert.match(result.stderr, /JWT_REFRESH_REUSE_GRACE_SECONDS/);
   }
 });
+
+describe('FIX-23 non-production hardening: staging/dev secrets and debug/legacy endpoints', () => {
+  const STRONG_JWT = 'a-very-long-and-high-entropy-staging-jwt-secret-2026-fix23';
+  const STRONG_WEBHOOK = 'a-very-long-and-high-entropy-staging-webhook-secret-2026-fix23';
+
+  test('NODE_ENV=staging disables debug and legacy extraction flags even when env flags are true', () => {
+    const result = loadEnv({
+      NODE_ENV: 'staging',
+      JWT_SECRET: STRONG_JWT,
+      WEBHOOK_SECRET: STRONG_WEBHOOK,
+      ENABLE_DEV_DEBUG_ROUTES: 'true',
+      ENABLE_LEGACY_EXTRACTION: 'true'
+    });
+    assert.equal(result.status, 0, `Expected staging startup to succeed with strong secrets, stderr=${result.stderr}`);
+    const parsed = JSON.parse(result.stdout.trim().split('\n').at(-1));
+    assert.equal(parsed.enableDebugRoutes, false, 'staging must never enable debug routes');
+    assert.equal(parsed.enableLegacyExtraction, false, 'staging must never enable legacy extraction');
+  });
+
+  test('staging HTTP requests to /debug/mock-fusion-result and /me/inventory/extraction return 404 even with flags enabled', async () => {
+    const envConfig = require('../src/config/env');
+    const RevokedToken = require('../src/models/RevokedToken');
+    const app = require('../src/app');
+    const request = require('supertest');
+    const jwt = require('jsonwebtoken');
+
+    const prevNodeEnv = envConfig.nodeEnv;
+    const prevDebug = process.env.ENABLE_DEV_DEBUG_ROUTES;
+    const prevLegacy = process.env.ENABLE_LEGACY_EXTRACTION;
+    const origExists = RevokedToken.exists;
+    const token = jwt.sign({ accountId: 'acc-fix23' }, envConfig.jwtSecret, { expiresIn: '1h' });
+
+    envConfig.nodeEnv = 'staging';
+    process.env.ENABLE_DEV_DEBUG_ROUTES = 'true';
+    process.env.ENABLE_LEGACY_EXTRACTION = 'true';
+    RevokedToken.exists = async () => null;
+
+    try {
+      const debugRes = await request(app)
+        .post('/character/debug/mock-fusion-result')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ raidId: 'raid-1', items: [] });
+      assert.equal(debugRes.status, 404);
+      assert.equal(debugRes.body.error, 'NOT_FOUND');
+
+      const legacyRes = await request(app)
+        .post('/character/me/inventory/extraction')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ raidId: 'raid-1', resultSequence: 1, items: [] });
+      assert.equal(legacyRes.status, 404);
+      assert.equal(legacyRes.body.error, 'NOT_FOUND');
+    } finally {
+      RevokedToken.exists = origExists;
+      envConfig.nodeEnv = prevNodeEnv;
+      if (prevDebug === undefined) delete process.env.ENABLE_DEV_DEBUG_ROUTES;
+      else process.env.ENABLE_DEV_DEBUG_ROUTES = prevDebug;
+      if (prevLegacy === undefined) delete process.env.ENABLE_LEGACY_EXTRACTION;
+      else process.env.ENABLE_LEGACY_EXTRACTION = prevLegacy;
+    }
+  });
+
+  test('startup rejects default/unset WEBHOOK_SECRET in staging and development unless ALLOW_DEV_WEBHOOK_SECRET=true', () => {
+    for (const nodeEnv of ['staging', 'development']) {
+      const unsetRes = loadEnv({ NODE_ENV: nodeEnv, JWT_SECRET: STRONG_JWT, WEBHOOK_SECRET: undefined });
+      assert.notEqual(unsetRes.status, 0, `${nodeEnv} must fail closed when WEBHOOK_SECRET falls back to default`);
+      assert.match(unsetRes.stderr, /WEBHOOK_SECRET/);
+
+      const explicitDefault = loadEnv({
+        NODE_ENV: nodeEnv,
+        JWT_SECRET: STRONG_JWT,
+        WEBHOOK_SECRET: 'dev-webhook-secret-do-not-use-in-prod'
+      });
+      assert.notEqual(explicitDefault.status, 0, `${nodeEnv} must fail closed on default WEBHOOK_SECRET`);
+      assert.match(explicitDefault.stderr, /WEBHOOK_SECRET/);
+    }
+  });
+
+  test('staging rejects weak JWT_SECRET and placeholder MONGODB_URI (fail-closed)', () => {
+    const weakJwt = loadEnv({
+      NODE_ENV: 'staging',
+      JWT_SECRET: 'short',
+      WEBHOOK_SECRET: STRONG_WEBHOOK
+    });
+    assert.notEqual(weakJwt.status, 0, 'staging must reject weak JWT_SECRET');
+    assert.match(weakJwt.stderr, /JWT_SECRET/);
+
+    const placeholderMongo = loadEnv({
+      NODE_ENV: 'staging',
+      JWT_SECRET: STRONG_JWT,
+      WEBHOOK_SECRET: STRONG_WEBHOOK,
+      MONGODB_URI: 'mongodb+srv://PLACEHOLDER_USER:PLACEHOLDER_PASSWORD@PLACEHOLDER_CLUSTER.mongodb.net/grimhold'
+    });
+    assert.notEqual(placeholderMongo.status, 0, 'staging must reject placeholder MONGODB_URI');
+    assert.match(placeholderMongo.stderr, /MONGODB_URI/);
+  });
+
+  test('development with explicit strong secrets still permits opt-in debug/legacy flags for local dev', () => {
+    const res = loadEnv({
+      NODE_ENV: 'development',
+      JWT_SECRET: STRONG_JWT,
+      WEBHOOK_SECRET: STRONG_WEBHOOK,
+      ENABLE_DEV_DEBUG_ROUTES: 'true',
+      ENABLE_LEGACY_EXTRACTION: 'true'
+    });
+    assert.equal(res.status, 0, `Expected local development startup to succeed, stderr=${res.stderr}`);
+    const parsed = JSON.parse(res.stdout.trim().split('\n').at(-1));
+    assert.equal(parsed.enableDebugRoutes, true);
+    assert.equal(parsed.enableLegacyExtraction, true);
+  });
+});
