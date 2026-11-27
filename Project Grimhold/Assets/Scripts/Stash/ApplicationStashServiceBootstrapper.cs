@@ -192,7 +192,7 @@ public static class ApplicationStashServiceBootstrapper
         if (store.PendingExtractionCommit != null)
         {
             var authToken = ApplicationAuthContext.Instance?.Token;
-            var backendConfig = ApplicationAuthContext.Instance?.BackendConfig ?? Resources.Load<BackendConfiguration>("BackendConfiguration");
+            var backendConfig = BackendConfigurationProvider.Resolve();
             if (!string.IsNullOrEmpty(authToken) && backendConfig != null)
                 _ = RetryPendingExtractionAsync(store, backendConfig, authToken, reconciliationService);
         }

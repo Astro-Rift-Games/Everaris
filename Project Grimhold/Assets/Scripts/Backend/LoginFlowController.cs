@@ -83,11 +83,8 @@ public sealed class LoginFlowController : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
 
-        if (_config == null)
-        {
-            _config = ScriptableObject.CreateInstance<BackendConfiguration>();
-            Debug.LogWarning($"[{nameof(LoginFlowController)}] No BackendConfiguration assigned. Using defaults.");
-        }
+        _config = BackendConfigurationProvider.ResolveOrDefault(_config);
+        Debug.Log($"[{nameof(LoginFlowController)}] Active BackendConfiguration: {_config.BaseUrl}");
 
         if (_authContext == null)
         {

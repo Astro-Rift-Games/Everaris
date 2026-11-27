@@ -31,19 +31,7 @@ public class ProfileReconciliationService : MonoBehaviour, IProfileReconciliatio
         _localConfig = localConfig;
         _store = store;
         _buybackLedger = buybackLedger;
-        
-        if (LoginFlowController.Instance != null && LoginFlowController.Instance.Config != null)
-        {
-            _config = LoginFlowController.Instance.Config;
-        }
-        else
-        {
-            _config = Resources.Load<BackendConfiguration>("BackendConfiguration");
-            if (_config == null)
-            {
-                _config = ScriptableObject.CreateInstance<BackendConfiguration>();
-            }
-        }
+        _config = BackendConfigurationProvider.ResolveOrDefault();
     }
 
     public async Task<bool> ReconcileAsync()

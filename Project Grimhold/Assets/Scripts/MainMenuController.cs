@@ -586,8 +586,7 @@ public sealed class MainMenuController : MonoBehaviour
     {
         if (_isBusy || _modalOpen) return;
         int generation = _enableGeneration;
-        var config = _backendConfig != null ? _backendConfig : ApplicationAuthContext.Instance?.BackendConfig;
-        if (config == null) config = LoginFlow?.Config;
+        var config = BackendConfigurationProvider.Resolve(_backendConfig);
         if (config == null)
             Debug.LogError($"[{nameof(MainMenuController)}] Assign BackendConfiguration for GET /health.", this);
         await _flow.CheckHealthAsync(_healthClient, config);

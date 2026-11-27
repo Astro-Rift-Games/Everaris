@@ -167,25 +167,14 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
     public void Initialize(LocalProfilePersistenceConfiguration localConfig, LocalProfileStore store)
     {
         _store = store;
-        // Fetch configuration from LoginFlowController if available, otherwise try Resources
-        if (LoginFlowController.Instance != null && LoginFlowController.Instance.Config != null)
-        {
-            _backendConfig = LoginFlowController.Instance.Config;
-            Debug.Log($"[{nameof(RemoteInventoryService)}] Loaded BackendConfiguration from LoginFlowController: {_backendConfig.BaseUrl}");
-        }
-        else
-        {
-            _backendConfig = Resources.Load<BackendConfiguration>("BackendConfiguration");
-            if (_backendConfig == null)
-            {
-                _backendConfig = ScriptableObject.CreateInstance<BackendConfiguration>();
-                Debug.LogWarning($"[{nameof(RemoteInventoryService)}] No BackendConfiguration found. Using defaults.");
-            }
-        }
+        _backendConfig = BackendConfigurationProvider.ResolveOrDefault();
+        Debug.Log($"[{nameof(RemoteInventoryService)}] Active BackendConfiguration: {_backendConfig.BaseUrl}");
     }
 
     /// <summary>
-    /// Persists character progression and attribute allocations.
+    /// Persists character progression and attribute allocations idempotently (FIX-36).
+    /// Retries transient/lost-response failures with the same transactionId and expectedRevision
+    /// so Unity converges to the backend's authoritative state without re-logging in or double spending.
     /// </summary>
     public async Task<(bool success, CharacterAttributesData data, BackendError error)> CommitProgressionAsync(string attributeName)
     {
@@ -195,32 +184,45 @@ public class RemoteInventoryService : MonoBehaviour, IRemoteInventoryService, IS
             return (false, default, new BackendError { error = "UNAUTHORIZED", message = "Not authenticated" });
         }
 
-        await _mutationLock.WaitAsync();
-        try
+        int expectedRevision = _store?.RemoteRevision ?? 0;
+
+        var (success, result, error) = await AttributeCommitRetryCoordinator.ExecuteAsync(
+            attributeName,
+            expectedRevision,
+            async request =>
+            {
+                if (string.IsNullOrEmpty(AuthToken))
+                {
+                    return (false, default, new BackendError { error = "UNAUTHORIZED", message = "Not authenticated" });
+                }
+
+                await _mutationLock.WaitAsync();
+                try
+                {
+                    var attempt = await ProgressionClient.CommitProgressionAsync(_backendConfig, AuthToken, request);
+                    if (!attempt.success && attempt.error.error == BackendErrorUtility.Unauthorized)
+                    {
+                        ApplicationAuthContext.Instance?.HandleUnauthorizedSession();
+                    }
+                    return attempt;
+                }
+                finally
+                {
+                    _mutationLock.Release();
+                }
+            });
+
+        if (success && _store != null)
         {
-            var request = new CommitProgressionRequest
+            _store.SetRemoteRevision(result.revision);
+            if (result.alreadySecured)
             {
-                attribute = attributeName,
-                expectedRevision = _store?.RemoteRevision ?? 0
-            };
-
-            var (success, result, error) = await ProgressionClient.CommitProgressionAsync(_backendConfig, AuthToken, request);
-            if (!success && error.error == BackendErrorUtility.Unauthorized)
-            {
-                ApplicationAuthContext.Instance?.HandleUnauthorizedSession();
+                Debug.Log($"[{nameof(RemoteInventoryService)}] Attribute spend already secured on backend " +
+                          $"(attr={attributeName}, tx={result.transactionId}, rev={result.revision}). Converged without double spend.");
             }
-
-            if (success && _store != null)
-            {
-                _store.SetRemoteRevision(result.revision);
-            }
-
-            return (success, result.characterAttributes, error);
         }
-        finally
-        {
-            _mutationLock.Release();
-        }
+
+        return (success, result.characterAttributes, error);
     }
 
     /// <summary>

@@ -27,8 +27,7 @@ public sealed class RemoteMissionClaimService : MonoBehaviour, IRemoteMissionCla
     public void Initialize(LocalProfileStore store, ProfileReconciliationService reconciliationService)
     {
         if (reconciliationService == null) throw new ArgumentNullException(nameof(reconciliationService));
-        BackendConfiguration config = LoginFlowController.Instance != null ? LoginFlowController.Instance.Config : null;
-        if (config == null) config = Resources.Load<BackendConfiguration>("BackendConfiguration");
+        BackendConfiguration config = BackendConfigurationProvider.Resolve();
         if (config == null)
         {
             Debug.LogError("[RemoteMissionClaimService] BackendConfiguration is missing; authoritative mission claims are unavailable.");

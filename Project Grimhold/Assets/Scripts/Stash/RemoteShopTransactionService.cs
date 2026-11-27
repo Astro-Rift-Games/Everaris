@@ -29,8 +29,7 @@ public sealed class RemoteShopTransactionService : MonoBehaviour, IShopTransacti
         ProfileReconciliationService reconciliationService, BuybackLedger ledger = null)
     {
         if (reconciliationService == null) throw new ArgumentNullException(nameof(reconciliationService));
-        BackendConfiguration config = LoginFlowController.Instance != null ? LoginFlowController.Instance.Config : null;
-        if (config == null) config = Resources.Load<BackendConfiguration>("BackendConfiguration");
+        BackendConfiguration config = BackendConfigurationProvider.Resolve();
         if (config == null)
         {
             Debug.LogError("[RemoteShopTransactionService] BackendConfiguration is missing; commerce is unavailable.");

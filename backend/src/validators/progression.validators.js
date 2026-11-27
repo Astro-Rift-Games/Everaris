@@ -22,6 +22,13 @@ const commitProgressionValidator = [
   body('expectedRevision')
     .exists().withMessage('expectedRevision is required')
     .isInt({ min: 0 }).withMessage('expectedRevision must be a non-negative integer'),
+  body('transactionId')
+    .optional()
+    .isString().withMessage('must be a string')
+    .bail()
+    .trim()
+    .notEmpty().withMessage('must not be empty')
+    .isLength({ max: 128 }).withMessage('must be at most 128 characters'),
   handleValidationErrors
 ];
 

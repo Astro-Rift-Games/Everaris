@@ -94,7 +94,7 @@ const weeklyStockSchema = new mongoose.Schema({
 
 const shopReceiptSchema = new mongoose.Schema({
   transactionId: { type: String, required: true },
-  type:          { type: String, enum: ['buy', 'sell', 'buyback', 'ability_purchase', 'install_gem', 'trade', 'upgrade', 'respec', 'mission_claim'], required: true },
+  type:          { type: String, enum: ['buy', 'sell', 'buyback', 'ability_purchase', 'install_gem', 'trade', 'upgrade', 'respec', 'mission_claim', 'attribute_spend'], required: true },
   entryId:       { type: String },
   intent:        { type: mongoose.Schema.Types.Mixed },
   outcome:       { type: mongoose.Schema.Types.Mixed },

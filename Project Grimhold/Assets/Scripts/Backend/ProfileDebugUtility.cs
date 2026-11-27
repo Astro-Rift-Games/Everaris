@@ -14,11 +14,7 @@ public sealed class ProfileDebugUtility : MonoBehaviour
 
     private void Awake()
     {
-        if (_config == null)
-        {
-            _config = ScriptableObject.CreateInstance<BackendConfiguration>();
-            Debug.LogWarning($"[{nameof(ProfileDebugUtility)}] No BackendConfiguration assigned. Using defaults.");
-        }
+        _config = BackendConfigurationProvider.ResolveOrDefault(_config);
     }
 
     [ContextMenu("Test: Save Custom Note")]
