@@ -110,12 +110,14 @@ public sealed class TownPartyInvitationPresenter : NetworkBehaviour
         if (_directory != null)
         {
             _directory.InvitationResultReceived -= OnInvitationResult;
+            _directory.IdentityErrorReceived -= OnIdentityError;
         }
 
         _directory = resolved;
         if (_directory != null)
         {
             _directory.InvitationResultReceived += OnInvitationResult;
+            _directory.IdentityErrorReceived += OnIdentityError;
         }
     }
 
@@ -161,6 +163,14 @@ public sealed class TownPartyInvitationPresenter : NetworkBehaviour
         _interactionHud?.ShowStatusFeedback(GetResultMessage(resultEvent.Result));
     }
 
+    private void OnIdentityError(string message)
+    {
+        if (!string.IsNullOrWhiteSpace(message))
+        {
+            _interactionHud?.ShowStatusFeedback(message);
+        }
+    }
+
     private void AcquireInputSuppression()
     {
         if (_inputSuppression != null || Runner == null)
@@ -191,6 +201,7 @@ public sealed class TownPartyInvitationPresenter : NetworkBehaviour
         if (_directory != null)
         {
             _directory.InvitationResultReceived -= OnInvitationResult;
+            _directory.IdentityErrorReceived -= OnIdentityError;
         }
 
         if (_view != null)

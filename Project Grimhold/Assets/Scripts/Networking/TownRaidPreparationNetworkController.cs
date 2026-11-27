@@ -88,6 +88,7 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
     private bool _releaseDispatched;
     private bool _terminalAuthorityReleaseRequested;
     private bool _resumingRelease;
+    private bool _waitingForVerifiedReleaseRecipients;
     private int _releaseStageIndex;
     private IReadOnlyList<ProfileId> _releaseOrder;
     private ProfileId _releaseRaidHostProfileId;
@@ -147,6 +148,20 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
                 PrepareCoordinatedRelease(Snapshot);
             }
         }
+        else if (_waitingForVerifiedReleaseRecipients && State == TownRaidPreparationState.Launching)
+        {
+            // FIX-93: Re-check strictly verified recipients after authority migration until either
+            // verification completes or the existing ACK/release deadline cancels the launch.
+            _waitingForVerifiedReleaseRecipients = false;
+            if (!_releaseDispatched && TownRaidPreparationRules.AreAllLaunchAcknowledged(Snapshot))
+            {
+                PrepareCoordinatedRelease(Snapshot);
+            }
+            else if (_releaseDispatched && !_terminalAuthorityReleaseRequested)
+            {
+                AdvanceStagedRelease();
+            }
+        }
 
         // A launch revision that never collects every ACK must not wait forever. The release
         // deadline only covers the phase after PrepareCoordinatedRelease, so the ACK phase owns
@@ -191,6 +206,7 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
 
     public void StateAuthorityChanged()
     {
+        Runner?.GetComponent<TownSenderIdentityContext>()?.NotifyAuthorityChanged();
         if (HasStateAuthority && State == TownRaidPreparationState.Launching)
         {
             ResetReleaseRuntime();
@@ -699,14 +715,48 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
             return;
         }
 
-        if (!TryResolveSender(Object.StateAuthority, out ProfileId townStateAuthorityProfileId) ||
-            !TownRaidPreparationRules.TryCreateReleaseOrder(
+        if (!TryResolveSenderWithStatus(Object.StateAuthority, out ProfileId townStateAuthorityProfileId, out TownSenderResolutionStatus authorityStatus))
+        {
+            if (authorityStatus == TownSenderResolutionStatus.PendingVerification)
+            {
+                _waitingForVerifiedReleaseRecipients = true;
+                return;
+            }
+
+            RequestCancelLaunch(TownRaidPreparationCancelReason.ReleaseFailed);
+            return;
+        }
+
+        if (!TownRaidPreparationRules.TryCreateReleaseOrder(
                 snapshot,
                 townStateAuthorityProfileId,
                 out IReadOnlyList<ProfileId> initialDepartures))
         {
             RequestCancelLaunch(TownRaidPreparationCancelReason.ReleaseFailed);
             return;
+        }
+
+        bool resumingRelease = ReleaseRevision == snapshot.LaunchRevision;
+        if (!resumingRelease)
+        {
+            for (int index = 0; index < initialDepartures.Count; index++)
+            {
+                ProfileId profileId = initialDepartures[index];
+                TownLaunchRecipientStatus recipientStatus = _directory != null
+                    ? _directory.ResolveLaunchRecipient(profileId, out _)
+                    : TownLaunchRecipientStatus.Disconnected;
+                if (recipientStatus == TownLaunchRecipientStatus.WaitingForVerification)
+                {
+                    _waitingForVerifiedReleaseRecipients = true;
+                    return;
+                }
+
+                if (recipientStatus != TownLaunchRecipientStatus.Verified)
+                {
+                    RequestCancelLaunch(TownRaidPreparationCancelReason.MemberDisconnected);
+                    return;
+                }
+            }
         }
 
         _expectedDepartures.Clear();
@@ -717,20 +767,14 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
         _releaseRaidHostProfileId = snapshot.HostProfileId;
         _releaseStageIndex = 0;
         _releaseDispatched = true;
-        _resumingRelease = ReleaseRevision == snapshot.LaunchRevision;
+        _resumingRelease = resumingRelease;
         ReleaseRevision = snapshot.LaunchRevision;
         _releaseDeadline = Time.time + ReleaseStageBudgetSeconds;
         _acknowledgeDeadline = 0f;
 
         for (int index = 0; index < initialDepartures.Count; index++)
         {
-            ProfileId profileId = initialDepartures[index];
-            _expectedDepartures.Add(profileId);
-            if (!_resumingRelease && (_directory == null || !_directory.TryResolvePlayer(profileId, out _)))
-            {
-                RequestCancelLaunch(TownRaidPreparationCancelReason.MemberDisconnected);
-                return;
-            }
+            _expectedDepartures.Add(initialDepartures[index]);
         }
 
         AdvanceStagedRelease();
@@ -769,7 +813,19 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
         for (int index = 0; index < batch.Count; index++)
         {
             ProfileId profileId = batch[index];
-            if (_directory == null || !_directory.TryResolvePlayer(profileId, out PlayerRef player))
+            PlayerRef player = PlayerRef.None;
+            TownLaunchRecipientStatus recipientStatus = _directory != null
+                ? _directory.ResolveLaunchRecipient(profileId, out player)
+                : TownLaunchRecipientStatus.Disconnected;
+            if (recipientStatus == TownLaunchRecipientStatus.WaitingForVerification)
+            {
+                // FIX-93: Never dispatch a release notice to an unverified peer; wait boundedly
+                // until verification completes or _releaseDeadline cancels the launch.
+                _waitingForVerifiedReleaseRecipients = true;
+                return false;
+            }
+
+            if (recipientStatus != TownLaunchRecipientStatus.Verified)
             {
                 if (_resumingRelease)
                 {
@@ -837,8 +893,21 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
             return;
         }
 
-        if (!_terminalTownAuthorityProfileId.IsValid || _directory == null ||
-            !_directory.TryResolvePlayer(_terminalTownAuthorityProfileId, out PlayerRef terminalPlayer))
+        if (!_terminalTownAuthorityProfileId.IsValid || _directory == null)
+        {
+            RequestCancelLaunch(TownRaidPreparationCancelReason.ReleaseFailed);
+            return;
+        }
+
+        TownLaunchRecipientStatus terminalStatus = _directory.ResolveLaunchRecipient(
+            _terminalTownAuthorityProfileId, out PlayerRef terminalPlayer);
+        if (terminalStatus == TownLaunchRecipientStatus.WaitingForVerification)
+        {
+            _waitingForVerifiedReleaseRecipients = true;
+            return;
+        }
+
+        if (terminalStatus != TownLaunchRecipientStatus.Verified)
         {
             RequestCancelLaunch(TownRaidPreparationCancelReason.ReleaseFailed);
             return;
@@ -859,7 +928,7 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
         TownRaidPreparationSnapshot snapshot = Snapshot;
         for (int index = 0; index < snapshot.Members.Count; index++)
         {
-            if (_directory != null && _directory.TryResolvePlayer(snapshot.Members[index].ProfileId, out PlayerRef player))
+            if (_directory != null && _directory.TryResolveVerifiedPlayer(snapshot.Members[index].ProfileId, out PlayerRef player))
             {
                 RPC_CancelLaunch(player, snapshot.RaidCode.Value, sequence);
                 _directory.NotifyMemberCancelled(player, reason);
@@ -971,8 +1040,13 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
 
     private bool TryResolveSender(PlayerRef player, out ProfileId profileId)
     {
+        return TryResolveSenderWithStatus(player, out profileId, out _);
+    }
+
+    private bool TryResolveSenderWithStatus(PlayerRef player, out ProfileId profileId, out TownSenderResolutionStatus status)
+    {
         ITownSessionTicketVerifier verifier = TicketVerifier ?? ApplicationAuthContext.Instance?.TownTicketVerifier;
-        return TownSenderIdentityValidator.TryResolveVerifiedSender(Runner, player, verifier, out profileId);
+        return TownSenderIdentityValidator.TryResolveVerifiedSender(Runner, player, verifier, out profileId, out status);
     }
 
     public ITownSessionTicketVerifier TicketVerifier { get; set; }
@@ -1013,6 +1087,7 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
         _releaseDispatched = false;
         _terminalAuthorityReleaseRequested = false;
         _resumingRelease = false;
+        _waitingForVerifiedReleaseRecipients = false;
         _releaseStageIndex = 0;
         _releaseOrder = null;
         _releaseRaidHostProfileId = default;
