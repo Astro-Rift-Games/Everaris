@@ -217,17 +217,8 @@ public sealed class TownPartyInvitationPresenter : NetworkBehaviour
     private static string GetDisplayName(string displayName, ProfileId fallback) =>
         string.IsNullOrWhiteSpace(displayName) ? fallback.Value : displayName;
 
-    private static string GetResultMessage(TownPartyInvitationResult result) => result switch
-    {
-        TownPartyInvitationResult.Accepted => "Invitación aceptada",
-        TownPartyInvitationResult.Rejected => "Invitación rechazada",
-        TownPartyInvitationResult.Expired => "La invitación expiró",
-        TownPartyInvitationResult.AlreadyGrouped => "El jugador ya está en un grupo",
-        TownPartyInvitationResult.PartyFull => "El grupo está completo",
-        TownPartyInvitationResult.Busy => "El grupo está ocupado",
-        TownPartyInvitationResult.Cooldown => "Esperá antes de volver a invitar",
-        _ => "Invitación no disponible"
-    };
+    private static string GetResultMessage(TownPartyInvitationResult result) =>
+        TownPartyFeedbackText.GetInvitationResultMessage(result);
 
 #if UNITY_EDITOR
     private void OnValidate() => CacheDependencies();

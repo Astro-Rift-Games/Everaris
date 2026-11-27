@@ -66,13 +66,21 @@ public sealed class SceneTransitionFader : MonoBehaviour
 
     private void Update()
     {
-        if (!_cover.IsAnimating)
+        if (_cover.IsAnimating)
         {
+            _cover.Advance(Time.unscaledDeltaTime, _fadeOutDuration, _fadeInDuration);
+            Apply();
             return;
         }
 
-        _cover.Advance(Time.unscaledDeltaTime, _fadeOutDuration, _fadeInDuration);
-        Apply();
+        if (_cover.IsLogicallyVisible && _loadingLabel != null && _coordinator != null)
+        {
+            string animated = SceneTransitionFadePolicy.FormatAnimatedStatus(_coordinator.State, Time.unscaledTime);
+            if (!string.Equals(_loadingLabel.text, animated, System.StringComparison.Ordinal))
+            {
+                _loadingLabel.text = animated;
+            }
+        }
     }
 
     private void OnSessionStateChanged(SessionConnectionState state)
@@ -121,10 +129,19 @@ public sealed class SceneTransitionFader : MonoBehaviour
         _canvasGroup.interactable = false;
         if (_loadingLabel != null)
         {
-            bool covered = _cover.Phase == UiPanelTransitionPhase.Shown;
-            if (_loadingLabel.gameObject.activeSelf != covered)
+            bool visible = _cover.IsLogicallyVisible;
+            if (_loadingLabel.gameObject.activeSelf != visible)
             {
-                _loadingLabel.gameObject.SetActive(covered);
+                _loadingLabel.gameObject.SetActive(visible);
+            }
+
+            if (visible && _coordinator != null)
+            {
+                string animated = SceneTransitionFadePolicy.FormatAnimatedStatus(_coordinator.State, Time.unscaledTime);
+                if (!string.Equals(_loadingLabel.text, animated, System.StringComparison.Ordinal))
+                {
+                    _loadingLabel.text = animated;
+                }
             }
         }
     }

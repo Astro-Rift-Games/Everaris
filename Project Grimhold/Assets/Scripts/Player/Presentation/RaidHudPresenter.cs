@@ -66,6 +66,7 @@ public sealed class RaidHudPresenter : MonoBehaviour
         Extracted,
         Countdown,
         Cancelled,
+        RitualBlocked,
         RitualCompleted,
         RitualInProgress,
         RitualCancelled,
@@ -94,6 +95,8 @@ public sealed class RaidHudPresenter : MonoBehaviour
 
     private int _observedCountdownPresentCount;
     private int _observedCountdownRequiredCount;
+    private TeamExtractionCancelReason _observedExtractionReason;
+    private string _observedExtractionReasonMember;
 
     /// <summary>
     /// Binds the local presentation to the current Input Authority player's sources.
@@ -557,12 +560,22 @@ public sealed class RaidHudPresenter : MonoBehaviour
         bool hasCountdown = false;
         int presentCount = 0;
         int requiredCount = 0;
+        TeamExtractionStatusSnapshot teamStatus = default;
 
         if (_entityRegistry != null && _entityRegistry.TryGetTeamExtractionCoordinator(out ITeamExtractionCoordinator coordinator) && coordinator != null)
         {
             if (teamId.IsValid)
             {
-                coordinator.TryGetTeamPresence(teamId, out presentCount, out requiredCount);
+                if (coordinator.TryGetTeamExtractionStatus(teamId, out teamStatus))
+                {
+                    presentCount = teamStatus.PresentCount;
+                    requiredCount = teamStatus.RequiredCount;
+                }
+                else
+                {
+                    coordinator.TryGetTeamPresence(teamId, out presentCount, out requiredCount);
+                }
+
                 if (coordinator.TryGetCountdownProgress(teamId, out ExtractionCountdownSnapshot teamCountdown) &&
                     teamCountdown.State != ExtractionState.None)
                 {
@@ -585,7 +598,7 @@ public sealed class RaidHudPresenter : MonoBehaviour
         RefreshQuotaSection(hasProgress, progress);
         RefreshProgressSection(hasProgress, progress);
         RefreshSanctuarySectionPresence(hasSanctuary, presentCount, requiredCount);
-        RefreshRitualStatusSectionPresence(hasCountdown, countdown, hasSanctuary, ritual, presentCount, requiredCount);
+        RefreshRitualStatusSectionWithTeamStatus(hasCountdown, countdown, hasSanctuary, ritual, presentCount, requiredCount, teamStatus);
     }
 
     private void RefreshQuotaSection(bool hasProgress, ExtractionProgressSnapshot progress)
@@ -695,6 +708,25 @@ public sealed class RaidHudPresenter : MonoBehaviour
         int presentCount,
         int requiredCount)
     {
+        RefreshRitualStatusSectionWithTeamStatus(
+            hasCountdown,
+            countdown,
+            hasSanctuary,
+            ritual,
+            presentCount,
+            requiredCount,
+            new TeamExtractionStatusSnapshot(presentCount, requiredCount));
+    }
+
+    private void RefreshRitualStatusSectionWithTeamStatus(
+        bool hasCountdown,
+        ExtractionCountdownSnapshot countdown,
+        bool hasSanctuary,
+        ExtractionRitualSnapshot ritual,
+        int presentCount,
+        int requiredCount,
+        in TeamExtractionStatusSnapshot teamStatus)
+    {
         if (hasCountdown)
         {
             ObserveExtractionSnapshot(countdown);
@@ -710,13 +742,18 @@ public sealed class RaidHudPresenter : MonoBehaviour
             countdown,
             hasSanctuary,
             ritual,
+            teamStatus,
             out RitualStatusKind status,
-            out float seconds);
+            out float seconds,
+            out TeamExtractionCancelReason activeReason,
+            out string activeReasonMember);
         if (_hasRitualStatus &&
             _observedRitualStatus == status &&
             Mathf.Approximately(_observedRitualStatusSeconds, seconds) &&
             _observedCountdownPresentCount == presentCount &&
-            _observedCountdownRequiredCount == requiredCount)
+            _observedCountdownRequiredCount == requiredCount &&
+            _observedExtractionReason == activeReason &&
+            string.Equals(_observedExtractionReasonMember, activeReasonMember, System.StringComparison.Ordinal))
         {
             return;
         }
@@ -726,6 +763,8 @@ public sealed class RaidHudPresenter : MonoBehaviour
         _observedRitualStatusSeconds = seconds;
         _observedCountdownPresentCount = presentCount;
         _observedCountdownRequiredCount = requiredCount;
+        _observedExtractionReason = activeReason;
+        _observedExtractionReasonMember = activeReasonMember;
 
         switch (status)
         {
@@ -736,7 +775,10 @@ public sealed class RaidHudPresenter : MonoBehaviour
                 _view?.PresentExtractionCountdown(seconds, presentCount, requiredCount);
                 break;
             case RitualStatusKind.Cancelled:
-                _view?.PresentExtractionCancelled();
+                _view?.PresentExtractionCancelled(activeReason, activeReasonMember);
+                break;
+            case RitualStatusKind.RitualBlocked:
+                _view?.PresentExtractionBlocked(activeReason, activeReasonMember, presentCount, requiredCount);
                 break;
             case RitualStatusKind.RitualCompleted:
                 _view?.PresentSanctuaryEnabled();
@@ -758,10 +800,15 @@ public sealed class RaidHudPresenter : MonoBehaviour
         ExtractionCountdownSnapshot countdown,
         bool hasSanctuary,
         ExtractionRitualSnapshot ritual,
+        in TeamExtractionStatusSnapshot teamStatus,
         out RitualStatusKind status,
-        out float seconds)
+        out float seconds,
+        out TeamExtractionCancelReason reason,
+        out string memberName)
     {
         seconds = 0f;
+        reason = TeamExtractionCancelReason.None;
+        memberName = null;
         if (hasCountdown && countdown.State == ExtractionState.Extracted)
         {
             status = RitualStatusKind.Extracted;
@@ -778,6 +825,8 @@ public sealed class RaidHudPresenter : MonoBehaviour
         if (_cancellationFeedbackUntil > Time.unscaledTime)
         {
             status = RitualStatusKind.Cancelled;
+            reason = teamStatus.LastCancelReason;
+            memberName = teamStatus.LastCancelMemberName;
             return;
         }
 
@@ -790,7 +839,19 @@ public sealed class RaidHudPresenter : MonoBehaviour
         switch (ritual.State)
         {
             case ExtractionRitualState.Completed:
-                status = RitualStatusKind.RitualCompleted;
+                if (teamStatus.RequiredCount > 1 &&
+                    (teamStatus.BlockReason == TeamExtractionCancelReason.RequiredMemberDisconnected ||
+                     (teamStatus.BlockReason == TeamExtractionCancelReason.RequiredMemberOutsideArea &&
+                      teamStatus.PresentCount > 0)))
+                {
+                    status = RitualStatusKind.RitualBlocked;
+                    reason = teamStatus.BlockReason;
+                    memberName = teamStatus.BlockingMemberName;
+                }
+                else
+                {
+                    status = RitualStatusKind.RitualCompleted;
+                }
                 break;
             case ExtractionRitualState.InProgress:
                 status = RitualStatusKind.RitualInProgress;
@@ -908,6 +969,8 @@ public sealed class RaidHudPresenter : MonoBehaviour
         _observedRitualStatusSeconds = 0f;
         _observedCountdownPresentCount = 0;
         _observedCountdownRequiredCount = 0;
+        _observedExtractionReason = TeamExtractionCancelReason.None;
+        _observedExtractionReasonMember = null;
         _hasQuotaState = false;
         _observedQuotaProgress = 0;
         _observedQuotaTarget = 0;

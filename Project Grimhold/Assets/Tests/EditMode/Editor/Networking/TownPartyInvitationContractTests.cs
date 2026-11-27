@@ -32,7 +32,10 @@ public sealed class TownPartyInvitationContractTests
                 nameof(TownPartyInvitationResult.PartyFull),
                 nameof(TownPartyInvitationResult.Busy),
                 nameof(TownPartyInvitationResult.Cooldown),
-                nameof(TownPartyInvitationResult.Unavailable)
+                nameof(TownPartyInvitationResult.Unavailable),
+                nameof(TownPartyInvitationResult.InviterAlreadyHasPending),
+                nameof(TownPartyInvitationResult.RecipientHasPending),
+                nameof(TownPartyInvitationResult.CancelledByPartyChange)
             },
             Enum.GetNames(typeof(TownPartyInvitationResult)));
     }

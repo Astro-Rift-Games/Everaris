@@ -84,6 +84,7 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
     private int _acknowledgedLocalRevision;
     private int _rejectedLocalRevision;
     private bool _cancelLaunchRequested;
+    private TownRaidPreparationCancelReason _pendingCancelReason;
     private bool _releaseDispatched;
     private bool _terminalAuthorityReleaseRequested;
     private bool _resumingRelease;
@@ -153,14 +154,14 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
         if (State == TownRaidPreparationState.Launching && !_releaseDispatched &&
             _acknowledgeDeadline > 0f && Time.time >= _acknowledgeDeadline)
         {
-            _cancelLaunchRequested = true;
+            RequestCancelLaunch(TownRaidPreparationCancelReason.AcknowledgeTimeout);
             _acknowledgeDeadline = 0f;
         }
 
         if (State == TownRaidPreparationState.Launching && _releaseDispatched && !_terminalAuthorityReleaseRequested &&
             _releaseDeadline > 0f && Time.time >= _releaseDeadline)
         {
-            _cancelLaunchRequested = true;
+            RequestCancelLaunch(TownRaidPreparationCancelReason.ReleaseTimeout);
             _releaseDeadline = 0f;
         }
 
@@ -169,10 +170,14 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
             return;
         }
 
+        TownRaidPreparationCancelReason cancelReason = _pendingCancelReason != TownRaidPreparationCancelReason.None
+            ? _pendingCancelReason
+            : TownRaidPreparationCancelReason.ReleaseFailed;
         _cancelLaunchRequested = false;
+        _pendingCancelReason = TownRaidPreparationCancelReason.None;
         if (State == TownRaidPreparationState.Launching)
         {
-            CancelLaunchingPreparation();
+            CancelLaunchingPreparation(cancelReason);
         }
     }
 
@@ -442,7 +447,7 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
             }
             else
             {
-                _cancelLaunchRequested = true;
+                RequestCancelLaunch(TownRaidPreparationCancelReason.MemberDisconnected);
             }
 
             return;
@@ -451,7 +456,7 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
         // A member that leaves before the authority released it (staged release) is premature.
         if (!TownRaidPreparationRules.IsExpectedReleaseDeparture(_expectedDepartures, _releasedProfiles, profileId))
         {
-            _cancelLaunchRequested = true;
+            RequestCancelLaunch(TownRaidPreparationCancelReason.MemberDisconnected);
             return;
         }
 
@@ -674,7 +679,16 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
             return;
         }
 
+        RequestCancelLaunch(TownRaidPreparationCancelReason.MemberRejectedLaunch);
+    }
+
+    private void RequestCancelLaunch(TownRaidPreparationCancelReason reason)
+    {
         _cancelLaunchRequested = true;
+        if (_pendingCancelReason == TownRaidPreparationCancelReason.None && reason != TownRaidPreparationCancelReason.None)
+        {
+            _pendingCancelReason = reason;
+        }
     }
 
     private void PrepareCoordinatedRelease(in TownRaidPreparationSnapshot snapshot)
@@ -691,7 +705,7 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
                 townStateAuthorityProfileId,
                 out IReadOnlyList<ProfileId> initialDepartures))
         {
-            _cancelLaunchRequested = true;
+            RequestCancelLaunch(TownRaidPreparationCancelReason.ReleaseFailed);
             return;
         }
 
@@ -714,7 +728,7 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
             _expectedDepartures.Add(profileId);
             if (!_resumingRelease && (_directory == null || !_directory.TryResolvePlayer(profileId, out _)))
             {
-                _cancelLaunchRequested = true;
+                RequestCancelLaunch(TownRaidPreparationCancelReason.MemberDisconnected);
                 return;
             }
         }
@@ -765,7 +779,7 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
                     continue;
                 }
 
-                _cancelLaunchRequested = true;
+                RequestCancelLaunch(TownRaidPreparationCancelReason.MemberDisconnected);
                 return false;
             }
 
@@ -826,7 +840,7 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
         if (!_terminalTownAuthorityProfileId.IsValid || _directory == null ||
             !_directory.TryResolvePlayer(_terminalTownAuthorityProfileId, out PlayerRef terminalPlayer))
         {
-            _cancelLaunchRequested = true;
+            RequestCancelLaunch(TownRaidPreparationCancelReason.ReleaseFailed);
             return;
         }
 
@@ -839,7 +853,7 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
         RPC_ReleaseLaunch(terminalPlayer, RaidCode.Value, LaunchRevision);
     }
 
-    private void CancelLaunchingPreparation()
+    private void CancelLaunchingPreparation(TownRaidPreparationCancelReason reason)
     {
         int sequence = LaunchRevision;
         TownRaidPreparationSnapshot snapshot = Snapshot;
@@ -848,12 +862,13 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
             if (_directory != null && _directory.TryResolvePlayer(snapshot.Members[index].ProfileId, out PlayerRef player))
             {
                 RPC_CancelLaunch(player, snapshot.RaidCode.Value, sequence);
+                _directory.NotifyMemberCancelled(player, reason);
             }
         }
 
         if (_directory == null || !_directory.AuthorityDissolvePreparation(this))
         {
-            _cancelLaunchRequested = true;
+            RequestCancelLaunch(reason);
         }
     }
 
@@ -994,6 +1009,7 @@ public sealed class TownRaidPreparationNetworkController : NetworkBehaviour, ISt
         _releasedProfiles.Clear();
         _departedProfiles.Clear();
         _cancelLaunchRequested = false;
+        _pendingCancelReason = TownRaidPreparationCancelReason.None;
         _releaseDispatched = false;
         _terminalAuthorityReleaseRequested = false;
         _resumingRelease = false;

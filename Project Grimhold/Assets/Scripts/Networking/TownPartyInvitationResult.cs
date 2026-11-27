@@ -7,5 +7,8 @@ public enum TownPartyInvitationResult
     PartyFull,
     Busy,
     Cooldown,
-    Unavailable
+    Unavailable,
+    InviterAlreadyHasPending,
+    RecipientHasPending,
+    CancelledByPartyChange
 }

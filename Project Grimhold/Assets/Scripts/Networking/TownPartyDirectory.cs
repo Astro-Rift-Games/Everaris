@@ -21,12 +21,14 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
 
     private readonly Dictionary<PlayerRef, ProfileId> _profileByPlayer = new();
     private readonly Queue<TownPartyInvitationResultEvent> _resultEvents = new();
+    private readonly Queue<TownPartyLeaveResult> _leaveResults = new();
     private readonly TownPartyContinuationClaimRegistry _continuationClaims = new();
     private int _observedEpoch = -1;
     private bool _localRequestPending;
     private float _nextLocalEnsureRetryTime;
 
     public event Action<TownPartyInvitationResultEvent> InvitationResultReceived;
+    public event Action<TownPartyLeaveResult> LeaveResultReceived;
     public int PartyCount { get { int count = 0; for (int i = 0; i < RaidSessionRules.MaxParticipants; i++) if (Parties[i].IsOccupied) count++; return count; } }
 
     public override void Spawned()
@@ -53,6 +55,12 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
             TownPartyInvitationResultEvent resultEvent = _resultEvents.Dequeue();
             InvitationResultReceived?.Invoke(resultEvent);
         }
+
+        while (_leaveResults.Count > 0)
+        {
+            TownPartyLeaveResult leaveResult = _leaveResults.Dequeue();
+            LeaveResultReceived?.Invoke(leaveResult);
+        }
     }
 
     public override void FixedUpdateNetwork()
@@ -74,6 +82,7 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
         runner.GetComponent<TownSenderIdentityContext>()?.UnregisterAuthorityObject(Object);
         _profileByPlayer.Clear();
         _resultEvents.Clear();
+        _leaveResults.Clear();
         _continuationClaims.Clear();
         _localRequestPending = false;
         _nextLocalEnsureRetryTime = 0f;
@@ -199,8 +208,12 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
     {
         ProfileId recipient = new(requestedRecipient.ToString());
         if (!CanMutate || !TryResolveSender(info.Source, out ProfileId inviter) || !recipient.IsValid || inviter == recipient ||
-            !TryResolvePlayer(recipient, out _) || HasPendingInvitation(inviter) || HasPendingInvitation(recipient))
+            !TryResolvePlayer(recipient, out _))
         { SendInvitationResult(info.Source, TownPartyInvitationResult.Unavailable); return default; }
+        if (HasPendingInvitation(inviter))
+        { SendInvitationResult(info.Source, TownPartyInvitationResult.InviterAlreadyHasPending); return default; }
+        if (HasPendingInvitation(recipient))
+        { SendInvitationResult(info.Source, TownPartyInvitationResult.RecipientHasPending); return default; }
 
         if (!TryGetPartyEntry(inviter, out _, out TownPartyNetworkEntry inviterParty) ||
             !TryGetPartyEntry(recipient, out _, out TownPartyNetworkEntry recipientParty))
@@ -250,7 +263,7 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
             inviterParty.PartyId != invitation.InviterPartyId || inviterParty.Revision != invitation.InviterPartyRevision ||
             recipientParty.PartyId != invitation.RecipientPartyId || recipientParty.Revision != invitation.RecipientPartyRevision ||
             !TownPartyRules.CanMerge(ToSnapshot(inviterParty), ToSnapshot(recipientParty)))
-        { ResolveInvitation(invitationIndex, invitation, TownPartyInvitationResult.Busy); return default; }
+        { ResolveInvitation(invitationIndex, invitation, TownPartyInvitationResult.CancelledByPartyChange); return default; }
 
         inviterParty.SecondMemberProfileId = recipient.Value;
         inviterParty.MemberCount = 2;
@@ -265,9 +278,12 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     private RpcInvokeInfo RPC_RequestLeaveParty(RpcInfo info = default)
     {
-        if (!CanMutate || !TryResolveSender(info.Source, out ProfileId leaver) ||
-            !TryGetPartyEntry(leaver, out int partyIndex, out TownPartyNetworkEntry party) || party.MemberCount != 2 ||
-            !TryFindFreePartySlot(out int freeIndex)) return default;
+        if (!CanMutate || !TryResolveSender(info.Source, out ProfileId leaver))
+        { SendLeaveResult(info.Source, TownPartyLeaveResult.Unavailable); return default; }
+        if (!TryGetPartyEntry(leaver, out int partyIndex, out TownPartyNetworkEntry party) || party.MemberCount != 2)
+        { SendLeaveResult(info.Source, TownPartyLeaveResult.NotInDuo); return default; }
+        if (!TryFindFreePartySlot(out int freeIndex))
+        { SendLeaveResult(info.Source, TownPartyLeaveResult.Unavailable); return default; }
 
         ProfileId remaining = new(party.FirstMemberProfileId.ToString() == leaver.Value
             ? party.SecondMemberProfileId.ToString()
@@ -280,6 +296,7 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
         Parties.Set(partyIndex, party);
         Parties.Set(freeIndex, CreateEntry(NextPartyIdentifier(), leaver, leaver));
         CancelOtherInvitations(leaver, remaining, 0);
+        SendLeaveResult(info.Source, TownPartyLeaveResult.Left);
         return default;
     }
 
@@ -425,7 +442,7 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
         for (int index = 0; index < RaidSessionRules.MaxParticipants; index++)
         { TownPartyInvitationNetworkEntry entry = Invitations[index]; if (entry.IsPending && entry.InvitationId != except &&
             (entry.InviterProfileId.ToString() == first.Value || entry.RecipientProfileId.ToString() == first.Value || entry.InviterProfileId.ToString() == second.Value || entry.RecipientProfileId.ToString() == second.Value))
-            ResolveInvitation(index, entry, TownPartyInvitationResult.Busy); }
+            ResolveInvitation(index, entry, TownPartyInvitationResult.CancelledByPartyChange); }
     }
 
     private void ResolveInvitation(int index, in TownPartyInvitationNetworkEntry invitation, TownPartyInvitationResult result)
@@ -467,6 +484,8 @@ public sealed class TownPartyDirectory : NetworkBehaviour, IStateAuthorityChange
     private void SendInvitationResult(ProfileId profile, TownPartyInvitationResult result) { if (TryResolvePlayer(profile, out PlayerRef player)) SendInvitationResult(player, result); }
     private void SendInvitationResult(PlayerRef player, TownPartyInvitationResult result) { if (!player.IsNone) RPC_ReceiveInvitationResult(player, result); }
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)] private void RPC_ReceiveInvitationResult([RpcTarget] PlayerRef target, TownPartyInvitationResult result) => _resultEvents.Enqueue(new TownPartyInvitationResultEvent(result));
+    private void SendLeaveResult(PlayerRef player, TownPartyLeaveResult result) { if (!player.IsNone) RPC_ReceiveLeaveResult(player, result); }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)] private void RPC_ReceiveLeaveResult([RpcTarget] PlayerRef target, TownPartyLeaveResult result) => _leaveResults.Enqueue(result);
 
     private static bool TryDecodeContext(NetworkString<_32> host, int count, NetworkString<_32> first, NetworkString<_32> second, out TownPartyContinuationContext context)
     {

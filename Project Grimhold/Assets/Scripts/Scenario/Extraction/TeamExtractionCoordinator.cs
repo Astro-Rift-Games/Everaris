@@ -339,6 +339,86 @@ public sealed class TeamExtractionCoordinator : NetworkBehaviour, ITeamExtractio
         return requiredCount > 0;
     }
 
+    public bool TryGetTeamExtractionStatus(RaidTeamId teamId, out TeamExtractionStatusSnapshot status)
+    {
+        status = default;
+#if UNITY_EDITOR
+        if (TeamExtractionStatusOverrideForTest != null)
+        {
+            var overridden = TeamExtractionStatusOverrideForTest(teamId);
+            if (overridden.HasValue)
+            {
+                status = overridden.Value;
+                return true;
+            }
+            return false;
+        }
+#endif
+        EnsureDependencies();
+
+        if (!teamId.IsValid || _assignmentService == null || _registry == null)
+        {
+            return false;
+        }
+
+        SanctuaryAssignmentResult assignment = _assignmentService.TryGetAssignment(teamId);
+        if (!assignment.Success || assignment.SanctuaryId.Value == 0)
+        {
+            return false;
+        }
+
+        if (!_registry.TryGetExtractionSanctuary(assignment.SanctuaryId, out IExtractionSanctuary sanctuary) ||
+            sanctuary == null ||
+            !_registry.TryGetExtractionZone(assignment.SanctuaryId, out IExtractionZone zone) ||
+            zone == null)
+        {
+            return false;
+        }
+
+        List<TeamMemberExtractionSnapshot> snapshots = _presenceSnapshotsBuffer;
+        snapshots.Clear();
+        _presenceControllersBuffer.Clear();
+        bool built = TryBuildMemberSnapshots(teamId, zone, snapshots, _presenceControllersBuffer);
+        _presenceControllersBuffer.Clear();
+        if (!built)
+        {
+            snapshots.Clear();
+            return false;
+        }
+
+        TeamExtractionEvaluationResult evaluation = TeamExtractionRequirementRules.EvaluateStart(
+            isRitualCompleted: true,
+            snapshots);
+        if (evaluation.RequiredMemberCount <= 0)
+        {
+            snapshots.Clear();
+            return false;
+        }
+
+        RaidParticipantId blockingId = FindBlockingParticipantId(snapshots, evaluation.CancelReason, useTolerant: false);
+        string blockingName = ResolveParticipantDisplayName(blockingId);
+
+        TeamExtractionCancelReason lastCancelReason = TeamExtractionCancelReason.None;
+        string lastCancelName = null;
+        int slotIndex = FindSlotIndex(teamId);
+        if (slotIndex >= 0)
+        {
+            TeamExtractionSlot slot = GetSlot(slotIndex);
+            lastCancelReason = slot.LastCancelReason;
+            lastCancelName = ResolveParticipantDisplayName(slot.LastBlockingParticipantId);
+        }
+
+        snapshots.Clear();
+        status = new TeamExtractionStatusSnapshot(
+            evaluation.PresentRequiredCount,
+            evaluation.RequiredMemberCount,
+            evaluation.CancelReason,
+            blockingName,
+            lastCancelReason,
+            lastCancelName);
+        return true;
+    }
+
     private void UpdateTeamExtraction(int slotIndex, TeamExtractionSlot slot)
     {
         RaidTeamId teamId = slot.TeamId;
@@ -429,7 +509,11 @@ public sealed class TeamExtractionCoordinator : NetworkBehaviour, ITeamExtractio
                     }
                 }
 
-                CancelTeamCountdown(slotIndex, slot, teamId, _memberControllersBuffer);
+                RaidParticipantId blockingId = FindBlockingParticipantId(
+                    _memberSnapshotsBuffer,
+                    contResult.CancelReason,
+                    useTolerant: true);
+                CancelTeamCountdown(slotIndex, slot, teamId, _memberControllersBuffer, contResult.CancelReason, blockingId);
                 return;
             }
 
@@ -558,6 +642,8 @@ public sealed class TeamExtractionCoordinator : NetworkBehaviour, ITeamExtractio
         slot.ActiveZoneIdValue = zoneId.Value;
         slot.CountdownTimer = timer;
         slot.ActiveSignatureValue = signature.Value;
+        slot.LastCancelReasonRaw = 0;
+        slot.LastBlockingParticipantIdRaw = 0;
         SetSlot(slotIndex, slot);
 
         for (int i = 0; i < controllers.Count; i++)
@@ -570,11 +656,15 @@ public sealed class TeamExtractionCoordinator : NetworkBehaviour, ITeamExtractio
         int slotIndex,
         TeamExtractionSlot slot,
         RaidTeamId teamId,
-        List<PlayerExtractionController> controllers = null)
+        List<PlayerExtractionController> controllers = null,
+        TeamExtractionCancelReason cancelReason = TeamExtractionCancelReason.None,
+        RaidParticipantId blockingParticipantId = default)
     {
         slot.ActiveZoneIdValue = 0;
         slot.CountdownTimer = TickTimer.None;
         slot.ActiveSignatureValue = 0;
+        slot.LastCancelReasonRaw = (byte)cancelReason;
+        slot.LastBlockingParticipantIdRaw = blockingParticipantId.IsValid ? blockingParticipantId.Value : 0;
         SetSlot(slotIndex, slot);
 
         if (controllers != null && controllers.Count > 0)
@@ -611,6 +701,8 @@ public sealed class TeamExtractionCoordinator : NetworkBehaviour, ITeamExtractio
         slot.ActiveZoneIdValue = 0;
         slot.CountdownTimer = TickTimer.None;
         slot.ActiveSignatureValue = 0;
+        slot.LastCancelReasonRaw = 0;
+        slot.LastBlockingParticipantIdRaw = 0;
         SetSlot(slotIndex, slot);
 
         // Simultaneous completion for all required members in this exact tick
@@ -622,6 +714,54 @@ public sealed class TeamExtractionCoordinator : NetworkBehaviour, ITeamExtractio
                 controller.CompleteExtraction();
             }
         }
+    }
+
+    private static RaidParticipantId FindBlockingParticipantId(
+        IReadOnlyList<TeamMemberExtractionSnapshot> snapshots,
+        TeamExtractionCancelReason reason,
+        bool useTolerant)
+    {
+        if (snapshots == null ||
+            (reason != TeamExtractionCancelReason.RequiredMemberDisconnected &&
+             reason != TeamExtractionCancelReason.RequiredMemberOutsideArea))
+        {
+            return default;
+        }
+
+        for (int index = 0; index < snapshots.Count; index++)
+        {
+            TeamMemberExtractionSnapshot member = snapshots[index];
+            if (!member.IsRequiredMember || !member.ParticipantId.IsValid)
+            {
+                continue;
+            }
+
+            if (reason == TeamExtractionCancelReason.RequiredMemberDisconnected && !member.IsConnected)
+            {
+                return member.ParticipantId;
+            }
+
+            if (reason == TeamExtractionCancelReason.RequiredMemberOutsideArea &&
+                !(useTolerant ? member.IsInsideTolerant : member.IsInsideExact))
+            {
+                return member.ParticipantId;
+            }
+        }
+
+        return default;
+    }
+
+    private string ResolveParticipantDisplayName(RaidParticipantId participantId)
+    {
+        if (!participantId.IsValid || _spawnManager == null ||
+            !_spawnManager.TryGetRaidParticipant(participantId, out NetworkRaidParticipant participant) ||
+            participant == null)
+        {
+            return null;
+        }
+
+        string name = participant.DisplayName.ToString();
+        return string.IsNullOrWhiteSpace(name) ? null : name.Trim();
     }
 
     private void EnsureDependencies()
@@ -775,5 +915,6 @@ public sealed class TeamExtractionCoordinator : NetworkBehaviour, ITeamExtractio
     internal Func<RaidTeamId, IExtractionZone, List<TeamMemberExtractionSnapshot>, List<PlayerExtractionController>, bool> MemberSnapshotsProviderForTest { get; set; }
     internal Func<RaidTeamId, bool> TimerExpiredOverrideForTest { get; set; }
     internal Func<RaidTeamId, (int present, int required)?> TeamPresenceOverrideForTest { get; set; }
+    internal Func<RaidTeamId, TeamExtractionStatusSnapshot?> TeamExtractionStatusOverrideForTest { get; set; }
 #endif
 }

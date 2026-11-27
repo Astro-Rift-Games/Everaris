@@ -44,7 +44,9 @@ public sealed class TownRaidPreparationView : MonoBehaviour
     private bool _awaitingPartyCompletion;
     private bool _busy;
     private string _rejectionNotice;
+    private string _cancellationNotice;
     private string _startNotice;
+    private string _actionNotice;
     private string _statusBody;
 
     public event Action<ProfileId> MemberSelected;
@@ -213,7 +215,9 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         UiPanelVisibility.SetVisible(_panelRoot, true);
 
         _rejectionNotice = null;
+        _cancellationNotice = null;
         _startNotice = null;
+        _actionNotice = null;
         ShowStatus("Creá una raid o ingresá el código de una sesión existente.");
         SetBusy(false);
     }
@@ -225,6 +229,7 @@ public sealed class TownRaidPreparationView : MonoBehaviour
     {
         _lastPresentation = default;
         _startNotice = null;
+        _actionNotice = null;
         HideInspection();
         HideMemberCards();
         _localReady = false;
@@ -321,13 +326,16 @@ public sealed class TownRaidPreparationView : MonoBehaviour
             _codeInput.interactable = !busy;
         }
 
+        bool hasActivePreparation = _lastPresentation.Snapshot.RaidCode.IsValid;
+        bool canSetReady = (!hasActivePreparation || _lastPresentation.CanSetReady) && CanToggleReady();
+        bool canLeave = !hasActivePreparation || _lastPresentation.CanLeave;
         if (_createButton != null) _createButton.interactable = !busy && !_awaitingPartyCompletion;
         if (_joinButton != null) _joinButton.interactable = !busy && !_awaitingPartyCompletion;
         if (_copyButton != null) _copyButton.interactable = !busy;
-        if (_readyButton != null) _readyButton.interactable = !busy && CanToggleReady();
-        if (_startButton != null) _startButton.interactable = !busy && !_awaitingPartyCompletion;
+        if (_readyButton != null) _readyButton.interactable = !busy && canSetReady;
+        if (_startButton != null) _startButton.interactable = !busy && (!hasActivePreparation || _lastPresentation.CanStart) && !_awaitingPartyCompletion;
         if (_friendlyFireButton != null) _friendlyFireButton.interactable = !busy && _lastPresentation.CanToggleFriendlyFire;
-        if (_leaveButton != null) _leaveButton.interactable = !busy;
+        if (_leaveButton != null) _leaveButton.interactable = !busy && canLeave;
         if (_reconnectButton != null) _reconnectButton.interactable = !busy;
         if (_discardReconnectButton != null) _discardReconnectButton.interactable = !busy;
         if (_closeButton != null) _closeButton.interactable = !busy;
@@ -345,7 +353,9 @@ public sealed class TownRaidPreparationView : MonoBehaviour
     public void PresentPreparation(in TownRaidPreparationPresentation presentation, bool awaitingPartyCompletion = false)
     {
         _lastPresentation = presentation;
+        _cancellationNotice = null;
         _startNotice = null;
+        _actionNotice = null;
         _awaitingPartyCompletion = awaitingPartyCompletion;
         if (_inspectionView != null && _inspectionView.IsOpen)
         {
@@ -377,11 +387,25 @@ public sealed class TownRaidPreparationView : MonoBehaviour
             }
 
             status
-                .Append(member.IsReady ? " — Ready" : " — No Ready")
+                .Append(presentation.IsLaunching
+                    ? (member.LaunchAcknowledged ? " — Confirmado" : " — Confirmando...")
+                    : (member.IsReady ? " — Ready" : " — No Ready"))
                 .AppendLine();
         }
 
-        status.Append(presentation.IsHost ? "Preparación del Host." : "Esperando al Host...");
+        if (presentation.IsLaunching)
+        {
+            status.Append(TownRaidPreparationActionText.FormatLaunchStatus(presentation));
+        }
+        else
+        {
+            status.Append(presentation.IsHost ? "Preparación del Host." : "Esperando al Host...");
+            string unreadyHint = TownRaidPreparationActionText.FormatUnreadyMembersHint(presentation);
+            if (!string.IsNullOrEmpty(unreadyHint))
+            {
+                status.AppendLine().Append(unreadyHint);
+            }
+        }
         status.AppendLine().Append("Fuego amigo: ").Append(presentation.FriendlyFireEnabled ? "Activado" : "Desactivado");
         if (awaitingPartyCompletion)
         {
@@ -396,7 +420,7 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         {
             _readyButton.gameObject.SetActive(true);
             _readyButton.GetComponentInChildren<TMP_Text>().text = presentation.LocalReady ? "Cancelar Ready" : "Ready";
-            _readyButton.interactable = !_busy && CanToggleReady();
+            _readyButton.interactable = !_busy && presentation.CanSetReady && CanToggleReady();
         }
         if (_startButton != null)
         {
@@ -415,7 +439,8 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         }
         if (_leaveButton != null)
         {
-            _leaveButton.gameObject.SetActive(true);
+            _leaveButton.gameObject.SetActive(presentation.CanLeave);
+            _leaveButton.interactable = !_busy && presentation.CanLeave;
             TMP_Text label = _leaveButton.GetComponentInChildren<TMP_Text>();
             if (label != null)
             {
@@ -485,6 +510,7 @@ public sealed class TownRaidPreparationView : MonoBehaviour
     {
         _lastPresentation = default;
         _startNotice = null;
+        _actionNotice = null;
         HideInspection();
         HideMemberCards();
         _localReady = false;
@@ -538,7 +564,31 @@ public sealed class TownRaidPreparationView : MonoBehaviour
     {
         SetBusy(false);
         _rejectionNotice = Describe(reason);
+        _cancellationNotice = null;
         ShowStatus(_rejectionNotice);
+    }
+
+    /// <summary>
+    /// Reports why the preparation dissolved or a launch was cancelled. Sticks across the
+    /// subsequent PresentNoPreparation repaint until the player enters a new preparation or reopens the panel.
+    /// </summary>
+    public void ShowCancellationNotice(TownRaidPreparationCancelReason reason)
+    {
+        if (!TownRaidCancellationText.TryGetMessage(reason, out string message))
+        {
+            return;
+        }
+
+        // Preserve a more specific local rejection reason when the local player caused MemberRejectedLaunch.
+        if (reason == TownRaidPreparationCancelReason.MemberRejectedLaunch &&
+            !string.IsNullOrEmpty(_rejectionNotice))
+        {
+            return;
+        }
+
+        SetBusy(false);
+        _cancellationNotice = message;
+        ShowStatus(_statusBody ?? message);
     }
 
     /// <summary>
@@ -553,6 +603,21 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         }
 
         _startNotice = message;
+        ShowStatus(_statusBody ?? string.Empty);
+    }
+
+    /// <summary>
+    /// Reports why a Create, Join, Ready, Leave or Start request was refused, keeping the
+    /// underlying status visible until the next snapshot, end of preparation or panel reopen.
+    /// </summary>
+    public void ShowActionRejected(TownRaidPreparationActionResult result)
+    {
+        if (!TownRaidPreparationActionText.TryGetMessage(result, out string message))
+        {
+            return;
+        }
+
+        _actionNotice = message;
         ShowStatus(_statusBody ?? string.Empty);
     }
 
@@ -658,6 +723,14 @@ public sealed class TownRaidPreparationView : MonoBehaviour
         string text = string.IsNullOrEmpty(_rejectionNotice) || status == _rejectionNotice
             ? status
             : $"{_rejectionNotice}\n{status}";
+        if (!string.IsNullOrEmpty(_cancellationNotice) && text != _cancellationNotice)
+        {
+            text = string.IsNullOrEmpty(text) ? _cancellationNotice : $"{_cancellationNotice}\n{text}";
+        }
+        if (!string.IsNullOrEmpty(_actionNotice))
+        {
+            text = string.IsNullOrEmpty(text) ? _actionNotice : $"{_actionNotice}\n{text}";
+        }
         _statusText.text = string.IsNullOrEmpty(_startNotice) ? text : $"{_startNotice}\n{text}";
         if (_statusScroll != null)
         {
