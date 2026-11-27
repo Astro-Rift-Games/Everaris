@@ -7,6 +7,7 @@ public sealed class TownPartyHudPresenter : NetworkBehaviour
 {
     [SerializeField] private SocialPlayerIdentity _identity;
     [SerializeField] private TownPartyHudView _view;
+    [SerializeField] private InteractionHudPresenter _interactionHud;
 
     private TownPartyDirectory _directory;
     private int _presentedPartyId;
@@ -76,6 +77,10 @@ public sealed class TownPartyHudPresenter : NetworkBehaviour
             _view.LeaveRequested -= LeaveParty;
             _view.SetOwned(false);
         }
+        if (_directory != null)
+        {
+            _directory.LeaveResultReceived -= OnLeaveResultReceived;
+        }
         _directory = null;
         _bound = false;
         _presentedPartyId = 0;
@@ -96,14 +101,45 @@ public sealed class TownPartyHudPresenter : NetworkBehaviour
 
     private void EnsureDirectory()
     {
-        _directory = Runner != null ? Runner.GetComponent<TownPartyDirectoryContext>()?.Directory : null;
+        TownPartyDirectory resolved = Runner != null ? Runner.GetComponent<TownPartyDirectoryContext>()?.Directory : null;
+        if (_directory == resolved) return;
+        if (_directory != null)
+        {
+            _directory.LeaveResultReceived -= OnLeaveResultReceived;
+        }
+        _directory = resolved;
+        if (_directory != null)
+        {
+            _directory.LeaveResultReceived += OnLeaveResultReceived;
+        }
     }
 
-    private void LeaveParty() => _directory?.RequestLeaveParty();
+    private void LeaveParty()
+    {
+        EnsureDirectory();
+        if (_directory == null || !_directory.RequestLeaveParty())
+        {
+            ShowLeaveFailure(TownPartyLeaveResult.Unavailable);
+        }
+    }
+
+    private void OnLeaveResultReceived(TownPartyLeaveResult result)
+    {
+        ShowLeaveFailure(result);
+    }
+
+    private void ShowLeaveFailure(TownPartyLeaveResult result)
+    {
+        if (TownPartyFeedbackText.TryGetLeaveFailureMessage(result, out string message))
+        {
+            _interactionHud?.ShowStatusFeedback(message);
+        }
+    }
 
     private void CacheDependencies()
     {
         if (_identity == null) _identity = GetComponent<SocialPlayerIdentity>();
+        if (_interactionHud == null) _interactionHud = GetComponentInChildren<InteractionHudPresenter>(true);
     }
 
 #if UNITY_EDITOR
