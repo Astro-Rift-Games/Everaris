@@ -10,7 +10,7 @@
     "Type": "User",
     "GUID": "{C19017E3-1C82-4CFC-9A2F-0579A4D099FF}",
     "Language": "SFX",
-    "Hash": "{22A61E39-29CB-9A60-FD37-C2209CC0B7F9}",
+    "Hash": "{070F92CA-E3AB-A380-B766-CAD6CCA6F12C}",
     "ObjectPath": "\\SoundBanks\\Default Work Unit\\General",
     "ShortName": "General",
     "Path": "General.bnk",
@@ -182,7 +182,8 @@
          "GroupType": "Switch",
          "GroupId": "3893417221",
          "Id": "646465998",
-         "GUID": "{E265D519-F2C3-46CE-9C40-922FADDA99D6}"
+         "GUID": "{E265D519-F2C3-46CE-9C40-922FADDA99D6}",
+         "Default": "true"
         },
         "MediaRefs": [
          {
@@ -325,6 +326,15 @@
          }
         ]
        }
+      ],
+      "ActionSetSwitch": [
+       {
+        "GroupId": "3893417221",
+        "Id": "646465998",
+        "Name": "ArmingSword",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\ArmingSword",
+        "GUID": "{E265D519-F2C3-46CE-9C40-922FADDA99D6}"
+       }
       ]
      },
      {
@@ -348,6 +358,166 @@
       "DurationType": "OneShot",
       "DurationMin": "0",
       "DurationMax": "0"
+     },
+     {
+      "Id": "580151831",
+      "Name": "SetWeapon_ArmingSword",
+      "ObjectPath": "\\Events\\Default Work Unit\\Attacks\\Set_Weapon\\SetWeapon_ArmingSword",
+      "GUID": "{1985C1D7-1F54-4E4D-93B6-583107BCDA7D}",
+      "Color": "8",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0",
+      "ActionSetSwitch": [
+       {
+        "GroupId": "3893417221",
+        "Id": "646465998",
+        "Name": "ArmingSword",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\ArmingSword",
+        "GUID": "{E265D519-F2C3-46CE-9C40-922FADDA99D6}"
+       }
+      ]
+     },
+     {
+      "Id": "2969083474",
+      "Name": "SetWeapon_Bow",
+      "ObjectPath": "\\Events\\Default Work Unit\\Attacks\\Set_Weapon\\SetWeapon_Bow",
+      "GUID": "{FA7EBAD4-557B-4654-9A36-36D3CD370B94}",
+      "Color": "8",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0",
+      "ActionSetSwitch": [
+       {
+        "GroupId": "3893417221",
+        "Id": "546945295",
+        "Name": "Bow",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\Bow",
+        "GUID": "{781630A2-46C6-4345-975A-105B7D1AE6EB}"
+       }
+      ]
+     },
+     {
+      "Id": "969345835",
+      "Name": "SetWeapon_GreatHammer",
+      "ObjectPath": "\\Events\\Default Work Unit\\Attacks\\Set_Weapon\\SetWeapon_GreatHammer",
+      "GUID": "{4A0E3A1D-E6C9-4698-8E02-FAC3E471DE16}",
+      "Color": "8",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0",
+      "ActionSetSwitch": [
+       {
+        "GroupId": "3893417221",
+        "Id": "2932462918",
+        "Name": "GreatHammer",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\GreatHammer",
+        "GUID": "{847BD021-F215-4DC7-B69F-9941210240AF}"
+       }
+      ]
+     },
+     {
+      "Id": "3633471087",
+      "Name": "SetWeapon_LongSword",
+      "ObjectPath": "\\Events\\Default Work Unit\\Attacks\\Set_Weapon\\SetWeapon_LongSword",
+      "GUID": "{1B261AD7-D177-465F-8B31-3C9D479D8041}",
+      "Color": "8",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0",
+      "ActionSetSwitch": [
+       {
+        "GroupId": "3893417221",
+        "Id": "3955957070",
+        "Name": "LongSword",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\LongSword",
+        "GUID": "{0A65FADE-02BE-4F9A-915D-C0AE61304299}"
+       }
+      ]
+     },
+     {
+      "Id": "1019670422",
+      "Name": "SetWeapon_MagicSword",
+      "ObjectPath": "\\Events\\Default Work Unit\\Attacks\\Set_Weapon\\SetWeapon_MagicSword",
+      "GUID": "{10EFA80A-3445-4E84-A056-9D346902F241}",
+      "Color": "8",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0",
+      "ActionSetSwitch": [
+       {
+        "GroupId": "3893417221",
+        "Id": "2967815805",
+        "Name": "MagicSword",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\MagicSword",
+        "GUID": "{0C0EC6C3-01F1-49FA-ACBB-3C46898ADCC6}"
+       }
+      ]
+     },
+     {
+      "Id": "3101069957",
+      "Name": "SetWeapon_Rapier",
+      "ObjectPath": "\\Events\\Default Work Unit\\Attacks\\Set_Weapon\\SetWeapon_Rapier",
+      "GUID": "{C9063AA8-96C9-4AF1-AFDF-B98972019717}",
+      "Color": "8",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0",
+      "ActionSetSwitch": [
+       {
+        "GroupId": "3893417221",
+        "Id": "1238745546",
+        "Name": "Rapier",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\Rapier",
+        "GUID": "{2EFEC5BE-8A1A-4827-86D2-4B2FBD9C1E98}"
+       }
+      ]
+     },
+     {
+      "Id": "128453221",
+      "Name": "SetWeapon_TrainingShortSword",
+      "ObjectPath": "\\Events\\Default Work Unit\\Attacks\\Set_Weapon\\SetWeapon_TrainingShortSword",
+      "GUID": "{A9995088-4C8F-4677-9C2C-D679AD5FAE59}",
+      "Color": "8",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0",
+      "ActionSetSwitch": [
+       {
+        "GroupId": "3893417221",
+        "Id": "3179814814",
+        "Name": "TrainingShortSword",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\TrainingShortSword",
+        "GUID": "{7AF669EA-42E5-4D5B-85B7-0F73BB981BD8}"
+       }
+      ]
+     },
+     {
+      "Id": "4219363623",
+      "Name": "SetWeapon_Zweihander",
+      "ObjectPath": "\\Events\\Default Work Unit\\Attacks\\Set_Weapon\\SetWeapon_Zweihander",
+      "GUID": "{3D9935AF-09EF-443C-B2DD-F4548EF544BD}",
+      "Color": "8",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0",
+      "ActionSetSwitch": [
+       {
+        "GroupId": "3893417221",
+        "Id": "1692362604",
+        "Name": "Zweihander",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Weapon\\Zweihander",
+        "GUID": "{960A7E75-1EFA-484C-9C2E-681F533B364D}"
+       }
+      ]
      },
      {
       "Id": "1281810935",
@@ -424,6 +594,6 @@
     ]
    }
   ],
-  "FileHash": "{7120A8DB-D1A7-FF01-F8E9-54BCFFF82AC8}"
+  "FileHash": "{3E67EBDD-1F5F-2E79-E6E3-35F87187B1D5}"
  }
 }

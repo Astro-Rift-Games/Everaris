@@ -18,6 +18,14 @@ namespace AK
         static const AkUniqueID ATTACK_SWING = 978692378U;
         static const AkUniqueID BOW_CHARGE = 2260571858U;
         static const AkUniqueID BOW_RELEASE = 3821338389U;
+        static const AkUniqueID SETWEAPON_ARMINGSWORD = 580151831U;
+        static const AkUniqueID SETWEAPON_BOW = 2969083474U;
+        static const AkUniqueID SETWEAPON_GREATHAMMER = 969345835U;
+        static const AkUniqueID SETWEAPON_LONGSWORD = 3633471087U;
+        static const AkUniqueID SETWEAPON_MAGICSWORD = 1019670422U;
+        static const AkUniqueID SETWEAPON_RAPIER = 3101069957U;
+        static const AkUniqueID SETWEAPON_TRAININGSHORTSWORD = 128453221U;
+        static const AkUniqueID SETWEAPON_ZWEIHANDER = 4219363623U;
         static const AkUniqueID START = 1281810935U;
     } // namespace EVENTS
 

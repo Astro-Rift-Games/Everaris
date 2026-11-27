@@ -96,6 +96,8 @@ public sealed class PlayerWeaponEquipmentNetworkController : NetworkBehaviour, I
     public bool HasAnyWeapon => IsEquipmentReadable &&
         (HasValidWeaponInSet(WeaponSetSlot.SetA) || HasValidWeaponInSet(WeaponSetSlot.SetB));
 
+    private PlayerAudio _playerAudio;
+
     /// <summary>True while any of the eight Equipment slots still owns a unit.</summary>
     public bool HasAnyEquipment
     {
@@ -1763,6 +1765,7 @@ public sealed class PlayerWeaponEquipmentNetworkController : NetworkBehaviour, I
         _character ??= GetComponent<ICharacter>();
         _raidOriginState ??= GetComponent<PlayerRaidLootOriginState>();
         _participantLink ??= GetComponent<RaidAvatarParticipantLink>();
+        _playerAudio = GetComponent<PlayerAudio>();
     }
 
     /// <summary>Dependencies every Equipment operation needs, weapons and armor alike.</summary>

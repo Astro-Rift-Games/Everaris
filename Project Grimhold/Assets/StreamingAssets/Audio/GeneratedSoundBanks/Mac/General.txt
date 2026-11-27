@@ -1,10 +1,18 @@
 Event	ID	Name			Wwise Object Path	Notes
+	128453221	SetWeapon_TrainingShortSword			\Default Work Unit\Attacks\Set_Weapon\SetWeapon_TrainingShortSword	
+	580151831	SetWeapon_ArmingSword			\Default Work Unit\Attacks\Set_Weapon\SetWeapon_ArmingSword	
+	969345835	SetWeapon_GreatHammer			\Default Work Unit\Attacks\Set_Weapon\SetWeapon_GreatHammer	
 	978692378	Attack_Swing			\Default Work Unit\Attacks\Attack_Swing	
+	1019670422	SetWeapon_MagicSword			\Default Work Unit\Attacks\Set_Weapon\SetWeapon_MagicSword	
 	1281810935	Start			\Default Work Unit\Start	
 	2260571858	Bow_Charge			\Default Work Unit\Attacks\Bow_Charge	
 	2274384713	Attack_Hit_Arrow			\Default Work Unit\Attacks\Attack_Hit_Arrow	
+	2969083474	SetWeapon_Bow			\Default Work Unit\Attacks\Set_Weapon\SetWeapon_Bow	
+	3101069957	SetWeapon_Rapier			\Default Work Unit\Attacks\Set_Weapon\SetWeapon_Rapier	
 	3248342671	Attack_Hit			\Default Work Unit\Attacks\Attack_Hit	
+	3633471087	SetWeapon_LongSword			\Default Work Unit\Attacks\Set_Weapon\SetWeapon_LongSword	
 	3821338389	Bow_Release			\Default Work Unit\Attacks\Bow_Release	
+	4219363623	SetWeapon_Zweihander			\Default Work Unit\Attacks\Set_Weapon\SetWeapon_Zweihander	
 
 Switch Group	ID	Name			Wwise Object Path	Notes
 	3893417221	Weapon			\Default Work Unit\Weapon	
