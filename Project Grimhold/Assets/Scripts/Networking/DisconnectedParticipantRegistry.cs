@@ -46,6 +46,33 @@ public sealed class DisconnectedParticipantRegistry
         return false;
     }
 
+    /// <summary>
+    /// FIX-47: Resolves a retained disconnected participant by immutable <see cref="RaidParticipantId"/>
+    /// so team extraction requirements continue to include retained disconnected teammates.
+    /// </summary>
+    public bool TryGetRetainedParticipant(RaidParticipantId participantId, out NetworkRaidParticipant participant)
+    {
+        participant = null;
+        if (!participantId.IsValid)
+        {
+            return false;
+        }
+
+        for (int index = 0; index < _retainedParticipants.Count; index++)
+        {
+            NetworkObject retained = _retainedParticipants[index];
+            if (retained != null && retained.IsValid &&
+                retained.TryGetBehaviour(out NetworkRaidParticipant candidate) &&
+                candidate.RaidParticipantId == participantId)
+            {
+                participant = candidate;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void Remove(ProfileId profileId)
     {
         for (int i = _retainedParticipants.Count - 1; i >= 0; i--)
