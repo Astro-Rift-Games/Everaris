@@ -59,6 +59,17 @@ test('shop catalogs mirror every Unity LootDefinition price and eligibility', t 
   assert.deepEqual([...BUYBACK_ELIGIBLE_IDS].sort(), [...eligibleIds].sort());
   assert.ok(ids > 0, 'Expected at least one Unity loot id');
   assert.equal(mismatches.length, 0, `Catalog parity mismatches:\n${mismatches.join('\n')}`);
+
+  // Reverse parity (FIX-24): BUY_CATALOG must never expose orphan or deprecated ids absent from Unity LootDefinitions.
+  const unityBuyableIds = new Set();
+  for (const file of assetFiles(definitions)) {
+    const text = fs.readFileSync(file, 'utf8');
+    const id = text.match(/^\s*_id:\s*(\S+)\s*$/m)?.[1];
+    const buyValue = Number(text.match(/^\s*_buyValuePerUnit:\s*(\d+)\s*$/m)?.[1] || 0);
+    if (id && buyValue > 0) unityBuyableIds.add(id);
+  }
+  const extraBuyIds = Object.keys(BUY_CATALOG).filter(id => !unityBuyableIds.has(id));
+  assert.deepEqual(extraBuyIds, [], `Unexpected non-Unity ids in BUY_CATALOG: ${extraBuyIds.join(', ')}`);
 });
 
 test('legacy healthpotion alias resolves merchant offers without duplicate catalog keys', () => {
