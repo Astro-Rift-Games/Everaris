@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1299,
-  "canonicalEntries": 1296,
+  "rawCommits": 1300,
+  "canonicalEntries": 1297,
   "before": {
+    "Other Changes": 380,
     "Bug Fixes": 202,
     "Documentation": 144,
     "Features": 476,
     "Architecture & Infrastructure": 31,
-    "Other Changes": 379,
     "Tests": 50,
     "Refactoring": 17
   },
   "after": {
+    "Documentation": 161,
     "Bug Fixes": 218,
-    "Documentation": 160,
     "Features": 615,
     "Maintenance": 29,
     "Other Changes": 186,
@@ -23,13 +23,13 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Build & Tooling": 674,
     "Inventory & Loot": 510,
     "Persistence & Backend": 332,
     "Documentation": 462,
     "Tests": 827,
     "Unassigned": 55,
     "Networking & Sessions": 373,
-    "Build & Tooling": 673,
     "UI": 371,
     "Combat": 427,
     "Extraction": 183,
@@ -42,8 +42,8 @@
   },
   "canonical": {
     "sections": {
+      "Documentation": 161,
       "Bug Fixes": 217,
-      "Documentation": 160,
       "Features": 614,
       "Maintenance": 29,
       "Other Changes": 185,
@@ -52,13 +52,13 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Build & Tooling": 672,
       "Inventory & Loot": 510,
       "Persistence & Backend": 332,
       "Documentation": 460,
       "Tests": 825,
       "Unassigned": 55,
       "Networking & Sessions": 373,
-      "Build & Tooling": 671,
       "UI": 370,
       "Combat": 425,
       "Extraction": 183,
@@ -76436,6 +76436,42 @@
   ],
   "examples": [
     {
+      "sha": "725dc293b3e08e39b7142da82e07775d8e6dd627",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/725dc293b3e08e39b7142da82e07775d8e6dd627",
+      "subject": "Document weekly release dry-run",
+      "body": "Correct the documented Unity version and CLI reference, and add an execution tracker for runner setup, dry-run results, reported fixes, and cleanup.\n",
+      "date": "2026-11-27T01:56:13-03:00",
+      "files": [
+        "odd/tasks/weekly-release-dry-run.md",
+        "tools/changelog/BOOTSTRAP.md"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "inferred",
+      "systems": [
+        "Build & Tooling"
+      ],
+      "evidence": [
+        {
+          "source": "artifact-paths",
+          "value": "odd/tasks/weekly-release-dry-run.md, tools/changelog/BOOTSTRAP.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "tools/changelog/BOOTSTRAP.md",
+          "supports": "Build & Tooling"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
       "sha": "19b3c219f9eeeed67a1f8310d1f1bf010fd91118",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/19b3c219f9eeeed67a1f8310d1f1bf010fd91118",
       "subject": "Add reservation refund window config",
@@ -78461,138 +78497,6 @@
       ],
       "generic": false,
       "secondary": true
-    },
-    {
-      "sha": "d4131be1653ce79ab1befaee2d556712b4c9e984",
-      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/d4131be1653ce79ab1befaee2d556712b4c9e984",
-      "subject": "Fix Collapse pressure behavior",
-      "body": "Align Collapse with the latest PvE pressure design: reinforcement spawns keep generating at max pressure without loot, while active enemies remain intact. This also updates the default dungeon config, network runner recovery, host-migration enemy state resets, and adds coverage for the new Collapse/no-loot rules.\n",
-      "date": "2026-10-07T17:01:12-03:00",
-      "files": [
-        "Plan-Correccion-US-49-Presion-PvE.md",
-        "Project Grimhold/Assets/Scenes/MainMenu.unity",
-        "Project Grimhold/Assets/Scriptable Objects/DefaultDungeonPressureConfig.asset",
-        "Project Grimhold/Assets/Scripts/Character/EnemyFSM.cs",
-        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPhaseResolver.cs",
-        "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/EnemyReinforcementDirector.cs",
-        "Project Grimhold/Assets/Scripts/Networking/FusionInputProvider.cs",
-        "Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs",
-        "Project Grimhold/Assets/Scripts/Pathfinding/EnemyPathfindingNavigator.cs",
-        "Project Grimhold/Assets/Scripts/Player/Combat/EnemyCombatAIController.cs",
-        "Project Grimhold/Assets/Scripts/Player/Movement/EnemyMovementAIController.cs",
-        "Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs",
-        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPhaseResolverTests.cs",
-        "Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md"
-      ],
-      "originalType": null,
-      "originalScope": null,
-      "originalSection": "Other Changes",
-      "breaking": false,
-      "reverts": null,
-      "section": "Bug Fixes",
-      "confidence": "inferred",
-      "systems": [
-        "Combat",
-        "Movement",
-        "Networking & Sessions",
-        "UI",
-        "World & Visibility",
-        "Persistence & Backend",
-        "Input",
-        "Build & Tooling",
-        "Documentation",
-        "Tests"
-      ],
-      "evidence": [
-        {
-          "source": "subject-action",
-          "value": "Fix Collapse pressure behavior",
-          "supports": "Bug Fixes"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Scripts/Player/Combat/EnemyCombatAIController.cs",
-          "supports": "Combat"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Scripts/Player/Movement/EnemyMovementAIController.cs",
-          "supports": "Movement"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Scripts/Networking/FusionInputProvider.cs",
-          "supports": "Networking & Sessions"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Scripts/Networking/NetworkSpawnManager.cs",
-          "supports": "Networking & Sessions"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPhaseResolverTests.cs",
-          "supports": "Networking & Sessions"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Scenes/MainMenu.unity",
-          "supports": "UI"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Scriptable Objects/DefaultDungeonPressureConfig.asset",
-          "supports": "World & Visibility"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/DungeonPhaseResolver.cs",
-          "supports": "World & Visibility"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Scripts/Gameplay/DungeonPressure/EnemyReinforcementDirector.cs",
-          "supports": "World & Visibility"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPhaseResolverTests.cs",
-          "supports": "World & Visibility"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md",
-          "supports": "World & Visibility"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Scripts/Stash/LocalProfileStore.cs",
-          "supports": "Persistence & Backend"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Scripts/Networking/FusionInputProvider.cs",
-          "supports": "Input"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPhaseResolverTests.cs",
-          "supports": "Build & Tooling"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Docs/Architecture/DungeonPressureArchitecture.md",
-          "supports": "Documentation"
-        },
-        {
-          "source": "path",
-          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/DungeonPhaseResolverTests.cs",
-          "supports": "Tests"
-        }
-      ],
-      "diagnostics": [],
-      "generic": false,
-      "secondary": false
     }
   ],
   "periods": [
@@ -78601,8 +78505,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 422,
-      "canonicalEntries": 422
+      "originalCommits": 423,
+      "canonicalEntries": 423
     },
     {
       "key": "v0.5.0",
@@ -78646,6 +78550,42 @@
     }
   ],
   "commits": [
+    {
+      "sha": "725dc293b3e08e39b7142da82e07775d8e6dd627",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/725dc293b3e08e39b7142da82e07775d8e6dd627",
+      "subject": "Document weekly release dry-run",
+      "body": "Correct the documented Unity version and CLI reference, and add an execution tracker for runner setup, dry-run results, reported fixes, and cleanup.\n",
+      "date": "2026-11-27T01:56:13-03:00",
+      "files": [
+        "odd/tasks/weekly-release-dry-run.md",
+        "tools/changelog/BOOTSTRAP.md"
+      ],
+      "originalType": null,
+      "originalScope": null,
+      "originalSection": "Other Changes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "inferred",
+      "systems": [
+        "Build & Tooling"
+      ],
+      "evidence": [
+        {
+          "source": "artifact-paths",
+          "value": "odd/tasks/weekly-release-dry-run.md, tools/changelog/BOOTSTRAP.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "tools/changelog/BOOTSTRAP.md",
+          "supports": "Build & Tooling"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
     {
       "sha": "8f88166b664f4775ea2cbe350b7e7128a650a52c",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/8f88166b664f4775ea2cbe350b7e7128a650a52c",

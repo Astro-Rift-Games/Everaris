@@ -4,18 +4,18 @@
 
 Release: Unreleased
 
-422 original commits; 422 canonical entries.
+423 original commits; 423 canonical entries.
 
 ## Canonical classification
 
-155 features; 124 bug fixes; 4 refactoring; 1 architecture & infrastructure; 70 documentation; 26 tests; 18 maintenance; 24 other changes
+155 features; 124 bug fixes; 4 refactoring; 1 architecture & infrastructure; 71 documentation; 26 tests; 18 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 19 | 13 | 1 | 0 | 10 | 1 |
 | Art & Animation | 34 | 14 | 3 | 0 | 11 | 8 |
 | Audio | 9 | 2 | 0 | 0 | 2 | 1 |
-| Build & Tooling | 108 | 81 | 4 | 1 | 31 | 7 |
+| Build & Tooling | 108 | 81 | 4 | 1 | 32 | 7 |
 | Combat | 61 | 27 | 2 | 0 | 19 | 2 |
 | Documentation | 48 | 47 | 0 | 0 | 22 | 2 |
 | Extraction | 23 | 24 | 2 | 0 | 10 | 5 |
@@ -30,6 +30,42 @@ Release: Unreleased
 | World & Visibility | 43 | 22 | 1 | 0 | 7 | 13 |
 
 ## Original commit records
+
+### 725dc293b3e08e39b7142da82e07775d8e6dd627
+
+[725dc293b3e08e39b7142da82e07775d8e6dd627](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/725dc293b3e08e39b7142da82e07775d8e6dd627)
+
+Date: 2026-11-27T01:56:13-03:00 · Classification: Documentation (inferred) · Systems: Build & Tooling
+
+Flags: secondary
+
+#### Original subject
+
+```text
+Document weekly release dry-run
+```
+
+#### Original body
+
+```text
+Correct the documented Unity version and CLI reference, and add an execution tracker for runner setup, dry-run results, reported fixes, and cleanup.
+```
+
+#### Changed paths
+
+```text
+odd/tasks/weekly-release-dry-run.md
+tools/changelog/BOOTSTRAP.md
+```
+
+#### Classification evidence
+
+- artifact-paths → Documentation: odd/tasks/weekly-release-dry-run.md, tools/changelog/BOOTSTRAP.md
+- path → Build &amp; Tooling: tools/changelog/BOOTSTRAP.md
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 8f88166b664f4775ea2cbe350b7e7128a650a52c
 
