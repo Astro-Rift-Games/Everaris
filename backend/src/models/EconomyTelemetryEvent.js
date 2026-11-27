@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const GOLD_SOURCES = Object.freeze(['npc_sale', 'mission_reward']);
 const GOLD_SINKS = Object.freeze(['purchase', 'buyback', 'weapon_upgrade', 'armor_upgrade', 'respec']);
 const OPERATIONS = Object.freeze([
-  'sell', 'buy', 'buyback', 'trade', 'upgrade', 'respec', 'mission_reward', 'raid_close', 'capacity_block'
+  'sell', 'buy', 'buyback', 'trade', 'upgrade', 'respec', 'mission_reward', 'raid_close', 'capacity_block',
+  'transport_block'
 ]);
 
 const goldLineSchema = new mongoose.Schema({

@@ -230,6 +230,22 @@ function recordCapacityBlock(character, source) {
   return record({ characterId: character._id, operation: 'capacity_block', details: { source, limit: 'capacity' } });
 }
 
+/*
+ * MaxTransportable is enforced by Unity (Doc 23 §8.2: it blocks the expedition start, never Town
+ * possession), so these blocks arrive as client reports (TASK-309). They are non-authoritative
+ * analytics: `reported: 'client'` marks them, nothing reads them and they never touch the character.
+ */
+const TRANSPORT_BLOCK_SOURCES = Object.freeze(['raid_admission']);
+
+/** Records one client-reported MaxTransportable block, separate from capacity blocks (Doc 23 §12). */
+function recordTransportBlock(character, source) {
+  return record({
+    characterId: character._id,
+    operation: 'transport_block',
+    details: { source, limit: 'max_transportable', reported: 'client' }
+  });
+}
+
 /**
  * Runs a loadout placement; when it is refused with INVENTORY_FULL the block is recorded and the
  * original error is rethrown unchanged, so the caller's rejection (and its unwritten state) is intact.
@@ -245,6 +261,7 @@ function trackCapacityBlock(character, source, place) {
 
 module.exports = {
   record, recordCommerce, recordUpgrade, recordRespec, recordMissionReward, recordRaidClose, recordCapacityBlock, trackCapacityBlock,
+  recordTransportBlock, TRANSPORT_BLOCK_SOURCES,
   flush, purchaseOfferType, buildEvent, classifyEntryProfile, extractedEntries,
   ENTRY_PROFILE_NAKED_MAX_GOLD, ENTRY_PROFILE_GEARED_MIN_GOLD
 };

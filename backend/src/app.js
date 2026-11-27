@@ -7,6 +7,7 @@ const inventoryRoutes = require('./routes/inventory.routes');
 const progressionRoutes = require('./routes/progression.routes');
 const missionRoutes = require('./routes/mission.routes');
 const raidRoutes = require('./routes/raid.routes');
+const telemetryRoutes = require('./routes/telemetry.routes');
 const errorHandler = require('./middleware/errorHandler');
 
 const env = require('./config/env');
@@ -34,6 +35,7 @@ app.use('/character', characterRoutes);
 app.use('/character', inventoryRoutes);
 app.use('/character', progressionRoutes);
 app.use('/character', missionRoutes);
+app.use('/character', telemetryRoutes);
 app.use('/character/raid', raidRoutes);
 
 // Health check endpoint.
