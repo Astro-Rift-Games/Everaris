@@ -142,7 +142,16 @@ public class EnemyCharacter : CharacterBase, IAbilityEnemyTarget
     /// </summary>
     protected override void HandleDeath()
     {
-        if (!HasStateAuthority || !_deathDependenciesValid)
+        if (!HasStateAuthority)
+        {
+            return;
+        }
+
+        // Any death on State Authority is a valid elimination of its Encounter (TASK-330 L8). It is reported before the
+        // dependency guard so that a dependency problem cannot keep the Encounter from resolving.
+        NotifyEncounterOfDeath();
+
+        if (!_deathDependenciesValid)
         {
             return;
         }
@@ -191,6 +200,31 @@ public class EnemyCharacter : CharacterBase, IAbilityEnemyTarget
             {
                 spawnManager.PopulationTracker.Unregister(Object.Id.Raw);
             }
+        }
+    }
+
+    private void NotifyEncounterOfDeath()
+    {
+        switch (EncounterDeathRouting.Resolve(EncounterIdValue, EncounterMemberKey, out EncounterId encounterId))
+        {
+            case EncounterDeathRoute.Notify:
+                var spawnManager = Runner.GetComponent<NetworkSpawnManager>();
+                EncounterRegistry registry = spawnManager != null ? spawnManager.EncounterRegistry : null;
+                if (registry == null)
+                {
+                    Debug.LogError(
+                        $"{nameof(EncounterRegistry)} is not available; the death of an enemy of {encounterId} (member {EncounterMemberKey}) cannot resolve it.",
+                        this);
+                    return;
+                }
+
+                registry.NotifyMemberDeath(encounterId, EncounterMemberKey);
+                return;
+            case EncounterDeathRoute.InvalidMember:
+                Debug.LogError(
+                    $"Enemy of Encounter#{EncounterIdValue} has no member key; its death cannot be registered.",
+                    this);
+                return;
         }
     }
 

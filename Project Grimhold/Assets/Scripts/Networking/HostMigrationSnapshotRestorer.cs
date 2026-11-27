@@ -101,6 +101,7 @@ public sealed class HostMigrationSnapshotRestorer : MonoBehaviour
 
             Debug.Log("[HM-MULTI] Snapshot restoration finished successfully.", this);
             _spawnManager.ReconcilePopulationTracker(RestoredObjects);
+            _spawnManager.ReconcileEncounterRegistry(RestoredObjects);
             _spawnManager.ReportSnapshotRestoreResult(true, GetRestoredParticipants());
         }
         catch (Exception ex)

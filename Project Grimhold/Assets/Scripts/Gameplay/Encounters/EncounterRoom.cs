@@ -59,6 +59,11 @@ public sealed class EncounterRoom : MonoBehaviour
             return Fail($"has inconsistent enemy counts: MinEnemies ({_composition.MinEnemies}) must be at least 1 and not greater than MaxEnemies ({_composition.MaxEnemies}).", out failure);
         }
 
+        if (_composition.MaxEnemies > EncounterLimits.MaxMembersPerRoom)
+        {
+            return Fail($"has a MaxEnemies ({_composition.MaxEnemies}) above the replicated member cap ({EncounterLimits.MaxMembersPerRoom}).", out failure);
+        }
+
         float chance = _composition.EncounterChance;
         if (float.IsNaN(chance) || chance < 0f || chance > 1f)
         {

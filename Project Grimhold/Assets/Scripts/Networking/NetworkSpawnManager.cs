@@ -200,6 +200,7 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
 
     private NetworkRunner _runner;
     private NetworkMatchController _matchController;
+    private EncounterRegistry _encounterRegistry;
     private NetworkSpawnSceneConfiguration _sceneSpawnPointConfiguration;
     private SessionStartupContext _startupContext;
     private RaidLaunchContext _launchContext;
@@ -258,6 +259,13 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
     /// Exposes the linked coordinator.
     /// </summary>
     public NetworkMatchController MatchController => _matchController;
+
+    /// <summary>
+    /// Runner-scoped replicated Encounter state, composed on the match controller prefab. Bound when the registry spawns
+    /// (every peer) and cleared when it despawns or the runner shuts down.
+    /// </summary>
+    public EncounterRegistry EncounterRegistry => _encounterRegistry;
+
     public Spawning.ReinforcementPointRegistry ReinforcementRegistry { get; } = new Spawning.ReinforcementPointRegistry();
     public PvePopulationTracker PopulationTracker { get; } = new PvePopulationTracker();
     public bool HasAdmittedRaidParticipants => _admittedProfiles.Count > 0;
@@ -705,6 +713,7 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
         _spawnPointLookup.Clear();
         _playerSpawnAreas = null;
         _matchController = null;
+        _encounterRegistry = null;
         _runner = null;
         _sceneSpawnPointConfiguration = null;
         _startupContext = default;
@@ -780,6 +789,7 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
         _spawnPointLookup.Clear();
         _playerSpawnAreas = null;
         _matchController = null;
+        _encounterRegistry = null;
         _sceneSpawnPointConfiguration = null;
 
         _currentSceneLoadGeneration = 0;
@@ -910,6 +920,111 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
     }
 
     /// <summary>
+    /// Binds the Encounter registry hosted on the match controller prefab. Scene preparation and registry spawn happen in
+    /// either order (a fresh raid prepares the scene first, a Host Migration restore may spawn the registry first); the
+    /// registry receives the scene's rooms as soon as both exist (<see cref="TryBindEncounterRooms"/>).
+    /// </summary>
+    public bool BindEncounterRegistry(EncounterRegistry registry)
+    {
+        if (_runner == null)
+        {
+            Debug.LogError("[NetworkSpawnManager] BindEncounterRegistry: Manager has not been initialized for a runner.");
+            return false;
+        }
+
+        if (registry == null)
+        {
+            Debug.LogError("[NetworkSpawnManager] BindEncounterRegistry: Encounter registry is null.");
+            return false;
+        }
+
+        if (registry.Runner != _runner)
+        {
+            Debug.LogError("[NetworkSpawnManager] BindEncounterRegistry: Registry belongs to a different runner.");
+            return false;
+        }
+
+        if (_encounterRegistry != null && _encounterRegistry != registry)
+        {
+            Debug.LogError("[NetworkSpawnManager] BindEncounterRegistry: Another Encounter registry is already bound to this manager.");
+            return false;
+        }
+
+        _encounterRegistry = registry;
+        TryBindEncounterRooms();
+        return true;
+    }
+
+    public void UnbindEncounterRegistry(EncounterRegistry registry)
+    {
+        if (_encounterRegistry == registry)
+        {
+            _encounterRegistry = null;
+        }
+    }
+
+    /// <summary>
+    /// Publishes the configured scene's rooms to the bound registry when both are present, whichever came last. The
+    /// room index in the registry is the room's position in <see cref="NetworkSpawnSceneConfiguration.EncounterRooms"/>.
+    /// Only State Authority binds rooms; other peers read the replicated result.
+    /// </summary>
+    private void TryBindEncounterRooms()
+    {
+        if (_encounterRegistry == null || !_encounterRegistry.HasStateAuthority || _sceneSpawnPointConfiguration == null)
+        {
+            return;
+        }
+
+        IReadOnlyList<EncounterRoom> rooms = _sceneSpawnPointConfiguration.EncounterRooms;
+        if (rooms == null || rooms.Count == 0)
+        {
+            // Both exist and there is nothing to bind: a restored registry would wait for a Configure that never comes.
+            _encounterRegistry.DiscardUnadoptedRestore("the restored scene has no Encounter rooms");
+            return;
+        }
+
+        var definitions = new List<EncounterRoomDefinition>(rooms.Count);
+        foreach (EncounterRoom room in rooms)
+        {
+            if (room == null || !room.Id.IsValid)
+            {
+                Debug.LogError("[NetworkSpawnManager] The scene's Encounter rooms contain a null or invalid room; the Encounter registry was not bound.", this);
+                _encounterRegistry.DiscardUnadoptedRestore("the scene's Encounter rooms contain a null or invalid room");
+                return;
+            }
+
+            definitions.Add(new EncounterRoomDefinition(room.Id, room.LifecycleSettings));
+        }
+
+        _encounterRegistry.Configure(definitions);
+    }
+
+    /// <summary>Moves a room spawned at bootstrap to Active with the member keys of its enemies.</summary>
+    public bool TryActivateEncounterRoom(EncounterId id, IReadOnlyList<uint> memberKeys, out string failure)
+    {
+        if (_encounterRegistry == null)
+        {
+            failure = $"{nameof(EncounterRegistry)} is not bound; compose it on the NetworkMatchController prefab.";
+            return false;
+        }
+
+        if (!_encounterRegistry.IsConfigured)
+        {
+            failure = $"{nameof(EncounterRegistry)} has not bound the scene's Encounter rooms, so {id} cannot be activated.";
+            return false;
+        }
+
+        if (!_encounterRegistry.TryActivate(id, memberKeys))
+        {
+            failure = $"{id} could not be activated: unknown room, invalid member keys or the room was already activated.";
+            return false;
+        }
+
+        failure = null;
+        return true;
+    }
+
+    /// <summary>
     /// Configures spawn points and groups using the scene's spatial configuration.
     /// </summary>
     public void ConfigureForScene(NetworkSpawnSceneConfiguration config)
@@ -1025,6 +1140,7 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             }
         }
         Debug.Log("[NetworkSpawnManager] Scene configuration applied successfully.");
+        TryBindEncounterRooms();
     }
 
     public override void OnSceneLoadStart(NetworkRunner runner)
@@ -1039,6 +1155,12 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
         _lootSpawnState.Clear();
         _breakableSpawnState.Clear();
         _usedEnemySpawnPoints.Clear();
+
+        // Encounter state never carries over to another scene (TASK-330).
+        if (_encounterRegistry != null)
+        {
+            _encounterRegistry.ResetForSceneChange();
+        }
 
         // Increment scene load generation to build a unique load identity
         _currentSceneLoadGeneration++;
@@ -1188,6 +1310,11 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             _spawnPointLookup.Clear();
             _playerSpawnAreas = null;
             _sceneSpawnPointConfiguration = null;
+            if (_encounterRegistry != null)
+            {
+                _encounterRegistry.DiscardUnadoptedRestore("the restored scene does not require spawn points, so it has no Encounter rooms");
+            }
+
             Debug.Log($"[NetworkSpawnManager] Scene '{runnerScene.name}' loaded. Scene does not require configured spawn points.");
         }
         else
@@ -4024,6 +4151,11 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
         _runner.GetComponent<ExtractionSanctuaryAssignmentService>()?.ResetForRaidClosure();
         ReinforcementRegistry.ResetForRaidClosure();
         PopulationTracker.ResetForRaidClosure();
+        if (_encounterRegistry != null)
+        {
+            _encounterRegistry.ResetForRaidClosure();
+        }
+
         _cleanupBuffer.Clear();
         _resultsWorldCleanupFailureCount = failureCount;
 
@@ -4052,6 +4184,38 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
         {
             Debug.Log($"[NetworkSpawnManager] {log}");
         }
+    }
+
+    /// <summary>
+    /// After a Host Migration restore: compares the restored Encounter state with the restored enemies (which keep their
+    /// EncounterId and member key although their NetworkIds changed) and logs every discrepancy. The registry stays
+    /// authoritative; see <see cref="EncounterRegistry.Reconcile"/>.
+    /// </summary>
+    public void ReconcileEncounterRegistry(IReadOnlyCollection<NetworkObject> restoredObjects)
+    {
+        if (restoredObjects == null)
+            return;
+
+        var observations = new List<EncounterMemberObservation>();
+        foreach (var obj in restoredObjects)
+        {
+            if (obj != null && obj.IsValid && obj.TryGetBehaviour(out EnemyCharacter enemy) && enemy.EncounterIdValue > 0)
+            {
+                observations.Add(new EncounterMemberObservation(enemy.EncounterIdValue, enemy.EncounterMemberKey, enemy.IsAlive));
+            }
+        }
+
+        if (_encounterRegistry == null)
+        {
+            if (observations.Count > 0)
+            {
+                Debug.LogWarning($"[NetworkSpawnManager] {observations.Count} restored enemies belong to an Encounter but the restored match controller has no {nameof(EncounterRegistry)}.");
+            }
+
+            return;
+        }
+
+        _encounterRegistry.Reconcile(observations);
     }
 
     private bool IsRetainedResultsObject(NetworkObject networkObject)
@@ -4178,6 +4342,14 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             return false;
         }
 
+        // Rooms spawn enemies bound to a registry entry. Without a bound registry their deaths could never resolve them.
+        if (_encounterRegistry == null || !_encounterRegistry.IsConfigured)
+        {
+            failure = $"Encounter bootstrap requires the {nameof(EncounterRegistry)} on the match controller to hold the scene's Encounter rooms.";
+            return false;
+        }
+
+        var memberKeys = new List<uint>();
         var assignments = new List<EncounterSpawnAssignment<NetworkPrefabRef>>();
         foreach (EncounterRoom room in rooms)
         {
@@ -4207,6 +4379,7 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
                 continue;
             }
 
+            memberKeys.Clear();
             foreach (EncounterSpawnAssignment<NetworkPrefabRef> assignment in assignments)
             {
                 Transform spawnPoint = room.SpawnPoints[assignment.SpawnPointIndex];
@@ -4223,6 +4396,14 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
                     failure = $"Enemy bootstrap failed for encounter room '{room.name}' ({room.Id}).";
                     return false;
                 }
+
+                memberKeys.Add(assignment.MemberKey);
+            }
+
+            if (!TryActivateEncounterRoom(room.Id, memberKeys, out string activationFailure))
+            {
+                failure = $"Encounter room '{room.name}' ({room.Id}) spawned its enemies but could not be activated. {activationFailure}";
+                return false;
             }
         }
 
@@ -5545,6 +5726,7 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
             _spawnPointLookup.Clear();
             _playerSpawnAreas = null;
             _matchController = null;
+            _encounterRegistry = null;
             _runner = null;
             _sceneSpawnPointConfiguration = null;
             _currentSceneLoadGeneration = 0;

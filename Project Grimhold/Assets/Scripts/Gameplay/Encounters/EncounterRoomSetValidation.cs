@@ -4,13 +4,19 @@ using UnityEngine;
 /// <summary>Validates the set of Encounter rooms referenced by one scene configuration.</summary>
 public static class EncounterRoomSetValidation
 {
-    /// <summary>Rejects null or invalid rooms, duplicate EncounterIds and a marker owned by two rooms.</summary>
+    /// <summary>Rejects more rooms than the replicated capacity, null or invalid rooms, duplicate EncounterIds and a marker owned by two rooms.</summary>
     public static bool Validate(IReadOnlyList<EncounterRoom> rooms, out string failure)
     {
         failure = string.Empty;
         if (rooms == null || rooms.Count == 0)
         {
             return true;
+        }
+
+        if (rooms.Count > EncounterLimits.MaxRooms)
+        {
+            failure = $"{rooms.Count} encounter rooms exceed the replicated capacity of {EncounterLimits.MaxRooms}.";
+            return false;
         }
 
         var roomsById = new Dictionary<int, EncounterRoom>();
