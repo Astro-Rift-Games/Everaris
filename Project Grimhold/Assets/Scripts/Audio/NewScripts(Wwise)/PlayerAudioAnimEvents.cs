@@ -10,9 +10,15 @@ public class PlayerAudioAnimEvents : MonoBehaviour
         _playerAudio = GetComponentInParent<PlayerAudio>();
     }
 
-    public void Audio_Swing()
+    public void Audio_Swing_Main()
     {
-        Debug.Log("AnimAudioEvent: Swing");
-        _playerAudio.Audio_Attack_Swing();
+        Debug.Log("Anim Audio Event: Swing_Main");
+        _playerAudio.Audio_Attack_Swing_Main();
+    }
+
+      public void Audio_Swing_Off()
+    {
+        Debug.Log("Anim Audio Event: Swing_Off");
+        _playerAudio.Audio_Attack_Swing_Off();
     }
 }
