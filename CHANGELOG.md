@@ -172,6 +172,7 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - The Catacombs Specter now navigates around walls during pursuit and reliably fades back to its home area instead of freezing after its first leash.
 - Enemies can no longer stop attacking permanently when their animations are interrupted or off-screen.
 - Picking up loot or treasures no longer fills the extraction quota; only defeating enemies, opening chests and defeating rival players do.
+- Extracted raid loot is no longer lost if you reconnect more than 24 hours later.
 
 
 ## [0.5.0](https://github.com/Astro-Rift-Games/ProjectGrimhold/releases/tag/v0.5.0) - 2026-11-08

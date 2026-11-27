@@ -4,32 +4,348 @@
 
 Release: Unreleased
 
-423 original commits; 423 canonical entries.
+428 original commits; 428 canonical entries.
 
 ## Canonical classification
 
-155 features; 124 bug fixes; 4 refactoring; 1 architecture & infrastructure; 71 documentation; 26 tests; 18 maintenance; 24 other changes
+155 features; 129 bug fixes; 4 refactoring; 1 architecture & infrastructure; 71 documentation; 26 tests; 18 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Abilities | 19 | 13 | 1 | 0 | 10 | 1 |
+| Abilities | 19 | 14 | 1 | 0 | 10 | 1 |
 | Art & Animation | 34 | 14 | 3 | 0 | 11 | 8 |
 | Audio | 9 | 2 | 0 | 0 | 2 | 1 |
 | Build & Tooling | 108 | 81 | 4 | 1 | 32 | 7 |
-| Combat | 61 | 27 | 2 | 0 | 19 | 2 |
+| Combat | 61 | 28 | 2 | 0 | 19 | 2 |
 | Documentation | 48 | 47 | 0 | 0 | 22 | 2 |
-| Extraction | 23 | 24 | 2 | 0 | 10 | 5 |
+| Extraction | 23 | 26 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
-| Inventory & Loot | 89 | 66 | 4 | 1 | 29 | 5 |
+| Inventory & Loot | 89 | 70 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
-| Networking & Sessions | 49 | 47 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 57 | 58 | 2 | 1 | 25 | 4 |
-| Tests | 141 | 114 | 4 | 1 | 42 | 4 |
+| Networking & Sessions | 49 | 48 | 0 | 0 | 19 | 2 |
+| Persistence & Backend | 57 | 63 | 2 | 1 | 25 | 4 |
+| Tests | 141 | 119 | 4 | 1 | 42 | 4 |
 | UI | 47 | 27 | 2 | 0 | 20 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 31 | 2 |
 | World & Visibility | 43 | 22 | 1 | 0 | 7 | 13 |
 
 ## Original commit records
+
+### 2f1ff30c64a44275bb7ad6396fe12a6ff2f0ebfe
+
+[2f1ff30c64a44275bb7ad6396fe12a6ff2f0ebfe](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2f1ff30c64a44275bb7ad6396fe12a6ff2f0ebfe)
+
+Date: 2026-11-27T14:31:03-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Abilities, Inventory & Loot, Networking & Sessions, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend): validate prepared equipment slot categories and weapon gate
+```
+
+#### Original body
+
+```text
+Enforce authoritative slot-category compatibility when saving prepared equipment across v1, v2 and v3 inventories, and guarantee that raid reservations and admission tickets require an actual weapon rather than any non-empty slot value.
+
+Mirror Unity EquipmentSlotRules in PreparedEquipmentValidation.js (hand slots accept Weapon/Shield; helmet/armor/gloves/boots accept only their matching category) and reject incompatible assignments with 422 INVALID_EQUIPMENT_SLOT without writes. Check real Weapon category across hand slots in both InventoryService.savePendingReservation and SessionTicketService.issueRaidAdmissionTicket so legacy non-weapon persisted entries also fail closed with 409 PREPARED_WEAPON_REQUIRED.
+
+Tests:
+- Added tests/equipment.slot-category.test.js (81 cases across v1/v2/v3).
+- Updated stale test fixtures in inventory.service, inventory.reservation, reservation.prepared-abilities, session.ticket, and admission.integration tests to use valid catalog weapons.
+
+Refs: FIX-95 (#840), FIX-US-04 (#685)
+```
+
+#### Changed paths
+
+```text
+backend/src/services/InventoryService.js
+backend/src/services/PreparedEquipmentValidation.js
+backend/src/services/SessionTicketService.js
+backend/tests/equipment.slot-category.test.js
+backend/tests/integration/admission.integration.test.js
+backend/tests/inventory.reservation.test.js
+backend/tests/inventory.service.test.js
+backend/tests/reservation.prepared-abilities.test.js
+backend/tests/session.ticket.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Combat: weapon
+- path → Abilities: backend/tests/reservation.prepared-abilities.test.js
+- message-term → Abilities: abilities
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- path → Inventory &amp; Loot: backend/src/services/PreparedEquipmentValidation.js
+- path → Inventory &amp; Loot: backend/tests/equipment.slot-category.test.js
+- path → Inventory &amp; Loot: backend/tests/inventory.reservation.test.js
+- path → Inventory &amp; Loot: backend/tests/inventory.service.test.js
+- message-term → Inventory &amp; Loot: equipment
+- path → Networking &amp; Sessions: backend/src/services/SessionTicketService.js
+- path → Networking &amp; Sessions: backend/tests/session.ticket.test.js
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/src/services/PreparedEquipmentValidation.js
+- path → Persistence &amp; Backend: backend/src/services/SessionTicketService.js
+- path → Persistence &amp; Backend: backend/tests/equipment.slot-category.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/admission.integration.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.reservation.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.service.test.js
+- path → Persistence &amp; Backend: backend/tests/reservation.prepared-abilities.test.js
+- path → Persistence &amp; Backend: backend/tests/session.ticket.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/equipment.slot-category.test.js
+- path → Tests: backend/tests/integration/admission.integration.test.js
+- path → Tests: backend/tests/inventory.reservation.test.js
+- path → Tests: backend/tests/inventory.service.test.js
+- path → Tests: backend/tests/reservation.prepared-abilities.test.js
+- path → Tests: backend/tests/session.ticket.test.js
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 208220a42917b26b1195b5d2076b7acb1aea9f9c
+
+[208220a42917b26b1195b5d2076b7acb1aea9f9c](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/208220a42917b26b1195b5d2076b7acb1aea9f9c)
+
+Date: 2026-11-27T00:59:32-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Inventory & Loot, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend): guard v1 legacy extraction with atomic revision update
+```
+
+#### Original body
+
+```text
+Replace non-atomic character.save() in InventoryService.commitExtraction
+for v1 inventories with a revision-guarded Character.findOneAndUpdate
+that atomically checks empty loadout and replay receipts and increments
+revision, preventing concurrent shop mutations from overwriting extracted
+loot.
+
+- Verified with real MongoDB interleaved race test in
+  tests/concurrency/extraction.legacy-shop.real.test.js and full unit
+  (976/976) and concurrency (52/52) suites.
+
+Refs: FIX-US-04 (#685), FIX-33 (#705)
+```
+
+#### Changed paths
+
+```text
+backend/src/services/InventoryService.js
+backend/tests/concurrency/extraction.legacy-shop.real.test.js
+backend/tests/inventory.extraction.test.js
+backend/tests/inventory.protocol.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: backend/tests/concurrency/extraction.legacy-shop.real.test.js
+- path → Extraction: backend/tests/inventory.extraction.test.js
+- message-term → Extraction: extraction
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- path → Inventory &amp; Loot: backend/tests/inventory.extraction.test.js
+- path → Inventory &amp; Loot: backend/tests/inventory.protocol.test.js
+- message-term → Inventory &amp; Loot: loot
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/tests/concurrency/extraction.legacy-shop.real.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.extraction.test.js
+- path → Persistence &amp; Backend: backend/tests/inventory.protocol.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/concurrency/extraction.legacy-shop.real.test.js
+- path → Tests: backend/tests/inventory.extraction.test.js
+- path → Tests: backend/tests/inventory.protocol.test.js
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### b59842ebe32c2944b29232d181c1808f4525ffc3
+
+[b59842ebe32c2944b29232d181c1808f4525ffc3](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/b59842ebe32c2944b29232d181c1808f4525ffc3)
+
+Date: 2026-11-27T00:59:32-03:00 · Classification: Bug Fixes (explicit) · Systems: Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend): disable debug/legacy routes and default secrets in staging
+```
+
+#### Original body
+
+```text
+Restrict enableDebugRoutes and enableLegacyExtraction strictly to local
+development and test environments so staging and production always return
+404 NOT_FOUND even if opt-in flags are set, and fail closed on default or
+weak WEBHOOK_SECRET, JWT_SECRET, and placeholder MONGODB_URI outside test.
+
+- Verified with env.hardening.test.js (27/27 passed).
+
+Refs: FIX-US-04 (#685), FIX-23 (#693)
+```
+
+#### Changed paths
+
+```text
+backend/src/config/env.js
+backend/tests/env.hardening.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Persistence &amp; Backend: backend/src/config/env.js
+- path → Persistence &amp; Backend: backend/tests/env.hardening.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/env.hardening.test.js
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 289ad07ee4c741613c20acc935e9d06c6cb19139
+
+[289ad07ee4c741613c20acc935e9d06c6cb19139](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/289ad07ee4c741613c20acc935e9d06c6cb19139)
+
+Date: 2026-11-27T00:59:31-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, Inventory & Loot, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend): retain unconsumed extraction results via partial TTL
+```
+
+#### Original body
+
+```text
+Replace the unconditional 24-hour createdAt TTL on
+AuthoritativeExtractionResult with a consumed-only partial TTL index on
+consumedAt (expireAfterSeconds: 86400, partialFilterExpression:
+{ consumed: true }) so unconsumed raid loot never expires if a player
+reconnects after more than 24 hours.
+
+- Extend startup index health checks to flag legacy unconditional
+  createdAt TTL indexes without crashing startup.
+- Add explicit dry-run/apply migration script
+  scripts/migrate_authoritative_result_ttl.js for authorized DB rollout.
+- Verified with authoritative.result.retention.test.js,
+  authoritative.results.maintenance.test.js, and raid.result.real.test.js.
+
+Refs: FIX-US-04 (#685), FIX-21 (#691)
+Player-Fixed: Extracted raid loot is no longer lost if you reconnect more than 24 hours later.
+```
+
+#### Changed paths
+
+```text
+backend/scripts/migrate_authoritative_result_ttl.js
+backend/src/db/authoritativeResultIndexes.js
+backend/src/models/AuthoritativeExtractionResult.js
+backend/tests/authoritative.result.retention.test.js
+backend/tests/authoritative.results.maintenance.test.js
+backend/tests/concurrency/raid.result.real.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: backend/src/models/AuthoritativeExtractionResult.js
+- message-term → Extraction: extraction
+- message-term → Inventory &amp; Loot: loot
+- path → Persistence &amp; Backend: backend/scripts/migrate\_authoritative\_result\_ttl.js
+- path → Persistence &amp; Backend: backend/src/db/authoritativeResultIndexes.js
+- path → Persistence &amp; Backend: backend/src/models/AuthoritativeExtractionResult.js
+- path → Persistence &amp; Backend: backend/tests/authoritative.result.retention.test.js
+- path → Persistence &amp; Backend: backend/tests/authoritative.results.maintenance.test.js
+- path → Persistence &amp; Backend: backend/tests/concurrency/raid.result.real.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/authoritative.result.retention.test.js
+- path → Tests: backend/tests/authoritative.results.maintenance.test.js
+- path → Tests: backend/tests/concurrency/raid.result.real.test.js
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 65cc986dd47e38b19d60304319fce901b8ce1661
+
+[65cc986dd47e38b19d60304319fce901b8ce1661](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/65cc986dd47e38b19d60304319fce901b8ce1661)
+
+Date: 2026-11-27T00:59:31-03:00 · Classification: Bug Fixes (explicit) · Systems: Inventory & Loot, Persistence & Backend, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(backend): enforce bidirectional MVP shop catalog parity
+```
+
+#### Original body
+
+```text
+Remove duplicate gem entries in shopCatalog.js, enforce reverse-direction
+parity so BUY_CATALOG never exposes orphan or deprecated ids absent from
+Unity LootDefinitions, and align shop integration/concurrency fixtures
+with MVP consumables (CON_MANA_FRAGMENT, CON_HEALTH_POTION).
+
+- Verified with shop.catalog.parity.test.js, commerce.catalog.doc23.test.js,
+  shop.authoritative.test.js (18/18), and inventory.real.test.js.
+
+Refs: FIX-US-04 (#685), FIX-24 (#694)
+```
+
+#### Changed paths
+
+```text
+backend/src/config/shopCatalog.js
+backend/tests/concurrency/inventory.real.test.js
+backend/tests/integration/shop.authoritative.test.js
+backend/tests/shop.catalog.parity.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Inventory &amp; Loot: backend/tests/concurrency/inventory.real.test.js
+- message-term → Inventory &amp; Loot: inventory
+- path → Persistence &amp; Backend: backend/src/config/shopCatalog.js
+- path → Persistence &amp; Backend: backend/tests/concurrency/inventory.real.test.js
+- path → Persistence &amp; Backend: backend/tests/integration/shop.authoritative.test.js
+- path → Persistence &amp; Backend: backend/tests/shop.catalog.parity.test.js
+- scope → Persistence &amp; Backend: backend
+- message-term → Persistence &amp; Backend: backend
+- path → Tests: backend/tests/concurrency/inventory.real.test.js
+- path → Tests: backend/tests/integration/shop.authoritative.test.js
+- path → Tests: backend/tests/shop.catalog.parity.test.js
+- message-term → Tests: test
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 725dc293b3e08e39b7142da82e07775d8e6dd627
 

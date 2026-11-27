@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1300,
-  "canonicalEntries": 1297,
+  "rawCommits": 1305,
+  "canonicalEntries": 1302,
   "before": {
+    "Bug Fixes": 207,
     "Other Changes": 380,
-    "Bug Fixes": 202,
     "Documentation": 144,
     "Features": 476,
     "Architecture & Infrastructure": 31,
@@ -12,8 +12,8 @@
     "Refactoring": 17
   },
   "after": {
+    "Bug Fixes": 223,
     "Documentation": 161,
-    "Bug Fixes": 218,
     "Features": 615,
     "Maintenance": 29,
     "Other Changes": 186,
@@ -23,27 +23,27 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Combat": 428,
+    "Abilities": 149,
+    "Inventory & Loot": 514,
+    "Networking & Sessions": 374,
+    "Persistence & Backend": 337,
+    "Tests": 832,
+    "Extraction": 185,
     "Build & Tooling": 674,
-    "Inventory & Loot": 510,
-    "Persistence & Backend": 332,
     "Documentation": 462,
-    "Tests": 827,
     "Unassigned": 55,
-    "Networking & Sessions": 373,
     "UI": 371,
-    "Combat": 427,
-    "Extraction": 183,
     "World & Visibility": 196,
     "Art & Animation": 280,
     "Audio": 44,
-    "Abilities": 148,
     "Movement": 109,
     "Input": 33
   },
   "canonical": {
     "sections": {
+      "Bug Fixes": 222,
       "Documentation": 161,
-      "Bug Fixes": 217,
       "Features": 614,
       "Maintenance": 29,
       "Other Changes": 185,
@@ -52,20 +52,20 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Combat": 426,
+      "Abilities": 147,
+      "Inventory & Loot": 514,
+      "Networking & Sessions": 374,
+      "Persistence & Backend": 337,
+      "Tests": 830,
+      "Extraction": 185,
       "Build & Tooling": 672,
-      "Inventory & Loot": 510,
-      "Persistence & Backend": 332,
       "Documentation": 460,
-      "Tests": 825,
       "Unassigned": 55,
-      "Networking & Sessions": 373,
       "UI": 370,
-      "Combat": 425,
-      "Extraction": 183,
       "World & Visibility": 194,
       "Art & Animation": 277,
       "Audio": 44,
-      "Abilities": 146,
       "Movement": 109,
       "Input": 33
     }
@@ -78505,8 +78505,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 423,
-      "canonicalEntries": 423
+      "originalCommits": 428,
+      "canonicalEntries": 428
     },
     {
       "key": "v0.5.0",
@@ -78550,6 +78550,585 @@
     }
   ],
   "commits": [
+    {
+      "sha": "2f1ff30c64a44275bb7ad6396fe12a6ff2f0ebfe",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2f1ff30c64a44275bb7ad6396fe12a6ff2f0ebfe",
+      "subject": "fix(backend): validate prepared equipment slot categories and weapon gate",
+      "body": "Enforce authoritative slot-category compatibility when saving prepared equipment across v1, v2 and v3 inventories, and guarantee that raid reservations and admission tickets require an actual weapon rather than any non-empty slot value.\n\nMirror Unity EquipmentSlotRules in PreparedEquipmentValidation.js (hand slots accept Weapon/Shield; helmet/armor/gloves/boots accept only their matching category) and reject incompatible assignments with 422 INVALID_EQUIPMENT_SLOT without writes. Check real Weapon category across hand slots in both InventoryService.savePendingReservation and SessionTicketService.issueRaidAdmissionTicket so legacy non-weapon persisted entries also fail closed with 409 PREPARED_WEAPON_REQUIRED.\n\nTests:\n- Added tests/equipment.slot-category.test.js (81 cases across v1/v2/v3).\n- Updated stale test fixtures in inventory.service, inventory.reservation, reservation.prepared-abilities, session.ticket, and admission.integration tests to use valid catalog weapons.\n\nRefs: FIX-95 (#840), FIX-US-04 (#685)\n",
+      "date": "2026-11-27T14:31:03-03:00",
+      "files": [
+        "backend/src/services/InventoryService.js",
+        "backend/src/services/PreparedEquipmentValidation.js",
+        "backend/src/services/SessionTicketService.js",
+        "backend/tests/equipment.slot-category.test.js",
+        "backend/tests/integration/admission.integration.test.js",
+        "backend/tests/inventory.reservation.test.js",
+        "backend/tests/inventory.service.test.js",
+        "backend/tests/reservation.prepared-abilities.test.js",
+        "backend/tests/session.ticket.test.js"
+      ],
+      "originalType": "fix",
+      "originalScope": "backend",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Abilities",
+        "Inventory & Loot",
+        "Networking & Sessions",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/reservation.prepared-abilities.test.js",
+          "supports": "Abilities"
+        },
+        {
+          "source": "message-term",
+          "value": "abilities",
+          "supports": "Abilities"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/PreparedEquipmentValidation.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/equipment.slot-category.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.reservation.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.service.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "equipment",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/SessionTicketService.js",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/session.ticket.test.js",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/PreparedEquipmentValidation.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/SessionTicketService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/equipment.slot-category.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/admission.integration.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.reservation.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.service.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/reservation.prepared-abilities.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/session.ticket.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/equipment.slot-category.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/admission.integration.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.reservation.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.service.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/reservation.prepared-abilities.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/session.ticket.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "208220a42917b26b1195b5d2076b7acb1aea9f9c",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/208220a42917b26b1195b5d2076b7acb1aea9f9c",
+      "subject": "fix(backend): guard v1 legacy extraction with atomic revision update",
+      "body": "Replace non-atomic character.save() in InventoryService.commitExtraction\nfor v1 inventories with a revision-guarded Character.findOneAndUpdate\nthat atomically checks empty loadout and replay receipts and increments\nrevision, preventing concurrent shop mutations from overwriting extracted\nloot.\n\n- Verified with real MongoDB interleaved race test in\n  tests/concurrency/extraction.legacy-shop.real.test.js and full unit\n  (976/976) and concurrency (52/52) suites.\n\nRefs: FIX-US-04 (#685), FIX-33 (#705)\n",
+      "date": "2026-11-27T00:59:32-03:00",
+      "files": [
+        "backend/src/services/InventoryService.js",
+        "backend/tests/concurrency/extraction.legacy-shop.real.test.js",
+        "backend/tests/inventory.extraction.test.js",
+        "backend/tests/inventory.protocol.test.js"
+      ],
+      "originalType": "fix",
+      "originalScope": "backend",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/extraction.legacy-shop.real.test.js",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.extraction.test.js",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.extraction.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.protocol.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "loot",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/extraction.legacy-shop.real.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.extraction.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.protocol.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/extraction.legacy-shop.real.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.extraction.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/inventory.protocol.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "b59842ebe32c2944b29232d181c1808f4525ffc3",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/b59842ebe32c2944b29232d181c1808f4525ffc3",
+      "subject": "fix(backend): disable debug/legacy routes and default secrets in staging",
+      "body": "Restrict enableDebugRoutes and enableLegacyExtraction strictly to local\ndevelopment and test environments so staging and production always return\n404 NOT_FOUND even if opt-in flags are set, and fail closed on default or\nweak WEBHOOK_SECRET, JWT_SECRET, and placeholder MONGODB_URI outside test.\n\n- Verified with env.hardening.test.js (27/27 passed).\n\nRefs: FIX-US-04 (#685), FIX-23 (#693)\n",
+      "date": "2026-11-27T00:59:32-03:00",
+      "files": [
+        "backend/src/config/env.js",
+        "backend/tests/env.hardening.test.js"
+      ],
+      "originalType": "fix",
+      "originalScope": "backend",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/env.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/env.hardening.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/env.hardening.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "289ad07ee4c741613c20acc935e9d06c6cb19139",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/289ad07ee4c741613c20acc935e9d06c6cb19139",
+      "subject": "fix(backend): retain unconsumed extraction results via partial TTL",
+      "body": "Replace the unconditional 24-hour createdAt TTL on\nAuthoritativeExtractionResult with a consumed-only partial TTL index on\nconsumedAt (expireAfterSeconds: 86400, partialFilterExpression:\n{ consumed: true }) so unconsumed raid loot never expires if a player\nreconnects after more than 24 hours.\n\n- Extend startup index health checks to flag legacy unconditional\n  createdAt TTL indexes without crashing startup.\n- Add explicit dry-run/apply migration script\n  scripts/migrate_authoritative_result_ttl.js for authorized DB rollout.\n- Verified with authoritative.result.retention.test.js,\n  authoritative.results.maintenance.test.js, and raid.result.real.test.js.\n\nRefs: FIX-US-04 (#685), FIX-21 (#691)\nPlayer-Fixed: Extracted raid loot is no longer lost if you reconnect more than 24 hours later.\n",
+      "date": "2026-11-27T00:59:31-03:00",
+      "files": [
+        "backend/scripts/migrate_authoritative_result_ttl.js",
+        "backend/src/db/authoritativeResultIndexes.js",
+        "backend/src/models/AuthoritativeExtractionResult.js",
+        "backend/tests/authoritative.result.retention.test.js",
+        "backend/tests/authoritative.results.maintenance.test.js",
+        "backend/tests/concurrency/raid.result.real.test.js"
+      ],
+      "originalType": "fix",
+      "originalScope": "backend",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/AuthoritativeExtractionResult.js",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "loot",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/scripts/migrate_authoritative_result_ttl.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/db/authoritativeResultIndexes.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/models/AuthoritativeExtractionResult.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/authoritative.result.retention.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/authoritative.results.maintenance.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/raid.result.real.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/authoritative.result.retention.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/authoritative.results.maintenance.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/raid.result.real.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "65cc986dd47e38b19d60304319fce901b8ce1661",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/65cc986dd47e38b19d60304319fce901b8ce1661",
+      "subject": "fix(backend): enforce bidirectional MVP shop catalog parity",
+      "body": "Remove duplicate gem entries in shopCatalog.js, enforce reverse-direction\nparity so BUY_CATALOG never exposes orphan or deprecated ids absent from\nUnity LootDefinitions, and align shop integration/concurrency fixtures\nwith MVP consumables (CON_MANA_FRAGMENT, CON_HEALTH_POTION).\n\n- Verified with shop.catalog.parity.test.js, commerce.catalog.doc23.test.js,\n  shop.authoritative.test.js (18/18), and inventory.real.test.js.\n\nRefs: FIX-US-04 (#685), FIX-24 (#694)\n",
+      "date": "2026-11-27T00:59:31-03:00",
+      "files": [
+        "backend/src/config/shopCatalog.js",
+        "backend/tests/concurrency/inventory.real.test.js",
+        "backend/tests/integration/shop.authoritative.test.js",
+        "backend/tests/shop.catalog.parity.test.js"
+      ],
+      "originalType": "fix",
+      "originalScope": "backend",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/inventory.real.test.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/config/shopCatalog.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/inventory.real.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/shop.authoritative.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/shop.catalog.parity.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "scope",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "message-term",
+          "value": "backend",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/concurrency/inventory.real.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/integration/shop.authoritative.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/shop.catalog.parity.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "test",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "725dc293b3e08e39b7142da82e07775d8e6dd627",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/725dc293b3e08e39b7142da82e07775d8e6dd627",
