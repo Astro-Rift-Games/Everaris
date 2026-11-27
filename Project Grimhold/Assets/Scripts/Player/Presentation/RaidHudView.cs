@@ -289,7 +289,27 @@ public sealed class RaidHudView : MonoBehaviour
     /// <summary>Presents a transient cancellation confirmation for the local extraction process.</summary>
     public void PresentExtractionCancelled()
     {
-        SetText(_extractionText, "Extracción: cancelada");
+        PresentExtractionCancelled(TeamExtractionCancelReason.None, null);
+    }
+
+    /// <summary>Presents a transient extraction cancellation with its specific team reason when available.</summary>
+    public void PresentExtractionCancelled(TeamExtractionCancelReason reason, string blockingMemberName)
+    {
+        SetText(_extractionText, TeamExtractionFeedbackText.FormatCancelledMessage(reason, blockingMemberName));
+    }
+
+    /// <summary>Presents why team extraction cannot start yet once the ritual is completed.</summary>
+    public void PresentExtractionBlocked(
+        TeamExtractionCancelReason reason,
+        string blockingMemberName,
+        int presentCount,
+        int requiredCount)
+    {
+        string text = TeamExtractionFeedbackText.FormatBlockedMessage(reason, blockingMemberName, presentCount, requiredCount);
+        if (!string.IsNullOrEmpty(text))
+        {
+            SetText(_extractionText, text);
+        }
     }
 
     /// <summary>Presents the terminal confirmed extracted state.</summary>

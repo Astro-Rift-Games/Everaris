@@ -33,4 +33,9 @@ public interface ITeamExtractionCoordinator : IEntity
     /// <param name="requiredCount">Total number of required members for this team.</param>
     /// <returns><see langword="true"/> if team presence was resolved; otherwise, <see langword="false"/>.</returns>
     bool TryGetTeamPresence(RaidTeamId teamId, out int presentCount, out int requiredCount);
+
+    /// <summary>
+    /// Attempts to query team extraction presence along with the current blocking reason and last cancellation reason.
+    /// </summary>
+    bool TryGetTeamExtractionStatus(RaidTeamId teamId, out TeamExtractionStatusSnapshot status);
 }
