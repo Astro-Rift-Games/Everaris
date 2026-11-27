@@ -4,32 +4,254 @@
 
 Release: Unreleased
 
-428 original commits; 428 canonical entries.
+431 original commits; 431 canonical entries.
 
 ## Canonical classification
 
-155 features; 129 bug fixes; 4 refactoring; 1 architecture & infrastructure; 71 documentation; 26 tests; 18 maintenance; 24 other changes
+155 features; 132 bug fixes; 4 refactoring; 1 architecture & infrastructure; 71 documentation; 26 tests; 18 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 19 | 14 | 1 | 0 | 10 | 1 |
-| Art & Animation | 34 | 14 | 3 | 0 | 11 | 8 |
+| Art & Animation | 34 | 15 | 3 | 0 | 11 | 8 |
 | Audio | 9 | 2 | 0 | 0 | 2 | 1 |
-| Build & Tooling | 108 | 81 | 4 | 1 | 32 | 7 |
-| Combat | 61 | 28 | 2 | 0 | 19 | 2 |
+| Build & Tooling | 108 | 84 | 4 | 1 | 32 | 7 |
+| Combat | 61 | 29 | 2 | 0 | 19 | 2 |
 | Documentation | 48 | 47 | 0 | 0 | 22 | 2 |
-| Extraction | 23 | 26 | 2 | 0 | 10 | 5 |
+| Extraction | 23 | 27 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
 | Inventory & Loot | 89 | 70 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
-| Networking & Sessions | 49 | 48 | 0 | 0 | 19 | 2 |
+| Networking & Sessions | 49 | 50 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 57 | 63 | 2 | 1 | 25 | 4 |
-| Tests | 141 | 119 | 4 | 1 | 42 | 4 |
-| UI | 47 | 27 | 2 | 0 | 20 | 6 |
+| Tests | 141 | 122 | 4 | 1 | 42 | 4 |
+| UI | 47 | 30 | 2 | 0 | 20 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 31 | 2 |
 | World & Visibility | 43 | 22 | 1 | 0 | 7 | 13 |
 
 ## Original commit records
+
+### 78eee503f1bb1d37b160b9b8f996ba049e10b10a
+
+[78eee503f1bb1d37b160b9b8f996ba049e10b10a](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/78eee503f1bb1d37b160b9b8f996ba049e10b10a)
+
+Date: 2026-11-27T15:11:10-03:00 · Classification: Bug Fixes (explicit) · Systems: Networking & Sessions, UI, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(party): differentiate party invitation and leave failure feedback
+```
+
+#### Original body
+
+```text
+Separate pending-invitation rejections (inviter vs recipient) from generic Unavailable, report party-change invitation cancellations distinctly from Busy to both players, and surface explicit Spanish feedback when leaving a Town Party fails.
+
+Tests:
+- Updated TownPartyInvitationContractTests and added TownPartyFeedbackTests (EditMode).
+
+Player-Improved: Town Party invitations and leave actions now show accurate messages when an invitation is already pending, cancelled by a party change, or leaving the party fails.
+Refs: FIX-16 (#683), FIX-US-03 (#667)
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/TownPartyDirectory.cs
+Project Grimhold/Assets/Scripts/Networking/TownPartyInvitationResult.cs
+Project Grimhold/Assets/Scripts/Networking/TownPartyLeaveResult.cs
+Project Grimhold/Assets/Scripts/Networking/TownPartyLeaveResult.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyFeedbackText.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyFeedbackText.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyHudPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyInvitationPresenter.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyInvitationContractTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownPartyFeedbackTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownPartyFeedbackTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPartyDirectory.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPartyInvitationResult.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPartyLeaveResult.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownPartyLeaveResult.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyInvitationContractTests.cs
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyHudPresenter.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyInvitationContractTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownPartyFeedbackTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownPartyFeedbackTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyInvitationContractTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownPartyFeedbackTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownPartyFeedbackTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 8ed1df0abe862332759c017ee951d8291329802f
+
+[8ed1df0abe862332759c017ee951d8291329802f](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/8ed1df0abe862332759c017ee951d8291329802f)
+
+Date: 2026-11-27T15:11:10-03:00 · Classification: Bug Fixes (explicit) · Systems: Extraction, UI, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(hud): display team extraction blocking and cancellation reasons
+```
+
+#### Original body
+
+```text
+Replicate the last team extraction cancellation reason and blocking participant id in TeamExtractionSlot, expose TryGetTeamExtractionStatus on ITeamExtractionCoordinator with participant display names, and present concrete Spanish messages in RaidHudPresenter and RaidHudView when waiting on an outside or disconnected teammate or when an extraction countdown is cancelled.
+
+Tests:
+- Added TeamExtractionFeedbackHudTests (EditMode) and verified RaidHudPresenterTests and TeamExtractionPresentationTests.
+
+Player-Improved: The Raid HUD now tells you which teammate you are waiting for in the extraction area and why a team extraction countdown was cancelled.
+Refs: FIX-15 (#682), FIX-US-03 (#667)
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/Presentation/RaidHudPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/RaidHudView.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TeamExtractionFeedbackText.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TeamExtractionFeedbackText.cs.meta
+Project Grimhold/Assets/Scripts/Scenario/Extraction/ITeamExtractionCoordinator.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionCoordinator.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionSlot.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionStatusSnapshot.cs
+Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionStatusSnapshot.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Extraction: Project Grimhold/Assets/Scripts/Player/Presentation/TeamExtractionFeedbackText.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Player/Presentation/TeamExtractionFeedbackText.cs.meta
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/ITeamExtractionCoordinator.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionCoordinator.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionSlot.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionStatusSnapshot.cs
+- path → Extraction: Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionStatusSnapshot.cs.meta
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs
+- path → Extraction: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs.meta
+- message-term → Extraction: extraction
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/RaidHudPresenter.cs
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/RaidHudView.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs.meta
+- scope → UI: hud
+- message-term → UI: hud
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 0120de8de2195c733b3b84bf3b6007e5a93b37fe
+
+[0120de8de2195c733b3b84bf3b6007e5a93b37fe](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0120de8de2195c733b3b84bf3b6007e5a93b37fe)
+
+Date: 2026-11-27T15:11:10-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, Networking & Sessions, UI, Art & Animation, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(ui): surface Town raid preparation, cancellation, and launch status
+```
+
+#### Original body
+
+```text
+Report concrete Spanish feedback for Create, Join, Ready, and Start refusals, name unready members when Start is disabled for the Host, notify all affected members of dissolution or launch cancellation reasons, show live launch confirmation progress with Leave/Ready disabled while launching, and display animated connecting status during scene transitions.
+
+Note: weapon-consent UI from the original FIX-12 audit was removed by TASK-278; weapon rejections remain surfaced via PreparedWeaponRequired.
+
+Tests:
+- Added TownRaidPreparationActionFeedbackTests, TownRaidCancellationFeedbackTests, and TownRaidLaunchStatusFeedbackTests (EditMode).
+
+Player-Improved: Expedition preparation now explains why Create, Join, Ready, or Start failed, lists who is not ready yet, shows live launch and connecting status, and explains why a launch or room was cancelled.
+Refs: FIX-11 (#678), FIX-12 (#679), FIX-13 (#680), FIX-US-03 (#667)
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationActionResult.cs
+Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationActionResult.cs.meta
+Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationCancelReason.cs
+Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationCancelReason.cs.meta
+Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs
+Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationNetworkController.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidCancellationText.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidCancellationText.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationActionText.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationActionText.cs.meta
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationPresentation.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationPresenter.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationView.cs
+Project Grimhold/Assets/Scripts/UI/Animation/SceneTransitionFadePolicy.cs
+Project Grimhold/Assets/Scripts/UI/Animation/SceneTransitionFader.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidCancellationFeedbackTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidCancellationFeedbackTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidLaunchStatusFeedbackTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidLaunchStatusFeedbackTests.cs.meta
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidPreparationActionFeedbackTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidPreparationActionFeedbackTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Combat: weapon
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationActionResult.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationActionResult.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationCancelReason.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationCancelReason.cs.meta
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs
+- path → Networking &amp; Sessions: Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationNetworkController.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/Animation/SceneTransitionFadePolicy.cs
+- path → UI: Project Grimhold/Assets/Scripts/UI/Animation/SceneTransitionFader.cs
+- scope → UI: ui
+- message-term → UI: ui
+- path → Art &amp; Animation: Project Grimhold/Assets/Scripts/UI/Animation/SceneTransitionFadePolicy.cs
+- path → Art &amp; Animation: Project Grimhold/Assets/Scripts/UI/Animation/SceneTransitionFader.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidCancellationFeedbackTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidCancellationFeedbackTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidLaunchStatusFeedbackTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidLaunchStatusFeedbackTests.cs.meta
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidPreparationActionFeedbackTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidPreparationActionFeedbackTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidCancellationFeedbackTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidCancellationFeedbackTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidLaunchStatusFeedbackTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidLaunchStatusFeedbackTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidPreparationActionFeedbackTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidPreparationActionFeedbackTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 2f1ff30c64a44275bb7ad6396fe12a6ff2f0ebfe
 

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1305,
-  "canonicalEntries": 1302,
+  "rawCommits": 1308,
+  "canonicalEntries": 1305,
   "before": {
-    "Bug Fixes": 207,
+    "Bug Fixes": 210,
     "Other Changes": 380,
     "Documentation": 144,
     "Features": 476,
@@ -12,7 +12,7 @@
     "Refactoring": 17
   },
   "after": {
-    "Bug Fixes": 223,
+    "Bug Fixes": 226,
     "Documentation": 161,
     "Features": 615,
     "Maintenance": 29,
@@ -23,26 +23,26 @@
   },
   "systemCountsOverlap": true,
   "systems": {
-    "Combat": 428,
+    "Networking & Sessions": 376,
+    "UI": 374,
+    "Build & Tooling": 677,
+    "Tests": 835,
+    "Extraction": 186,
+    "Combat": 429,
+    "Art & Animation": 281,
     "Abilities": 149,
     "Inventory & Loot": 514,
-    "Networking & Sessions": 374,
     "Persistence & Backend": 337,
-    "Tests": 832,
-    "Extraction": 185,
-    "Build & Tooling": 674,
     "Documentation": 462,
     "Unassigned": 55,
-    "UI": 371,
     "World & Visibility": 196,
-    "Art & Animation": 280,
     "Audio": 44,
     "Movement": 109,
     "Input": 33
   },
   "canonical": {
     "sections": {
-      "Bug Fixes": 222,
+      "Bug Fixes": 225,
       "Documentation": 161,
       "Features": 614,
       "Maintenance": 29,
@@ -52,19 +52,19 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
-      "Combat": 426,
+      "Networking & Sessions": 376,
+      "UI": 373,
+      "Build & Tooling": 675,
+      "Tests": 833,
+      "Extraction": 186,
+      "Combat": 427,
+      "Art & Animation": 278,
       "Abilities": 147,
       "Inventory & Loot": 514,
-      "Networking & Sessions": 374,
       "Persistence & Backend": 337,
-      "Tests": 830,
-      "Extraction": 185,
-      "Build & Tooling": 672,
       "Documentation": 460,
       "Unassigned": 55,
-      "UI": 370,
       "World & Visibility": 194,
-      "Art & Animation": 277,
       "Audio": 44,
       "Movement": 109,
       "Input": 33
@@ -78505,8 +78505,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 428,
-      "canonicalEntries": 428
+      "originalCommits": 431,
+      "canonicalEntries": 431
     },
     {
       "key": "v0.5.0",
@@ -78550,6 +78550,447 @@
     }
   ],
   "commits": [
+    {
+      "sha": "78eee503f1bb1d37b160b9b8f996ba049e10b10a",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/78eee503f1bb1d37b160b9b8f996ba049e10b10a",
+      "subject": "fix(party): differentiate party invitation and leave failure feedback",
+      "body": "Separate pending-invitation rejections (inviter vs recipient) from generic Unavailable, report party-change invitation cancellations distinctly from Busy to both players, and surface explicit Spanish feedback when leaving a Town Party fails.\n\nTests:\n- Updated TownPartyInvitationContractTests and added TownPartyFeedbackTests (EditMode).\n\nPlayer-Improved: Town Party invitations and leave actions now show accurate messages when an invitation is already pending, cancelled by a party change, or leaving the party fails.\nRefs: FIX-16 (#683), FIX-US-03 (#667)\n",
+      "date": "2026-11-27T15:11:10-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Networking/TownPartyDirectory.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownPartyInvitationResult.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownPartyLeaveResult.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownPartyLeaveResult.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyFeedbackText.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyFeedbackText.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyHudPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyInvitationPresenter.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyInvitationContractTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownPartyFeedbackTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownPartyFeedbackTests.cs.meta"
+      ],
+      "originalType": "fix",
+      "originalScope": "party",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Networking & Sessions",
+        "UI",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPartyDirectory.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPartyInvitationResult.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPartyLeaveResult.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownPartyLeaveResult.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyInvitationContractTests.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TownPartyHudPresenter.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyInvitationContractTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownPartyFeedbackTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownPartyFeedbackTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Networking/TownPartyInvitationContractTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownPartyFeedbackTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownPartyFeedbackTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "8ed1df0abe862332759c017ee951d8291329802f",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/8ed1df0abe862332759c017ee951d8291329802f",
+      "subject": "fix(hud): display team extraction blocking and cancellation reasons",
+      "body": "Replicate the last team extraction cancellation reason and blocking participant id in TeamExtractionSlot, expose TryGetTeamExtractionStatus on ITeamExtractionCoordinator with participant display names, and present concrete Spanish messages in RaidHudPresenter and RaidHudView when waiting on an outside or disconnected teammate or when an extraction countdown is cancelled.\n\nTests:\n- Added TeamExtractionFeedbackHudTests (EditMode) and verified RaidHudPresenterTests and TeamExtractionPresentationTests.\n\nPlayer-Improved: The Raid HUD now tells you which teammate you are waiting for in the extraction area and why a team extraction countdown was cancelled.\nRefs: FIX-15 (#682), FIX-US-03 (#667)\n",
+      "date": "2026-11-27T15:11:10-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Player/Presentation/RaidHudPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/RaidHudView.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TeamExtractionFeedbackText.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TeamExtractionFeedbackText.cs.meta",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/ITeamExtractionCoordinator.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionCoordinator.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionSlot.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionStatusSnapshot.cs",
+        "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionStatusSnapshot.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs.meta"
+      ],
+      "originalType": "fix",
+      "originalScope": "hud",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Extraction",
+        "UI",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TeamExtractionFeedbackText.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/TeamExtractionFeedbackText.cs.meta",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/ITeamExtractionCoordinator.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionCoordinator.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionSlot.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionStatusSnapshot.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Scenario/Extraction/TeamExtractionStatusSnapshot.cs.meta",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs.meta",
+          "supports": "Extraction"
+        },
+        {
+          "source": "message-term",
+          "value": "extraction",
+          "supports": "Extraction"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/RaidHudPresenter.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/RaidHudView.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "scope",
+          "value": "hud",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "hud",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TeamExtractionFeedbackHudTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
+    {
+      "sha": "0120de8de2195c733b3b84bf3b6007e5a93b37fe",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/0120de8de2195c733b3b84bf3b6007e5a93b37fe",
+      "subject": "fix(ui): surface Town raid preparation, cancellation, and launch status",
+      "body": "Report concrete Spanish feedback for Create, Join, Ready, and Start refusals, name unready members when Start is disabled for the Host, notify all affected members of dissolution or launch cancellation reasons, show live launch confirmation progress with Leave/Ready disabled while launching, and display animated connecting status during scene transitions.\n\nNote: weapon-consent UI from the original FIX-12 audit was removed by TASK-278; weapon rejections remain surfaced via PreparedWeaponRequired.\n\nTests:\n- Added TownRaidPreparationActionFeedbackTests, TownRaidCancellationFeedbackTests, and TownRaidLaunchStatusFeedbackTests (EditMode).\n\nPlayer-Improved: Expedition preparation now explains why Create, Join, Ready, or Start failed, lists who is not ready yet, shows live launch and connecting status, and explains why a launch or room was cancelled.\nRefs: FIX-11 (#678), FIX-12 (#679), FIX-13 (#680), FIX-US-03 (#667)\n",
+      "date": "2026-11-27T15:11:10-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationActionResult.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationActionResult.cs.meta",
+        "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationCancelReason.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationCancelReason.cs.meta",
+        "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs",
+        "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationNetworkController.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidCancellationText.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidCancellationText.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationActionText.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationActionText.cs.meta",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationPresentation.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationPresenter.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/TownRaidPreparationView.cs",
+        "Project Grimhold/Assets/Scripts/UI/Animation/SceneTransitionFadePolicy.cs",
+        "Project Grimhold/Assets/Scripts/UI/Animation/SceneTransitionFader.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidCancellationFeedbackTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidCancellationFeedbackTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidLaunchStatusFeedbackTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidLaunchStatusFeedbackTests.cs.meta",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidPreparationActionFeedbackTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidPreparationActionFeedbackTests.cs.meta"
+      ],
+      "originalType": "fix",
+      "originalScope": "ui",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "Networking & Sessions",
+        "UI",
+        "Art & Animation",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "message-term",
+          "value": "weapon",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationActionResult.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationActionResult.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationCancelReason.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationCancelReason.cs.meta",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationDirectory.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Networking/TownRaidPreparationNetworkController.cs",
+          "supports": "Networking & Sessions"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Animation/SceneTransitionFadePolicy.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Animation/SceneTransitionFader.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "scope",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "ui",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Animation/SceneTransitionFadePolicy.cs",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/UI/Animation/SceneTransitionFader.cs",
+          "supports": "Art & Animation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidCancellationFeedbackTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidCancellationFeedbackTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidLaunchStatusFeedbackTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidLaunchStatusFeedbackTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidPreparationActionFeedbackTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidPreparationActionFeedbackTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidCancellationFeedbackTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidCancellationFeedbackTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidLaunchStatusFeedbackTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidLaunchStatusFeedbackTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidPreparationActionFeedbackTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/TownRaidPreparationActionFeedbackTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "2f1ff30c64a44275bb7ad6396fe12a6ff2f0ebfe",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/2f1ff30c64a44275bb7ad6396fe12a6ff2f0ebfe",

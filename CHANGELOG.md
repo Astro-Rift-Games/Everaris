@@ -93,6 +93,9 @@ What's new in Project Grimhold. Only changes included in published releases are 
 - The Catacombs are darker and lit by many more torches, braziers and candles.
 - Raids run a little smoother, without a hidden warning being logged every frame.
 - The game runs smoother while moving through a Raid; the minimap no longer slows down every frame.
+- Expedition preparation now explains why Create, Join, Ready, or Start failed, lists who is not ready yet, shows live launch and connecting status, and explains why a launch or room was cancelled.
+- The Raid HUD now tells you which teammate you are waiting for in the extraction area and why a team extraction countdown was cancelled.
+- Town Party invitations and leave actions now show accurate messages when an invitation is already pending, cancelled by a party change, or leaving the party fails.
 
 ### Fixed
 
