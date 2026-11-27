@@ -4,19 +4,19 @@
 
 Release: Unreleased
 
-416 original commits; 416 canonical entries.
+418 original commits; 418 canonical entries.
 
 ## Canonical classification
 
-153 features; 122 bug fixes; 4 refactoring; 1 architecture & infrastructure; 68 documentation; 26 tests; 18 maintenance; 24 other changes
+153 features; 123 bug fixes; 4 refactoring; 1 architecture & infrastructure; 69 documentation; 26 tests; 18 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Abilities | 19 | 13 | 1 | 0 | 10 | 1 |
 | Art & Animation | 34 | 14 | 3 | 0 | 11 | 8 |
 | Audio | 9 | 2 | 0 | 0 | 2 | 1 |
-| Build & Tooling | 107 | 80 | 4 | 1 | 31 | 7 |
-| Combat | 61 | 26 | 2 | 0 | 19 | 2 |
+| Build & Tooling | 107 | 81 | 4 | 1 | 31 | 7 |
+| Combat | 61 | 27 | 2 | 0 | 19 | 2 |
 | Documentation | 47 | 46 | 0 | 0 | 22 | 2 |
 | Extraction | 23 | 24 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
@@ -24,12 +24,127 @@ Release: Unreleased
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
 | Networking & Sessions | 48 | 47 | 0 | 0 | 19 | 2 |
 | Persistence & Backend | 55 | 57 | 2 | 1 | 25 | 4 |
-| Tests | 139 | 112 | 4 | 1 | 42 | 4 |
-| UI | 47 | 26 | 2 | 0 | 19 | 6 |
+| Tests | 139 | 113 | 4 | 1 | 42 | 4 |
+| UI | 47 | 27 | 2 | 0 | 20 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 30 | 2 |
 | World & Visibility | 43 | 22 | 1 | 0 | 7 | 13 |
 
 ## Original commit records
+
+### f25d250d66bd9ffc3dbb8007249bb7ec41ce6a57
+
+[f25d250d66bd9ffc3dbb8007249bb7ec41ce6a57](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f25d250d66bd9ffc3dbb8007249bb7ec41ce6a57)
+
+Date: 2026-11-27T00:07:44-03:00 · Classification: Documentation (explicit) · Systems: UI
+
+Flags: secondary
+
+#### Original subject
+
+```text
+docs(odd): track FIX-107 minimap mesh rebuilds
+```
+
+#### Original body
+
+```text
+
+```
+
+#### Changed paths
+
+```text
+odd/tasks/fix-107-minimap-mesh-rebuild.md
+```
+
+#### Classification evidence
+
+- type → Documentation: docs
+- path → UI: odd/tasks/fix-107-minimap-mesh-rebuild.md
+- message-term → UI: minimap
+
+#### Diagnostics
+
+- No classification ambiguity detected.
+
+### 3576094875a2f6eebca6587d3b6db9d9c5311e68
+
+[3576094875a2f6eebca6587d3b6db9d9c5311e68](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3576094875a2f6eebca6587d3b6db9d9c5311e68)
+
+Date: 2026-11-27T00:07:44-03:00 · Classification: Bug Fixes (explicit) · Systems: Combat, UI, Build & Tooling, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(minimap): stop rebuilding tile-art meshes while the map pans
+```
+
+#### Original body
+
+```text
+The HUD Canvas is pixel perfect, so Unity reports a dimension change to
+the minimap and all of its tile-art batches whenever the panned map
+reaches a new screen pixel, even though no rect size changed. Graphic's
+default handler then dirtied every batch mesh, repopulating about 50
+TileArtBatch meshes on each moving frame (FIX-107).
+
+RaidMinimapGraphic and RaidMinimapBatchGraphic now forward
+OnRectTransformDimensionsChange only when their rect size actually
+changes. The tile-art mesh does not depend on the rect position, so the
+minimap looks the same; reconfiguration still rebuilds through its
+explicit SetAllDirty and a real resize still rebuilds through the base
+handler.
+
+Measured in the Editor (Host Raid, CatacombsMap, moving in combat, 600
+frames, same method before and after): CanvasUpdateRegistry.PerformUpdate
+7.87 ms -> 0.22 ms average, frame 23.0 ms -> 14.3 ms, frames with
+minimap meshes queued for rebuild 152 -> 0.
+
+Tests:
+- RaidMinimapMeshRebuildPlayModeTests: moving player and map on the
+  production HUD must not rebuild tile-art meshes (RED 20/30 frames).
+- RaidMinimapMeshRebuildTests: reconfiguring a batch and resizing the
+  map still rebuild the meshes.
+
+Player-Improved: The game runs smoother while moving through a Raid; the minimap no longer slows down every frame.
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Assets/Scripts/Player/Presentation/RaidMinimapBatchGraphic.cs
+Project Grimhold/Assets/Scripts/Player/Presentation/RaidMinimapGraphic.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs
+Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs.meta
+Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapMeshRebuildPlayModeTests.cs
+Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapMeshRebuildPlayModeTests.cs.meta
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- message-term → Combat: combat
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/RaidMinimapBatchGraphic.cs
+- path → UI: Project Grimhold/Assets/Scripts/Player/Presentation/RaidMinimapGraphic.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs
+- path → UI: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs.meta
+- path → UI: Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapMeshRebuildPlayModeTests.cs
+- path → UI: Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapMeshRebuildPlayModeTests.cs.meta
+- scope → UI: minimap
+- message-term → UI: minimap
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs
+- path → Build &amp; Tooling: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs.meta
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapMeshRebuildPlayModeTests.cs
+- path → Tests: Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapMeshRebuildPlayModeTests.cs.meta
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 6089237bc23eccf7ea4d855acd75f7d68c05ea86
 

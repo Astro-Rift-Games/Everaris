@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1293,
-  "canonicalEntries": 1290,
+  "rawCommits": 1295,
+  "canonicalEntries": 1292,
   "before": {
-    "Documentation": 142,
-    "Bug Fixes": 200,
+    "Documentation": 143,
+    "Bug Fixes": 201,
     "Features": 474,
     "Architecture & Infrastructure": 31,
     "Other Changes": 379,
@@ -12,8 +12,8 @@
     "Refactoring": 17
   },
   "after": {
-    "Documentation": 158,
-    "Bug Fixes": 216,
+    "Documentation": 159,
+    "Bug Fixes": 217,
     "Features": 613,
     "Maintenance": 29,
     "Other Changes": 186,
@@ -23,15 +23,15 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "UI": 371,
+    "Combat": 427,
+    "Build & Tooling": 672,
+    "Tests": 824,
     "Unassigned": 54,
     "Extraction": 183,
     "Networking & Sessions": 372,
-    "UI": 369,
-    "Build & Tooling": 671,
-    "Tests": 823,
     "World & Visibility": 196,
     "Documentation": 460,
-    "Combat": 426,
     "Art & Animation": 280,
     "Inventory & Loot": 509,
     "Audio": 44,
@@ -42,8 +42,8 @@
   },
   "canonical": {
     "sections": {
-      "Documentation": 158,
-      "Bug Fixes": 215,
+      "Documentation": 159,
+      "Bug Fixes": 216,
       "Features": 612,
       "Maintenance": 29,
       "Other Changes": 185,
@@ -52,15 +52,15 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "UI": 370,
+      "Combat": 425,
+      "Build & Tooling": 670,
+      "Tests": 822,
       "Unassigned": 54,
       "Extraction": 183,
       "Networking & Sessions": 372,
-      "UI": 368,
-      "Build & Tooling": 669,
-      "Tests": 821,
       "World & Visibility": 194,
       "Documentation": 458,
-      "Combat": 424,
       "Art & Animation": 277,
       "Inventory & Loot": 509,
       "Audio": 44,
@@ -78601,8 +78601,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 416,
-      "canonicalEntries": 416
+      "originalCommits": 418,
+      "canonicalEntries": 418
     },
     {
       "key": "v0.5.0",
@@ -78646,6 +78646,164 @@
     }
   ],
   "commits": [
+    {
+      "sha": "f25d250d66bd9ffc3dbb8007249bb7ec41ce6a57",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/f25d250d66bd9ffc3dbb8007249bb7ec41ce6a57",
+      "subject": "docs(odd): track FIX-107 minimap mesh rebuilds",
+      "body": "",
+      "date": "2026-11-27T00:07:44-03:00",
+      "files": [
+        "odd/tasks/fix-107-minimap-mesh-rebuild.md"
+      ],
+      "originalType": "docs",
+      "originalScope": "odd",
+      "originalSection": "Documentation",
+      "breaking": false,
+      "reverts": null,
+      "section": "Documentation",
+      "confidence": "explicit",
+      "systems": [
+        "UI"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "docs",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "odd/tasks/fix-107-minimap-mesh-rebuild.md",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "minimap",
+          "supports": "UI"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": true
+    },
+    {
+      "sha": "3576094875a2f6eebca6587d3b6db9d9c5311e68",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/3576094875a2f6eebca6587d3b6db9d9c5311e68",
+      "subject": "fix(minimap): stop rebuilding tile-art meshes while the map pans",
+      "body": "The HUD Canvas is pixel perfect, so Unity reports a dimension change to\nthe minimap and all of its tile-art batches whenever the panned map\nreaches a new screen pixel, even though no rect size changed. Graphic's\ndefault handler then dirtied every batch mesh, repopulating about 50\nTileArtBatch meshes on each moving frame (FIX-107).\n\nRaidMinimapGraphic and RaidMinimapBatchGraphic now forward\nOnRectTransformDimensionsChange only when their rect size actually\nchanges. The tile-art mesh does not depend on the rect position, so the\nminimap looks the same; reconfiguration still rebuilds through its\nexplicit SetAllDirty and a real resize still rebuilds through the base\nhandler.\n\nMeasured in the Editor (Host Raid, CatacombsMap, moving in combat, 600\nframes, same method before and after): CanvasUpdateRegistry.PerformUpdate\n7.87 ms -> 0.22 ms average, frame 23.0 ms -> 14.3 ms, frames with\nminimap meshes queued for rebuild 152 -> 0.\n\nTests:\n- RaidMinimapMeshRebuildPlayModeTests: moving player and map on the\n  production HUD must not rebuild tile-art meshes (RED 20/30 frames).\n- RaidMinimapMeshRebuildTests: reconfiguring a batch and resizing the\n  map still rebuild the meshes.\n\nPlayer-Improved: The game runs smoother while moving through a Raid; the minimap no longer slows down every frame.\n",
+      "date": "2026-11-27T00:07:44-03:00",
+      "files": [
+        "Project Grimhold/Assets/Scripts/Player/Presentation/RaidMinimapBatchGraphic.cs",
+        "Project Grimhold/Assets/Scripts/Player/Presentation/RaidMinimapGraphic.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs",
+        "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs.meta",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapMeshRebuildPlayModeTests.cs",
+        "Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapMeshRebuildPlayModeTests.cs.meta"
+      ],
+      "originalType": "fix",
+      "originalScope": "minimap",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Combat",
+        "UI",
+        "Build & Tooling",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "message-term",
+          "value": "combat",
+          "supports": "Combat"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/RaidMinimapBatchGraphic.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Scripts/Player/Presentation/RaidMinimapGraphic.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapMeshRebuildPlayModeTests.cs",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapMeshRebuildPlayModeTests.cs.meta",
+          "supports": "UI"
+        },
+        {
+          "source": "scope",
+          "value": "minimap",
+          "supports": "UI"
+        },
+        {
+          "source": "message-term",
+          "value": "minimap",
+          "supports": "UI"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs.meta",
+          "supports": "Build & Tooling"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/EditMode/Editor/Presentation/RaidMinimapMeshRebuildTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapMeshRebuildPlayModeTests.cs",
+          "supports": "Tests"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Assets/Tests/PlayMode/Presentation/RaidMinimapMeshRebuildPlayModeTests.cs.meta",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "6089237bc23eccf7ea4d855acd75f7d68c05ea86",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/6089237bc23eccf7ea4d855acd75f7d68c05ea86",
