@@ -203,6 +203,9 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
     private NetworkSpawnSceneConfiguration _sceneSpawnPointConfiguration;
     private SessionStartupContext _startupContext;
     private RaidLaunchContext _launchContext;
+    // Projection of _launchContext, rebuilt only when the bound context instance changes.
+    private RaidLaunchContext _affiliationsLaunchContext;
+    private RaidInitialAffiliationSnapshot _affiliations;
 
     private int _currentSceneLoadGeneration = 0;
     private int _lastCompletedSceneLoadGeneration = -1;
@@ -542,13 +545,31 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
 
     /// <summary>
     /// Projects the immutable launch cohort into its canonical initial affiliation snapshot.
-    /// The launch context remains the sole source of this runner-local projection.
+    /// The launch context remains the sole source of this runner-local projection; both are
+    /// immutable, so the projection is built once per bound context and reused on every read.
     /// </summary>
     public bool TryGetRaidInitialAffiliations(out RaidInitialAffiliationSnapshot affiliations)
     {
         affiliations = null;
-        return _launchContext != null &&
-            RaidInitialAffiliationSnapshot.TryCreate(_launchContext.Participants, out affiliations);
+        if (_launchContext == null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(_affiliationsLaunchContext, _launchContext) && _affiliations != null)
+        {
+            affiliations = _affiliations;
+            return true;
+        }
+
+        if (!RaidInitialAffiliationSnapshot.TryCreate(_launchContext.Participants, out affiliations))
+        {
+            return false;
+        }
+
+        _affiliationsLaunchContext = _launchContext;
+        _affiliations = affiliations;
+        return true;
     }
 
     /// <summary>
@@ -688,6 +709,8 @@ public sealed class NetworkSpawnManager : NetworkRunnerCallbacksAdapter
         _sceneSpawnPointConfiguration = null;
         _startupContext = default;
         _launchContext = null;
+        _affiliationsLaunchContext = null;
+        _affiliations = null;
         ClearHostMigrationRoster();
         _cleanupBuffer.Clear();
     }

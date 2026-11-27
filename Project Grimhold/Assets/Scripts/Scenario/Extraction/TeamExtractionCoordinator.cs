@@ -33,6 +33,9 @@ public sealed class TeamExtractionCoordinator : NetworkBehaviour, ITeamExtractio
 
     private readonly List<TeamMemberExtractionSnapshot> _memberSnapshotsBuffer = new(4);
     private readonly List<PlayerExtractionController> _memberControllersBuffer = new(4);
+    // Presentation queries keep their own buffers so they never disturb a simulation evaluation.
+    private readonly List<TeamMemberExtractionSnapshot> _presenceSnapshotsBuffer = new(4);
+    private readonly List<PlayerExtractionController> _presenceControllersBuffer = new(4);
 
     public new EntityId Id => Object != null && Object.IsValid
         ? new EntityId(unchecked((int)Object.Id.Raw))
@@ -308,10 +311,15 @@ public sealed class TeamExtractionCoordinator : NetworkBehaviour, ITeamExtractio
             return false;
         }
 
-        List<TeamMemberExtractionSnapshot> snapshots = new List<TeamMemberExtractionSnapshot>(4);
-        List<PlayerExtractionController> controllers = new List<PlayerExtractionController>(4);
-        if (!TryBuildMemberSnapshots(teamId, zone, snapshots, controllers))
+        List<TeamMemberExtractionSnapshot> snapshots = _presenceSnapshotsBuffer;
+        snapshots.Clear();
+        _presenceControllersBuffer.Clear();
+        bool built = TryBuildMemberSnapshots(teamId, zone, snapshots, _presenceControllersBuffer);
+        // The query only counts members; never retain avatar references between frames.
+        _presenceControllersBuffer.Clear();
+        if (!built)
         {
+            snapshots.Clear();
             return false;
         }
 

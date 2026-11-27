@@ -657,6 +657,81 @@ namespace Tests.EditMode.Scenario
             public bool IsOccupant(EntityId participantId) => true;
         }
 
+        [Test]
+        public void TryGetTeamPresence_CountsRequiredMembersInsideAndConnected()
+        {
+            RaidTeamId team1 = ArrangeDuoPresenceQuery();
+
+            Assert.That(_coordinator.TryGetTeamPresence(team1, out int present, out int required), Is.True);
+            Assert.That(present, Is.EqualTo(1));
+            Assert.That(required, Is.EqualTo(2));
+
+            Assert.That(_coordinator.TryGetTeamPresence(team1, out present, out required), Is.True);
+            Assert.That(present, Is.EqualTo(1));
+            Assert.That(required, Is.EqualTo(2));
+        }
+
+        // FIX-110: the raid HUD queries team presence every frame.
+        [Test]
+        public void TryGetTeamPresence_RepeatedQueries_DoNotAllocate()
+        {
+            RaidTeamId team1 = ArrangeDuoPresenceQuery();
+            Assert.That(_coordinator.TryGetTeamPresence(team1, out _, out _), Is.True);
+
+            TeamExtractionCoordinator coordinator = _coordinator;
+            TestDelegate repeatedQuery = () => coordinator.TryGetTeamPresence(team1, out _, out _);
+            Assert.That(
+                repeatedQuery,
+                UnityEngine.TestTools.Constraints.ConstraintExtensions.AllocatingGCMemory(Is.Not));
+        }
+
+        [Test]
+        public void TryGetTeamPresence_AfterFailedMemberBuild_DoesNotCountStaleMembers()
+        {
+            Assert.That(RaidTeamId.TryCreate(1, out RaidTeamId team1), Is.True);
+            _assignmentService.Assignments[team1] = _sanctuary.SanctuaryId;
+            var part1 = MakeParticipantId(1);
+            var part2 = MakeParticipantId(2);
+            bool failBuild = true;
+            _coordinator.MemberSnapshotsProviderForTest = (tid, zone, snaps, ctrls) =>
+            {
+                if (tid != team1) return false;
+                snaps.Add(new TeamMemberExtractionSnapshot(part1, RaidParticipantState.Raiding, isConnected: true, isInsideExact: true, isInsideTolerant: true));
+                if (failBuild) return false;
+                snaps.Add(new TeamMemberExtractionSnapshot(part2, RaidParticipantState.Raiding, isConnected: true, isInsideExact: false, isInsideTolerant: false));
+                return true;
+            };
+
+            Assert.That(_coordinator.TryGetTeamPresence(team1, out int present, out int required), Is.False);
+            Assert.That(present, Is.EqualTo(0));
+            Assert.That(required, Is.EqualTo(0));
+
+            failBuild = false;
+            Assert.That(_coordinator.TryGetTeamPresence(team1, out present, out required), Is.True);
+            Assert.That(present, Is.EqualTo(1));
+            Assert.That(required, Is.EqualTo(2));
+        }
+
+        private RaidTeamId ArrangeDuoPresenceQuery()
+        {
+            Assert.That(RaidTeamId.TryCreate(1, out RaidTeamId team1), Is.True);
+            _assignmentService.Assignments[team1] = _sanctuary.SanctuaryId;
+
+            var part1 = MakeParticipantId(1);
+            var part2 = MakeParticipantId(2);
+            _coordinator.MemberSnapshotsProviderForTest = (tid, zone, snaps, ctrls) =>
+            {
+                if (tid != team1) return false;
+                snaps.Add(new TeamMemberExtractionSnapshot(part1, RaidParticipantState.Raiding, isConnected: true, isInsideExact: true, isInsideTolerant: true));
+                snaps.Add(new TeamMemberExtractionSnapshot(part2, RaidParticipantState.Raiding, isConnected: true, isInsideExact: false, isInsideTolerant: false));
+                ctrls.Add(_player1Controller);
+                ctrls.Add(_player2Controller);
+                return true;
+            };
+
+            return team1;
+        }
+
         private sealed class MockAssignmentService : ExtractionSanctuaryAssignmentService
         {
             public Dictionary<RaidTeamId, EntityId> Assignments = new();
