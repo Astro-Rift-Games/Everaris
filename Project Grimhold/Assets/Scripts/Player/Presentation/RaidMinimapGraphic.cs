@@ -29,6 +29,7 @@ public sealed class RaidMinimapGraphic : MaskableGraphic
 
     private float _uiUnitsPerWorldUnit = 1f;
     private bool _configured;
+    private Vector2 _lastRectSize = new Vector2(float.NaN, float.NaN);
     private readonly List<RaidMinimapBatchGraphic> _batches = new List<RaidMinimapBatchGraphic>();
 
     public override Texture mainTexture => Layout != null && Layout.ArtBatchCount > 0
@@ -98,6 +99,13 @@ public sealed class RaidMinimapGraphic : MaskableGraphic
         RaidMinimapBatchGraphic.Populate(vertexHelper,
             _configured && Layout != null && Layout.ArtBatchCount > 0 ? Layout.GetArtBatch(0) : null,
             _uiUnitsPerWorldUnit, color);
+    }
+
+    protected override void OnRectTransformDimensionsChange()
+    {
+        // Ignore the position-only callbacks of the pixel-perfect HUD Canvas while the map pans.
+        if (RaidMinimapBatchGraphic.HasRectSizeChanged(rectTransform, ref _lastRectSize))
+            base.OnRectTransformDimensionsChange();
     }
 
     protected override void OnEnable()
