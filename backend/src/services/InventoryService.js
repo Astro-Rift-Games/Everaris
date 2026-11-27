@@ -1535,7 +1535,9 @@ class InventoryService {
     }
 
     const loadout = character.inventory.loadout;
-    const { revenue: authoritativeRevenue, sale, buybackEntry } = applyShopSale(loadout, version, lootId, amount, sourceSlot);
+    // Same weekly demand (+20%, Doc 23 §7) as cart sales; buyback derives from the gold actually paid.
+    const { revenue: authoritativeRevenue, sale, buybackEntry } =
+      applyShopSale(loadout, version, lootId, amount, sourceSlot, getWeeklyRotation().demandItems);
     const buybackPush = buybackEntry ? {
       'inventory.buyback.entries': { $each: [buybackEntry], $slice: -BUYBACK_MAX_ENTRIES }
     } : {};

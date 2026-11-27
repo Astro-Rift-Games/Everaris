@@ -99,4 +99,3 @@ db.economytelemetryevents.aggregate([
 
 - MaxTransportable blocks are client-reported (`transport_block`), not validated by the backend. They cover only the expedition start, which is the only place Doc 23 §8.2 applies the limit in Town. Raid loot pickups refused by MaxTransportable inside the Dungeon are not recorded.
 - Gem installation (`installGem`) is not recorded; it moves no gold.
-- Single sales (`shopSell`) do not apply weekly demand (only `shopTrade` does); telemetry reports what the commit applied.
