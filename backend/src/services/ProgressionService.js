@@ -91,6 +91,20 @@ class ProgressionService {
       throw { statusCode: 400, errorCode: 'INVALID_ATTRIBUTE', message: `Invalid attribute: ${payload.attribute}` };
     }
 
+    // FIX-36: optional idempotency key so a lost response can be safely reconciled without double spend.
+    let transactionId = null;
+    if (payload.transactionId !== undefined) {
+      if (typeof payload.transactionId !== 'string' || payload.transactionId.trim() === '' || payload.transactionId.length > 128) {
+        throw { statusCode: 400, errorCode: 'INVALID_TRANSACTION_ID', message: 'transactionId must be a non-empty string up to 128 characters.' };
+      }
+      transactionId = payload.transactionId.trim();
+      const existingReceipt = findReceipt(character, transactionId);
+      if (existingReceipt) {
+        return ProgressionService.#replayAttributeSpend(character, existingReceipt, transactionId, attributeName);
+      }
+      assertWithinRetention(character, transactionId);
+    }
+
     const attrs = character.characterAttributes || {
       vitality: 5, resistance: 5, strength: 5,
       dexterity: 5, intelligence: 5, luck: 5, availablePoints: 10
@@ -104,21 +118,37 @@ class ProgressionService {
       throw { statusCode: 422, errorCode: 'ATTRIBUTE_MAXED', message: `Attribute ${payload.attribute} is already at the maximum value.` };
     }
 
+    const filter = {
+      accountId,
+      revision: payload.expectedRevision,
+      'characterAttributes.availablePoints': { $gt: 0 },
+      [`characterAttributes.${attributeName}`]: { $lt: MAX_ATTRIBUTE_VALUE },
+      ...(transactionId ? { 'appliedShopReceipts.transactionId': { $ne: transactionId } } : {})
+    };
+
     const updateQuery = {
       $inc: {
         [`characterAttributes.${attributeName}`]: 1,
         'characterAttributes.availablePoints': -1,
         revision: 1
-      }
+      },
+      ...(transactionId ? {
+        ...watermarkUpdate(character),
+        $push: {
+          appliedShopReceipts: receiptPush({
+            transactionId,
+            type: 'attribute_spend',
+            lootId: attributeName,
+            amount: 1,
+            totalAmount: 1,
+            timestamp: new Date()
+          })
+        }
+      } : {})
     };
 
     const updated = await Character.findOneAndUpdate(
-      { 
-        accountId, 
-        revision: payload.expectedRevision,
-        'characterAttributes.availablePoints': { $gt: 0 },
-        [`characterAttributes.${attributeName}`]: { $lt: MAX_ATTRIBUTE_VALUE }
-      },
+      filter,
       updateQuery,
       { new: true }
     );
@@ -129,6 +159,13 @@ class ProgressionService {
       const exists = await Character.findOne({ accountId }, null, { lean: true });
       if (!exists) {
         throw { statusCode: 404, errorCode: 'CHARACTER_NOT_FOUND', message: 'No character found.' };
+      }
+
+      if (transactionId) {
+        const recorded = findReceipt(exists, transactionId);
+        if (recorded) {
+          return ProgressionService.#replayAttributeSpend(exists, recorded, transactionId, attributeName);
+        }
       }
       
       const currentAttrs = exists.characterAttributes;
@@ -145,10 +182,29 @@ class ProgressionService {
     }
 
     return {
+      ...(transactionId ? { alreadySecured: false, transactionId } : {}),
       characterAttributes: updated.characterAttributes,
       level: updated.level,
       experience: updated.experience,
       revision: updated.revision
+    };
+  }
+
+  static #replayAttributeSpend(character, receipt, transactionId, attributeName) {
+    if (receipt.type !== 'attribute_spend' || receipt.lootId !== attributeName) {
+      throw {
+        statusCode: 409,
+        errorCode: 'TRANSACTION_ID_REUSED',
+        message: 'Transaction ID has already been used for a different operation.'
+      };
+    }
+    return {
+      alreadySecured: true,
+      transactionId,
+      characterAttributes: attributeSnapshot(character.characterAttributes),
+      level: character.level,
+      experience: character.experience,
+      revision: character.revision || 0
     };
   }
 

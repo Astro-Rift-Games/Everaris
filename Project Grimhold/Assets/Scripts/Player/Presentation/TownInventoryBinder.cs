@@ -321,9 +321,7 @@ public sealed class TownInventoryBinder : NetworkBehaviour
             return;
         }
 
-        var config = LoginFlowController.Instance != null
-            ? LoginFlowController.Instance.Config : null;
-        if (config == null) config = Resources.Load<Grimhold.Backend.BackendConfiguration>("BackendConfiguration");
+        var config = Grimhold.Backend.BackendConfigurationProvider.Resolve();
         if (config != null && _profileContext.TryGetComponent<RemoteInventoryService>(out var remoteInventory))
         {
             _profileContext.TryGetComponent<ProfileReconciliationService>(out var reconciliation);

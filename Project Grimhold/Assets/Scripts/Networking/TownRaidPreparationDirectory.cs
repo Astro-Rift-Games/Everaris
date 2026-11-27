@@ -15,7 +15,8 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
 
     private readonly List<TownRaidPreparationNetworkController> _preparations = new();
     private readonly TownRaidPreparationDirectoryCache<TownRaidPreparationNetworkController> _cache = new();
-    private readonly Dictionary<PlayerRef, ProfileId> _profileByPlayer = new();
+    private readonly TownPreparationDisconnectResolver _disconnectResolver = new();
+    private readonly TownPendingRpcQueue _pendingRpcs = new();
     private readonly Queue<TownRaidStartResult> _startResults = new();
     private readonly Queue<TownRaidPreparationActionResult> _actionResults = new();
     private readonly Queue<TownRaidPreparationCancelReason> _cancelReasons = new();
@@ -77,7 +78,10 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
 
     public override void FixedUpdateNetwork()
     {
-        if (!HasStateAuthority || _rebuildTicksRemaining <= 0) return;
+        if (!HasStateAuthority) return;
+        ObserveActivePlayers();
+        _pendingRpcs.Drain(Time.unscaledTime, TryResolveSenderWithStatus);
+        if (_rebuildTicksRemaining <= 0) return;
         _rebuildTicksRemaining--;
         if (_rebuildTicksRemaining == 0) RebuildAuthorityIndices();
     }
@@ -90,21 +94,36 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
         _startResults.Clear();
         _actionResults.Clear();
         _cancelReasons.Clear();
+        _pendingRpcs.Clear();
         _indexReady = false;
         _preparations.Clear();
-        _profileByPlayer.Clear();
+        _disconnectResolver.ClearAll();
     }
 
     public void StateAuthorityChanged()
     {
-        _profileByPlayer.Clear();
-        if (HasStateAuthority) BeginAuthorityRebuild();
+        Runner?.GetComponent<TownSenderIdentityContext>()?.NotifyAuthorityChanged();
+        _disconnectResolver.ClearVerified();
+        _pendingRpcs.Clear();
+        if (HasStateAuthority)
+        {
+            ObserveActivePlayers();
+            BeginAuthorityRebuild();
+        }
         else { _indexReady = true; _rebuildTicksRemaining = 0; }
     }
 
     public void PlayerLeft(PlayerRef player)
     {
-        if (!HasStateAuthority || !_profileByPlayer.Remove(player, out ProfileId profile) || !_cache.TryResolve(profile, out TownRaidPreparationNetworkController preparation)) return;
+        _pendingRpcs.RemoveSender(player);
+        if (!HasStateAuthority) return;
+        bool resolved = _disconnectResolver.TryResolveDisconnectedProfile(
+            player,
+            Runner != null ? Runner.ActivePlayers : null,
+            TryResolveVerifiedProfileOrDefault,
+            TryReadDeclaredProfileOrDefault,
+            out ProfileId profile);
+        if (!resolved || !_cache.TryResolve(profile, out TownRaidPreparationNetworkController preparation)) return;
         if (preparation.State == TownRaidPreparationState.Launching) { preparation.AuthorityHandlePlayerLeft(profile); return; }
         if (profile == preparation.HostProfileId)
         {
@@ -120,10 +139,73 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
     public bool TryGetPreparation(RaidCode code, out TownRaidPreparationNetworkController preparation)
     { preparation = null; return code.IsValid && _cache.TryResolve(code, out preparation); }
 
+    /// <summary>
+    /// Resolves a player's <see cref="PlayerRef"/> strictly from identities verified by THIS authority peer
+    /// (FIX-93). Never consults <see cref="TownPartyDirectory"/> (which may have a different State Authority
+    /// during migration) and never falls back to unverified replicated ProfileId claims.
+    /// </summary>
+    public bool TryResolveVerifiedPlayer(ProfileId profile, out PlayerRef player)
+    {
+        player = PlayerRef.None;
+        if (!HasStateAuthority || Runner == null || !profile.IsValid)
+        {
+            return false;
+        }
+
+        if (_disconnectResolver.TryFindVerifiedPlayer(profile, out PlayerRef cached))
+        {
+            if (TownSenderIdentityContext.IsActive(Runner, cached) &&
+                TryResolveSender(cached, out ProfileId confirmed) && confirmed == profile)
+            {
+                player = cached;
+                return true;
+            }
+
+            _disconnectResolver.RemoveVerified(cached);
+        }
+
+        foreach (PlayerRef candidate in Runner.ActivePlayers)
+        {
+            if (!TryResolveSender(candidate, out ProfileId resolved)) continue;
+            _disconnectResolver.RecordVerified(candidate, resolved);
+            if (resolved == profile) { player = candidate; return true; }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Resolves the recipient of a launch release notice strictly from verified identities, distinguishing
+    /// a member still awaiting post-migration verification from a genuinely disconnected member (FIX-93).
+    /// </summary>
+    public TownLaunchRecipientStatus ResolveLaunchRecipient(ProfileId profile, out PlayerRef verifiedPlayer)
+    {
+        verifiedPlayer = PlayerRef.None;
+        if (!HasStateAuthority || Runner == null || !profile.IsValid)
+        {
+            return TownLaunchRecipientStatus.Disconnected;
+        }
+
+        return TownLaunchRecipientResolver.Resolve(
+            profile,
+            Runner.ActivePlayers,
+            TryResolveVerifiedPlayer,
+            TryResolveDeclaredProfileForActivePlayer,
+            TryResolveSender,
+            out verifiedPlayer);
+    }
+
     public bool TryResolvePlayer(ProfileId profile, out PlayerRef player)
     {
         TownPartyDirectory parties = Runner?.GetComponent<TownPartyDirectoryContext>()?.Directory;
-        if (parties != null && parties.TryResolvePlayer(profile, out player)) return true;
+        // FIX-93: When this directory is State Authority, only consult TownPartyDirectory if it is
+        // ALSO State Authority on this peer; otherwise TownPartyDirectory would fall back to unverified
+        // replicated ProfileId claims.
+        if (parties != null && (!HasStateAuthority || parties.HasStateAuthority) && parties.TryResolvePlayer(profile, out player))
+        {
+            return true;
+        }
+
         player = PlayerRef.None;
         if (Runner == null) return false;
         if (!HasStateAuthority)
@@ -136,14 +218,8 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
             }
             return false;
         }
-        foreach (KeyValuePair<PlayerRef, ProfileId> pair in _profileByPlayer) if (pair.Value == profile) { player = pair.Key; return true; }
-        foreach (PlayerRef candidate in Runner.ActivePlayers)
-        {
-            if (!TryResolveSender(candidate, out ProfileId resolved)) continue;
-            _profileByPlayer[candidate] = resolved;
-            if (resolved == profile) { player = candidate; return true; }
-        }
-        return false;
+
+        return TryResolveVerifiedPlayer(profile, out player);
     }
 
     public bool TryGetLocalPartyContinuation(ProfileId localProfile, out TownPartyContinuationContext context)
@@ -188,42 +264,63 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
             SendActionResult(info.Source, TownRaidPreparationActionResult.DirectoryUnavailable);
             return default;
         }
-        if (!TryResolveSender(info.Source, out ProfileId creator))
+        if (TryResolveSenderWithStatus(info.Source, out ProfileId creator, out TownSenderResolutionStatus status))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.Failed);
+            ExecuteCreate(info.Source, creator);
             return default;
+        }
+        if (status == TownSenderResolutionStatus.PendingVerification)
+        {
+            PlayerRef source = info.Source;
+            if (!_pendingRpcs.Enqueue(source, Time.unscaledTime,
+                    verified => ExecuteCreate(source, verified),
+                    () => SendActionResult(source, TownRaidPreparationActionResult.Failed)))
+            {
+                SendActionResult(source, TownRaidPreparationActionResult.Failed);
+            }
+            return default;
+        }
+        SendActionResult(info.Source, TownRaidPreparationActionResult.Failed);
+        return default;
+    }
+
+    private void ExecuteCreate(PlayerRef source, ProfileId creator)
+    {
+        if (!CanMutate || !_preparationPrefab.IsValid)
+        {
+            SendActionResult(source, TownRaidPreparationActionResult.DirectoryUnavailable);
+            return;
         }
         if (_cache.TryResolve(creator, out _))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.AlreadyInPreparation);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.AlreadyInPreparation);
+            return;
         }
-        if (IsAwaitingPartyCompletion(info.Source))
+        if (IsAwaitingPartyCompletion(source))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.AwaitingPartyCompletion);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.AwaitingPartyCompletion);
+            return;
         }
 
         TownPartyDirectory partyDirectory = Runner.GetComponent<TownPartyDirectoryContext>()?.Directory;
         if (partyDirectory == null || !partyDirectory.TryGetParty(creator, out TownPartySnapshot party) ||
             !TownPartyRules.TryCreateRaidCreatorRoster(party, creator, out IReadOnlyList<ProfileId> roster))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.PartyUnavailable);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.PartyUnavailable);
+            return;
         }
 
         if (!TryGenerateUniqueRaidCode(out RaidCode code))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.Failed);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.Failed);
+            return;
         }
 
-        _profileByPlayer[info.Source] = creator;
+        _disconnectResolver.RecordVerified(source, creator);
         if (!TrySpawnPreparation(code, creator, roster))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.Failed);
+            SendActionResult(source, TownRaidPreparationActionResult.Failed);
         }
-        return default;
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
@@ -239,68 +336,105 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
             SendActionResult(info.Source, TownRaidPreparationActionResult.InvalidCode);
             return default;
         }
-        if (!TryResolveSender(info.Source, out ProfileId profile))
+        if (TryResolveSenderWithStatus(info.Source, out ProfileId profile, out TownSenderResolutionStatus status))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.Failed);
+            ExecuteJoin(info.Source, profile, code);
             return default;
+        }
+        if (status == TownSenderResolutionStatus.PendingVerification)
+        {
+            PlayerRef source = info.Source;
+            if (!_pendingRpcs.Enqueue(source, Time.unscaledTime,
+                    verified => ExecuteJoin(source, verified, code),
+                    () => SendActionResult(source, TownRaidPreparationActionResult.Failed)))
+            {
+                SendActionResult(source, TownRaidPreparationActionResult.Failed);
+            }
+            return default;
+        }
+        SendActionResult(info.Source, TownRaidPreparationActionResult.Failed);
+        return default;
+    }
+
+    private void ExecuteJoin(PlayerRef source, ProfileId profile, RaidCode code)
+    {
+        if (!CanMutate)
+        {
+            SendActionResult(source, TownRaidPreparationActionResult.DirectoryUnavailable);
+            return;
         }
         if (_cache.TryResolve(profile, out _))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.AlreadyInPreparation);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.AlreadyInPreparation);
+            return;
         }
-        if (IsAwaitingPartyCompletion(info.Source))
+        if (IsAwaitingPartyCompletion(source))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.AwaitingPartyCompletion);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.AwaitingPartyCompletion);
+            return;
         }
         if (!_cache.TryResolve(code, out TownRaidPreparationNetworkController preparation))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.CodeNotFound);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.CodeNotFound);
+            return;
         }
         if (!preparation.HasStateAuthority)
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.DirectoryUnavailable);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.DirectoryUnavailable);
+            return;
         }
         if (preparation.State != TownRaidPreparationState.Waiting)
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.PreparationLaunching);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.PreparationLaunching);
+            return;
         }
         if (preparation.MemberCount >= TownRaidPreparationRules.MaxMembers)
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.PreparationFull);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.PreparationFull);
+            return;
         }
         if (!preparation.AuthorityTryAddMember(profile))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.Failed);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.Failed);
+            return;
         }
-        _profileByPlayer[info.Source] = profile;
-        return default;
+        _disconnectResolver.RecordVerified(source, profile);
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     private RpcInvokeInfo RPC_RequestLeave(RpcInfo info = default)
     {
-        if (!CanMutate || !TryResolveSender(info.Source, out ProfileId profile) ||
-            !_cache.TryResolve(profile, out TownRaidPreparationNetworkController preparation)) return default;
-        if (preparation.State != TownRaidPreparationState.Waiting)
+        if (!CanMutate) return default;
+        if (TryResolveSenderWithStatus(info.Source, out ProfileId profile, out TownSenderResolutionStatus status))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.PreparationLaunching);
+            ExecuteLeave(info.Source, profile);
             return default;
         }
-        _profileByPlayer[info.Source] = profile;
+        if (status == TownSenderResolutionStatus.PendingVerification)
+        {
+            PlayerRef source = info.Source;
+            _pendingRpcs.Enqueue(source, Time.unscaledTime,
+                verified => ExecuteLeave(source, verified),
+                () => SendActionResult(source, TownRaidPreparationActionResult.Failed));
+        }
+        return default;
+    }
+
+    private void ExecuteLeave(PlayerRef source, ProfileId profile)
+    {
+        if (!CanMutate || !_cache.TryResolve(profile, out TownRaidPreparationNetworkController preparation)) return;
+        if (preparation.State != TownRaidPreparationState.Waiting)
+        {
+            SendActionResult(source, TownRaidPreparationActionResult.PreparationLaunching);
+            return;
+        }
+        _disconnectResolver.RecordVerified(source, profile);
         if (profile == preparation.HostProfileId)
         {
             NotifyMembersCancelled(preparation, TownRaidPreparationCancelReason.HostLeft, profile);
             AuthorityDissolvePreparation(preparation);
         }
         else preparation.AuthorityTryRemoveMember(profile);
-        return default;
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
@@ -311,47 +445,86 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
             SendActionResult(info.Source, TownRaidPreparationActionResult.DirectoryUnavailable);
             return default;
         }
-        if (!TryResolveSender(info.Source, out ProfileId profile))
+        if (TryResolveSenderWithStatus(info.Source, out ProfileId profile, out TownSenderResolutionStatus status))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.Failed);
+            ExecuteSetReady(info.Source, profile, ready);
             return default;
+        }
+        if (status == TownSenderResolutionStatus.PendingVerification)
+        {
+            PlayerRef source = info.Source;
+            bool isReady = ready;
+            if (!_pendingRpcs.Enqueue(source, Time.unscaledTime,
+                    verified => ExecuteSetReady(source, verified, isReady),
+                    () => SendActionResult(source, TownRaidPreparationActionResult.Failed)))
+            {
+                SendActionResult(source, TownRaidPreparationActionResult.Failed);
+            }
+            return default;
+        }
+        SendActionResult(info.Source, TownRaidPreparationActionResult.Failed);
+        return default;
+    }
+
+    private void ExecuteSetReady(PlayerRef source, ProfileId profile, bool ready)
+    {
+        if (!CanMutate)
+        {
+            SendActionResult(source, TownRaidPreparationActionResult.DirectoryUnavailable);
+            return;
         }
         if (!_cache.TryResolve(profile, out TownRaidPreparationNetworkController preparation))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.NotInPreparation);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.NotInPreparation);
+            return;
         }
         if (!preparation.HasStateAuthority)
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.DirectoryUnavailable);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.DirectoryUnavailable);
+            return;
         }
-        _profileByPlayer[info.Source] = profile;
-        if (ready && IsAwaitingPartyCompletion(info.Source))
+        _disconnectResolver.RecordVerified(source, profile);
+        if (ready && IsAwaitingPartyCompletion(source))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.AwaitingPartyCompletion);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.AwaitingPartyCompletion);
+            return;
         }
         if (preparation.State != TownRaidPreparationState.Waiting)
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.PreparationLaunching);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.PreparationLaunching);
+            return;
         }
         if (!preparation.AuthorityTrySetReady(profile, ready))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.Failed);
+            SendActionResult(source, TownRaidPreparationActionResult.Failed);
         }
-        return default;
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     private RpcInvokeInfo RPC_RequestSetFriendlyFire(NetworkBool enabled, RpcInfo info = default)
     {
-        if (!CanMutate || !TryResolveSender(info.Source, out ProfileId profile) ||
-            !_cache.TryResolve(profile, out TownRaidPreparationNetworkController preparation) || !preparation.HasStateAuthority) return default;
-        _profileByPlayer[info.Source] = profile;
-        preparation.AuthorityTrySetFriendlyFire(profile, enabled);
+        if (!CanMutate) return default;
+        if (TryResolveSenderWithStatus(info.Source, out ProfileId profile, out TownSenderResolutionStatus status))
+        {
+            ExecuteSetFriendlyFire(info.Source, profile, enabled);
+            return default;
+        }
+        if (status == TownSenderResolutionStatus.PendingVerification)
+        {
+            PlayerRef source = info.Source;
+            bool isEnabled = enabled;
+            _pendingRpcs.Enqueue(source, Time.unscaledTime,
+                verified => ExecuteSetFriendlyFire(source, verified, isEnabled),
+                null);
+        }
         return default;
+    }
+
+    private void ExecuteSetFriendlyFire(PlayerRef source, ProfileId profile, bool enabled)
+    {
+        if (!CanMutate || !_cache.TryResolve(profile, out TownRaidPreparationNetworkController preparation) || !preparation.HasStateAuthority) return;
+        _disconnectResolver.RecordVerified(source, profile);
+        preparation.AuthorityTrySetFriendlyFire(profile, enabled);
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
@@ -362,31 +535,53 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
             SendActionResult(info.Source, TownRaidPreparationActionResult.DirectoryUnavailable);
             return default;
         }
-        if (!TryResolveSender(info.Source, out ProfileId profile))
+        if (TryResolveSenderWithStatus(info.Source, out ProfileId profile, out TownSenderResolutionStatus status))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.Failed);
+            ExecuteStart(info.Source, profile);
             return default;
+        }
+        if (status == TownSenderResolutionStatus.PendingVerification)
+        {
+            PlayerRef source = info.Source;
+            if (!_pendingRpcs.Enqueue(source, Time.unscaledTime,
+                    verified => ExecuteStart(source, verified),
+                    () => SendActionResult(source, TownRaidPreparationActionResult.Failed)))
+            {
+                SendActionResult(source, TownRaidPreparationActionResult.Failed);
+            }
+            return default;
+        }
+        SendActionResult(info.Source, TownRaidPreparationActionResult.Failed);
+        return default;
+    }
+
+    private void ExecuteStart(PlayerRef source, ProfileId profile)
+    {
+        if (!CanMutate)
+        {
+            SendActionResult(source, TownRaidPreparationActionResult.DirectoryUnavailable);
+            return;
         }
         if (!_cache.TryResolve(profile, out TownRaidPreparationNetworkController preparation))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.NotInPreparation);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.NotInPreparation);
+            return;
         }
         if (!preparation.HasStateAuthority)
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.DirectoryUnavailable);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.DirectoryUnavailable);
+            return;
         }
-        _profileByPlayer[info.Source] = profile;
-        if (IsAwaitingPartyCompletion(info.Source))
+        _disconnectResolver.RecordVerified(source, profile);
+        if (IsAwaitingPartyCompletion(source))
         {
-            SendActionResult(info.Source, TownRaidPreparationActionResult.AwaitingPartyCompletion);
-            return default;
+            SendActionResult(source, TownRaidPreparationActionResult.AwaitingPartyCompletion);
+            return;
         }
         TownRaidStartResult result = preparation.AuthorityTryStart(profile);
         if (result == TownRaidStartResult.PartyUnavailable)
         {
-            RPC_ReceiveStartResult(info.Source, result);
+            RPC_ReceiveStartResult(source, result);
         }
         else if (result != TownRaidStartResult.Started)
         {
@@ -398,9 +593,8 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
                     : !TownRaidPreparationRules.AreAllMembersReady(snapshot.Members)
                         ? TownRaidPreparationActionResult.NotAllMembersReady
                         : TownRaidPreparationActionResult.Failed;
-            SendActionResult(info.Source, reason);
+            SendActionResult(source, reason);
         }
-        return default;
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
@@ -429,7 +623,7 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
         {
             ProfileId member = snapshot.Members[index].ProfileId;
             if (excludeProfile.IsValid && member == excludeProfile) continue;
-            if (TryResolvePlayer(member, out PlayerRef player))
+            if (TryResolveVerifiedPlayer(member, out PlayerRef player))
             {
                 RPC_ReceiveCancellation(player, reason);
             }
@@ -472,11 +666,33 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
         var entries = new List<KeyValuePair<TownRaidPreparationNetworkController, TownRaidPreparationSnapshot>>(_preparations.Count);
         for (int index = 0; index < _preparations.Count; index++)
         { TownRaidPreparationNetworkController preparation = _preparations[index]; if (preparation != null && preparation.Object != null && preparation.Object.IsValid) entries.Add(new(preparation, preparation.Snapshot)); }
-        _profileByPlayer.Clear();
-        if (Runner != null) foreach (PlayerRef player in Runner.ActivePlayers) if (TryResolveSender(player, out ProfileId profile)) _profileByPlayer[player] = profile;
+        _disconnectResolver.ClearVerified();
+        ObserveActivePlayers();
         _indexReady = _cache.Rebuild(entries);
         RefreshConflictState();
     }
+
+    private void ObserveActivePlayers()
+    {
+        if (Runner == null) return;
+        _disconnectResolver.ObserveActiveDeclaredProfiles(Runner.ActivePlayers, TryReadDeclaredProfileOrDefault);
+        foreach (PlayerRef player in Runner.ActivePlayers)
+        {
+            if (!_disconnectResolver.TryGetVerifiedProfile(player, out _) && TryResolveSender(player, out ProfileId profile))
+            {
+                _disconnectResolver.RecordVerified(player, profile);
+            }
+        }
+    }
+
+    private ProfileId TryResolveVerifiedProfileOrDefault(PlayerRef player) =>
+        TryResolveSender(player, out ProfileId profile) ? profile : default;
+
+    private ProfileId TryReadDeclaredProfileOrDefault(PlayerRef player) =>
+        TownSenderIdentityValidator.TryResolveDeclaredProfile(Runner, player, out ProfileId profile) ? profile : default;
+
+    private bool TryResolveDeclaredProfileForActivePlayer(PlayerRef player, out ProfileId profile) =>
+        TownSenderIdentityValidator.TryResolveDeclaredProfile(Runner, player, out profile);
 
     private void UpdateCache(TownRaidPreparationNetworkController preparation)
     { if (!_cache.RegisterOrUpdate(preparation, preparation.Snapshot)) _indexReady = !HasStateAuthority; RefreshConflictState(); }
@@ -501,8 +717,13 @@ public sealed class TownRaidPreparationDirectory : NetworkBehaviour, IPlayerLeft
 
     private bool TryResolveSender(PlayerRef player, out ProfileId profile)
     {
+        return TryResolveSenderWithStatus(player, out profile, out _);
+    }
+
+    private bool TryResolveSenderWithStatus(PlayerRef player, out ProfileId profile, out TownSenderResolutionStatus status)
+    {
         ITownSessionTicketVerifier verifier = TicketVerifier ?? ApplicationAuthContext.Instance?.TownTicketVerifier;
-        return TownSenderIdentityValidator.TryResolveVerifiedSender(Runner, player, verifier, out profile);
+        return TownSenderIdentityValidator.TryResolveVerifiedSender(Runner, player, verifier, out profile, out status);
     }
 
     private bool CanSendRequest => Runner != null && Object != null && Object.IsValid && _indexReady && SessionConnectionCoordinator.Instance?.State == SessionConnectionState.Town;

@@ -59,14 +59,21 @@ if (nodeEnv !== 'test') {
 }
 
 // Only explicit hop counts are supported; boolean true trusts attacker-supplied chains.
+// Deployed environments (staging/production) sit behind a single reverse proxy (e.g. Render),
+// so default to 1 trusted hop unless explicitly overridden (FIX-37).
+const isProductionLike = !LOCAL_DEBUG_ENVS.includes(nodeEnv);
 const rawTrustProxy = process.env.TRUST_PROXY;
-let trustProxy = false;
-if (rawTrustProxy && rawTrustProxy !== 'false') {
-  if (!/^\d+$/.test(rawTrustProxy) || !Number.isSafeInteger(Number(rawTrustProxy))) {
-    console.error('[Config] TRUST_PROXY must be false or a non-negative integer hop count; true is unsafe.');
-    process.exit(1);
+let trustProxy = isProductionLike ? 1 : false;
+if (rawTrustProxy !== undefined && rawTrustProxy !== '') {
+  if (rawTrustProxy === 'false') {
+    trustProxy = false;
+  } else {
+    if (!/^\d+$/.test(rawTrustProxy) || !Number.isSafeInteger(Number(rawTrustProxy))) {
+      console.error('[Config] TRUST_PROXY must be false or a non-negative integer hop count; true is unsafe.');
+      process.exit(1);
+    }
+    trustProxy = Number(rawTrustProxy);
   }
-  trustProxy = Number(rawTrustProxy);
 }
 
 // FIX-34: PLACEHOLDER. Game Design has not defined the refresh token lifetime;
@@ -93,6 +100,7 @@ module.exports = {
   jwtRefreshExpiresIn,
   jwtRefreshReuseGraceSeconds,
   nodeEnv: nodeEnv,
+  isProductionLike,
   webhookSecret: webhookSecret,
   allowDevWebhookSecret: allowDevWebhookSecret,
   get inventoryProtocolGate() {

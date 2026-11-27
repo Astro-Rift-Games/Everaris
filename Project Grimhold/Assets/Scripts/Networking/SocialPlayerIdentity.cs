@@ -55,6 +55,8 @@ public sealed class SocialPlayerIdentity : NetworkBehaviour
     /// <summary>
     /// Delivers the ticket only to the Town State Authority. The sender is the RPC source (<c>info.Source</c>),
     /// never a payload field, so a client cannot register a ticket on behalf of another PlayerRef.
+    /// Responds to <c>info.Source</c> with the registration outcome so rejected/raced clients can
+    /// re-register with bounded backoff (FIX-94).
     /// </summary>
     [Rpc(Channel = RpcChannel.ReliableLargeData, TickAligned = false)]
     public static void RPC_RegisterTownSender(
@@ -69,7 +71,30 @@ public sealed class SocialPlayerIdentity : NetworkBehaviour
         }
 
         TownSenderIdentityContext context = runner.GetComponent<TownSenderIdentityContext>();
-        context?.AcceptRegistration(info.Source, rawTicket, player => TownSenderIdentityContext.IsActive(runner, player));
+        TownSenderRegistrationResult result = context != null
+            ? context.AcceptRegistration(info.Source, rawTicket, player => TownSenderIdentityContext.IsActive(runner, player))
+            : TownSenderRegistrationResult.RejectedNotAuthority;
+        RPC_AcknowledgeTownSenderRegistration(runner, info.Source, result);
+    }
+
+    /// <summary>
+    /// Targeted acknowledgement/rejection sent by the Town State Authority back to the registering
+    /// client so it stops retrying on acceptance or retries with bounded backoff on rejection (FIX-94).
+    /// </summary>
+    [Rpc(Channel = RpcChannel.Reliable, TickAligned = false)]
+    public static void RPC_AcknowledgeTownSenderRegistration(
+        NetworkRunner runner,
+        [RpcTarget] PlayerRef target,
+        TownSenderRegistrationResult result,
+        RpcInfo info = default)
+    {
+        if (info.IsInvokeLocal || info.Source.IsNone || runner == null)
+        {
+            return;
+        }
+
+        TownSenderIdentityContext context = runner.GetComponent<TownSenderIdentityContext>();
+        context?.OnRegistrationAcknowledged(info.Source, result);
     }
 
     private void PublishTownTicket()

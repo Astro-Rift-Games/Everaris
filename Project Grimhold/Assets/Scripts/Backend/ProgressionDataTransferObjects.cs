@@ -34,6 +34,8 @@ namespace Grimhold.Backend
     [Serializable]
     public struct CommitProgressionResult
     {
+        public bool alreadySecured;
+        public string transactionId;
         public CharacterAttributesData characterAttributes;
         public int revision;
     }
@@ -80,6 +82,7 @@ namespace Grimhold.Backend
     {
         public string attribute;
         public int expectedRevision;
+        public string transactionId;
     }
 
     [Serializable]

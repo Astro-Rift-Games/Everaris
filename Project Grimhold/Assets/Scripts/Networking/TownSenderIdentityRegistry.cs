@@ -15,6 +15,7 @@ public sealed class TownSenderIdentityRegistry
 {
     private readonly Dictionary<PlayerRef, Binding> _bindings = new();
     private readonly List<PlayerRef> _evictedSenders = new();
+    private readonly TownSecurityWarningGate _warningGate = new();
     private long _nextSequence;
 
     private enum VerificationState
@@ -91,29 +92,53 @@ public sealed class TownSenderIdentityRegistry
     /// </summary>
     public bool TryResolve(PlayerRef sender, ITownSessionTicketVerifier verifier, out ProfileId profileId)
     {
+        return TryResolveWithStatus(sender, verifier, out profileId, out _);
+    }
+
+    /// <summary>
+    /// Resolves the verified profile bound to this exact sender and reports the exact status
+    /// (<see cref="TownSenderResolutionStatus.PendingVerification"/> vs terminal rejections) while
+    /// suppressing repetitive per-tick warnings for the same sender episode (FIX-59).
+    /// </summary>
+    public bool TryResolveWithStatus(
+        PlayerRef sender,
+        ITownSessionTicketVerifier verifier,
+        out ProfileId profileId,
+        out TownSenderResolutionStatus status)
+    {
         profileId = default;
+        status = TownSenderResolutionStatus.RejectedNoTicket;
         if (sender.IsNone || !_bindings.TryGetValue(sender, out Binding binding))
         {
             return false;
         }
 
+        string senderKey = sender.ToString();
         if (!TownSenderIdentityValidator.TryValidateSenderIdentity(
                 binding.Profile.Value,
                 binding.RawTicket,
                 verifier,
-                sender.ToString(),
-                out ProfileId verified))
+                senderKey,
+                out ProfileId verified,
+                out status,
+                _warningGate))
         {
             return false;
         }
 
         if (HasEarlierOwner(sender, binding, verifier, out PlayerRef owner))
         {
-            Debug.LogWarning($"[SECURITY] Town sender resolution rejected: {sender} claims '{binding.Profile.Value}', owned by earlier sender {owner}.");
+            status = TownSenderResolutionStatus.RejectedConflict;
+            if (_warningGate.ShouldLog(senderKey, $"earlier_owner:{owner}"))
+            {
+                Debug.LogWarning($"[SECURITY] Town sender resolution rejected: {sender} claims '{binding.Profile.Value}', owned by earlier sender {owner}.");
+            }
             return false;
         }
 
+        _warningGate.ResetSender(senderKey);
         profileId = verified;
+        status = TownSenderResolutionStatus.Verified;
         return true;
     }
 
@@ -140,9 +165,17 @@ public sealed class TownSenderIdentityRegistry
         return !sender.IsNone;
     }
 
-    public bool Remove(PlayerRef sender) => _bindings.Remove(sender);
+    public bool Remove(PlayerRef sender)
+    {
+        _warningGate.ResetSender(sender.ToString());
+        return _bindings.Remove(sender);
+    }
 
-    public void Clear() => _bindings.Clear();
+    public void Clear()
+    {
+        _bindings.Clear();
+        _warningGate.Clear();
+    }
 
     private bool HasEarlierOwner(PlayerRef sender, in Binding binding, ITownSessionTicketVerifier verifier, out PlayerRef owner)
     {

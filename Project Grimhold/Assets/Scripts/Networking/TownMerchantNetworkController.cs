@@ -201,6 +201,7 @@ public sealed class TownMerchantNetworkController : NetworkBehaviour, IMerchantT
 
     public void StateAuthorityChanged()
     {
+        Runner?.GetComponent<TownSenderIdentityContext>()?.NotifyAuthorityChanged();
         if (HasStateAuthority && _requestValidator != null)
         {
             EnsureStockInitialized();

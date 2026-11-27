@@ -65,6 +65,16 @@ The backend maintains strict separation between the authentication concept (`Acc
 
 ### Unity Client Architecture
 
+#### Backend Configuration Selection (FIX-58)
+
+Every Unity service (`LoginFlowController`, `MainMenuController`, `RemoteInventoryService`, `ProfileReconciliationService`, `RemoteShopTransactionService`, `RemoteAbilityPurchaseService`, `RemoteMissionClaimService`, `ApplicationStashServiceBootstrapper`, `TownInventoryBinder`, `ProfileDebugUtility`) resolves its active `BackendConfiguration` exclusively through the single source of truth `Grimhold.Backend.BackendConfigurationProvider` — no service loads `"BackendConfiguration"` by name from `Resources`.
+
+*   **Resolution order**: explicit runtime/test override (`BackendConfigurationProvider.SetActiveOverride`) -> development local toggle (`Resources/BackendConfiguration_Local.asset`) -> `ApplicationAuthContext.Instance.BackendConfig` -> `LoginFlowController.Instance.Config` -> caller serialized fallback -> default `Resources/BackendConfiguration.asset`.
+*   **Switching to localhost in development (without modifying versioned assets)**:
+    *   **Unity Editor**: use the menu `Grimhold → Backend → Use Local Backend (localhost:3000)` (stored in `EditorPrefs` under `Grimhold.Backend.UseLocalConfiguration`) or switch back via `Grimhold → Backend → Use Deployed Backend (Render)`.
+    *   **Editor or Development Build (including multi-process Duo tests)**: set the environment variable `GRIMHOLD_USE_LOCAL_BACKEND=1` (also accepts `true`, `local`, `yes`) before launching the process.
+    *   **Release builds**: local overrides are compiled out (`!UNITY_EDITOR && !DEVELOPMENT_BUILD` always returns `false`), ensuring production builds always target the configured deployed endpoint.
+
 The authentication flow is orchestrated by `LoginFlowController`, a non-UI component that executes the sequence:
 
 1.  `AuthenticationClient.PostLoginAsync` -> Retrieves JWT.
