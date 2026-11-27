@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "rawCommits": 1298,
-  "canonicalEntries": 1295,
+  "rawCommits": 1299,
+  "canonicalEntries": 1296,
   "before": {
+    "Bug Fixes": 202,
     "Documentation": 144,
     "Features": 476,
-    "Bug Fixes": 201,
     "Architecture & Infrastructure": 31,
     "Other Changes": 379,
     "Tests": 50,
     "Refactoring": 17
   },
   "after": {
+    "Bug Fixes": 218,
     "Documentation": 160,
     "Features": 615,
-    "Bug Fixes": 217,
     "Maintenance": 29,
     "Other Changes": 186,
     "Tests": 55,
@@ -23,18 +23,18 @@
   },
   "systemCountsOverlap": true,
   "systems": {
+    "Inventory & Loot": 510,
+    "Persistence & Backend": 332,
+    "Documentation": 462,
+    "Tests": 827,
     "Unassigned": 55,
     "Networking & Sessions": 373,
-    "Persistence & Backend": 331,
     "Build & Tooling": 673,
-    "Documentation": 461,
-    "Tests": 826,
     "UI": 371,
     "Combat": 427,
     "Extraction": 183,
     "World & Visibility": 196,
     "Art & Animation": 280,
-    "Inventory & Loot": 509,
     "Audio": 44,
     "Abilities": 148,
     "Movement": 109,
@@ -42,9 +42,9 @@
   },
   "canonical": {
     "sections": {
+      "Bug Fixes": 217,
       "Documentation": 160,
       "Features": 614,
-      "Bug Fixes": 216,
       "Maintenance": 29,
       "Other Changes": 185,
       "Tests": 55,
@@ -52,18 +52,18 @@
       "Architecture & Infrastructure": 6
     },
     "systems": {
+      "Inventory & Loot": 510,
+      "Persistence & Backend": 332,
+      "Documentation": 460,
+      "Tests": 825,
       "Unassigned": 55,
       "Networking & Sessions": 373,
-      "Persistence & Backend": 331,
       "Build & Tooling": 671,
-      "Documentation": 459,
-      "Tests": 824,
       "UI": 370,
       "Combat": 425,
       "Extraction": 183,
       "World & Visibility": 194,
       "Art & Animation": 277,
-      "Inventory & Loot": 509,
       "Audio": 44,
       "Abilities": 146,
       "Movement": 109,
@@ -78601,8 +78601,8 @@
       "title": "Unreleased",
       "version": "Unreleased",
       "tag": null,
-      "originalCommits": 421,
-      "canonicalEntries": 421
+      "originalCommits": 422,
+      "canonicalEntries": 422
     },
     {
       "key": "v0.5.0",
@@ -78646,6 +78646,82 @@
     }
   ],
   "commits": [
+    {
+      "sha": "8f88166b664f4775ea2cbe350b7e7128a650a52c",
+      "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/8f88166b664f4775ea2cbe350b7e7128a650a52c",
+      "subject": "fix(commerce): apply weekly demand to single NPC sales",
+      "body": "Single sales through POST /character/me/inventory/shop/sell now get the\nsame weekly demand bonus as cart sales (Doc 23 section 7: an in-demand\nitem sells for floor(ObjectValue * 1.2)). shopSell passes the current\nweek's demand items to the shared applyShopSale path, so its Gold,\neconomy telemetry (demandBonus, demandBonusGold) and buyback price,\nwhich is derived from the Gold actually paid, match shop/trade. Items\noutside the demand keep their catalog price. The Unity Town client sells\nonly through the cart.\n\nTests (economy.telemetry.commerce.test.js):\n- an in-demand item pays the same Gold per unit by the single and cart\n  routes, with identical telemetry\n- an item outside the demand keeps its price by both routes\n- a rejected in-demand single sale changes no Gold, inventory or\n  revision and records no telemetry\n- existing fixtures pick their demand and non-demand items from the\n  weekly rotation instead of assuming RES_SLIME_GEL is never in demand\n\nDocs: CommerceArchitecture.md states the rule for both routes;\nEconomyTelemetryArchitecture.md drops the resolved known gap.\n\nRefs: TASK-308\n",
+      "date": "2026-11-27T01:35:59-03:00",
+      "files": [
+        "Project Grimhold/Docs/Architecture/CommerceArchitecture.md",
+        "Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md",
+        "backend/src/services/InventoryService.js",
+        "backend/tests/economy.telemetry.commerce.test.js"
+      ],
+      "originalType": "fix",
+      "originalScope": "commerce",
+      "originalSection": "Bug Fixes",
+      "breaking": false,
+      "reverts": null,
+      "section": "Bug Fixes",
+      "confidence": "explicit",
+      "systems": [
+        "Inventory & Loot",
+        "Persistence & Backend",
+        "Documentation",
+        "Tests"
+      ],
+      "evidence": [
+        {
+          "source": "type",
+          "value": "fix",
+          "supports": "Bug Fixes"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "message-term",
+          "value": "inventory",
+          "supports": "Inventory & Loot"
+        },
+        {
+          "source": "path",
+          "value": "backend/src/services/InventoryService.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/economy.telemetry.commerce.test.js",
+          "supports": "Persistence & Backend"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/CommerceArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md",
+          "supports": "Documentation"
+        },
+        {
+          "source": "path",
+          "value": "backend/tests/economy.telemetry.commerce.test.js",
+          "supports": "Tests"
+        },
+        {
+          "source": "message-term",
+          "value": "Tests",
+          "supports": "Tests"
+        }
+      ],
+      "diagnostics": [],
+      "generic": false,
+      "secondary": false
+    },
     {
       "sha": "605385c312e5013c159ec6192844d35647b5435b",
       "url": "https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/605385c312e5013c159ec6192844d35647b5435b",

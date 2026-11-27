@@ -4,11 +4,11 @@
 
 Release: Unreleased
 
-421 original commits; 421 canonical entries.
+422 original commits; 422 canonical entries.
 
 ## Canonical classification
 
-155 features; 123 bug fixes; 4 refactoring; 1 architecture & infrastructure; 70 documentation; 26 tests; 18 maintenance; 24 other changes
+155 features; 124 bug fixes; 4 refactoring; 1 architecture & infrastructure; 70 documentation; 26 tests; 18 maintenance; 24 other changes
 
 | System | Features | Fixes | Refactors / perf | Infrastructure | Secondary | Reverts / other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -17,19 +17,85 @@ Release: Unreleased
 | Audio | 9 | 2 | 0 | 0 | 2 | 1 |
 | Build & Tooling | 108 | 81 | 4 | 1 | 31 | 7 |
 | Combat | 61 | 27 | 2 | 0 | 19 | 2 |
-| Documentation | 48 | 46 | 0 | 0 | 22 | 2 |
+| Documentation | 48 | 47 | 0 | 0 | 22 | 2 |
 | Extraction | 23 | 24 | 2 | 0 | 10 | 5 |
 | Input | 2 | 1 | 0 | 0 | 1 | 1 |
-| Inventory & Loot | 89 | 65 | 4 | 1 | 29 | 5 |
+| Inventory & Loot | 89 | 66 | 4 | 1 | 29 | 5 |
 | Movement | 9 | 7 | 0 | 0 | 3 | 1 |
 | Networking & Sessions | 49 | 47 | 0 | 0 | 19 | 2 |
-| Persistence & Backend | 57 | 57 | 2 | 1 | 25 | 4 |
-| Tests | 141 | 113 | 4 | 1 | 42 | 4 |
+| Persistence & Backend | 57 | 58 | 2 | 1 | 25 | 4 |
+| Tests | 141 | 114 | 4 | 1 | 42 | 4 |
 | UI | 47 | 27 | 2 | 0 | 20 | 6 |
 | Unassigned | 1 | 3 | 0 | 0 | 31 | 2 |
 | World & Visibility | 43 | 22 | 1 | 0 | 7 | 13 |
 
 ## Original commit records
+
+### 8f88166b664f4775ea2cbe350b7e7128a650a52c
+
+[8f88166b664f4775ea2cbe350b7e7128a650a52c](https://github.com/Astro-Rift-Games/ProjectGrimhold/commit/8f88166b664f4775ea2cbe350b7e7128a650a52c)
+
+Date: 2026-11-27T01:35:59-03:00 · Classification: Bug Fixes (explicit) · Systems: Inventory & Loot, Persistence & Backend, Documentation, Tests
+
+Flags: primary or unclassified
+
+#### Original subject
+
+```text
+fix(commerce): apply weekly demand to single NPC sales
+```
+
+#### Original body
+
+```text
+Single sales through POST /character/me/inventory/shop/sell now get the
+same weekly demand bonus as cart sales (Doc 23 section 7: an in-demand
+item sells for floor(ObjectValue * 1.2)). shopSell passes the current
+week's demand items to the shared applyShopSale path, so its Gold,
+economy telemetry (demandBonus, demandBonusGold) and buyback price,
+which is derived from the Gold actually paid, match shop/trade. Items
+outside the demand keep their catalog price. The Unity Town client sells
+only through the cart.
+
+Tests (economy.telemetry.commerce.test.js):
+- an in-demand item pays the same Gold per unit by the single and cart
+  routes, with identical telemetry
+- an item outside the demand keeps its price by both routes
+- a rejected in-demand single sale changes no Gold, inventory or
+  revision and records no telemetry
+- existing fixtures pick their demand and non-demand items from the
+  weekly rotation instead of assuming RES_SLIME_GEL is never in demand
+
+Docs: CommerceArchitecture.md states the rule for both routes;
+EconomyTelemetryArchitecture.md drops the resolved known gap.
+
+Refs: TASK-308
+```
+
+#### Changed paths
+
+```text
+Project Grimhold/Docs/Architecture/CommerceArchitecture.md
+Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md
+backend/src/services/InventoryService.js
+backend/tests/economy.telemetry.commerce.test.js
+```
+
+#### Classification evidence
+
+- type → Bug Fixes: fix
+- path → Inventory &amp; Loot: backend/src/services/InventoryService.js
+- message-term → Inventory &amp; Loot: inventory
+- path → Persistence &amp; Backend: backend/src/services/InventoryService.js
+- path → Persistence &amp; Backend: backend/tests/economy.telemetry.commerce.test.js
+- path → Documentation: Project Grimhold/Docs/Architecture/CommerceArchitecture.md
+- path → Documentation: Project Grimhold/Docs/Architecture/EconomyTelemetryArchitecture.md
+- path → Tests: backend/tests/economy.telemetry.commerce.test.js
+- message-term → Tests: Tests
+
+#### Diagnostics
+
+- No classification ambiguity detected.
 
 ### 605385c312e5013c159ec6192844d35647b5435b
 
